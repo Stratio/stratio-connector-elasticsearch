@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.stratio.connector.elasticsearch.ftest.functionalTestQuery.QueryFilterTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.268 sec
