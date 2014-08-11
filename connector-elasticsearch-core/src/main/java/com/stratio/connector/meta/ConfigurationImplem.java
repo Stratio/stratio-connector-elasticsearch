@@ -101,7 +101,8 @@ public class ConfigurationImplem implements IConfiguration{
     private static List<String> seeds;
     
     static{
-    	seeds = Arrays.asList("172.19.0.77:9300");
+    	seeds = Arrays.asList("localhost:9300");
+    	//seeds = Arrays.asList("172.19.0.77:9300");
     }
     
     //Credentials...

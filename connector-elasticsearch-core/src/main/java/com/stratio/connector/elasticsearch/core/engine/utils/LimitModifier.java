@@ -20,6 +20,7 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
 
 import com.stratio.connector.meta.Limit;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
 /**
@@ -35,11 +36,13 @@ public class LimitModifier{
 	
 	
 	private LimitModifier(){}
-	public static void modify(SearchRequestBuilder requestBuilder, Limit limit) {
-		if (limit != null) { requestBuilder.setSize(limit.getLimit()); 
-		}else {
-			requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
-		}
+	public static void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type)  {
+		if (limit != null) { 
+			if(type == SearchType.SCAN) requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN); 
+			else if(type == SearchType.QUERY_THEN_FETCH) requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
+			//TODO else throw new ExecutionException("SearchType unexpected: "+ type);
+		}else requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
+		
 	}
 	
 	//TODO different requests?

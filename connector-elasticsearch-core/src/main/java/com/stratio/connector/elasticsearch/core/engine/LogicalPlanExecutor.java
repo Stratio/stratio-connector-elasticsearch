@@ -31,12 +31,14 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderHelper;
+import com.stratio.connector.elasticsearch.core.engine.utils.GroupByModifier;
 import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.elasticsearch.core.engine.utils.MatchBuilderHelper;
 import com.stratio.connector.elasticsearch.core.engine.utils.ProjectModifier;
@@ -75,6 +77,8 @@ public class LogicalPlanExecutor {
 	
 	private Client elasticClient = null;
 	
+	private SearchType searchType = null;
+	
 	private Project projection = null;
 	private ArrayList<Sort> sortList = null;
 	private Limit limitValue = null;
@@ -95,8 +99,12 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 		this.elasticClient = elasticClient;
 		
 		readLogicalPlan(logicalPlan);
+		setSearchType();
 		buildQuery();
 }
+
+
+
 
 
 	private void readLogicalPlan(LogicalPlan logicalPlan) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
@@ -150,14 +158,25 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 		
 		//MODIFY QUERY
 		ProjectModifier.modify(requestBuilder, projection);
-		LimitModifier.modify(requestBuilder, limitValue);
+		LimitModifier.modify(requestBuilder, limitValue, searchType);
 		if (!sortList.isEmpty()) SortModifier.modify(requestBuilder, sortList);
 		
-		//if (groupBy != null) query.add(buildGroupBy());
+		if (groupBy != null) GroupByModifier.modify(requestBuilder, groupBy);
 
 	}
 	
 
+
+	/**
+	 * 
+	 */
+	private void setSearchType() {
+		if(limitValue == null) searchType = SearchType.SCAN;
+		else {
+			//TODO IF SORT IS EMPTY=> SCAN o QUERY_THEN_FETCH o setSort(Empty)(default=>score?)
+			searchType = (sortList.isEmpty()) ? SearchType.QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
+		}		
+	}
 
 	/**
 	 * Queries for objects in a collection
@@ -169,12 +188,12 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 		resultSet.setColumnMetadata(projection.getColumnList());// needed??
 		SearchResponse scrollResp;
 		
-		if(limitValue != null){ 
+		if(searchType == SearchType.QUERY_THEN_FETCH){ 
 			scrollResp = requestBuilder.execute().actionGet();
 			for (SearchHit hit : scrollResp.getHits()) {
 				resultSet.add(createRow(hit));
 		    }
-		}else{
+		}else if ( searchType == SearchType.SCAN){
 			//Prepare to SCAN
 			scrollResp = requestBuilder.execute().actionGet();
 			do{
@@ -185,6 +204,14 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 			}while(scrollResp.getHits().getHits().length == 0);
 			   
 		}
+		
+		if(groupBy != null){
+//			Aggregation agg = scrollResp.getAggregations().get("keys");
+//			agg.
+//			response.getAggregations().get("keys");
+//			Collection<Terms.Bucket> buckets = terms.getBuckets();
+		}
+		
 		
 		return QueryResult.createQueryResult(resultSet);
 	}

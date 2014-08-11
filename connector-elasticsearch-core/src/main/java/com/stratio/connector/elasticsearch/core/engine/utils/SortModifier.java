@@ -35,6 +35,7 @@ public class SortModifier{
 		
 		//TODO missings fields?
 		for (Sort sortElem : sortList) { 
+			//TODO scoreSort?
 			SortOrder sOrder = ( sortElem.getType() == Sort.ASC ) ? SortOrder.ASC : SortOrder.DESC;
 			requestBuilder.addSort(SortBuilders.fieldSort(sortElem.getField()).order( sOrder));
 		}	

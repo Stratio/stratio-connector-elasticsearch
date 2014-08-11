@@ -18,9 +18,11 @@ package com.stratio.connector.elasticsearch.core;
 
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
@@ -28,20 +30,24 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.stratio.connector.elasticsearch.core.configuration.ConnectionConfigurationCreator;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
 import com.stratio.connector.elasticsearch.core.configuration.SupportedOperationsCreator;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetaProvider;
+import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
 import com.stratio.connector.meta.ConnectionConfiguration;
 import com.stratio.connector.meta.IMetadataProvider;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.connector.IConnector;
+import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.exceptions.InitializationException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 
 
@@ -77,6 +83,11 @@ public class ElasticsearchConnector implements IConnector {
 	private ElasticsearchQueryEngine elasticQueryEngine = null;
 	
 	/**
+	 * The QueryEngine.
+	 */
+	private ElasticsearchMetadataEngine elasticMetadataEngine = null;
+	
+	/**
 	* The Log.
 	*/
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -101,7 +112,6 @@ public class ElasticsearchConnector implements IConnector {
 				if(!isConnected()){
 					
 					elasticConfiguration = new ElasticsearchClientConfiguration(configuration);
-
 					if(elasticConfiguration.isNodeClient()){
 						createNodeClient(elasticConfiguration, credentials);
 					}else createTransportClient(elasticConfiguration, credentials);
@@ -138,7 +148,7 @@ public class ElasticsearchConnector implements IConnector {
 	 */
 	@Override
 	public IStorageEngine getStorageEngine() {
-		createSingeltonStorageEngine();
+		createSingletonStorageEngine();
 		elasticStorageEngine.setConnection(elasticClient);
 		return elasticStorageEngine;
 
@@ -150,7 +160,7 @@ public class ElasticsearchConnector implements IConnector {
 	 * @return the MetadataProvider
 	 */
 	public IMetadataProvider getMedatadaProvider(){
-		createSingeltonMetaProvider();
+		createSingletonMetaProvider();
 		elasticMetaProvider.setConnection(elasticClient);
 		return elasticMetaProvider;
 	}
@@ -162,10 +172,26 @@ public class ElasticsearchConnector implements IConnector {
 	 */
 	@Override
 	public IQueryEngine getQueryEngine(){
-		createSingeltonQueryEngine();
+		createSingletonQueryEngine();
 		elasticQueryEngine.setConnection(elasticClient);
 		return elasticQueryEngine;
 	}
+
+	
+	/* (non-Javadoc)
+	 * @see com.stratio.meta.common.connector.IConnector#getMetadataEngine()
+	 */
+	@Override
+	public IMetadataEngine getMetadataEngine() throws UnsupportedException {
+		createSingletonMetadataEngine();
+		elasticMetadataEngine.setStorageEngine((ElasticsearchStorageEngine) getStorageEngine());
+		elasticMetadataEngine.setQueryEngine((ElasticsearchQueryEngine) getQueryEngine());
+		return elasticMetadataEngine;
+	}
+	
+	
+	
+
 
 	/**
      * Return the supported operations
@@ -176,6 +202,7 @@ public class ElasticsearchConnector implements IConnector {
         return SupportedOperationsCreator.getSupportedOperations();
     }
     
+	
     
     /**
      * Return the supported configuration options
@@ -190,7 +217,7 @@ public class ElasticsearchConnector implements IConnector {
 	/**
 	 * Create a StorageEngine.
 	 */
-	private void createSingeltonStorageEngine() {
+	private void createSingletonStorageEngine() {
 		if (elasticStorageEngine == null) {
 			elasticStorageEngine = new ElasticsearchStorageEngine();
 		}
@@ -200,7 +227,7 @@ public class ElasticsearchConnector implements IConnector {
 	/**
 	 * Create a QueryEngine.
 	 */
-	private void createSingeltonQueryEngine() {
+	private void createSingletonQueryEngine() {
 		if (elasticQueryEngine == null) {
 			elasticQueryEngine = new ElasticsearchQueryEngine();
 		}
@@ -209,12 +236,21 @@ public class ElasticsearchConnector implements IConnector {
 	/**
 	 * Create a MetaProvider.
 	 */
-	private void createSingeltonMetaProvider() {
+	private void createSingletonMetaProvider() {
 		if (elasticMetaProvider == null) {
 			elasticMetaProvider = new ElasticsearchMetaProvider();
 		}
 	}
 	
+	/**
+	 * Create a MetadataEngine.
+	 */
+	private void createSingletonMetadataEngine() {
+		if (elasticMetadataEngine == null) {
+			elasticMetadataEngine = new ElasticsearchMetadataEngine();
+		}
+		
+	}
 	
 	/**
 	* Return the DataStore Name.
@@ -289,7 +325,9 @@ public class ElasticsearchConnector implements IConnector {
 				}
 			return seeds;
 		}
-		
+
+
+	
 	
 
 }

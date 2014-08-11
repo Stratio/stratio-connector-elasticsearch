@@ -18,27 +18,33 @@
 package com.stratio.connector.meta;
 
 import com.stratio.meta.common.logicalplan.LogicalStep;
+import com.stratio.meta.common.statements.structures.selectors.GroupByFunction;
+import com.stratio.meta.common.statements.structures.selectors.SelectorIdentifier;
+
 import java.io.Serializable;
 import java.util.List;
 
 
-public class GroupBy  extends LogicalStep implements Serializable{
+public class ColumnGroupBy{
 
-  private static final long serialVersionUID = 1946514142415876581L;
+  private String identifier;
+  private GroupByFunction groupByFunction;
+  private String alias;
 
-  List<String> fieldsGroup;
-  List<ColumnGroupBy> columns;
-
-  public GroupBy(List<String> fieldsGroup, List<ColumnGroupBy> columns) {
-    this.fieldsGroup = fieldsGroup;
-    this.columns = columns;
+  public ColumnGroupBy(String identifier, GroupByFunction groupByFunction, String alias) {
+    this.identifier = identifier;
+    this.groupByFunction = groupByFunction;
+    this.alias = alias;
   }
 
-  public List<String> getFieldsGroup() {
-    return fieldsGroup;
+  public String getIdentifiers() {
+    return identifier;
+  }
+  public GroupByFunction getGroupByFunction() {
+	    return groupByFunction;
+	  }
+  public String getAlias(){
+	  return alias;
   }
 
-  public List<ColumnGroupBy> getColumns() {
-	    return columns;
-	}
 }

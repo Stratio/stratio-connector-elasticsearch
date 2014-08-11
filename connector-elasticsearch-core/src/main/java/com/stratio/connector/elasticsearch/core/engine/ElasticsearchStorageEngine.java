@@ -203,4 +203,6 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	public void setConnection(Client elasticClient) {
 		this.elasticClient = elasticClient;
 	}
+
+
 }

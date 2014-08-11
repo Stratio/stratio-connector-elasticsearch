@@ -133,6 +133,3 @@ public class ElasticsearchClientConfiguration implements IConfiguration{
 	//	}
 
 }
-
-
-

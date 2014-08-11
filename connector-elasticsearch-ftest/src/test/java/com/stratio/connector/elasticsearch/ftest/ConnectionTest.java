@@ -38,6 +38,7 @@ public class ConnectionTest {
     protected final String CATALOG = "functionaltest";
     protected final Long MILLIS = 1200l;
     
+    
     /**
      * The elasticsearch elasticClient.
      */
@@ -45,7 +46,8 @@ public class ConnectionTest {
     protected ElasticsearchConnector stratioElasticConnector = null;
 //    MongoClientOptions cilentOptions = null;
     protected String clusterName = "david_cluster";
-
+    protected String IP = "localhost";//"172.19.0.77"
+    
     @Before
     public void setUp() throws InitializationException {
 //        try {
@@ -57,7 +59,7 @@ public class ConnectionTest {
 //            
             
             InetSocketTransportAddress[] seeds = new InetSocketTransportAddress[1];
-			InetSocketTransportAddress ta = new InetSocketTransportAddress("172.19.0.77", 9300);
+			InetSocketTransportAddress ta = new InetSocketTransportAddress(IP, 9300);
 			seeds[0] = ta;
 			
 			Settings settings = ImmutableSettings.settingsBuilder()
