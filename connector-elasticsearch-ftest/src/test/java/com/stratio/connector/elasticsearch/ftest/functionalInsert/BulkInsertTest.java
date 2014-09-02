@@ -23,6 +23,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.data.TableName;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.search.SearchHit;
@@ -45,7 +48,7 @@ public class BulkInsertTest extends ConnectionTest {
     final String COLLECTION = getClass().getSimpleName();
 
     @Test
-    public void testBulkInsert() throws ExecutionException, ValidationException, UnsupportedOperationException {
+    public void testBulkInsert() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
 
 
         Set<Row> rows = new HashSet<Row>();
@@ -62,12 +65,14 @@ public class BulkInsertTest extends ConnectionTest {
             rows.add(row);
         }
 
-        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, rows);
-       
-        
-        refresh();
-        
-        SearchResponse response = client.prepareSearch(CATALOG)
+
+        TableMetadata targetTable = new TableMetadata(new TableName(CATALOG,COLLECTION),null,null,null,null,null);
+        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME, targetTable, rows);
+
+
+        refresh(CATALOG);
+
+        SearchResponse response = nodeClient.prepareSearch(CATALOG)
         		.setSearchType(SearchType.QUERY_THEN_FETCH) //si size es menor que el número de resultados podría no devolver todos los valores
         		.setTypes(COLLECTION)
         		.execute()
@@ -81,31 +86,12 @@ public class BulkInsertTest extends ConnectionTest {
           assertEquals("The value is correct", "value1_R" + hit.getSource().get("key"), hit.getSource().get("name1"));
           assertEquals("The value is correct", "value2_R" + hit.getSource().get("key"), hit.getSource().get("name2"));
           assertEquals("The value is correct", "value3_R" + hit.getSource().get("key"), hit.getSource().get("name3"));
-//          recordNumber++;
+
         }
         
         assertEquals("The records number is correct", 10, hits.totalHits());
         
-        
-//
-//        DBCollection collection = mongoClient.getDB(CATALOG).getCollection(COLLECTION);
-//        
-//        DBCursor cursor = collection.find();
-//
-//        DBObject resultSet;
-//        int recordNumber = 0;
-//        
-//        while (cursor.hasNext()) {
-//        	resultSet = cursor.next();
-//            assertEquals("The value is correct", "value1_R" + resultSet.get("key"), resultSet.get("name1"));
-//            assertEquals("The value is correct", "value2_R" + resultSet.get("key"), resultSet.get("name2"));
-//            assertEquals("The value is correct", "value3_R" + resultSet.get("key"), resultSet.get("name3"));
-//            recordNumber++;
-//        }
-//        
-//
-//
-//        assertEquals("The records number is correct", 10, recordNumber);
+
 
     }
 }

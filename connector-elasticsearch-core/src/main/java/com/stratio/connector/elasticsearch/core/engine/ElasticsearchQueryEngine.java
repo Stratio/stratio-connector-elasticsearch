@@ -15,6 +15,12 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
+import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
+import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
+import com.stratio.connector.meta.exception.*;
+import com.stratio.connector.meta.exception.UnsupportedOperationException;
+import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta2.common.data.ClusterName;
 import org.elasticsearch.client.Client;
 
 import com.stratio.connector.meta.ElasticsearchResultSet;
@@ -31,9 +37,15 @@ import com.stratio.meta.common.result.QueryResult;
 
 public class ElasticsearchQueryEngine implements IQueryEngine {
 
-    private Client elasticClient = null;
+    ConnectionHandle connectionHandle;
 
-    public QueryResult execute(LogicalPlan logicalPlan) throws com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException, UnsupportedException {
+    public ElasticsearchQueryEngine(ConnectionHandle connectionHandle) {
+
+        this.connectionHandle = connectionHandle;
+
+    }
+
+    private QueryResult execute(Client elasticClient,LogicalWorkflow logicalPlan) throws UnsupportedException, ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
     	
     	QueryResult resultSet =null;
     	LogicalPlanExecutor executor = new LogicalPlanExecutor(logicalPlan, elasticClient);
@@ -42,22 +54,27 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
 
     }
 
-    public IResultSet execute(IResultSet previousResult, LogicalPlan logicalPlan) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not yet supported");
-
-    }
-    public IResultSet execute(LogicalPlan logicalPlan, ICallBack callback) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not yet supported");
-
-    }
-    
 
 	
-	  /**
-* Set the connection.
-* @param elasticsearchClient the connection.
-*/
-    public void setConnection(Client elasticClient) {
-        this.elasticClient = elasticClient;
+
+
+
+    //REVIEW este es el metodo nuevo.
+
+
+    @Override
+    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
+        QueryResult queryResult = null;
+        try {
+            queryResult =  execute(recoveredClient(targetCluster),workflow);
+        } catch (UnsupportedOperationException e) {
+            e.printStackTrace();
+        }
+        return queryResult;
+    }
+
+
+    private Client recoveredClient(ClusterName targetCluster) {
+        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
     }
 }

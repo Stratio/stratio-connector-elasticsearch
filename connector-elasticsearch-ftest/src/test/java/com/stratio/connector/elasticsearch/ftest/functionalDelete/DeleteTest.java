@@ -17,6 +17,7 @@
 package com.stratio.connector.elasticsearch.ftest.functionalDelete;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,23 +30,15 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
 
-import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
 import com.stratio.connector.elasticsearch.ftest.ConnectionTest;
-import com.stratio.connector.meta.StringTerm;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
-import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta.common.statements.structures.relationships.RelationBetween;
-import com.stratio.meta.common.statements.structures.relationships.RelationCompare;
-import com.stratio.meta.common.statements.structures.relationships.RelationType;
-import com.stratio.meta.common.statements.structures.terms.IntegerTerm;
-import com.stratio.meta.common.statements.structures.terms.Term;
+
 
 
 
@@ -71,17 +64,19 @@ public class DeleteTest extends ConnectionTest {
          insertRow(2,"text",9,17);
          insertRow(3,"text",11,26);
          insertRow(4,"text",10,30);
-         insertRow(5,"text",20,42);	
-         refresh();
-       
-         
+         insertRow(5,"text",20,42);
+
+        refresh(CATALOG);
+
+
         Filter[] filterSet = createFilterCollection(EQUAL_FILTER, "text2"); 
-   	 	((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION, filterSet);
-        refresh();
-   	 	
-   	 	
-   	 	
-   	 SearchResponse response = client.prepareSearch(CATALOG)
+//   	 	((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION, filterSet);
+        fail("Not implemented"); //REVIEW debido a cambio de interfaz
+
+        refresh(CATALOG);
+
+
+        SearchResponse response = nodeClient.prepareSearch(CATALOG)
      		.setSearchType(SearchType.QUERY_THEN_FETCH)
      		.setTypes(COLLECTION)
      		.execute()
@@ -110,16 +105,19 @@ public class DeleteTest extends ConnectionTest {
          insertRow(2,"text",9,17);
          insertRow(3,"text",11,20);
          insertRow(4,"text",10,30);
-         insertRow(5,"text",20,42);	
-         refresh();
-         
+         insertRow(5,"text",20,42);
+
+        refresh(CATALOG);
+
 
         Filter[] filterSet = createFilterCollection(EQUAL_FILTER, 20);    
-   	 	((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION, filterSet);
-   	 	refresh();
-   	 	
-   	 	
-   	 SearchResponse response = client.prepareSearch(CATALOG)
+//   	 	((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION, filterSet);
+        fail("Not implemented"); //REVIEW debido a cambio de interfaz
+
+        refresh(CATALOG);
+
+
+        SearchResponse response = nodeClient.prepareSearch(CATALOG)
       		.setSearchType(SearchType.QUERY_THEN_FETCH)
       		.setTypes(COLLECTION)
       		.execute()
@@ -143,17 +141,19 @@ public class DeleteTest extends ConnectionTest {
 	 insertRow(3,"text",11,20);
 	 insertRow(4,"text",10,30);
 	 insertRow(5,"text",20,42);
-	 refresh();
-	 
-	 
-	 //age notequal 20 and money between 9,11
+
+        refresh(CATALOG);
+
+
+        //age notequal 20 and money between 9,11
 	 Filter[] filterSet = createFilterCollection(NOTEQUAL_BETWEEN, 20);
-	 ((ElasticsearchStorageEngine)
-	 stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION,
-	 filterSet);
-	 refresh();
-	 
-	 SearchResponse response = client.prepareSearch(CATALOG)
+
+//	 ((ElasticsearchStorageEngine)stratioElasticConnector.getStorageEngine()).delete(CATALOG, COLLECTION,filterSet);
+             fail("Not implemented"); //REVIEW debido a cambio de interfaz
+
+        refresh(CATALOG);
+
+        SearchResponse response = nodeClient.prepareSearch(CATALOG)
 	      		.setSearchType(SearchType.QUERY_THEN_FETCH)
 	      		.setTypes(COLLECTION)
 	      		.execute()
@@ -197,37 +197,45 @@ public class DeleteTest extends ConnectionTest {
 
 
 private Filter createNotEqualsFilter(int filterType, Object object) throws Exception {
-	RelationCompare relCom;
-	if(object instanceof String) relCom = new RelationCompare(COLUMN_TEXT, "!=", new StringTerm((String)object));
-	else if(object instanceof Integer) relCom = new RelationCompare(COLUMN_AGE, "<>", new IntegerTerm(String.valueOf(object)));
-	else throw new Exception("unsupported type"+ object.getClass());
+//	RelationCompare relCom;
+//	if(object instanceof String) relCom = new RelationCompare(COLUMN_TEXT, "!=", new StringTerm((String)object));
+//	else if(object instanceof Integer) relCom = new RelationCompare(COLUMN_AGE, "<>", new IntegerTerm(String.valueOf(object)));
+//	else throw new Exception("unsupported type"+ object.getClass());
+//
+//	Filter f = new Filter(Operations.SELECT_WHERE_MATCH, RelationType.COMPARE, relCom);
+//	return f;
+    return null; //REVIEW por la nueva version de meta
 
-	Filter f = new Filter(Operations.SELECT_WHERE_MATCH, RelationType.COMPARE, relCom);
-	return f;
 }
 
 
 private Filter createBetweenFilter(int min, int max) {
 	
-	 Relation relation = new RelationBetween(COLUMN_MONEY);
-     relation.setType(Relation.TYPE_BETWEEN);
-     List<Term<?>> terms = new ArrayList<>();
-     terms.add(new IntegerTerm(String.valueOf(min)));
-     terms.add(new IntegerTerm(String.valueOf(max)));
-     relation.setTerms(terms);
-     Filter f = new Filter(Operations.SELECT_WHERE_BETWEEN, RelationType.BETWEEN, relation);
-     return f;
+//	 Relation relation = new RelationBetween(COLUMN_MONEY);
+//     relation.setType(Relation.TYPE_BETWEEN);
+//     List<Term<?>> terms = new ArrayList<>();
+//     terms.add(new IntegerTerm(String.valueOf(min)));
+//     terms.add(new IntegerTerm(String.valueOf(max)));
+//     relation.setTerms(terms);
+//     Filter f = new Filter(Operations.SELECT_WHERE_BETWEEN, RelationType.BETWEEN, relation);
+//     return f;
+
+    return null; //REVIEW por la nueva version de meta
+
 }
 
 
 private Filter createEqualsFilter(int filterType, Object object) throws Exception {
-	RelationCompare relCom;
-	if(object instanceof String) relCom = new RelationCompare(COLUMN_TEXT, "=", new StringTerm((String)object));
-	else if(object instanceof Integer) relCom = new RelationCompare(COLUMN_AGE, "=", new IntegerTerm(String.valueOf(object)));
-	else throw new Exception("unsupported type"+ object.getClass());
+//	RelationCompare relCom;
+//	if(object instanceof String) relCom = new RelationCompare(COLUMN_TEXT, "=", new StringTerm((String)object));
+//	else if(object instanceof Integer) relCom = new RelationCompare(COLUMN_AGE, "=", new IntegerTerm(String.valueOf(object)));
+//	else throw new Exception("unsupported type"+ object.getClass());
+//
+//	Filter f = new Filter(Operations.SELECT_WHERE_MATCH, RelationType.COMPARE, relCom);
+//	return f;
+    fail("Not implemented");
+    return null; //REVIEW por la nueva version de meta
 
-	Filter f = new Filter(Operations.SELECT_WHERE_MATCH, RelationType.COMPARE, relCom);
-	return f;
 }
 
 
@@ -240,8 +248,8 @@ private void insertRow(int ikey, String texto, int money, int age) throws Unsupp
        cells.put(COLUMN_AGE, new Cell(age));
        row.setCells(cells);
         
-       ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
-        
+//       ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
+    fail("Not implemented"); //REVIEW debido a cambio de interfaz
     }
  
 

@@ -41,4 +41,14 @@ public class GroupBy  extends LogicalStep implements Serializable{
   public List<ColumnGroupBy> getColumns() {
 	    return columns;
 	}
+
+    @Override
+    public List<LogicalStep> getPreviousSteps() {
+        return null;
+    }
+
+    @Override
+    public LogicalStep getFirstPrevious() {
+        return null;
+    }
 }

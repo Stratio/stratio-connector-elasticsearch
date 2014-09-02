@@ -17,16 +17,19 @@ package com.stratio.connector.elasticsearch.core.configuration;
 
 
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
+import java.util.Map;
+
+
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 
-import com.stratio.connector.meta.ConfigurationImplem;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.exceptions.InitializationException;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 
 
 /**
@@ -34,102 +37,47 @@ import com.stratio.meta.common.exceptions.InitializationException;
  */
  
 public class ElasticsearchClientConfiguration implements IConfiguration{
-	
-	/**
-     * The Elasticsearch driver settings
-     */
-	private Settings elasticsearchSettings = null;
-	
-	/**
-     * List of seeds
-     */
-	private List<String> seeds = null;
 
-	/**
-     * Type of Elasticsearch client
-     */
-	private boolean isNodeClient;
-
-
-
-	/**
-	 * Initializes the Elasticsearch client configuration from a map based configuration
-	 * @param iconfiguration 
-	 * @throws InitializationException
-	 */
-	public ElasticsearchClientConfiguration(IConfiguration iconfiguration) throws InitializationException{
-		isNodeClient = false;
-		ConfigurationImplem configuration = (ConfigurationImplem) iconfiguration;
-		configureSeeds(configuration);
-		configureClientOptions(configuration);
-	}
-
-	/**
-	 * Retrieves the seeds from the Elasticsearch client configuration
-	 * @param iconfiguration 
-	 * @throws InitializationException
-	 */
-	private void configureSeeds (ConfigurationImplem configuration) throws InitializationException{
-		
-		if( (seeds = configuration.getSeeds()) == null ){
-			throw new InitializationException("there is no seeds");
-		}
-
-	}
 	/**
 	 * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
-	 * @param iconfiguration 
+	 * @param configuration
 	 * @throws InitializationException
 	 */
-	public void configureClientOptions(ConfigurationImplem configuration) {
+	public static Settings getSettings(ConnectorClusterConfig configuration) {
 
-		Map<String,String> confSettings = configuration.getMapProperties();
-		Map<String,String> confSettingsElasticsearch = new HashMap<String, String>();
-		
-		 for (Entry<String, String> e: confSettings.entrySet()) {
-			 	String newKey = e.getKey().substring("elasticsearch.".length());
-			 	if(!newKey.startsWith("stratio.")) confSettingsElasticsearch.put(newKey, e.getValue());
-			 	else configureClientType(e.getValue());
-			 	
-	     }
+		Map<String,String> setting = new HashMap<String, String>();
+        setting.put(NODE_DATA.getOptionName(), addSetting(configuration.getOptions(), NODE_DATA));
+        setting.put(NODE_MASTER.getOptionName(),addSetting(configuration.getOptions(),NODE_MASTER));
+        setting.put(TRANSPORT_SNIFF.getOptionName(),addSetting(configuration.getOptions(),TRANSPORT_SNIFF));
+        setting.put(CLUSTER_NAME.getOptionName(),configuration.getName().getName());
 
-		elasticsearchSettings = ImmutableSettings.settingsBuilder().put(confSettingsElasticsearch).build();
+        return ImmutableSettings.settingsBuilder().put(setting).build();
 				
 	}
-	
-	/**
-	 * Sets the client's type.
-	 * @param isNodeClient 
-	 */
-	private void configureClientType(String isNodeClient){
-		this.isNodeClient = Boolean.parseBoolean(isNodeClient);
-	}
-	
-	
-	/**
-	 * Returns the Elasticsearch driver settings
-	 * @return the Elasticsearch driver settings
-	 */
-	public Settings getSettings() {
-		return elasticsearchSettings;
-	}
-	/**
-	 * Returns the list of seeds
-	 * @return the seeds
-	 */
-	public List<String> getSeeds(){
-		return seeds;
-	}
-	/**
-	 * Returns the type of client
-	 * @return true for a node client, false for a transport client.
-	 */
-	public boolean isNodeClient(){
-		return isNodeClient;
-	}
-	
-	//	public  ConnectorConfigurationOptions getConnectorConfigurationOptions(){
-	//		
-	//	}
 
+
+    private static String addSetting(Map<String, String> configuration, ConfigurationOptions nodeData) {
+        String option;
+        if (configuration.containsKey(nodeData.getOptionName())){
+            option = (String)configuration.get(nodeData.getOptionName());
+        }else{
+            option = nodeData.getDefaultValue()[0];
+        }
+        return option;
+    }
+
+
+
+
+    public static TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
+
+        String hosts = (String)config.getOptions().get(HOST.getOptionName());
+        String ports = (String)config.getOptions().get(PORT.getOptionName());
+        TransportAddress[] transportAddresses = new TransportAddress[1];
+        //for (int i =0;i<hosts.length;i++){
+            transportAddresses[0]=new InetSocketTransportAddress(hosts,Integer.decode(ports)); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
+        //}
+        return transportAddresses;
+
+    }
 }

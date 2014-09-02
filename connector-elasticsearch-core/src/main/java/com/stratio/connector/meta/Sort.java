@@ -19,6 +19,8 @@ package com.stratio.connector.meta;
 
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
+import java.util.List;
+
 public class Sort extends LogicalStep{
 
 	
@@ -40,6 +42,15 @@ public class Sort extends LogicalStep{
 	public int getType() {
 		return type;
 	}
-	
 
+
+    @Override
+    public List<LogicalStep> getPreviousSteps() {
+        return null;
+    }
+
+    @Override
+    public LogicalStep getFirstPrevious() {
+        return null;
+    }
 }

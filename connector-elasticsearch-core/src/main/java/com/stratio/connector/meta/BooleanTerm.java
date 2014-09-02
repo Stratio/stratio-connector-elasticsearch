@@ -17,7 +17,9 @@ package com.stratio.connector.meta;/*
 
 
 */
-import com.stratio.meta.common.statements.structures.terms.Term;
+
+
+import com.stratio.meta2.common.statements.structures.terms.Term;
 
 public class BooleanTerm extends Term<Boolean> {
 

@@ -20,10 +20,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequest;
-import org.elasticsearch.common.util.ArrayUtils;
 import org.junit.Test;
 
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
@@ -36,7 +38,7 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 public class DropTest extends ConnectionTest {
 
 	@Test
-	public void dropCollectionTest() throws UnsupportedOperationException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+	public void dropCollectionTest() throws UnsupportedOperationException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException, UnsupportedException {
 
 		Row row = new Row();
 		Map<String, Cell> cells = new HashMap<>();
@@ -44,26 +46,27 @@ public class DropTest extends ConnectionTest {
 		cells.put("name2", new Cell(2));
 		row.setCells(cells);
 
-		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
-		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG+"b", COLLECTION, row);
-		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, "Collect", row);
-		
-		
-		refresh();
-		refresh(CATALOG+"b");
+        TableMetadata targetTable = new TableMetadata(new TableName(CATALOG,COLLECTION),null,null,null,null,null);
+		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME, new TableMetadata(new TableName(CATALOG,COLLECTION),null,null,null,null,null), row);
+		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME, new TableMetadata(new TableName(CATALOG+"b",COLLECTION),null,null,null,null,null), row);
+		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME,  new TableMetadata(new TableName(CATALOG,"Collect"),null,null,null,null,null), row);
+
+
+        refresh(CATALOG);
+        refresh(CATALOG+"b");
 		
 		((IMetadataProvider) stratioElasticConnector.getMedatadaProvider()).dropTable(CATALOG, COLLECTION);
 
 
-		assertEquals("Collection deleted", false, client.admin().indices().typesExists(new TypesExistsRequest(new String[]{CATALOG}, COLLECTION)).actionGet().isExists() ); 
+		assertEquals("Collection deleted", false, nodeClient.admin().indices().typesExists(new TypesExistsRequest(new String[]{CATALOG}, COLLECTION)).actionGet().isExists() );
 		
-		assertEquals( true, client.admin().indices().typesExists(new TypesExistsRequest(new String[]{CATALOG+"b"}, COLLECTION)).actionGet().isExists() ); 
+		assertEquals( true, nodeClient.admin().indices().typesExists(new TypesExistsRequest(new String[]{CATALOG+"b"}, COLLECTION)).actionGet().isExists() );
 		
-		client.admin().indices().delete(new DeleteIndexRequest(CATALOG+"b")).actionGet();
+		nodeClient.admin().indices().delete(new DeleteIndexRequest(CATALOG+"b")).actionGet();
 	}
 	
 	@Test
-	public void dropCatalogTest() throws UnsupportedOperationException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+	public void dropCatalogTest() throws UnsupportedOperationException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException, UnsupportedException {
 
 		Row row = new Row();
 		Map<String, Cell> cells = new HashMap<>();
@@ -71,17 +74,17 @@ public class DropTest extends ConnectionTest {
 		cells.put("name2", new Cell(2));
 		row.setCells(cells);
 
-		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
-		
-		refresh();
+		((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME, new TableMetadata(new TableName(CATALOG,"Collect"),null,null,null,null,null), row);
 
-		assertEquals("Catalog deleted", true, client.admin().indices().exists(new IndicesExistsRequest(CATALOG)).actionGet().isExists()); 
+        refresh(CATALOG);
+
+        assertEquals("Catalog deleted", true, nodeClient.admin().indices().exists(new IndicesExistsRequest(CATALOG)).actionGet().isExists());
 		
 		((IMetadataProvider) stratioElasticConnector.getMedatadaProvider()).dropCatalog(CATALOG);
-		
-		refresh();
 
-		assertEquals("Catalog deleted", false, client.admin().indices().exists(new IndicesExistsRequest(CATALOG)).actionGet().isExists()); 
+        refresh(CATALOG);
+
+        assertEquals("Catalog deleted", false, nodeClient.admin().indices().exists(new IndicesExistsRequest(CATALOG)).actionGet().isExists());
 
 	}
 	

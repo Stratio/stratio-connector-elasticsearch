@@ -25,6 +25,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import org.junit.Test;
 
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
@@ -37,10 +41,8 @@ import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalPlan;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 import com.stratio.meta.common.result.QueryResult;
 
 public class OrderByTest extends ConnectionTest {
@@ -56,27 +58,24 @@ public class OrderByTest extends ConnectionTest {
 
 
     @Test
-    public void sortFailTest() throws UnsupportedOperationException, ExecutionException {
+    public void sortFailTest() throws UnsupportedOperationException, ExecutionException, UnsupportedException {
 
     	 insertRow(1,"text",10,20);//row,text,money,age
          insertRow(2,"text",9,17);
          insertRow(3,"text",11,26);
          insertRow(4,"text",10,30);
-         insertRow(5,"text",20,42);	
-         refresh();
-         
-         LogicalPlan logicalPlan = createLogicalPlan(SORT_AGE);
+         insertRow(5,"text",20,42);
+
+        refresh(CATALOG);
+
+        LogicalWorkflow logicalPlan = createLogicalPlan(SORT_AGE);
          
          //return COLUMN_TEXT order by age DESC
 
-		try {
-			((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(logicalPlan);
+
+		((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
 			fail();
-		} catch (com.stratio.connector.meta.exception.UnsupportedOperationException e) {
-			//ok
-		} catch( Exception e){
-			fail();
-		}
+
          
      
         
@@ -89,27 +88,28 @@ public class OrderByTest extends ConnectionTest {
          insertRow(2,"text",9,17);
          insertRow(3,"text",11,26);
          insertRow(4,"text",10,30);
-         insertRow(5,"text",20,42);	
-         refresh();
-         
-         LogicalPlan logicalPlan = createLogicalPlanLimit(SORT_AGE);
-         
+         insertRow(5,"text",20,42);
+
+        refresh(CATALOG);
+
+        LogicalWorkflow logicalPlan = createLogicalPlanLimit(SORT_AGE);
+
          //return COLUMN_TEXT order by age DESC
 
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(logicalPlan);
-			
-    
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+
+
 	    assertEquals(5, queryResult.getResultSet().size());
-	    
+
 	    Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
-	
-	       
+
+
 	    assertEquals("text5", rowIterator.next().getCell(COLUMN_TEXT).getValue());
 	    assertEquals("text4", rowIterator.next().getCell(COLUMN_TEXT).getValue());
 	    assertEquals("text3", rowIterator.next().getCell(COLUMN_TEXT).getValue());
 	    assertEquals("text1", rowIterator.next().getCell(COLUMN_TEXT).getValue());
 	    assertEquals("text2", rowIterator.next().getCell(COLUMN_TEXT).getValue());
-	    
+
 		}
     
     @Test
@@ -120,14 +120,15 @@ public class OrderByTest extends ConnectionTest {
          insertRow(3,"text",11,26);
          insertRow(4,"text",10,30);
          insertRow(5,"text",20,42);	
-         insertRow(6,"text",10,10);	
-         refresh();
-         
-         LogicalPlan logicalPlan = createLogicalPlanMultifield();
+         insertRow(6,"text",10,10);
+
+        refresh(CATALOG);
+
+        LogicalWorkflow logicalPlan = createLogicalPlanMultifield();
          
          //return COLUMN_TEXT order by money asc, age asc
 
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
 			
     
 	    assertEquals(6, queryResult.getResultSet().size());
@@ -158,19 +159,20 @@ public class OrderByTest extends ConnectionTest {
 
       	 
       	 
-	private LogicalPlan createLogicalPlanLimit(int sortAge) {
+	private LogicalWorkflow createLogicalPlanLimit(int sortAge) {
 	   	 
 	   	 
 	   	 List<LogicalStep> stepList = new ArrayList<>();
 
-	     List<ColumnMetadata> columns = new ArrayList<>();
+	     List<ColumnName> columns = new ArrayList<>();
 	     
 	     Limit limit = new Limit(10);
 	     stepList.add(limit);
 
-	     columns.add(new ColumnMetadata(COLLECTION,COLUMN_TEXT));
-	     columns.add(new ColumnMetadata(COLLECTION,COLUMN_AGE));
-	     Project project = new Project(CATALOG, COLLECTION,columns);
+	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_TEXT)); //REVIEW cambiado para que compile
+	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_AGE));
+        TableName tableName = new TableName(CATALOG,COLLECTION);
+	     Project project = new Project(null,tableName,columns);
 	     stepList.add(project);
 	     
 	     
@@ -181,24 +183,25 @@ public class OrderByTest extends ConnectionTest {
 //    	        	case SORT_AGE_MONEY: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
 //    	        	case SORT_AGE_TEXT: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
 	        }
-	        return new LogicalPlan(stepList);
+	        return new LogicalWorkflow(stepList);
 
 		}
 
    	
     
-	private LogicalPlan createLogicalPlan(int sortAge) {
+	private LogicalWorkflow createLogicalPlan(int sortAge) {
    	 
    	 
    	 List<LogicalStep> stepList = new ArrayList<>();
 
-     List<ColumnMetadata> columns = new ArrayList<>();
+     List<ColumnName> columns = new ArrayList<>();
      
      
 
-     columns.add(new ColumnMetadata(COLLECTION,COLUMN_TEXT));
-     columns.add(new ColumnMetadata(COLLECTION,COLUMN_AGE));
-     Project project = new Project(CATALOG, COLLECTION,columns);
+     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_TEXT)); //REVIEW cambiado para que compile
+     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_AGE));
+        TableName tableName = new TableName(CATALOG,COLLECTION);
+     Project project = new Project(null, tableName,columns);
      stepList.add(project);
      
      
@@ -209,21 +212,22 @@ public class OrderByTest extends ConnectionTest {
 //        	case SORT_AGE_MONEY: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
 //        	case SORT_AGE_TEXT: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
         }
-        return new LogicalPlan(stepList);
+        return new LogicalWorkflow(stepList);
 
 	}
 
-	private LogicalPlan createLogicalPlanMultifield() {
+	private LogicalWorkflow createLogicalPlanMultifield() {
 		 
 	   	 List<LogicalStep> stepList = new ArrayList<>();
 
-	     List<ColumnMetadata> columns = new ArrayList<>();
+	     List<ColumnName> columns = new ArrayList<>();
 	     
 
-	     columns.add(new ColumnMetadata(COLLECTION,COLUMN_TEXT));
-	     columns.add(new ColumnMetadata(COLLECTION,COLUMN_AGE));
+	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_TEXT));
+	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_AGE));
 	     // money not required
-	     Project project = new Project(CATALOG, COLLECTION,columns);
+        TableName tableName = new TableName(CATALOG,COLLECTION);
+	     Project project = new Project(null,tableName,columns); //REVIEW cambiado para que compile
 	     
 	     stepList.add(project);
 	     stepList.add(new Sort(COLUMN_MONEY, Sort.ASC));
@@ -232,12 +236,12 @@ public class OrderByTest extends ConnectionTest {
 	     Limit limit = new Limit(10);
 	     stepList.add(limit);
 	     
-	     return new LogicalPlan(stepList);
+	     return new LogicalWorkflow(stepList);
 
 	}
 
 
-private void insertRow(int ikey, String texto, int money, int age) throws UnsupportedOperationException, ExecutionException{
+private void insertRow(int ikey, String texto, int money, int age) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
      	
 	Row row = new Row();
     Map<String, Cell> cells = new HashMap<>();
@@ -245,7 +249,7 @@ private void insertRow(int ikey, String texto, int money, int age) throws Unsupp
     cells.put(COLUMN_AGE, new Cell(age));
     cells.put(COLUMN_MONEY, new Cell(money));
     row.setCells(cells);        
-    ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
+    ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME,new TableMetadata(new TableName(CATALOG, COLLECTION),null,null,null,null,null), row);
         
     }
 

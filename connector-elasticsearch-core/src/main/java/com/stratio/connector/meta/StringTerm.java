@@ -17,14 +17,14 @@
 package com.stratio.connector.meta;
 
 
-
-import com.stratio.meta.common.statements.structures.terms.Term;
+import com.stratio.meta2.common.statements.structures.terms.Term;
 
 public class StringTerm extends Term<String> {
 
   private static final long serialVersionUID = 4470491967411363431L;
+    private static final int TYPE_TERM = 1; //REVIEW esto no estaba fallaba la compilacion en StringTerm this.type = TYPE_TERM.
 
-  private boolean quotedLiteral = false;
+    private boolean quotedLiteral = false;
 
   public StringTerm(String term, boolean quotedLiteral) {
     super(String.class, term);

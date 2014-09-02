@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.data.Cell;
@@ -33,6 +34,11 @@ import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
 
 /**
  * @author darroyo
@@ -42,10 +48,15 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
 	private static final String INDEX = "metadata_storage";
 	private static String TYPE = "default";
-	
-	
-	private ElasticsearchStorageEngine storageEngine = null;
+    private final ConnectionHandle connectionHandle;
+
+
+    private ElasticsearchStorageEngine storageEngine = null;
 	private ElasticsearchQueryEngine queryEngine = null;
+
+    public ElasticsearchMetadataEngine(ConnectionHandle connectionHandle) {
+        this.connectionHandle = connectionHandle;
+    }
 	
 	
 	
@@ -53,7 +64,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
 	/* (non-Javadoc)
 	 * @see com.stratio.meta.common.connector.IMetadataEngine#put(java.lang.String, java.lang.String)
-	 */
+	 * /
 	@Override
 	public void put(String key, String metadata) {
 		//TODO validate? key exist? =>key=type y id=1
@@ -74,7 +85,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
 	/* (non-Javadoc)
 	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
-	 */
+	 * /
 	@Override
 	public String get(String key) {
 		//TODO getID, getPK
@@ -106,7 +117,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
         
         return (String) row.getCells().get(key).getValue();
         
-	}
+	} */
 
 	/**
 	 * @param elasticStorageEngine
@@ -125,4 +136,27 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 	}
 
 
+   //REVIEW Esto es la nueva interfaz, lo anterior estaba de antes hay que revisarlos.
+
+
+
+    @Override
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata) throws UnsupportedException, ExecutionException {
+
+    }
+
+    @Override
+    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata) throws UnsupportedException, ExecutionException {
+
+    }
+
+    @Override
+    public void dropCatalog(ClusterName targetCluster, CatalogName name) throws UnsupportedException, ExecutionException {
+
+    }
+
+    @Override
+    public void dropTable(ClusterName targetCluster, TableName name) throws UnsupportedException, ExecutionException {
+
+    }
 }

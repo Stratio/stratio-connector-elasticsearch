@@ -31,10 +31,12 @@ public class ProjectModifier{
 
 	private ProjectModifier(){}
 	public static void modify(SearchRequestBuilder requestBuilder, Project projection) {
+        List<ColumnMetadata> columnMetadataList  = null;
+
+        //REVIEW comentado por que no existen estos metodos.
+	/*	requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName());
 		
-		requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName());
-		
-		List<ColumnMetadata> columnMetadataList = projection.getColumnList();
+		List<ColumnMetadata> columnMetadataList = projection.getColumnList(); */
 		
 		if(columnMetadataList == null || columnMetadataList.isEmpty() ) {
 				//throw new ValidationException? or select *

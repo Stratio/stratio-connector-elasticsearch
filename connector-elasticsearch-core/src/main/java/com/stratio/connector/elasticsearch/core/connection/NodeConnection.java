@@ -1,0 +1,70 @@
+package com.stratio.connector.elasticsearch.core.connection;
+
+
+import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+
+import com.stratio.meta.common.security.ICredentials;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.elasticsearch.node.NodeBuilder.*;
+
+/**
+ *
+ * This class represents a logic connection.
+ * Created by jmgomez on 28/08/14.
+ */
+public class NodeConnection extends Connection<Client>{
+
+    /**
+     * The Log.
+     */
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
+    /**
+     * The Elasticsearch client.
+     */
+    private Client elasticClient = null;  //REVIEW posiblemente esta clase desaparezca ya que la conexion no esta aqui.
+
+    private Node node = null;
+
+
+
+    /**
+     * Constructor.
+     * @param credentiasl the credentials.
+     *
+     * @param config The cluster configuration.
+     */
+    public NodeConnection(ICredentials credentiasl, ConnectorClusterConfig config){
+       NodeBuilder nodeBuilder = nodeBuilder();
+
+       node = nodeBuilder.settings(ElasticsearchClientConfiguration.getSettings(config)).node();
+       elasticClient = node.client();
+       isConnect = true;
+        logger.info("Elasticsearch Node connection established ");
+
+    }
+
+    public void close() {
+        if (node != null )  {
+            node.close();
+            isConnect=false;
+            node = null;
+            elasticClient=null;
+
+        }
+
+    }
+
+    @Override
+    public Client getClient() {
+        return elasticClient;
+    }
+
+}

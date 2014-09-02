@@ -29,6 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import org.junit.Test;
 
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
@@ -39,10 +43,8 @@ import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalPlan;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 import com.stratio.meta.common.result.QueryResult;
 
 
@@ -63,10 +65,11 @@ public class QueryProjectTest extends ConnectionTest {
         insertRow(2);
         insertRow(3);
         insertRow(4);
-        refresh();
 
-        LogicalPlan logicalPlan = createLogicalPlan();
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine)stratioElasticConnector.getQueryEngine()).execute(logicalPlan);
+        refresh(CATALOG);
+
+        LogicalWorkflow logicalPlan = createLogicalPlan();
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine)stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
         
         Set<Object> probeSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -99,17 +102,18 @@ public class QueryProjectTest extends ConnectionTest {
 
 
 
-    private LogicalPlan createLogicalPlan() {
+    private LogicalWorkflow createLogicalPlan() {
         List<LogicalStep> stepList = new ArrayList<>();
-        List<ColumnMetadata> columns = new ArrayList<>();
-        columns.add(new ColumnMetadata(COLLECTION,COLUMN_1));
-        columns.add(new ColumnMetadata(COLLECTION,COLUMN_2));
-        Project project = new Project(CATALOG, COLLECTION,columns);
+        List<ColumnName> columns = new ArrayList<>();
+        columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_1));
+        columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_2));
+        TableName tableName = new TableName(CATALOG,COLLECTION); //REVIEW modificado para que compile
+        Project project = new Project(null,tableName,columns);
         stepList.add(project);
-        return new LogicalPlan(stepList);
+        return new LogicalWorkflow(stepList);
     }
 
-private void insertRow(int ikey) throws UnsupportedOperationException, ExecutionException{
+private void insertRow(int ikey) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
      	
     	Row row = new Row();
         Map<String, Cell> cells = new HashMap<>();
@@ -117,7 +121,7 @@ private void insertRow(int ikey) throws UnsupportedOperationException, Execution
         cells.put(COLUMN_2, new Cell("ValueBin2_r"+ikey));
         cells.put(COLUMN_3, new Cell("ValueBin3_r"+ikey));
         row.setCells(cells);        
-        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CATALOG, COLLECTION, row);
+        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME,new TableMetadata(new TableName(CATALOG, COLLECTION),null,null,null,null,null), row);
         
     }
 

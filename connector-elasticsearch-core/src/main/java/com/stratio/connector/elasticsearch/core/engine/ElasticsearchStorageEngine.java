@@ -15,19 +15,20 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.TableMetadata;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.action.deletebyquery.IndexDeleteByQueryResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -49,20 +50,51 @@ import com.stratio.meta.common.logicalplan.Filter;
 
 public class ElasticsearchStorageEngine implements IStorageEngine {
 
-	private Client elasticClient = null;
-	
-	/**
+
+
+   private transient ConnectionHandle connectionHandle;
+
+
+    public ElasticsearchStorageEngine(ConnectionHandle connectionHandle) {
+        this.connectionHandle = connectionHandle;
+    }
+
+
+    @Override
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row) throws UnsupportedException, ExecutionException {
+
+        insert(recoveredClient(targetCluster), targetTable, row);
+
+    }
+
+
+
+
+
+     @Override
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
+        insert(recoveredClient(targetCluster), targetTable, rows);
+    }
+
+    private Client recoveredClient(ClusterName targetCluster) {
+        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
+    }
+
+
+    /**
      * Insert a document in Elasticsearch.
      *
-     * @param index			the database.
-     * @param type		    the type.
+     * @param targetTable the targetName.
+     *
      * @param row      		the row.
      * @throws ExecutionException  in case of failure during the execution.
      */
-	
-	public void insert(String index, String type, Row row)
-			throws UnsupportedOperationException, ExecutionException {
+
+    private void insert(Client client, TableMetadata targetTable, Row row)
+			throws ExecutionException {
 		//TODO connector should check??
+        String index = targetTable.getName().getCatalogName().getName();
+        String type = targetTable.getName().getName();
 		if (isEmpty(index) || isEmpty(type) || row == null) {
 			throw new ExecutionException("illegal insert: index, type and row cannot be empties"); 
 		}else{
@@ -79,9 +111,9 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 //							){
 //					}
 			//TODO read configuration to set index settings
-			createIndexRequestBuilder(index, type, row).execute().actionGet();
-			
-		}
+			IndexResponse response = createIndexRequestBuilder(client,index, type, row).execute().actionGet();
+
+        }
 			
 	}
 
@@ -90,14 +122,14 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	/**
      * Insert a set of documents in Elasticsearch.
      *
-     * @param index			the database.
-     * @param type		    the type.
+     * @param targetTable			the target table.
      * @param rows      	the set of rows.
      * @throws ExecutionException  in case of failure during the execution.
      */
-	public void insert(String index, String type, Set<Row> rows)
-			throws UnsupportedOperationException, ExecutionException {
-	
+    private void insert(Client elasticClient, TableMetadata targetTable,  Collection<Row> rows)
+			throws UnsupportedException, ExecutionException {
+        String index = targetTable.getName().getCatalogName().getName();
+        String type = targetTable.getName().getName();
 //		_id required	
 //		if (isEmpty(catalog) || isEmpty(tableName) || rows == null || rows.isEmpty()) {
 //			//throwException
@@ -106,7 +138,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 		BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 		
 		for(Row row: rows){
-			bulkRequest.add(createIndexRequestBuilder(index, type, row));
+			bulkRequest.add(createIndexRequestBuilder(elasticClient,index, type, row));
 		}
 		
 		BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -118,7 +150,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	/**
 	 * Returns an IndexRequestBuilder. Adds the json created from the row
 	 */
-	private IndexRequestBuilder createIndexRequestBuilder(String index, String type, Row row){
+	private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, String index, String type, Row row){
 		
 		
 		Map<String, Object> json = new HashMap<String,Object>();
@@ -139,7 +171,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	* @param filters 	filters to restrict the set of documents.
 	*/
 	
-	public void delete(String index, String type, Filter... filters)
+	private void delete(Client elasticClient, String index, String type, Filter... filters)
 			throws UnsupportedOperationException, ElasticsearchDeleteException {
 		
 		DeleteByQueryResponse response;
@@ -193,16 +225,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	private boolean isEmpty(String value) {
         return value == null || value.trim().isEmpty();
     }
-	
-	/**
-	 * Set the connection.
-	 * 
-	 * @param mongoClient
-	 *            the connection.
-	 */
-	public void setConnection(Client elasticClient) {
-		this.elasticClient = elasticClient;
-	}
-
-
 }
+
+
+

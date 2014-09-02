@@ -18,6 +18,17 @@ package com.stratio.connector.meta;
 
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
+import java.util.List;
+
 public class Match extends LogicalStep{
 
+    @Override
+    public List<LogicalStep> getPreviousSteps() {
+        return null;
+    }
+
+    @Override
+    public LogicalStep getFirstPrevious() {
+        return null;
+    }
 }

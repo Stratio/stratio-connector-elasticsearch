@@ -15,6 +15,7 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
+import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
@@ -33,7 +34,14 @@ public class ElasticsearchMetaProvider implements IMetadataProvider {
 	* The connection.
 	*/
 	private Client elasticClient = null;
-	
+
+   private transient ConnectionHandle connectionHandle;
+
+    public ElasticsearchMetaProvider(ConnectionHandle connectionHandle) {
+
+        this.connectionHandle = connectionHandle;
+    }
+
 
     @Override
     public void createCatalog(String catalog) throws UnsupportedOperationException {
@@ -84,14 +92,7 @@ public class ElasticsearchMetaProvider implements IMetadataProvider {
 		
 	}
 		
-		
-   /**
-	* Sets the connection.
-	* @param elasticClient the connection.
-	*/
-    public void setConnection(Client elasticClient) {
-    this.elasticClient = elasticClient;
-    }
+
 		
 	
 }

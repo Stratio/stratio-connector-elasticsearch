@@ -18,6 +18,8 @@ package com.stratio.connector.meta;
 
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
+import java.util.List;
+
 public class Limit extends LogicalStep{
 
    /**
@@ -32,4 +34,14 @@ public class Limit extends LogicalStep{
 	public int getLimit(){
 		return number;
 	}
+
+    @Override
+    public List<LogicalStep> getPreviousSteps() {
+        return null;
+    }
+
+    @Override
+    public LogicalStep getFirstPrevious() {
+        return null;
+    }
 }

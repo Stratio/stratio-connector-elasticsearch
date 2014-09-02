@@ -18,6 +18,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.stratio.meta2.common.statements.structures.terms.Term;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -29,7 +30,7 @@ import com.stratio.meta.common.statements.structures.relationships.RelationBetwe
 import com.stratio.meta.common.statements.structures.relationships.RelationCompare;
 import com.stratio.meta.common.statements.structures.relationships.RelationIn;
 import com.stratio.meta.common.statements.structures.relationships.RelationType;
-import com.stratio.meta.common.statements.structures.terms.Term;
+
 
 public class FilterBuilderHelper {
 

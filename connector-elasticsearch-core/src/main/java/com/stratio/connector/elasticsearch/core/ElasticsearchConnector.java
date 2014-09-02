@@ -17,37 +17,27 @@
 package com.stratio.connector.elasticsearch.core;
 
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
+import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
+import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
+import com.stratio.meta.common.connector.*;
+import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta2.common.data.ClusterName;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.elasticsearch.core.configuration.ConnectionConfigurationCreator;
-import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
 import com.stratio.connector.elasticsearch.core.configuration.SupportedOperationsCreator;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetaProvider;
-import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
 import com.stratio.connector.meta.ConnectionConfiguration;
 import com.stratio.connector.meta.IMetadataProvider;
-import com.stratio.meta.common.connector.IConfiguration;
-import com.stratio.meta.common.connector.IConnector;
-import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.connector.IStorageEngine;
-import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.exceptions.InitializationException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.security.ICredentials;
 
 
@@ -56,141 +46,116 @@ import com.stratio.meta.common.security.ICredentials;
  */
 public class ElasticsearchConnector implements IConnector {
 
+
+
+    /**
+     * The Log.
+     */
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The connectionHandle.
+     */
+    private ConnectionHandle connectionHandle = null;
 	
 
-	/**
-	 * The Elasticsearch client.
-	 */
-	private Client elasticClient = null;
-	/**
-	 * The connector's configuration.
-	 */
-	private ElasticsearchClientConfiguration elasticConfiguration = null;
-	
-	/**
-	 * The StorageEngine.
-	 */
-	private ElasticsearchStorageEngine elasticStorageEngine = null;
 
-	/**
-	 * The MetaProvider.
-	 */
-	private ElasticsearchMetaProvider elasticMetaProvider = null;
 
-	/**
-	 * The QueryEngine.
-	 */
-	private ElasticsearchQueryEngine elasticQueryEngine = null;
-	
-	/**
-	 * The QueryEngine.
-	 */
-	private ElasticsearchMetadataEngine elasticMetadataEngine = null;
-	
-	/**
-	* The Log.
-	*/
-	final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Override
+    public String getConnectorName() {
+        return null; //TODO
+    }
 
-	/**
+    /**
+     * Return the DataStore Name.
+     * @return DataStore Name
+     */
+    @Override
+    public String[] getDatastoreName() {
+        return new String[] {"Elasticsearch"}; //TODO
+    }
+
+    /**
+     * Return the StorageEngine.
+     *
+     * @return the StorageEngine
+     */
+    @Override
+    public IStorageEngine getStorageEngine() {
+
+        return new ElasticsearchStorageEngine(connectionHandle);
+
+    }
+
+    /**
+     * Return the MetadataProvider.
+     *
+     * @return the MetadataProvider
+     */
+    public IMetadataProvider getMedatadaProvider(){
+
+        return new ElasticsearchMetaProvider(connectionHandle);
+    }
+
+    /**
+     * Return the QueryEngine.
+     *
+     * @return the QueryEngine
+     */
+    @Override
+    public IQueryEngine getQueryEngine(){
+
+        return new ElasticsearchQueryEngine(connectionHandle);
+    }
+
+    /**
+     * Return the MetadataEngine.
+     *
+     * @return the MetadataEngine
+     */
+    @Override
+    public IMetadataEngine getMetadataEngine()  {
+        return  new ElasticsearchMetadataEngine(connectionHandle);
+    }
+
+
+
+    /**
 	 * Create a connection to Elasticsearch. 
 	 * The client will be a transportClient by default unless stratio nodeClient is specified.
 	 * 
-	 * @param credentials
-	 *            the security credentials.
-	 * @param configuration
-	 *            the connection configuration.
+	 * @param configuration   the connection configuration. It must be not null.
 	 *
-	 * @throws InitializationException
-	 *             on failure connection.
+	 * @throws InitializationException        on failure connection.
 	 */
 	
 	@Override
-	public void init(ICredentials credentials, IConfiguration configuration)
-			throws InitializationException {
-				
-				if(!isConnected()){
-					
-					elasticConfiguration = new ElasticsearchClientConfiguration(configuration);
-					if(elasticConfiguration.isNodeClient()){
-						createNodeClient(elasticConfiguration, credentials);
-					}else createTransportClient(elasticConfiguration, credentials);
+	public void init(IConfiguration configuration) throws InitializationException {
 
-				}else {
-					throw new InitializationException("connection already exist");
-				}
+         connectionHandle = new ConnectionHandle(configuration);
+
 
 	}
-	
-	
-	/**
+
+    @Override
+    public void connect(ICredentials credentials, ConnectorClusterConfig config) throws ConnectionException {
+        //TODO al implementar la nueva interfaz
+
+        connectionHandle.createConnection(credentials,config);
+    }
+
+
+    /**
 	 * Close the Mongo's connection.
-	 * 
-	 */
+	 *
+     * @param name
+     */
 	@Override
-	public void close() {
+	public void close(ClusterName name) {
+        connectionHandle.closeConnection(name.getName());
 
-		if(elasticClient != null){
-			elasticClient.close();
-			logger.info("Disconnected from Elasticsearch");
-		}
-		elasticClient = null;
-		elasticStorageEngine = null;
-		elasticQueryEngine = null;
-		elasticMetaProvider = null;
-	}
-	
+    }
 
-	/**
-	 * Return the StorageEngine.
-	 * 
-	 * @return the StorageEngine
-	 */
-	@Override
-	public IStorageEngine getStorageEngine() {
-		createSingletonStorageEngine();
-		elasticStorageEngine.setConnection(elasticClient);
-		return elasticStorageEngine;
-
-	}
-
-	/**
-	 * Return the MetadataProvider.
-	 * 
-	 * @return the MetadataProvider
-	 */
-	public IMetadataProvider getMedatadaProvider(){
-		createSingletonMetaProvider();
-		elasticMetaProvider.setConnection(elasticClient);
-		return elasticMetaProvider;
-	}
-
-	/**
-	 * Return the QueryEngine.
-	 * 
-	 * @return the QueryEngine
-	 */
-	@Override
-	public IQueryEngine getQueryEngine(){
-		createSingletonQueryEngine();
-		elasticQueryEngine.setConnection(elasticClient);
-		return elasticQueryEngine;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see com.stratio.meta.common.connector.IConnector#getMetadataEngine()
-	 */
-	@Override
-	public IMetadataEngine getMetadataEngine() throws UnsupportedException {
-		createSingletonMetadataEngine();
-		elasticMetadataEngine.setStorageEngine((ElasticsearchStorageEngine) getStorageEngine());
-		elasticMetadataEngine.setQueryEngine((ElasticsearchQueryEngine) getQueryEngine());
-		return elasticMetadataEngine;
-	}
-	
-	
-	
 
 
 	/**
@@ -212,104 +177,49 @@ public class ElasticsearchConnector implements IConnector {
     public Set<ConnectionConfiguration> getConnectionConfiguration(){
     	return ConnectionConfigurationCreator.getConfiguration();
     }
-	
-	
-	/**
-	 * Create a StorageEngine.
-	 */
-	private void createSingletonStorageEngine() {
-		if (elasticStorageEngine == null) {
-			elasticStorageEngine = new ElasticsearchStorageEngine();
-		}
-	}
 
-
-	/**
-	 * Create a QueryEngine.
-	 */
-	private void createSingletonQueryEngine() {
-		if (elasticQueryEngine == null) {
-			elasticQueryEngine = new ElasticsearchQueryEngine();
-		}
-	}
-
-	/**
-	 * Create a MetaProvider.
-	 */
-	private void createSingletonMetaProvider() {
-		if (elasticMetaProvider == null) {
-			elasticMetaProvider = new ElasticsearchMetaProvider();
-		}
-	}
-	
-	/**
-	 * Create a MetadataEngine.
-	 */
-	private void createSingletonMetadataEngine() {
-		if (elasticMetadataEngine == null) {
-			elasticMetadataEngine = new ElasticsearchMetadataEngine();
-		}
-		
-	}
-	
-	/**
-	* Return the DataStore Name.
-	* @return DataStore Name
-	*/
-	@Override
-	public String getDatastoreName() {
-		return "Elasticsearch";
-	}
 
 	/**
 	* The connection status.
 	*
 	* @return true if the driver's client is not null.
+     * @param name the cluster Name.
 	*/
 	@Override
-	public boolean isConnected() {
+	public boolean isConnected(ClusterName name) {
 
-		return elasticClient != null;
-		
-		
-//		boolean connected=false;
-//		if ( elasticClient != null ) {
-//			ClusterHealthResponse resp = elasticClient.admin().cluster().prepareHealth().execute().actionGet();
-//			resp.getStatus();
-//			resp.getActiveShards();
-//		}
-//		return connected;
+		return connectionHandle.isConnected(name.getName());
 
 	}
 
 
-	 private void createNodeClient(ElasticsearchClientConfiguration elasticConfiguration, ICredentials credentials) throws InitializationException {
-		 if(elasticClient == null){
-			// TODO settings are overwritten?
-			 if (credentials == null) {
-				 NodeBuilder nodeBuilder = nodeBuilder();
-				 Node node = nodeBuilder.settings(elasticConfiguration.getSettings()).node();	
-				 elasticClient = node.client();
-				 logger.info("Elasticsearch connection established ");
-			 }else throw new InitializationException("Credentials are not supported");
-		 }	
-	}
-
-
-
-		private void createTransportClient(ElasticsearchClientConfiguration elasticConfiguration,
-				ICredentials credentials) throws InitializationException {
-			
-			if (elasticClient == null) {
-
-				if (credentials == null) {
-					elasticClient = new TransportClient(elasticConfiguration.getSettings())
-					.addTransportAddresses(getTransportAddressFromString(elasticConfiguration.getSeeds()));
-					logger.info("Elasticsearch connection established ");
-				} else throw new InitializationException("Credentials are not supported");
-				
-			}
-		}
+//	 private void createNodeClient(ElasticsearchClientConfiguration elasticConfiguration, ICredentials credentials) throws InitializationException {
+//		 if(elasticClient == null){
+//			// TODO settings are overwritten?
+//			 if (credentials == null) {
+//				 NodeBuilder nodeBuilder = nodeBuilder();
+//				 Node node = nodeBuilder.settings(elasticConfiguration.getSettings()).node();
+//				 elasticClient = node.client();
+//				 logger.info("Elasticsearch connection established ");
+//			 }else throw new InitializationException("Credentials are not supported");
+//		 }
+//	}
+//
+//
+//
+//		private void createTransportClient(ElasticsearchClientConfiguration elasticConfiguration,
+//				ICredentials credentials) throws InitializationException {
+//
+//			if (elasticClient == null) {
+//
+//				if (credentials == null) {
+//					elasticClient = new TransportClient(elasticConfiguration.getSettings())
+//					.addTransportAddresses(getTransportAddressFromString(elasticConfiguration.getSeeds()));
+//					logger.info("Elasticsearch connection established ");
+//				} else throw new InitializationException("Credentials are not supported");
+//
+//			}
+//		} //REVIEW por cambio de arquitectura
 		
 
 		private InetSocketTransportAddress[] getTransportAddressFromString(List<String> seedsStr) throws InitializationException{

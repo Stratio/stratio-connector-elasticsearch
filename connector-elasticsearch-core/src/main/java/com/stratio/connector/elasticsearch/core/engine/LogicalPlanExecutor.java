@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.meta.common.logicalplan.*;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -52,18 +53,9 @@ import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.logicalplan.LogicalPlan;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta.common.statements.structures.relationships.RelationBetween;
-import com.stratio.meta.common.statements.structures.relationships.RelationCompare;
-import com.stratio.meta.common.statements.structures.relationships.RelationIn;
-import com.stratio.meta.common.statements.structures.relationships.RelationType;
-import com.stratio.meta.common.statements.structures.terms.Term;
+
 
 /**
  * @author darroyo
@@ -95,7 +87,7 @@ public class LogicalPlanExecutor {
  * @throws com.stratio.connector.meta.exception.UnsupportedOperationException if any operation is not allowed.
  * @throws UnsupportedException
  */
-public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException{
+public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException{
 		this.elasticClient = elasticClient;
 		
 		readLogicalPlan(logicalPlan);
@@ -107,9 +99,9 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 
 
 
-	private void readLogicalPlan(LogicalPlan logicalPlan) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+	private void readLogicalPlan(LogicalWorkflow logicalPlan) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
 
-		List<LogicalStep> logicalSteps = logicalPlan.getStepList();
+		List<LogicalStep> logicalSteps = logicalPlan.getInitialSteps(); //REVIEW cambiado por cambio de interfaz
 		sortList = new ArrayList<Sort>();
 		filterList = new ArrayList<Filter>();
 		matchList = new ArrayList<Match>();
@@ -185,7 +177,7 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 	public QueryResult executeQuery() {
 		
 		ElasticsearchResultSet resultSet = new ElasticsearchResultSet();		
-		resultSet.setColumnMetadata(projection.getColumnList());// needed??
+	//	resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
 		SearchResponse scrollResp;
 		
 		if(searchType == SearchType.QUERY_THEN_FETCH){ 
