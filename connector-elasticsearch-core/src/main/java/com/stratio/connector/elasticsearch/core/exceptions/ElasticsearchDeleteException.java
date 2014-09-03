@@ -15,11 +15,19 @@
 */
 package com.stratio.connector.elasticsearch.core.exceptions;
 
+
 import com.stratio.meta.common.exceptions.ExecutionException;
+
 
 public class ElasticsearchDeleteException extends ExecutionException {
 
     public ElasticsearchDeleteException(String msg, Throwable cause) {
-        super(msg);
+
+        super(msg,cause);
 }
+
+    public ElasticsearchDeleteException(String msg) {
+
+        super(msg);
+    }
 }

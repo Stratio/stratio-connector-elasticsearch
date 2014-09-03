@@ -45,32 +45,24 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
 
     }
 
-    private QueryResult execute(Client elasticClient,LogicalWorkflow logicalPlan) throws UnsupportedException, ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
-    	
-    	QueryResult resultSet =null;
-    	LogicalPlanExecutor executor = new LogicalPlanExecutor(logicalPlan, elasticClient);
-    	resultSet = executor.executeQuery();  		
-    	return resultSet; 	
-
-    }
-
-
-	
-
-
-
-    //REVIEW este es el metodo nuevo.
-
-
     @Override
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
         QueryResult queryResult = null;
         try {
             queryResult =  execute(recoveredClient(targetCluster),workflow);
         } catch (UnsupportedOperationException e) {
-            e.printStackTrace();
+            e.printStackTrace(); //TODO
         }
         return queryResult;
+    }
+
+    private QueryResult execute(Client elasticClient,LogicalWorkflow logicalPlan) throws UnsupportedException, ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+    	
+    	QueryResult resultSet =null;
+    	LogicalPlanExecutor executor = new LogicalPlanExecutor(logicalPlan, elasticClient);
+    	resultSet = executor.executeQuery(elasticClient);
+    	return resultSet; 	
+
     }
 
 

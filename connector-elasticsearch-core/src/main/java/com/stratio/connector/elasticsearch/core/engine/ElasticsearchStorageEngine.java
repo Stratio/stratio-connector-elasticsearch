@@ -56,6 +56,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 
 
     public ElasticsearchStorageEngine(ConnectionHandle connectionHandle) {
+
         this.connectionHandle = connectionHandle;
     }
 
@@ -111,7 +112,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 //							){
 //					}
 			//TODO read configuration to set index settings
-			IndexResponse response = createIndexRequestBuilder(client,index, type, row).execute().actionGet();
+			createIndexRequestBuilder(client,index, type, row).execute().actionGet();
 
         }
 			
@@ -215,7 +216,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 		while(iter.hasNext()){
 			indexDeleteResponse = iter.next();
 			if (indexDeleteResponse.getFailedShards()>0){
-				throw new ElasticsearchDeleteException("#failed Shards: "+indexDeleteResponse.getFailedShards(), null);
+				throw new ElasticsearchDeleteException("#failed Shards: "+indexDeleteResponse.getFailedShards());
 			}
 		}
 		

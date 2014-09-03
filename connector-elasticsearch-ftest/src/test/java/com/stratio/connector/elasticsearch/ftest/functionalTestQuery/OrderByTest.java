@@ -166,25 +166,28 @@ public class OrderByTest extends ConnectionTest {
 
 	     List<ColumnName> columns = new ArrayList<>();
 	     
-	     Limit limit = new Limit(10);
-	     stepList.add(limit);
+	     //Limit limit = new Limit(10);
+        //stepList.add(limit);
 
-	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_TEXT)); //REVIEW cambiado para que compile
-	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_AGE));
-        TableName tableName = new TableName(CATALOG,COLLECTION);
-	     Project project = new Project(null,tableName,columns);
-	     stepList.add(project);
-	     
-	     
-	        switch (sortAge){
-	        	case SORT_AGE: stepList.add(new Sort(COLUMN_AGE, Sort.DESC)); break;
-	        	
-	// 2 Sort? o uno con lista de parámetros y luego lista de tipo ASC o DESC
-//    	        	case SORT_AGE_MONEY: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
-//    	        	case SORT_AGE_TEXT: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
-	        }
-	        return new LogicalWorkflow(stepList);
-
+//
+//
+//	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_TEXT)); //REVIEW cambiado para que compile
+//	     columns.add(new ColumnName(CATALOG,COLLECTION,COLUMN_AGE));
+//        TableName tableName = new TableName(CATALOG,COLLECTION);
+//	     Project project = new Project(null,tableName,columns);
+//	     stepList.add(project);
+//
+//
+//	        switch (sortAge){
+//	        	case SORT_AGE: //stepList.add(new Sort(COLUMN_AGE, Sort.DESC)); break; //REVIEW cuando haya SORT de meta
+//	        	            throw new RuntimeException("Esperando a meta");
+//	// 2 Sort? o uno con lista de parámetros y luego lista de tipo ASC o DESC
+////    	        	case SORT_AGE_MONEY: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
+////    	        	case SORT_AGE_TEXT: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
+//	        }
+//	        return new LogicalWorkflow(stepList);
+        //REVIEW cuando haya LIMIT de meta
+        throw new RuntimeException("Esperando a meta");
 		}
 
    	
@@ -206,7 +209,9 @@ public class OrderByTest extends ConnectionTest {
      
      
         switch (sortAge){
-        	case SORT_AGE: stepList.add(new Sort(COLUMN_AGE, Sort.DESC)); break;
+        	case SORT_AGE: //stepList.add(new Sort(COLUMN_AGE, Sort.DESC)); break;
+            //REVIEW cuando haya SORT de meta
+            throw new RuntimeException("Esperando a meta");
         	
 // 2 Sort? o uno con lista de parámetros y luego lista de tipo ASC o DESC
 //        	case SORT_AGE_MONEY: stepList.add(createNotEqualsFilter(filterType, object)); stepList.add(createBetweenFilter(9,11)); break;
@@ -230,13 +235,16 @@ public class OrderByTest extends ConnectionTest {
 	     Project project = new Project(null,tableName,columns); //REVIEW cambiado para que compile
 	     
 	     stepList.add(project);
-	     stepList.add(new Sort(COLUMN_MONEY, Sort.ASC));
-	     stepList.add(new Sort(COLUMN_AGE, Sort.ASC));
 
-	     Limit limit = new Limit(10);
-	     stepList.add(limit);
-	     
-	     return new LogicalWorkflow(stepList);
+	     //stepList.add(new Sort(COLUMN_MONEY, Sort.ASC));
+	     //stepList.add(new Sort(COLUMN_AGE, Sort.ASC));
+
+	     //Limit limit = new Limit(10);
+	     //stepList.add(limit);
+        //return new LogicalWorkflow(stepList);
+        //REVIEW cuando haya SORT de meta
+        throw new RuntimeException("Esperando a meta");
+
 
 	}
 

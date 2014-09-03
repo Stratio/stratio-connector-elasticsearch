@@ -17,6 +17,7 @@
 package com.stratio.connector.meta;
 
 
+import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
 import java.util.List;
@@ -29,11 +30,14 @@ public class Sort extends LogicalStep{
 	
 	private String fieldName;
 	private int type;
-	
-	public Sort(String field,int type){
-		fieldName = field;
-		this.type = type;
-	}
+
+    public Sort(Operations operation){
+        super(operation);
+    }
+//	public Sort(String field,int type){
+//		fieldName = field;
+//		this.type = type;
+//	}
 
 	public String getField() {
 		return fieldName;

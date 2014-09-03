@@ -19,6 +19,7 @@ package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,10 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.*;
+import com.stratio.meta.common.statements.structures.relationships.Operator;
+import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
 import org.junit.Test;
 
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
@@ -62,21 +69,72 @@ public class QueryFilterTest extends ConnectionTest{
     private static final int LOW_FILTER =4;
     private static final int HIGH_BETWEEN_FILTER =5;
 
+
     @Test
-    public void selectFilterEqual() throws UnsupportedException, ExecutionException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+    public void selectFilterEqualNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterEqual(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectFilterTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterEqual(CLUSTER_TRANSPORT_NAME);
+    }
+
+    @Test
+    public void selectFilterBetweenNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterBetween(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectFilterBetweenTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterBetween(CLUSTER_TRANSPORT_NAME);
+    }
+
+    @Test
+    public void selectHighBetweenNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectHighBetween(CLUSTER_NODE_NAME);
+
+    }
+    @Test
+    public void selectHighBetweenTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectHighBetween(CLUSTER_TRANSPORT_NAME);
+
+    }
+
+    @Test
+    public void selectFilterHighNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+         selectFilterHigh(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectFilterHighTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterHigh(CLUSTER_TRANSPORT_NAME);
+    }
+
+    @Test
+    public void selectFilterLowNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterLow(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectFilterLowTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterLow(CLUSTER_TRANSPORT_NAME);
+    }
+
+    public void selectFilterEqual(ClusterName clusterNodeName) throws UnsupportedException, ExecutionException, com.stratio.connector.meta.exception.UnsupportedOperationException {
 
 
-        insertRow(1,10,1);
-        insertRow(2,9,1);
-        insertRow(3,11,1);
-        insertRow(4,10,1);
-        insertRow(5,20,1);
+        insertRow(1,10,1, clusterNodeName);
+        insertRow(2,9,1, clusterNodeName);
+        insertRow(3,11,1, clusterNodeName);
+        insertRow(4,10,1, clusterNodeName);
+        insertRow(5,20,1, clusterNodeName);
 
         refresh(CATALOG);
 
 
         LogicalWorkflow logicalPlan = createLogicalPlan(EQUAL_FILTER);
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
        
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -103,25 +161,25 @@ public class QueryFilterTest extends ConnectionTest{
 
 
 
-    @Test
-    public void selectFilterBetween() throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectFilterBetween(ClusterName clusterNodeName) throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
 
-    	insertRow(1,1,10);
-    	insertRow(2,1,9);
-    	insertRow(3,1,11);
-    	insertRow(4,1,10);
-    	insertRow(5,1,20);
-    	insertRow(6,1,11);
-    	insertRow(7,1,8);
-    	insertRow(8,1,12);
+    	insertRow(1,1,10, clusterNodeName);
+    	insertRow(2,1,9, clusterNodeName);
+    	insertRow(3,1,11, clusterNodeName);
+    	insertRow(4,1,10, clusterNodeName);
+    	insertRow(5,1,20, clusterNodeName);
+    	insertRow(6,1,11, clusterNodeName);
+    	insertRow(7,1,8, clusterNodeName);
+    	insertRow(8,1,12, clusterNodeName);
 
         refresh(CATALOG);
 
 
         LogicalWorkflow logicalPlan = createLogicalPlan(BETWEEN_FILTER);
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -152,25 +210,25 @@ public class QueryFilterTest extends ConnectionTest{
 
 
    
-    @Test
-    public void selectHighBetween() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectHighBetween(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
 
-    	insertRow(1,10, 15);
-    	insertRow(2,9,10);
-    	insertRow(3,11,9);
-    	insertRow(4,10,7);
-    	insertRow(5,7,9);
-    	insertRow(6,11,100);
-    	insertRow(7,8,1);
-    	insertRow(8,12,10);
+    	insertRow(1,10, 15, clusterNodeName);
+    	insertRow(2,9,10, clusterNodeName);
+    	insertRow(3,11,9, clusterNodeName);
+    	insertRow(4,10,7, clusterNodeName);
+    	insertRow(5,7,9, clusterNodeName);
+    	insertRow(6,11,100, clusterNodeName);
+    	insertRow(7,8,1, clusterNodeName);
+    	insertRow(8,12,10, clusterNodeName);
 
         refresh(CATALOG);
 
 
         LogicalWorkflow logicalPlan = createLogicalPlan(HIGH_BETWEEN_FILTER);
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -195,24 +253,24 @@ public class QueryFilterTest extends ConnectionTest{
 
 
 
-    @Test
-    public void selectFilterHigh() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectFilterHigh(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
 
-    	insertRow(1,10,1);
-    	insertRow(2,9,1);
-    	insertRow(3,11,1);
-    	insertRow(4,10,1);
-    	insertRow(5,20,1);
-    	insertRow(6,7,1);
-    	insertRow(7,8,1);
-    	insertRow(8,12,1);
+    	insertRow(1,10,1, clusterNodeName);
+    	insertRow(2,9,1, clusterNodeName);
+    	insertRow(3,11,1, clusterNodeName);
+    	insertRow(4,10,1, clusterNodeName);
+    	insertRow(5,20,1, clusterNodeName);
+    	insertRow(6,7,1, clusterNodeName);
+    	insertRow(7,8,1, clusterNodeName);
+    	insertRow(8,12,1, clusterNodeName);
 
         refresh(CATALOG);
 
         LogicalWorkflow logicalPlan = createLogicalPlan(HIGH_FILTER);
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -246,24 +304,24 @@ public class QueryFilterTest extends ConnectionTest{
     }
 
 
-    @Test
-    public void selectFilterLow() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectFilterLow(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
 
-    	insertRow(1,10,1);
-    	insertRow(2,9,1);
-    	insertRow(3,11,1);
-    	insertRow(4,10,1);
-    	insertRow(5,20,1);
-    	insertRow(6,7,1);
-    	insertRow(7,8,1);
-    	insertRow(8,12,1);
+    	insertRow(1,10,1, clusterNodeName);
+    	insertRow(2,9,1, clusterNodeName);
+    	insertRow(3,11,1, clusterNodeName);
+    	insertRow(4,10,1, clusterNodeName);
+    	insertRow(5,20,1, clusterNodeName);
+    	insertRow(6,7,1, clusterNodeName);
+    	insertRow(7,8,1, clusterNodeName);
+    	insertRow(8,12,1, clusterNodeName);
 
         refresh(CATALOG);
 
         LogicalWorkflow logicalPlan = createLogicalPlan(LOW_FILTER);
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
@@ -311,7 +369,7 @@ public class QueryFilterTest extends ConnectionTest{
     }
 
     private LogicalStep  createBetweenFilter() {
-//        Relation relation = new RelationBetween(COLUMN_MONEY);
+//        Relation relation =  relation = new Relation(new ColumnSelector(new ColumnName(CATALOG, COLLECTION, COLUMN_MONEY)),Operator.BETWEEN,
 //        relation.setType(Relation.TYPE_BETWEEN);
 //        List<Term<?>> terms = new ArrayList<>();
 //        terms.add(new IntegerTerm("9"));
@@ -319,28 +377,31 @@ public class QueryFilterTest extends ConnectionTest{
 //        relation.setTerms(terms);
 //        Filter f = new Filter(Operations.SELECT_WHERE_BETWEEN, RelationType.BETWEEN, relation);
 //        return f;
+        fail("Falta operacion Between");
         return null; //REVIEW para que compile por la nueva version de meta
     }
 
     private Filter createEqualsFilter(int filterType) {
-//        Relation relation = new RelationCompare(COLUMN_AGE);
-//        relation.setType(Relation.TYPE_COMPARE);
-//        if (filterType==EQUAL_FILTER)
-//            relation.setOperator("=");
-//        if (filterType==HIGH_FILTER || filterType == HIGH_BETWEEN_FILTER)
-//            relation.setOperator(">=");
-//        if (filterType==LOW_FILTER)
-//            relation.setOperator("<=");
-//        List<Term<?>> terms = new ArrayList<>();
-//        IntegerTerm term = new IntegerTerm("10");
-//        terms.add(term);
-//        relation.setTerms(terms);
-//        return new Filter( Operations.SELECT_WHERE_MATCH , RelationType.COMPARE, relation);
-        return null; //REVIEW para que compile por la nueva version de meta
+        Relation relation = null;
+        Operations operation = null;
+        if (filterType==EQUAL_FILTER) {
+            relation = new Relation(new ColumnSelector(new ColumnName(CATALOG, COLLECTION, COLUMN_AGE)), Operator.COMPARE, new IntegerSelector("10"));
+            operation= Operations.FILTER_NON_INDEXED_EQ;
+        }
+        else if (filterType==HIGH_FILTER || filterType == HIGH_BETWEEN_FILTER) {
+            relation = new Relation(new ColumnSelector(new ColumnName(CATALOG, COLLECTION, COLUMN_AGE)), Operator.GET, new IntegerSelector("10"));
+            operation= Operations.FILTER_NON_INDEXED_GET;
+        }else  if (filterType==LOW_FILTER) {
+            relation = new Relation(new ColumnSelector(new ColumnName(CATALOG, COLLECTION, COLUMN_AGE)), Operator.LET, new IntegerSelector("10"));
+            operation= Operations.FILTER_NON_INDEXED_LET;
+        }
+
+        return new Filter( operation, relation);
+
     }
 
     
-        private void insertRow(int ikey, int age, int money) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
+        private void insertRow(int ikey, int age, int money, ClusterName clusterNodeName) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
  	
         	Row row = new Row();
             Map<String, Cell> cells = new HashMap<>();
@@ -350,7 +411,7 @@ public class QueryFilterTest extends ConnectionTest{
             cells.put(COLUMN_AGE, new Cell(age));
             cells.put(COLUMN_MONEY, new Cell(money));
             row.setCells(cells);        
-            ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME,new TableMetadata(new TableName(CATALOG, COLLECTION),null,null,null,null,null), row);
+            ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(clusterNodeName,new TableMetadata(new TableName(CATALOG, COLLECTION),null,null,null,null,null), row);
             
         }
 

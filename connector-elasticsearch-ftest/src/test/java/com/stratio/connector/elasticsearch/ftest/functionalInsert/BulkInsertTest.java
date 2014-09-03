@@ -24,10 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.data.TableName;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
@@ -48,12 +50,32 @@ public class BulkInsertTest extends ConnectionTest {
     final String COLLECTION = getClass().getSimpleName();
 
     @Test
-    public void testBulkInsert() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+    public void testBulkInsertTransport() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+
+
+        testBulkInsert(CLUSTER_TRANSPORT_NAME,transportClient);
+
+
+
+    }
+    @Test
+    public void testBulkInsertNode() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+
+
+
+        testBulkInsert(CLUSTER_NODE_NAME,nodeClient);
+
+
+    }
+
+
+
+    public void testBulkInsert(ClusterName cluesterName, Client nativeClient ) throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
 
 
         Set<Row> rows = new HashSet<Row>();
         
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
 
             Row row = new Row();
             Map<String, Cell> cells = new HashMap<>();
@@ -67,12 +89,12 @@ public class BulkInsertTest extends ConnectionTest {
 
 
         TableMetadata targetTable = new TableMetadata(new TableName(CATALOG,COLLECTION),null,null,null,null,null);
-        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME, targetTable, rows);
+        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(cluesterName, targetTable, rows);
 
 
         refresh(CATALOG);
 
-        SearchResponse response = nodeClient.prepareSearch(CATALOG)
+        SearchResponse response = nativeClient.prepareSearch(CATALOG)
         		.setSearchType(SearchType.QUERY_THEN_FETCH) //si size es menor que el número de resultados podría no devolver todos los valores
         		.setTypes(COLLECTION)
         		.execute()
@@ -89,7 +111,7 @@ public class BulkInsertTest extends ConnectionTest {
 
         }
         
-        assertEquals("The records number is correct", 10, hits.totalHits());
+        assertEquals("The records number is correct", 100, hits.totalHits());
         
 
 

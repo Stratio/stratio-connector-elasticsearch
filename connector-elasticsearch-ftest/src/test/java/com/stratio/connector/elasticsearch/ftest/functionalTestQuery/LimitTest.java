@@ -81,9 +81,11 @@ public class LimitTest extends ConnectionTest {
 		Project project =  new Project(null,tableName, columns);
 		stepList.add(project);
 
-		stepList.add(new Limit(limit));
+		//stepList.add(new Limit(limit));
+        //return new LogicalWorkflow(stepList);
 
-		return new LogicalWorkflow(stepList);
+        //REVIEW cuando haya LIMIT de meta
+        throw new RuntimeException("Esperando a meta");
 
 	}
 

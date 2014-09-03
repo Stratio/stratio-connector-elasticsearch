@@ -26,8 +26,11 @@ import com.stratio.meta.common.connector.Operations;
  */
 public class SupportedOperationsCreator implements IConfiguration{
 
+
     private static final Map<Operations, Boolean> support;
 
+
+    //TODO
     static {
         support = new EnumMap<Operations, Boolean>(Operations.class);
         support.put(Operations.CREATE_CATALOG, Boolean.FALSE);//FALSE?
@@ -37,13 +40,13 @@ public class SupportedOperationsCreator implements IConfiguration{
         support.put(Operations.DROP_TABLE, Boolean.TRUE);
         support.put(Operations.INSERT, Boolean.TRUE);
 		//support.put(Operations.INSERT_BULK, Boolean.TRUE);
-        support.put(Operations.SELECT_AGGREGATION_SELECTORS, Boolean.FALSE);
+//        support.put(Operations.SELECT_AGGREGATION_SELECTORS, Boolean.FALSE);
         support.put(Operations.SELECT_GROUP_BY, Boolean.FALSE);
         support.put(Operations.SELECT_INNER_JOIN, Boolean.FALSE);
         support.put(Operations.SELECT_LIMIT, Boolean.TRUE);
         support.put(Operations.SELECT_ORDER_BY, Boolean.TRUE);
         support.put(Operations.SELECT_WHERE_BETWEEN, Boolean.TRUE);
-        support.put(Operations.SELECT_WHERE_MATCH, Boolean.TRUE);
+  //      support.put(Operations.SELECT_WHERE_MATCH, Boolean.TRUE);
         support.put(Operations.SELECT_WINDOW, Boolean.FALSE);
         support.put(Operations.SELECT_WHERE_IN, Boolean.TRUE);
     }

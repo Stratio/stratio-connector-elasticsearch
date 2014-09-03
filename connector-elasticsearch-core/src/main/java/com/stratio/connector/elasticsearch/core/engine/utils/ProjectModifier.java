@@ -17,6 +17,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.util.List;
 
+import com.stratio.meta2.common.data.ColumnName;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
 import com.stratio.connector.meta.Limit;
@@ -31,20 +32,20 @@ public class ProjectModifier{
 
 	private ProjectModifier(){}
 	public static void modify(SearchRequestBuilder requestBuilder, Project projection) {
-        List<ColumnMetadata> columnMetadataList  = null;
+
 
         //REVIEW comentado por que no existen estos metodos.
-	/*	requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName());
+		requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
 		
-		List<ColumnMetadata> columnMetadataList = projection.getColumnList(); */
+		List<ColumnName> columnMetadataList = projection.getColumnList();
 		
 		if(columnMetadataList == null || columnMetadataList.isEmpty() ) {
 				//throw new ValidationException? or select *
     	}else{	
     		String[] fields = new String[columnMetadataList.size()];
     		int i=0;
-    		for (ColumnMetadata columnMetadata: columnMetadataList){
-    			fields[i] = columnMetadata.getColumnName();//TODO o ALIAS??
+    		for (ColumnName columnMetadata: columnMetadataList){
+    			fields[i] = columnMetadata.getName();//TODO o ALIAS??
     			i++;
     		}
     		//TODO IF NOT STORED=> GET_SOURCE => addField(_all). 

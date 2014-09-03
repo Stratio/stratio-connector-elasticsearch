@@ -20,6 +20,10 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 public class ElasticsearchQueryException extends ExecutionException {
 
     public ElasticsearchQueryException(String msg, Throwable cause) {
+        super(msg,cause);
+    }
+
+    public ElasticsearchQueryException(String msg) {
         super(msg);
-    } 
+    }
 }

@@ -15,10 +15,14 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
-import com.stratio.meta2.common.statements.structures.terms.Term;
+import com.stratio.meta.common.statements.structures.relationships.Operator;
+import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -26,10 +30,7 @@ import org.elasticsearch.index.query.FilterBuilders;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta.common.statements.structures.relationships.RelationBetween;
-import com.stratio.meta.common.statements.structures.relationships.RelationCompare;
-import com.stratio.meta.common.statements.structures.relationships.RelationIn;
-import com.stratio.meta.common.statements.structures.relationships.RelationType;
+
 
 
 public class FilterBuilderHelper {
@@ -40,8 +41,9 @@ public class FilterBuilderHelper {
 	public static FilterBuilder createFilterBuilder(List<Filter> filters) throws UnsupportedOperationException {
 
 		
-		RelationType relationType;
+
 		Relation relation;
+        Operator operator;
 
 		FilterBuilder filterBuilder = null;
 		BoolFilterBuilder boolFilterBuilder = null;
@@ -49,69 +51,75 @@ public class FilterBuilderHelper {
 		boolFilterBuilder = (filters.size() > 1) ? FilterBuilders.boolFilter() : null ;
 
 		for (Filter filter : filters) {
-			relationType = filter.getType();
-			relation = filter.getRelation();
-			
-			FilterBuilder localFilterBuilder = null;
-			
-			switch (relationType) {
+            relation = filter.getRelation();
+            operator = relation.getOperator();
 
-			case BETWEEN:
-				localFilterBuilder = handleBetweenFilter(relation);
-				// TODO update when or is implemented
-				if (boolFilterBuilder == null) filterBuilder = localFilterBuilder;
-				else {
-					
-					boolFilterBuilder.must(localFilterBuilder);
-				}
-			break;
+            FilterBuilder localFilterBuilder = handleCompareFilter(relation);
+            if (boolFilterBuilder == null && localFilterBuilder != null) {
+                filterBuilder = localFilterBuilder;
+            } else {
+                // TODO update when or is implemented
+                if (operator == Operator.DISTINCT) {
+                    boolFilterBuilder.mustNot(localFilterBuilder);
+                } else
+                    boolFilterBuilder.must(localFilterBuilder);
 
-			case COMPARE:
+            }
 
-				
-				String operator = ((RelationCompare) relation).getOperator();
-				localFilterBuilder = handleCompareFilter(relation);
-				
-				if (boolFilterBuilder == null && localFilterBuilder != null)
-					filterBuilder = localFilterBuilder;
-				else {
-					// TODO update when or is implemented
-					if (operator.equals("<>") || operator.equals("!=")) {
-						boolFilterBuilder.mustNot(localFilterBuilder);
-					} else
-						boolFilterBuilder.must(localFilterBuilder);
+//			switch (operator) {
+//
+//			case BETWEEN:
+//
+//				// TODO update when or is implemented
+//				if (boolFilterBuilder == null) filterBuilder = localFilterBuilder;
+//				else {
+//
+//					boolFilterBuilder.must(localFilterBuilder);
+//				}
+//			break;
+//
+//			case COMPARE:
+//
+//				if (boolFilterBuilder == null && localFilterBuilder != null)
+//					filterBuilder = localFilterBuilder;
+//				else {
+//					// TODO update when or is implemented
+//					if (operator == Operator.DISTINCT) {
+//						boolFilterBuilder.mustNot(localFilterBuilder);
+//					} else
+//						boolFilterBuilder.must(localFilterBuilder);
+//
+//				}
+//
+//				break;
+//
+//			case IN:
+//
+//
+//
+//
+//				if (boolFilterBuilder == null)
+//					filterBuilder = localFilterBuilder;
+//				else {
+//					// TODO update when or is implemented
+//					boolFilterBuilder.must(localFilterBuilder);
+//				}
+//
+//				break;
+//
+//			// case TOKEN:
+//			// TODO get instead of search
+//			// //GetResponse response = client.prepareGet("twitter", "tweet",
+//			// "1")
+//			// // .execute()
+//			// // .actionGet();
+//			// break;
+//
+//			default: throw new UnsupportedOperationException("Relation type unsupported");
+//
+//			}
+        }
 
-				}
-
-				break;
-
-			case IN:
-
-				localFilterBuilder = handleInFilter(relation);
-				
-
-				if (boolFilterBuilder == null)
-					filterBuilder = localFilterBuilder;
-				else {
-					// TODO update when or is implemented
-					boolFilterBuilder.must(localFilterBuilder);
-				}
-
-				break;
-
-			// case TOKEN:
-			// TODO get instead of search
-			// //GetResponse response = client.prepareGet("twitter", "tweet",
-			// "1")
-			// // .execute()
-			// // .actionGet();
-			// break;
-
-			default: throw new UnsupportedOperationException("Relation type unsupported");
-
-			}			
-			
-		}
 		
 		if (boolFilterBuilder != null) return boolFilterBuilder;
 		else return filterBuilder;
@@ -124,69 +132,68 @@ public class FilterBuilderHelper {
 	 * @return
 	 */
 	private static FilterBuilder handleInFilter(Relation relation) {
-		RelationIn relIn = (RelationIn) relation;
-		// check integer, number, string,date, etc...??
-
-		ArrayList inTerms = new ArrayList();
-		for (Term<?> term : relIn.getTerms()) {
-			// TODO check if insert the field or not
-			inTerms.add(term.getTermValue());
-		}
-
-		return FilterBuilders.inFilter(relation.getIdentifiers().get(0).getField(),inTerms.toArray());
+//		Relation relIn = (RelationIn) relation;
+//		// check integer, number, string,date, etc...??
+//
+//		ArrayList inTerms = new ArrayList();
+//		for (Term<?> term : relIn.getTerms()) {
+//			// TODO check if insert the field or not
+//			inTerms.add(term.getTermValue());
+//		}
+//
+//		return FilterBuilders.inFilter(relation.getIdentifiers().get(0).getField(),inTerms.toArray());
+        throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
 
 	}
 
-	private static FilterBuilder handleCompareFilter(Relation relation) {
+	private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedOperationException {
 		
 		FilterBuilder localFilterBuilder = null;
 		// TermFilter: Filters documents that have fields that contain a
 		// term (not analyzed)
 
-		RelationCompare relCompare = (RelationCompare) relation;
+        Selector leftTerm = relation.getLeftTerm();
+        Selector rightTerm = relation.getRightTerm();
+        switch (relation.getOperator()){
+            case COMPARE: case DISTINCT /*The not is modify in FilterBuilder method */: //REVIEW el distinct
+                      localFilterBuilder = FilterBuilders.termFilter( getSelectorField(leftTerm),getSelectorField(rightTerm)); break;
+            case LT:  localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lt(getSelectorField(rightTerm));break;
+            case LET: localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lte(getSelectorField(rightTerm));break;
+            case GT:  localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gt(getSelectorField(rightTerm));break;
+            case GET: localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gte(getSelectorField(rightTerm));break;
+            case BETWEEN:  new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW mewtodo  handleBetweenFilter
+            default: throw new UnsupportedOperationException("Not implemented yet.");  //TODO
 
-		if (relCompare.getOperator().equals("="))
-			localFilterBuilder = FilterBuilders.termFilter(
-					relation.getIdentifiers().get(0).getField(), 
-					relCompare.getTerms().get(0).getTermValue());
-		
-		else if (relCompare.getOperator().equals(">"))
-			localFilterBuilder = FilterBuilders.rangeFilter(
-					relation.getIdentifiers().get(0).getField()).gt(
-					relCompare.getTerms().get(0).getTermValue());
-		
-		else if (relCompare.getOperator().equals(">="))
-			localFilterBuilder = FilterBuilders.rangeFilter(
-					relation.getIdentifiers().get(0).getField()).gte(
-					relCompare.getTerms().get(0).getTermValue());
-		
-		else if (relCompare.getOperator().equals("<"))
-			localFilterBuilder = FilterBuilders.rangeFilter(
-					relation.getIdentifiers().get(0).getField()).lt(
-					relCompare.getTerms().get(0).getTermValue());
-		
-		else if (relCompare.getOperator().equals("<="))
-			localFilterBuilder = FilterBuilders.rangeFilter(
-					relation.getIdentifiers().get(0).getField()).lte(
-					relCompare.getTerms().get(0).getTermValue());
-		
-		else if (relCompare.getOperator().equals("<>")
-				|| relCompare.getOperator().equals("!="))
-			localFilterBuilder = FilterBuilders.termFilter(relation
-					.getIdentifiers().get(0).getField(), relCompare
-					.getTerms().get(0).getTermValue());
-		
+        }
+
+
 		return localFilterBuilder;
 
 	}
 
+    private static String getSelectorField(Selector selector) {
+        String field="";
+        if (selector instanceof ColumnSelector){
+            ColumnSelector columnSelector = (ColumnSelector)selector;
+            field = columnSelector.getName().getName();
+        }else if (selector instanceof IntegerSelector) {
+            IntegerSelector integerSelector = (IntegerSelector)selector;
+            field = String.valueOf(integerSelector.getValue());
+        }else throw new RuntimeException("Not implemented yet.");//TODO
 
-	private static FilterBuilder handleBetweenFilter(Relation relation) {
+
+        return field;
+    }
+
+
+    private static FilterBuilder handleBetweenFilter(Relation relation) {
 		
-		RelationBetween relBetween = (RelationBetween) relation;
-		return FilterBuilders.rangeFilter(relation.getIdentifiers().get(0).getField())
-				.gte(relBetween.getTerms().get(0).getTermValue())
-				.lte(relBetween.getTerms().get(1).getTermValue());
+//		RelationBetween relBetween = (RelationBetween) relation;
+//		return FilterBuilders.rangeFilter(relation.getIdentifiers().get(0).getField())
+//				.gte(relBetween.getTerms().get(0).getTermValue())
+//				.lte(relBetween.getTerms().get(1).getTermValue());
+
+        throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
 	}
 
 	

@@ -22,6 +22,7 @@ import java.util.Map;
 import com.stratio.meta.common.logicalplan.*;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
@@ -67,7 +68,7 @@ public class LogicalPlanExecutor {
 	final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	
-	private Client elasticClient = null;
+
 	
 	private SearchType searchType = null;
 	
@@ -88,11 +89,11 @@ public class LogicalPlanExecutor {
  * @throws UnsupportedException
  */
 public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException{
-		this.elasticClient = elasticClient;
+
 		
 		readLogicalPlan(logicalPlan);
 		setSearchType();
-		buildQuery();
+		buildQuery(elasticClient);
 }
 
 
@@ -109,19 +110,19 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 		for (LogicalStep lStep : logicalSteps) { //TODO validate??
 			if (lStep instanceof Project) {
 				if (projection == null) projection = (Project) lStep;
-				else throw new ElasticsearchQueryException(" # Project > 1", null);
+				else throw new ElasticsearchQueryException(" # Project > 1");
 			} else if (lStep instanceof Sort) {
 				sortList.add((Sort) lStep);
 			} else if (lStep instanceof Limit) {
 				if (limitValue == null) limitValue = (Limit) lStep;
-				else throw new ElasticsearchQueryException(" # Limit > 1", null);
+				else throw new ElasticsearchQueryException(" # Limit > 1");
 			} else if (lStep instanceof Filter) {
 				filterList.add((Filter) lStep);
 			} else if (lStep instanceof Match) {
 				matchList.add((Match) lStep);
 			} else if (lStep instanceof GroupBy) {
 				if (groupBy == null) groupBy = (GroupBy) lStep;
-				else throw new ElasticsearchQueryException(" # GroupBy > 1", null);
+				else throw new ElasticsearchQueryException(" # GroupBy > 1");
 			} else {
 				throw new UnsupportedOperationException("operation unsupported");
 			}
@@ -134,7 +135,7 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 
 
 
-	private void buildQuery() throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+	private void buildQuery(Client elasticClient) throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException {
 		//TODO Multisearch? elasticClient.prepareMultiSearch().add(requestBuilder);
 		//TODO if count or distinct => prepare Count?? or aggregation
 		requestBuilder = elasticClient.prepareSearch();
@@ -172,12 +173,13 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 
 	/**
 	 * Queries for objects in a collection
-	 */
+     * @param elasticClient
+     */
 
-	public QueryResult executeQuery() {
+	public QueryResult executeQuery(Client elasticClient) {
 		
 		ElasticsearchResultSet resultSet = new ElasticsearchResultSet();		
-	//	resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
+		//resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
 		SearchResponse scrollResp;
 		
 		if(searchType == SearchType.QUERY_THEN_FETCH){ 
@@ -189,7 +191,11 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 			//Prepare to SCAN
 			scrollResp = requestBuilder.execute().actionGet();
 			do{
-			    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+                String scrollId = scrollResp.getScrollId();
+                TimeValue keepAlive = new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS);
+                SearchScrollRequestBuilder searchScrollRequestBuilder = elasticClient.prepareSearchScroll(scrollId);
+                SearchScrollRequestBuilder searchScrollRequestBuilder1 = searchScrollRequestBuilder.setScroll(keepAlive);
+                scrollResp = searchScrollRequestBuilder1.execute().actionGet();
 			    for (SearchHit hit : scrollResp.getHits()) {
 			    	resultSet.add(createRow(hit));
 			    }

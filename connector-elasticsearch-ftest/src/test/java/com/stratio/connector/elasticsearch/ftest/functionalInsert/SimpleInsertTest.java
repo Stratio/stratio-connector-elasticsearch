@@ -45,17 +45,29 @@ import com.stratio.meta.common.exceptions.ValidationException;
 public class SimpleInsertTest extends ConnectionTest {
 
 
+
     @Test
-    public void testSimpleInsert() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+    public void testSimpleInsertNode() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
 
 
-        testSimpleInsertConnection(CLUSTER_TRANSPORT_NAME,transportClient);
-        testSimpleInsertConnection(CLUSTER_NODE_NAME,nodeClient);
-        
+
+        testSimpleInsert(CLUSTER_NODE_NAME,nodeClient);
+
 
     }
 
-    private void testSimpleInsertConnection(ClusterName cluesterName, Client nativeClient ) throws UnsupportedException, ExecutionException {
+    @Test
+    public void testSimpleInsertTransport() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+
+
+        testSimpleInsert(CLUSTER_TRANSPORT_NAME,transportClient);
+
+
+
+    }
+
+
+    private void testSimpleInsert(ClusterName cluesterName, Client nativeClient ) throws UnsupportedException, ExecutionException {
         System.out.println("*********************************** INIT FUNCTIONAL TEST testSimpleInsert "+cluesterName.getName()+" ***********************************");
 
         Row row = new Row();

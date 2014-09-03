@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.TableMetadata;
@@ -58,7 +59,17 @@ public class QueryProjectTest extends ConnectionTest {
     public static final String COLUMN_3 = "bin3";
 
     @Test
-    public void selectFilterProject() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+    public void selectFilterProjectNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterProject(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectFilterProjectTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFilterProject(CLUSTER_TRANSPORT_NAME);
+    }
+
+
+    public void selectFilterProject(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
         insertRow(1);

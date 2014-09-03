@@ -22,8 +22,11 @@ import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta2.common.data.ClusterName;
+import org.elasticsearch.action.ShardOperationFailedException;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
+import org.elasticsearch.action.admin.indices.flush.FlushResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.indices.IndexMissingException;
 import org.junit.After;
@@ -53,9 +56,9 @@ public class ConnectionTest {
 
 
     protected String SERVER_NODE_IP = "localhost";//"172.19.0.77"
-    protected String SERVER_TRANSPORT_IP = "localhost";//"172.19.0.77"
+    protected String SERVER_TRANSPORT_IP = "10.200.0.58,10.200.0.59,10.200.0.60";//"localhost";//"172.19.0.77"
     private String SERVER_NODE_PORT = "9300";
-    private String SERVER_TRANSPORT_PORT = "9301";
+    private String SERVER_TRANSPORT_PORT = "9301,9301,9301";
 
 
 
@@ -67,17 +70,18 @@ public class ConnectionTest {
         stratioElasticConnector = new ElasticsearchConnector();
         stratioElasticConnector.init(new ConfigurationImplem());
 
-
-       System.out.println("Create node connection");
-        stratioElasticConnector.connect(null, createNodeConnection());
+        ConnectorClusterConfig nodeConnection = null;
+       //System.out.println("************** Create node connection");
+        //nodeConnection = createNodeConnection();
+        //stratioElasticConnector.connect(null, nodeConnection);
 
         System.out.println("************** Create transport connection");
         ConnectorClusterConfig transportConnection = createTransportConnection();
         stratioElasticConnector.connect(null, transportConnection);
 
         ConnectionHandle connectionHandle=  (ConnectionHandle)Whitebox.getInternalState(stratioElasticConnector,"connectionHandle");
-        nodeClient = (Client) connectionHandle.getConnection(CLUSTER_NODE_NAME.getName()).getClient();
-        transportClient = (Client) connectionHandle.getConnection(CLUSTER_TRANSPORT_NAME.getName()).getClient();
+       if (nodeConnection!=null) nodeClient = (Client) connectionHandle.getConnection(CLUSTER_NODE_NAME.getName()).getClient();
+       if (transportConnection!=null) transportClient = (Client) connectionHandle.getConnection(CLUSTER_TRANSPORT_NAME.getName()).getClient();
 
         deleteSet(CATALOG);
         System.out.println(CATALOG+"/"+COLLECTION);
@@ -119,12 +123,21 @@ public class ConnectionTest {
     protected void refresh(String catalog){
 
     	   try {
-               if (nodeClient != null) nodeClient.admin().indices().flush(new FlushRequest(catalog)).actionGet();
+               if (nodeClient != null){
+                   nodeClient.admin().indices().flush(new FlushRequest(catalog)).actionGet();
+               }
            }catch(IndexMissingException e){
                System.out.println("Index missing");
            }
         try{
-            if (transportClient!=null) transportClient.admin().indices().flush(new FlushRequest(catalog)).actionGet();
+            if (transportClient!=null) {
+                transportClient.admin().indices().refresh(new RefreshRequest(catalog).force(true)).actionGet();
+              //  transportClient.admin().indices().flush(new FlushRequest(catalog).force(true)).actionGet();
+
+
+                //System.out.println(pp[0].reason());
+//                System.out.println(response);
+            }
         }catch(IndexMissingException e){
             System.out.println("Index missing");
         }

@@ -26,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.meta.common.exceptions.ValidationException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.TableMetadata;
@@ -56,18 +58,48 @@ public class QueryTest extends ConnectionTest {
     public static final String COLUMN_3 = "bin3";
 
     @Test
-    public void selectAllFromTable() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+    public void testselectAllFromTableTransport() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+        selectAllFromTable(CLUSTER_TRANSPORT_NAME);
+    }
+    @Test
+    public void testselectAllFromTabletNode() throws ExecutionException, ValidationException, UnsupportedOperationException, UnsupportedException {
+        selectAllFromTable(CLUSTER_NODE_NAME);
+    }
 
 
-        insertRow(1);
-        insertRow(2);
-        insertRow(3);
-        insertRow(4);
+    @Test
+    public void selectFromTableTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFromTable(CLUSTER_TRANSPORT_NAME);
+    }
+
+
+    @Test
+    public void selectFromTableTransportNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectFromTable(CLUSTER_NODE_NAME);
+    }
+
+    @Test
+    public void selectAllFromTableCursorTransport() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectAllFromTableCursor(CLUSTER_TRANSPORT_NAME);
+    }
+
+    @Test
+    public void selectAllFromTableCursorNode() throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+        selectAllFromTableCursor(CLUSTER_NODE_NAME);
+    }
+
+    public void selectAllFromTable(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+
+        insertRow(1, clusterNodeName);
+        insertRow(2, clusterNodeName);
+        insertRow(3, clusterNodeName);
+        insertRow(4, clusterNodeName);
 
         refresh(CATALOG);
 
         LogicalWorkflow logicalPlan = createLogicalPlan();
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
         while(rowIterator.hasNext()){
@@ -94,22 +126,22 @@ public class QueryTest extends ConnectionTest {
     }
 
     
-    @Test
-    public void selectFromTable() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectFromTable(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
 
-        insertRow(1);
-        insertRow(2);
-        insertRow(3);
-        insertRow(4);
-        
-        insertRow(1,"type2");
-        insertRow(2,"type2");
+        insertRow(1, clusterNodeName);
+        insertRow(2, clusterNodeName);
+        insertRow(3, clusterNodeName);
+        insertRow(4, clusterNodeName);
+
+        insertRow(1,"type2", clusterNodeName);
+        insertRow(2,"type2", clusterNodeName);
 
         refresh(CATALOG);
 
         LogicalWorkflow logicalPlan = createLogicalPlan();
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
         while(rowIterator.hasNext()){
@@ -136,28 +168,28 @@ public class QueryTest extends ConnectionTest {
     }
 
     
-    @Test
-    public void selectAllFromTableCursor() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+    public void selectAllFromTableCursor(ClusterName clusterNodeName) throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 
     	//insert more than SIZE elements
     	
-        insertRow(1);
-        insertRow(2);
-        insertRow(3);
-        insertRow(4);
-        insertRow(5);
-        insertRow(6);
-        insertRow(7);
-        insertRow(8);
-        insertRow(9);
-        insertRow(10);
-        insertRow(11);
-        insertRow(12);
+        insertRow(1, clusterNodeName);
+        insertRow(2, clusterNodeName);
+        insertRow(3, clusterNodeName);
+        insertRow(4, clusterNodeName);
+        insertRow(5, clusterNodeName);
+        insertRow(6, clusterNodeName);
+        insertRow(7, clusterNodeName);
+        insertRow(8, clusterNodeName);
+        insertRow(9, clusterNodeName);
+        insertRow(10, clusterNodeName);
+        insertRow(11, clusterNodeName);
+        insertRow(12, clusterNodeName);
 
         refresh(CATALOG);
 
         LogicalWorkflow logicalPlan = createLogicalPlan();
-        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(CLUSTER_NODE_NAME,logicalPlan);
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(clusterNodeName,logicalPlan);
         Set<Object> proveSet = new HashSet<>();
         Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
         while(rowIterator.hasNext()){
@@ -185,12 +217,12 @@ public class QueryTest extends ConnectionTest {
         return new LogicalWorkflow(stepList);
     }
 
-    private void insertRow(int ikey) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
-     	insertRow(ikey, COLLECTION);  
+    private void insertRow(int ikey, ClusterName clusterNodeName) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
+     	insertRow(ikey, COLLECTION, clusterNodeName);
     }
     
 
-private void insertRow(int ikey, String type) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
+private void insertRow(int ikey, String type, ClusterName clusterNodeName) throws UnsupportedOperationException, ExecutionException, UnsupportedException {
      	
     	Row row = new Row();
         Map<String, Cell> cells = new HashMap<>();
@@ -198,7 +230,7 @@ private void insertRow(int ikey, String type) throws UnsupportedOperationExcepti
         cells.put(COLUMN_2, new Cell("ValueBin2_r"+ikey));
         cells.put(COLUMN_3, new Cell("ValueBin3_r"+ikey));
         row.setCells(cells);        
-        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(CLUSTER_NODE_NAME,new TableMetadata(new TableName(CATALOG, type),null,null,null,null,null), row);
+        ((ElasticsearchStorageEngine) stratioElasticConnector.getStorageEngine()).insert(clusterNodeName,new TableMetadata(new TableName(CATALOG, type),null,null,null,null,null), row);
         
     }
 

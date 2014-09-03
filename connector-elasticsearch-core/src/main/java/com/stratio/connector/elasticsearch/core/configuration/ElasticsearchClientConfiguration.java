@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+import com.stratio.connector.commons.util.Parser;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
@@ -37,6 +38,11 @@ import org.elasticsearch.common.transport.TransportAddress;
  */
  
 public class ElasticsearchClientConfiguration implements IConfiguration{
+
+    /**
+     * The parser.
+     */
+    private Parser parser = new Parser();
 
 	/**
 	 * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
@@ -69,14 +75,14 @@ public class ElasticsearchClientConfiguration implements IConfiguration{
 
 
 
-    public static TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
+    public TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
 
-        String hosts = (String)config.getOptions().get(HOST.getOptionName());
-        String ports = (String)config.getOptions().get(PORT.getOptionName());
+        String[] hosts = (String[])parser.hosts(config.getOptions().get(HOST.getOptionName()));
+        String[] ports = (String[])parser.ports(config.getOptions().get(PORT.getOptionName()));
         TransportAddress[] transportAddresses = new TransportAddress[1];
-        //for (int i =0;i<hosts.length;i++){
-            transportAddresses[0]=new InetSocketTransportAddress(hosts,Integer.decode(ports)); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
-        //}
+        for (int i =0;i<hosts.length;i++){
+            transportAddresses[0]=new InetSocketTransportAddress(hosts[i],Integer.decode(ports[i])); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
+        }
         return transportAddresses;
 
     }

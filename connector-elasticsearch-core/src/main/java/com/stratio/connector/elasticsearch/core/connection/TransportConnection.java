@@ -21,6 +21,8 @@ public class TransportConnection extends Connection<Client> {
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    ElasticsearchClientConfiguration elasticsearchClientConfiguration = new ElasticsearchClientConfiguration();
+
     /**
      * The Elasticsearch client.
      */
@@ -38,7 +40,7 @@ public class TransportConnection extends Connection<Client> {
 
 
                elasticClient = new TransportClient(ElasticsearchClientConfiguration.getSettings(config))
-                        .addTransportAddresses(ElasticsearchClientConfiguration.getTransporAddress(config));
+                        .addTransportAddresses(elasticsearchClientConfiguration.getTransporAddress(config));
                 logger.info("Elasticsearch Transport connection established ");
 
 
