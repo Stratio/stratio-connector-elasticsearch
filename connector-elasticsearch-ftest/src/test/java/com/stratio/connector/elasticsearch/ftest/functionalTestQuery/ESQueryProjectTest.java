@@ -14,22 +14,22 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-package com.stratio.connector.elasticsearch.ftest;
-
-
+package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
 import com.stratio.connector.elasticsearch.ftest.functionalInsert.helper.ESConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
+/**
+ * Created by jmgomez on 5/09/14.
+ */
+public class ESQueryProjectTest extends GenericQueryProjectTest {
 
-
-
-
-public class ConfigurationTest extends GenericConfigurationTest {
-
-
+    @Override
+    protected Integer getRowsToSearch( ){
+        return 2000;
+    }
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -44,9 +44,4 @@ public class ConfigurationTest extends GenericConfigurationTest {
         }
         return esConnectorHelper;
     }
-
-
-
-
-
 }

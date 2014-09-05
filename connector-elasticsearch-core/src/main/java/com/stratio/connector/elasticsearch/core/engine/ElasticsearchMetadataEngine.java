@@ -1,39 +1,24 @@
-/**
-* Copyright (C) 2014 Stratio (http://stratio.com)
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/*
+ * Stratio Meta
+ *
+ *   Copyright (c) 2014, Stratio, All rights reserved.
+ *
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
+ */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.stratio.connector.elasticsearch.core.connection.ConnectionHandle;
-import com.stratio.connector.meta.exception.UnsupportedOperationException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
 import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalPlan;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
-import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
@@ -42,22 +27,21 @@ import com.stratio.meta2.common.metadata.TableMetadata;
 
 /**
  * @author darroyo
- *
  */
-public class ElasticsearchMetadataEngine implements IMetadataEngine{
+public class ElasticsearchMetadataEngine implements IMetadataEngine {
 
-	private static final String INDEX = "metadata_storage";
-	private static String TYPE = "default";
-    private final ConnectionHandle connectionHandle;
+    private static final String INDEX = "metadata_storage";
+    private static String TYPE = "default";
+    private final ElasticSearchConnectionHandle connectionHandle;
 
 
     private ElasticsearchStorageEngine storageEngine = null;
-	private ElasticsearchQueryEngine queryEngine = null;
+    private ElasticsearchQueryEngine queryEngine = null;
 
-    public ElasticsearchMetadataEngine(ConnectionHandle connectionHandle) {
+    public ElasticsearchMetadataEngine(ElasticSearchConnectionHandle connectionHandle) {
         this.connectionHandle = connectionHandle;
     }
-	
+
 	
 	
 	
@@ -119,25 +103,24 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
         
 	} */
 
-	/**
-	 * @param elasticStorageEngine
-	 */
-	public void setStorageEngine(ElasticsearchStorageEngine elasticStorageEngine) {
-		storageEngine = elasticStorageEngine;
-		
-	}
-	
-	/**
-	 * @param elasticQueryEngine
-	 */
-	public void setQueryEngine(ElasticsearchQueryEngine elasticQueryEngine) {
-		queryEngine  = elasticQueryEngine;
-		
-	}
+    /**
+     * @param elasticStorageEngine
+     */
+    public void setStorageEngine(ElasticsearchStorageEngine elasticStorageEngine) {
+        storageEngine = elasticStorageEngine;
+
+    }
+
+    /**
+     * @param elasticQueryEngine
+     */
+    public void setQueryEngine(ElasticsearchQueryEngine elasticQueryEngine) {
+        queryEngine = elasticQueryEngine;
+
+    }
 
 
-   //REVIEW Esto es la nueva interfaz, lo anterior estaba de antes hay que revisarlos.
-
+    //REVIEW Esto es la nueva interfaz, lo anterior estaba de antes hay que revisarlos.
 
 
     @Override

@@ -14,9 +14,7 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-package com.stratio.connector.elasticsearch.ftest;
-
-
+package com.stratio.connector.elasticsearch.ftest.functionalInsert;
 
 import com.stratio.connector.elasticsearch.ftest.functionalInsert.helper.ESConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
@@ -24,28 +22,28 @@ import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
 
+/**
+ * Created by jmgomez on 4/09/14.
+ */
+public class ESBulkInsertTest extends GenericBulkInsertTest{
 
 
-
-public class ConfigurationTest extends GenericConfigurationTest {
-
-
+    protected int getRowToInsert() {
+        return 1000;
+    }
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;
-        try {
+        try{
             esConnectorHelper = new ESConnectorHelper(getClusterName());
-            return esConnectorHelper;
-        } catch (ConnectionException e) {
+        }catch(InitializationException e){
             e.printStackTrace();
-        } catch (InitializationException e) {
+        } catch (ConnectionException e) {
             e.printStackTrace();
         }
         return esConnectorHelper;
     }
-
-
 
 
 

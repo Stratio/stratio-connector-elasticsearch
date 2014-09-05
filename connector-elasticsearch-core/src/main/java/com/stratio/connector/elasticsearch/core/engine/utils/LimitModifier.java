@@ -1,50 +1,54 @@
-/**
-* Copyright (C) 2014 Stratio (http://stratio.com)
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/*
+ * Stratio Meta
+ *
+ *   Copyright (c) 2014, Stratio, All rights reserved.
+ *
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
+ */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import com.stratio.connector.meta.Limit;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.stratio.connector.meta.Limit;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-
 /**
  * @author darroyo
- *
  */
-public class LimitModifier{
+public class LimitModifier {
 
-	//TODO move to configuration
-	public static final int SCAN_TIMEOUT_MILLIS = 600000;
-	//public static final int SIZE_QUERY_ANDTHEN_FETCH = 10;
-	public static final int SIZE_SCAN = 10;
-	
-	
-	private LimitModifier(){}
-	public static void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type)  {
-		if (limit != null) { 
-			if(type == SearchType.SCAN) requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN); 
-			else if(type == SearchType.QUERY_THEN_FETCH) requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
-			//TODO else throw new ExecutionException("SearchType unexpected: "+ type);
-		}else requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
-		
-	}
-	
-	//TODO different requests?
+    //TODO move to configuration
+    public static final int SCAN_TIMEOUT_MILLIS = 600000;
+    //public static final int SIZE_QUERY_ANDTHEN_FETCH = 10;
+    public static final int SIZE_SCAN = 10;
+
+
+    private LimitModifier() {
+    }
+
+    public static void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type) {
+        if (limit != null) {
+            if (type == SearchType.SCAN) {
+                requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
+            } else if (type == SearchType.QUERY_THEN_FETCH) {
+                requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
+            }
+            //TODO else throw new ExecutionException("SearchType unexpected: "+ type);
+        } else {
+
+            requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
+        }
+
+    }
+
+    //TODO different requests?
 
 }

@@ -1,56 +1,52 @@
-/**
- * Copyright (C) 2014 Stratio (http://stratio.com)
+/*
+ * Stratio Meta
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   Copyright (c) 2014, Stratio, All rights reserved.
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 
-import java.util.List;
-
+import com.stratio.connector.meta.exception.UnsupportedOperationException;
+import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
+import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
 import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
-import com.stratio.connector.meta.exception.UnsupportedOperationException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-
+import java.util.List;
 
 
 public class FilterBuilderHelper {
 
-	private FilterBuilderHelper() {
-	}
+    private FilterBuilderHelper() {
+    }
 
-	public static FilterBuilder createFilterBuilder(List<Filter> filters) throws UnsupportedOperationException {
+    public static FilterBuilder createFilterBuilder(List<Filter> filters) throws UnsupportedOperationException {
 
-		
 
-		Relation relation;
+        Relation relation;
         Operator operator;
 
-		FilterBuilder filterBuilder = null;
-		BoolFilterBuilder boolFilterBuilder = null;
+        FilterBuilder filterBuilder = null;
+        BoolFilterBuilder boolFilterBuilder = null;
 
-		boolFilterBuilder = (filters.size() > 1) ? FilterBuilders.boolFilter() : null ;
+        boolFilterBuilder = (filters.size() > 1) ? FilterBuilders.boolFilter() : null;
 
-		for (Filter filter : filters) {
+        for (Filter filter : filters) {
             relation = filter.getRelation();
             operator = relation.getOperator();
 
@@ -120,18 +116,18 @@ public class FilterBuilderHelper {
 //			}
         }
 
-		
-		if (boolFilterBuilder != null) return boolFilterBuilder;
-		else return filterBuilder;
 
-	}
-	
-	
-	/**
-	 * @param relation
-	 * @return
-	 */
-	private static FilterBuilder handleInFilter(Relation relation) {
+        if (boolFilterBuilder != null) return boolFilterBuilder;
+        else return filterBuilder;
+
+    }
+
+
+    /**
+     * @param relation
+     * @return
+     */
+    private static FilterBuilder handleInFilter(Relation relation) {
 //		Relation relIn = (RelationIn) relation;
 //		// check integer, number, string,date, etc...??
 //
@@ -144,42 +140,54 @@ public class FilterBuilderHelper {
 //		return FilterBuilders.inFilter(relation.getIdentifiers().get(0).getField(),inTerms.toArray());
         throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
 
-	}
+    }
 
-	private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedOperationException {
-		
-		FilterBuilder localFilterBuilder = null;
-		// TermFilter: Filters documents that have fields that contain a
-		// term (not analyzed)
+    private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedOperationException {
+
+        FilterBuilder localFilterBuilder = null;
+        // TermFilter: Filters documents that have fields that contain a
+        // term (not analyzed)
 
         Selector leftTerm = relation.getLeftTerm();
         Selector rightTerm = relation.getRightTerm();
-        switch (relation.getOperator()){
-            case COMPARE: case DISTINCT /*The not is modify in FilterBuilder method */: //REVIEW el distinct
-                      localFilterBuilder = FilterBuilders.termFilter( getSelectorField(leftTerm),getSelectorField(rightTerm)); break;
-            case LT:  localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lt(getSelectorField(rightTerm));break;
-            case LET: localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lte(getSelectorField(rightTerm));break;
-            case GT:  localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gt(getSelectorField(rightTerm));break;
-            case GET: localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gte(getSelectorField(rightTerm));break;
-            case BETWEEN:  new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW mewtodo  handleBetweenFilter
-            default: throw new UnsupportedOperationException("Not implemented yet.");  //TODO
+        switch (relation.getOperator()) {
+            case COMPARE:
+            case DISTINCT /*The not is modify in FilterBuilder method */: //REVIEW el distinct
+                localFilterBuilder = FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm));
+                break;
+            case LT:
+                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lt(getSelectorField(rightTerm));
+                break;
+            case LET:
+                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lte(getSelectorField(rightTerm));
+                break;
+            case GT:
+                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gt(getSelectorField(rightTerm));
+                break;
+            case GET:
+                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gte(getSelectorField(rightTerm));
+                break;
+            case BETWEEN:
+                new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW mewtodo  handleBetweenFilter
+            default:
+                throw new UnsupportedOperationException("Not implemented yet.");  //TODO
 
         }
 
 
-		return localFilterBuilder;
+        return localFilterBuilder;
 
-	}
+    }
 
     private static String getSelectorField(Selector selector) {
-        String field="";
-        if (selector instanceof ColumnSelector){
-            ColumnSelector columnSelector = (ColumnSelector)selector;
+        String field = "";
+        if (selector instanceof ColumnSelector) {
+            ColumnSelector columnSelector = (ColumnSelector) selector;
             field = columnSelector.getName().getName();
-        }else if (selector instanceof IntegerSelector) {
-            IntegerSelector integerSelector = (IntegerSelector)selector;
+        } else if (selector instanceof IntegerSelector) {
+            IntegerSelector integerSelector = (IntegerSelector) selector;
             field = String.valueOf(integerSelector.getValue());
-        }else throw new RuntimeException("Not implemented yet.");//TODO
+        } else throw new RuntimeException("Not implemented yet.");//TODO
 
 
         return field;
@@ -187,14 +195,14 @@ public class FilterBuilderHelper {
 
 
     private static FilterBuilder handleBetweenFilter(Relation relation) {
-		
+
 //		RelationBetween relBetween = (RelationBetween) relation;
 //		return FilterBuilders.rangeFilter(relation.getIdentifiers().get(0).getField())
 //				.gte(relBetween.getTerms().get(0).getTermValue())
 //				.lte(relBetween.getTerms().get(1).getTermValue());
 
         throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
-	}
+    }
 
-	
+
 }

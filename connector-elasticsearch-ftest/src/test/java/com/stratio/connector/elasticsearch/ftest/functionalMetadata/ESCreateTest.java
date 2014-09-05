@@ -14,21 +14,17 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-package com.stratio.connector.elasticsearch.ftest;
-
-
+package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
 import com.stratio.connector.elasticsearch.ftest.functionalInsert.helper.ESConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
-
-
-
-
-public class ConfigurationTest extends GenericConfigurationTest {
-
+/**
+ * Created by jmgomez on 5/09/14.
+ */
+public class ESCreateTest extends GenericCreateTest {
 
 
     @Override
@@ -44,9 +40,4 @@ public class ConfigurationTest extends GenericConfigurationTest {
         }
         return esConnectorHelper;
     }
-
-
-
-
-
 }
