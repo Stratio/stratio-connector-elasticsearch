@@ -15,14 +15,13 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import java.util.ArrayList;
-
+import com.stratio.connector.meta.Sort;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
-import com.stratio.connector.meta.Sort;
-import com.stratio.meta.common.exceptions.ExecutionException;
+import java.util.ArrayList;
 
 
 /**

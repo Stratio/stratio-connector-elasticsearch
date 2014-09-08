@@ -15,12 +15,7 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.connector.meta.ColumnGroupBy;
-
-import com.stratio.meta.common.statements.structures.selectors.GroupByFunction;
 import org.elasticsearch.action.search.SearchRequestBuilder;
-
-import java.util.List;
 
 
 /**

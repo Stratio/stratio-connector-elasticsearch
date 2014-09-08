@@ -23,6 +23,8 @@ import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptio
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.security.ICredentials;
+import com.stratio.meta2.common.data.ClusterName;
+import org.elasticsearch.client.Client;
 
 
 /**
@@ -49,4 +51,7 @@ public class ElasticSearchConnectionHandle extends ConnectionHandle {
     private boolean isNodeClient(ConnectorClusterConfig config) {
         return Boolean.parseBoolean((String) config.getOptions().get(ConfigurationOptions.NODE_TYPE.getOptionName()));
     }
+
+
+
 }

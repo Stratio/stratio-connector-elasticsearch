@@ -16,12 +16,11 @@
 
 package com.stratio.connector.meta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.LogicalStep;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Match extends LogicalStep{
 	

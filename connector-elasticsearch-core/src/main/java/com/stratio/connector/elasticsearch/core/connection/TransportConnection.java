@@ -80,7 +80,7 @@ public class TransportConnection implements Connection<Client> {
     }
 
     @Override
-    public Client getClient() {
+    public Client getNativeConnection() {
         return elasticClient;
     }
 

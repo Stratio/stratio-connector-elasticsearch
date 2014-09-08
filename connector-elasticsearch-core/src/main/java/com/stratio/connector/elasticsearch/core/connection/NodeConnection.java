@@ -83,7 +83,7 @@ public class NodeConnection implements Connection<Client> {
     }
 
     @Override
-    public Client getClient() {
+    public Client getNativeConnection() {
         return elasticClient;
     }
 

@@ -26,6 +26,7 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -60,19 +61,17 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
     @Override
     public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row) throws UnsupportedException, ExecutionException {
 
-        insert(recoveredClient(targetCluster), targetTable, row);
+        insert((Client)connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), targetTable, row);
 
     }
 
 
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
-        insert(recoveredClient(targetCluster), targetTable, rows);
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows ) throws UnsupportedException, ExecutionException {
+        insert((Client)connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), targetTable, rows);
     }
 
-    private Client recoveredClient(ClusterName targetCluster) {
-        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
-    }
+
 
 
     /**
@@ -84,7 +83,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      */
 
     private void insert(Client client, TableMetadata targetTable, Row row)
-            throws ExecutionException {
+            throws ExecutionException, UnsupportedException {
         //TODO connector should check??
         String index = targetTable.getName().getCatalogName().getName();
         String type = targetTable.getName().getName();
@@ -104,7 +103,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 //							){
 //					}
             //TODO read configuration to set index settings
-            createIndexRequestBuilder(client, index, type, row).execute().actionGet();
+            createIndexRequestBuilder(targetTable,client, index, type, row).execute().actionGet();
 
         }
 
@@ -130,7 +129,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
     BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 
     for (Row row : rows) {
-        bulkRequest.add(createIndexRequestBuilder(elasticClient, index, type, row));
+        bulkRequest.add(createIndexRequestBuilder(targetTable,elasticClient, index, type, row));
     }
 
     BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -143,16 +142,27 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 	   /**
      * Returns an IndexRequestBuilder. Adds the json created from the row
      */
-    private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, String index, String type, Row row) {
+    private IndexRequestBuilder createIndexRequestBuilder(TableMetadata targetTable, Client elasticClient, String index, String type, Row row) throws UnsupportedException {
 
 
         Map<String, Object> json = new HashMap<String, Object>();
+        String pk = null;
+        IndexRequestBuilder indexRequestBuilder = null;
         for (Map.Entry<String, Cell> entry : row.getCells().entrySet()) {
             Object cellValue = entry.getValue().getValue();
             //TODO check if the cell is primaryKey?
             json.put(entry.getKey(), cellValue);
+            if (targetTable.isPK(new ColumnName(targetTable.getName().getCatalogName().getName(),targetTable.getName().getName(), entry.getKey()))){
+                if (pk!=null) throw new UnsupportedException("Only one PK is allowed");
+                pk = entry.getValue().getValue().toString(); //TODO revisar el toString.
+            }
         }
-        return elasticClient.prepareIndex(index, type).setSource(json);
+        if (pk!=null){
+            indexRequestBuilder =  elasticClient.prepareIndex(index,type,pk).setSource(json);
+        }else {
+            indexRequestBuilder =elasticClient.prepareIndex(index, type).setSource(json);
+        }
+        return  indexRequestBuilder;
 
 
     }

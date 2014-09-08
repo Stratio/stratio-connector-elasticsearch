@@ -16,14 +16,13 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 
-import java.util.ArrayList;
-
+import com.stratio.connector.meta.Match;
+import com.stratio.meta.common.exceptions.UnsupportedException;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import com.stratio.connector.meta.Match;
-import com.stratio.meta.common.exceptions.UnsupportedException;
+import java.util.ArrayList;
 
 
 public class MatchBuilderHelper {

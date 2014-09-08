@@ -16,21 +16,6 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
-import java.util.Map;
-
-import org.elasticsearch.action.get.GetResponse;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
-
-import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
-import com.stratio.connector.meta.ElasticsearchResultSet;
-import com.stratio.connector.meta.ICallBack;
-import com.stratio.connector.meta.IResultSet;
-
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
 import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
@@ -42,6 +27,10 @@ import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.client.Client;
+
+import java.util.Map;
 
 
 public class ElasticsearchQueryEngine implements IQueryEngine {
@@ -74,24 +63,28 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
 
     }
     
-	//TODO CHECK PROTECTED
-    protected Row getRowByID(Client elasticClient, String index, String type, String id){
-    	GetResponse response= elasticClient.prepareGet(index, type, id).execute().actionGet();
-    	
-    	Row row = new Row();
-    	
-    	if(!response.isSourceEmpty()){
-			for (Map.Entry<String, Object> entry : response.getSourceAsMap().entrySet())	{
-				row.addCell(entry.getKey(), new Cell(entry.getValue()));
-			}
-    	}
-    	return row;
-    	
-    }
+
 	
 
 
     private Client recoveredClient(ClusterName targetCluster) {
-        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
+        return (Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection();
     }
+
+
+
+//    protected Row getRowByID(Client elasticClient, String index, String type, String id){
+//    	GetResponse response= elasticClient.prepareGet(index, type, id).execute().actionGet();
+//
+//    	Row row = new Row();
+//
+//    	if(!response.isSourceEmpty()){
+//			for (Map.Entry<String, Object> entry : response.getSourceAsMap().entrySet())	{
+//				row.addCell(entry.getKey(), new Cell(entry.getValue()));
+//			}
+//    	}
+//    	return row;
+//
+//    }
+
 }

@@ -116,15 +116,7 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 	            } else if (lStep instanceof Filter) {
 	                filterList.add((Filter) lStep);
 	            }
-//				} else if (lStep instanceof Match) { //REVIEW a la espera de meta
-//					matchList.add((Match) lStep);
-//				} else if (lStep instanceof GroupBy) {
-//					if (groupBy == null) groupBy = (GroupBy) lStep;
-//					else throw new ElasticsearchQueryException(" # GroupBy > 1");
-//				} else {
-//					throw new UnsupportedOperationException("operation unsupported");
-//				}
-//			}
+
 	        }
 	        if (projection == null) throw new ElasticsearchQueryException("no projection founded", null);
 	        if (!sortList.isEmpty() && limitValue == null)

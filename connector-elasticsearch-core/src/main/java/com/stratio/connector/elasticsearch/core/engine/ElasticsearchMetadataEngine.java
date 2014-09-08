@@ -15,19 +15,8 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
-import org.elasticsearch.client.Client;
-
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
-import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.CatalogName;
@@ -35,103 +24,39 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
+import org.elasticsearch.client.Client;
 
 /**
  * @author darroyo
  *
  */
 public class ElasticsearchMetadataEngine implements IMetadataEngine{
-	//TODO fields used in old MetadataEngine (put,get) interface
-	private static final String INDEX = "metadata_storage";
-	private static String TYPE = "default";
-	private ElasticsearchStorageEngine storageEngine = null;
-	private ElasticsearchQueryEngine queryEngine = null;
-	
-	
+
 	private transient ElasticSearchConnectionHandle connectionHandle;
 
     public ElasticsearchMetadataEngine(ElasticSearchConnectionHandle connectionHandle) {
 
         this.connectionHandle = connectionHandle;
     }
-	
-	
-
-	/* (non-Javadoc)
-	 * @see com.stratio.meta.common.connector.IMetadataEngine#put(java.lang.String, java.lang.String)
-	 */
-/*	@Override
-	public void put(String key, String metadata) {
-		//TODO validate? key exist? =>key=type y id=1
-		//get then insert?
-		
-		Row row = new Row();
-        Map<String, Cell> cells = new HashMap<>();
-        cells.put(key, new Cell(metadata));
-        row.setCells(cells);
-		try {
-			storageEngine.insert(INDEX, TYPE, row, key);
-		} catch (UnsupportedOperationException | ExecutionException e) {
-			// TODO Incluir throws... Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-*/
-	
-	/* (non-Javadoc)
-	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
-	 * TODO null if not exist
-	 */
- /*   @Override
-	public String get(String key) {
-		//TODO getID, getPK
-		Object value;
-		Cell cell;
-		if ((cell= queryEngine.getRowByID(INDEX, TYPE, key).getCell(key)) != null){
-			if ((value =cell.getValue()) != null){
-				return (value instanceof String) ? (String) value : null;
-			} else return null;
-		}else return null;
-        
-	}
-*/
-
-	/**
-	 * @param elasticStorageEngine
-	 */
-	public void setStorageEngine(ElasticsearchStorageEngine elasticStorageEngine) {
-		storageEngine = elasticStorageEngine;
-		
-	}
-	
-	/**
-	 * @param elasticQueryEngine
-	 */
-	public void setQueryEngine(ElasticsearchQueryEngine elasticQueryEngine) {
-		queryEngine  = elasticQueryEngine;
-		
-	}
-
-
-
-    //REVIEW Esto es la nueva interfaz, lo anterior estaba de antes hay que revisarlos.
 
 
     @Override
-    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata) throws UnsupportedException, ExecutionException {
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata) throws UnsupportedException  {
     	//TODO index settings?
         throw new UnsupportedException("Not yet supported");
     }
 
     @Override
-    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata) throws UnsupportedException, ExecutionException {
+    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata) throws UnsupportedException  {
         //TODO type mappings?
         throw new UnsupportedException("Not yet supported");
     }
 
     @Override
-    public void dropCatalog(ClusterName targetCluster, CatalogName name) throws UnsupportedException, ExecutionException {
+    public void dropCatalog(ClusterName targetCluster, CatalogName name) throws ExecutionException {
     	//TODO getName o qualifiedName?
     	DeleteIndexResponse delete = recoveredClient(targetCluster).admin().indices().delete(new DeleteIndexRequest(name.getName())).actionGet();
         if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
@@ -139,7 +64,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
     }
 
     @Override
-    public void dropTable(ClusterName targetCluster, TableName name) throws UnsupportedException, ExecutionException {
+    public void dropTable(ClusterName targetCluster, TableName name) throws  ExecutionException {
     	 //drop mapping => the table will be deleted
     	//TODO name.getCatalogName() y targetCluster.getName().
         DeleteMappingResponse delete =recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName()).execute().actionGet();
@@ -149,29 +74,72 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
     
     
 
-/*//TODO new features in meta?
-    @Override
-    public void createIndex(String catalog, String tableName, String... fields) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("Not supported");
-
-    }
-
-    @Override
-    public void dropIndex(String catalog, String tableName, String... fields) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("not supported");
-
-    }
-
-    
-    /*public void dropIndexes(String catalog, String tableName) throws UnsupportedOperationException {
-        throw new UnsupportedOperationException("not supported");
-
-    }
-*/
-    
     
     private Client recoveredClient(ClusterName targetCluster) {
-        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
+        return (Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection();
     }
+
+
+
+
+//    //TODO fields used in old MetadataEngine (put,get) interface
+//    private static final String INDEX = "metadata_storage";
+//    private static String TYPE = "default";
+//    private ElasticsearchStorageEngine storageEngine = null;
+//    private ElasticsearchQueryEngine queryEngine = null;
+//    	/* (non-Javadoc)
+//	 * @see com.stratio.meta.common.connector.IMetadataEngine#put(java.lang.String, java.lang.String)
+//	 */
+//	@Override
+//	public void put(String key, String metadata) {
+//		//TODO validate? key exist? =>key=type y id=1
+//		//get then insert?
+//
+//		Row row = new Row();
+//        Map<String, Cell> cells = new HashMap<>();
+//        cells.put(key, new Cell(metadata));
+//        row.setCells(cells);
+//		try {
+//			storageEngine.insert(INDEX, TYPE, row, key);
+//		} catch (UnsupportedOperationException | ExecutionException e) {
+//			// TODO Incluir throws... Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
+//
+//
+//	/* (non-Javadoc)
+//	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
+//	 * TODO null if not exist
+//	 */
+//    @Override
+//	public String get(String key) {
+//		//TODO getID, getPK
+//		Object value;
+//		Cell cell;
+//		if ((cell= queryEngine.getRowByID(INDEX, TYPE, key).getCell(key)) != null){
+//			if ((value =cell.getValue()) != null){
+//				return (value instanceof String) ? (String) value : null;
+//			} else return null;
+//		}else return null;
+//
+//	}
+//
+//		/**
+//	 * @param elasticStorageEngine
+//	 */
+//    public void setStorageEngine(ElasticsearchStorageEngine elasticStorageEngine) {
+//        storageEngine = elasticStorageEngine;
+//
+//    }
+//
+//    /**
+//     * @param elasticQueryEngine
+//     */
+//    public void setQueryEngine(ElasticsearchQueryEngine elasticQueryEngine) {
+//        queryEngine  = elasticQueryEngine;
+//
+//    }
 }
 

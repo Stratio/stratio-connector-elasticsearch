@@ -17,7 +17,6 @@
 package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
 import com.stratio.connector.elasticsearch.ftest.functionalInsert.helper.ESConnectorHelper;
-import com.stratio.connector.elasticsearch.ftest.functionalMetadata.GenericCreateTest;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
