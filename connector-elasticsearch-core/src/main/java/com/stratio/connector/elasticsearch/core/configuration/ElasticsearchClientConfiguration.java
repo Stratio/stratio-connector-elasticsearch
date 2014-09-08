@@ -1,135 +1,86 @@
-/**
-* Copyright (C) 2014 Stratio (http://stratio.com)
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/*
+ * Stratio Meta
+ *
+ *   Copyright (c) 2014, Stratio, All rights reserved.
+ *
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
+ */
 package com.stratio.connector.elasticsearch.core.configuration;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-
-import com.stratio.connector.meta.ConfigurationImplem;
+import com.stratio.connector.commons.util.Parser;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.exceptions.InitializationException;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
 
 
 /**
  * The configuration for Elasticsearch.
  */
- 
-public class ElasticsearchClientConfiguration implements IConfiguration{
-	
-	/**
-     * The Elasticsearch driver settings
+
+public class ElasticsearchClientConfiguration implements IConfiguration {
+
+    /**
+     * The parser.
      */
-	private Settings elasticsearchSettings = null;
-	
-	/**
-     * List of seeds
+    private Parser parser = new Parser();
+
+    /**
+     * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
+     *
+     * @param configuration
+     * @throws InitializationException
      */
-	private List<String> seeds = null;
+    public static Settings getSettings(ConnectorClusterConfig configuration) {
 
-	/**
-     * Type of Elasticsearch client
-     */
-	private boolean isNodeClient;
+        Map<String, String> setting = new HashMap<String, String>();
+        setting.put(NODE_DATA.getOptionName(), addSetting(configuration.getOptions(), NODE_DATA));
+        setting.put(NODE_MASTER.getOptionName(), addSetting(configuration.getOptions(), NODE_MASTER));
+        setting.put(TRANSPORT_SNIFF.getOptionName(), addSetting(configuration.getOptions(), TRANSPORT_SNIFF));
+        setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
+
+        return ImmutableSettings.settingsBuilder().put(setting).build();
+
+    }
 
 
+    private static String addSetting(Map<String, String> configuration, ConfigurationOptions nodeData) {
+        String option;
+        if (configuration.containsKey(nodeData.getOptionName())) {
+            option = (String) configuration.get(nodeData.getOptionName());
+        } else {
+            option = nodeData.getDefaultValue()[0];
+        }
+        return option;
+    }
 
-	/**
-	 * Initializes the Elasticsearch client configuration from a map based configuration
-	 * @param iconfiguration 
-	 * @throws InitializationException
-	 */
-	public ElasticsearchClientConfiguration(IConfiguration iconfiguration) throws InitializationException{
-		isNodeClient = false;
-		ConfigurationImplem configuration = (ConfigurationImplem) iconfiguration;
-		configureSeeds(configuration);
-		configureClientOptions(configuration);
-	}
 
-	/**
-	 * Retrieves the seeds from the Elasticsearch client configuration
-	 * @param iconfiguration 
-	 * @throws InitializationException
-	 */
-	private void configureSeeds (ConfigurationImplem configuration) throws InitializationException{
-		
-		if( (seeds = configuration.getSeeds()) == null ){
-			throw new InitializationException("there is no seeds");
-		}
+    public TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
 
-	}
-	/**
-	 * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
-	 * @param iconfiguration 
-	 * @throws InitializationException
-	 */
-	public void configureClientOptions(ConfigurationImplem configuration) {
+        String[] hosts = (String[]) parser.hosts(config.getOptions().get(HOST.getOptionName()));
+        String[] ports = (String[]) parser.ports(config.getOptions().get(PORT.getOptionName()));
+        TransportAddress[] transportAddresses = new TransportAddress[1];
+        for (int i = 0; i < hosts.length; i++) {
+            transportAddresses[0] = new InetSocketTransportAddress(hosts[i], Integer.decode(ports[i])); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
+        }
+        return transportAddresses;
 
-		Map<String,String> confSettings = configuration.getMapProperties();
-		Map<String,String> confSettingsElasticsearch = new HashMap<String, String>();
-		
-		 for (Entry<String, String> e: confSettings.entrySet()) {
-			 	String newKey = e.getKey().substring("elasticsearch.".length());
-			 	if(!newKey.startsWith("stratio.")) confSettingsElasticsearch.put(newKey, e.getValue());
-			 	else configureClientType(e.getValue());
-			 	
-	     }
-
-		elasticsearchSettings = ImmutableSettings.settingsBuilder().put(confSettingsElasticsearch).build();
-				
-	}
-	
-	/**
-	 * Sets the client's type.
-	 * @param isNodeClient 
-	 */
-	private void configureClientType(String isNodeClient){
-		this.isNodeClient = Boolean.parseBoolean(isNodeClient);
-	}
-	
-	
-	/**
-	 * Returns the Elasticsearch driver settings
-	 * @return the Elasticsearch driver settings
-	 */
-	public Settings getSettings() {
-		return elasticsearchSettings;
-	}
-	/**
-	 * Returns the list of seeds
-	 * @return the seeds
-	 */
-	public List<String> getSeeds(){
-		return seeds;
-	}
-	/**
-	 * Returns the type of client
-	 * @return true for a node client, false for a transport client.
-	 */
-	public boolean isNodeClient(){
-		return isNodeClient;
-	}
-	
-	//	public  ConnectorConfigurationOptions getConnectorConfigurationOptions(){
-	//		
-	//	}
-
+    }
 }

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
 public class Match extends LogicalStep{
@@ -30,7 +31,10 @@ public class Match extends LogicalStep{
 	private int minimunMatch=1;//0 is ignored
 	private String field;
 	
-	public Match(String field,int type){
+	public Match(Operations operations){
+		super(operations);
+	}
+	/*public Match(String field,int type){
 		terms = new ArrayList<String>();
 		this.type=type;
 		this.field = field;
@@ -50,7 +54,7 @@ public class Match extends LogicalStep{
 		this.field = field;
 		this.computeScore=computeScore;
 	}
-	
+	*/
 	public void addTerm(String term){
 		terms.add(term);
 	}
@@ -78,6 +82,22 @@ public class Match extends LogicalStep{
 	}
 	public int getMinimumMatch(){
 		return minimunMatch;
+	}
+	/* (non-Javadoc)
+	 * @see com.stratio.meta.common.logicalplan.LogicalStep#getPreviousSteps()
+	 */
+	@Override
+	public List<LogicalStep> getPreviousSteps() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/* (non-Javadoc)
+	 * @see com.stratio.meta.common.logicalplan.LogicalStep#getFirstPrevious()
+	 */
+	@Override
+	public LogicalStep getFirstPrevious() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	

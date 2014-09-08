@@ -15,47 +15,52 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
+import org.elasticsearch.client.Client;
+
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalPlan;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
-import com.stratio.meta.common.metadata.structures.ColumnType;
-import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
 
 /**
  * @author darroyo
  *
  */
 public class ElasticsearchMetadataEngine implements IMetadataEngine{
-
+	//TODO fields used in old MetadataEngine (put,get) interface
 	private static final String INDEX = "metadata_storage";
 	private static String TYPE = "default";
-	
-	
 	private ElasticsearchStorageEngine storageEngine = null;
 	private ElasticsearchQueryEngine queryEngine = null;
 	
 	
+	private transient ElasticSearchConnectionHandle connectionHandle;
+
+    public ElasticsearchMetadataEngine(ElasticSearchConnectionHandle connectionHandle) {
+
+        this.connectionHandle = connectionHandle;
+    }
 	
 	
 
 	/* (non-Javadoc)
 	 * @see com.stratio.meta.common.connector.IMetadataEngine#put(java.lang.String, java.lang.String)
 	 */
-	@Override
+/*	@Override
 	public void put(String key, String metadata) {
 		//TODO validate? key exist? =>key=type y id=1
 		//get then insert?
@@ -72,13 +77,15 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 		}
 		
 	}
-
+*/
+	
 	/* (non-Javadoc)
 	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
 	 * TODO null if not exist
 	 */
-	@Override
+ /*   @Override
 	public String get(String key) {
+		//TODO getID, getPK
 		Object value;
 		Cell cell;
 		if ((cell= queryEngine.getRowByID(INDEX, TYPE, key).getCell(key)) != null){
@@ -86,38 +93,9 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 				return (value instanceof String) ? (String) value : null;
 			} else return null;
 		}else return null;
-				
-
-		
-		//TODO getID, getPK
-//		List<LogicalStep> stepList = new ArrayList<>();
-//        List<ColumnMetadata> columns = Arrays.asList(new ColumnMetadata(TYPE,key));
-//        Project project = new Project(INDEX, TYPE,columns);
-//        stepList.add(project);
-//		LogicalPlan logicalPlan = new LogicalPlan(stepList);
-//		
-//		
-//        QueryResult queryResult = null;
-//		try {
-//			queryResult = (QueryResult) queryEngine.execute(logicalPlan);
-//		} catch (UnsupportedOperationException | ExecutionException
-//				| UnsupportedException e) {
-//			// TODO throws Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//        
-//        Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
-//        Row row = null;
-//        while(rowIterator.hasNext()){
-//        	if(row != null) {
-//        		row = null; break;//TODO throw new Exception
-//        	}else row = rowIterator.next();
-//        	
-//        }
-//        
-//        return (String) row.getCells().get(key).getValue();
         
 	}
+*/
 
 	/**
 	 * @param elasticStorageEngine
@@ -136,4 +114,64 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 	}
 
 
+
+    //REVIEW Esto es la nueva interfaz, lo anterior estaba de antes hay que revisarlos.
+
+
+    @Override
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata) throws UnsupportedException, ExecutionException {
+    	//TODO index settings?
+        throw new UnsupportedException("Not yet supported");
+    }
+
+    @Override
+    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata) throws UnsupportedException, ExecutionException {
+        //TODO type mappings?
+        throw new UnsupportedException("Not yet supported");
+    }
+
+    @Override
+    public void dropCatalog(ClusterName targetCluster, CatalogName name) throws UnsupportedException, ExecutionException {
+    	//TODO getName o qualifiedName?
+    	DeleteIndexResponse delete = recoveredClient(targetCluster).admin().indices().delete(new DeleteIndexRequest(name.getName())).actionGet();
+        if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
+
+    }
+
+    @Override
+    public void dropTable(ClusterName targetCluster, TableName name) throws UnsupportedException, ExecutionException {
+    	 //drop mapping => the table will be deleted
+    	//TODO name.getCatalogName() y targetCluster.getName().
+        DeleteMappingResponse delete =recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName()).execute().actionGet();
+        if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
+        //TODO configure level??
+    }
+    
+    
+
+/*//TODO new features in meta?
+    @Override
+    public void createIndex(String catalog, String tableName, String... fields) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("Not supported");
+
+    }
+
+    @Override
+    public void dropIndex(String catalog, String tableName, String... fields) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("not supported");
+
+    }
+
+    
+    /*public void dropIndexes(String catalog, String tableName) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("not supported");
+
+    }
+*/
+    
+    
+    private Client recoveredClient(ClusterName targetCluster) {
+        return (Client) connectionHandle.getConnection(targetCluster.getName()).getClient();
+    }
 }
+
