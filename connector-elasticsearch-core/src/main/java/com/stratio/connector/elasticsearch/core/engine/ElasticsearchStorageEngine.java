@@ -28,6 +28,7 @@ import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
 import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.action.deletebyquery.IndexDeleteByQueryResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -114,6 +115,8 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 		if( bulkResponse.hasFailures()) throw new ExecutionException(bulkResponse.buildFailureMessage());	
 								
 	}
+	
+	
 
 	/**
 	 * Returns an IndexRequestBuilder. Adds the json created from the row
@@ -204,5 +207,52 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 		this.elasticClient = elasticClient;
 	}
 
+	
+	/**
+     * Insert a document in Elasticsearch.
+     *
+     * @param index			the database.
+     * @param type		    the type.
+     * @param row      		the row.
+     * @param id			the id 
+     * @throws ExecutionException  in case of failure during the execution.
+     */
+	
+	protected void insert(String index, String type, Row row, String id) throws UnsupportedOperationException, ExecutionException {
+		//TODO if (null) => ... public insert... should call this method
+		
+		//TODO connector should check??
+		if (isEmpty(index) || isEmpty(type) || row == null || isEmpty(id)) {
+			throw new ExecutionException("illegal insert: index, type and row cannot be empties"); 
+		}else{
+			//CHECK BEFORE INSERTING?			
+			//TODO read configuration to set index settings
+			try {
+				IndexResponse response = createIndexRequestBuilder(index, type, row,id).execute().get();
+			} catch (InterruptedException | java.util.concurrent.ExecutionException e) {
+				throw new ExecutionException("Data has not been indexed");
+
+			}
+			//check response
+		}
+			
+	}
+	
+	/**
+	 * Returns an IndexRequestBuilder. Adds the json created from the row
+	 */
+	private IndexRequestBuilder createIndexRequestBuilder(String index, String type, Row row,String id){
+		
+	
+		Map<String, Object> json = new HashMap<String,Object>();
+		for (Map.Entry<String, Cell> entry : row.getCells().entrySet()){
+			Object cellValue = entry.getValue().getValue();	
+			//TODO check if the cell is primaryKey?
+			json.put(entry.getKey(), cellValue);
+		}
+		return elasticClient.prepareIndex(index,type,id).setSource(json);	
+		
+		
+	}
 
 }

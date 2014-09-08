@@ -17,6 +17,10 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.util.ArrayList;
 
+import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -32,21 +36,37 @@ public class MatchBuilderHelper{
 
 	public static QueryBuilder createMatchBuilder(ArrayList<Match> matchList) throws UnsupportedException{
 		
-		
+		QueryBuilder queryBuilder = null;
+		BoolQueryBuilder boolQueryBuilder = null;
 		
 		if(matchList.isEmpty()){
 			return QueryBuilders.matchAllQuery();
+			//TODO wrapper with QueryBuilders.IdQuery?. Equivalent to requestQuery.setIndices?
 		}else{
-			throw new UnsupportedException("Not yet supported full text searchs");
-			/*
-			 * TODO
-			 * QueryBuilder queryBuilder = null;
-			BoolQueryBuilder boolQueryBuilder = (queries.length > 1) ? QueryBuilders.boolQuery() : null;		
-			if(boolQueryBuilder != null) return boolQueryBuilder;
-			else return queryBuilder;
-			*/
+			
+			
+			boolQueryBuilder = (matchList.size() > 1) ? QueryBuilders.boolQuery() : null ;
+			
+			for(Match match: matchList){
+				QueryBuilder localQueryBuilder;
+				//TODO only exact terms query implemented
+				
+				localQueryBuilder = QueryBuilders.termsQuery(match.getField(),match.getTerms()).minimumMatch(match.getMinimumMatch());
+				
+				if (boolQueryBuilder == null) queryBuilder = localQueryBuilder;
+				else {
+					
+					boolQueryBuilder.must(localQueryBuilder);
+				}
+				/*TODO if(match.computeScore())
+				else*/
+			}
+			
+			
 		}
 	
+		if (boolQueryBuilder != null) return boolQueryBuilder;
+		else return queryBuilder;
 
 	}
 }

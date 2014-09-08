@@ -91,6 +91,37 @@ public class QueryTest extends ConnectionTest {
 
     }
 
+    @Test
+    public void selectWithoutRecords() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+
+
+        insertRow(1);
+
+        refresh();
+
+        List<LogicalStep> stepList = new ArrayList<>();
+        List<ColumnMetadata> columns = new ArrayList<>();
+
+        columns.add(new ColumnMetadata(COLLECTION,COLUMN_1));
+        columns.add(new ColumnMetadata(COLLECTION,COLUMN_2));
+        columns.add(new ColumnMetadata(COLLECTION,COLUMN_3));
+        Project project = new Project(CATALOG, "OTHER_COLL",columns);
+        stepList.add(project);
+        
+        LogicalPlan logicalPlan = new LogicalPlan(stepList);
+        
+        
+        QueryResult queryResult = (QueryResult) ((ElasticsearchQueryEngine) stratioElasticConnector.getQueryEngine()).execute(logicalPlan);
+        Set<Object> proveSet = new HashSet<>();
+        Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
+        while(rowIterator.hasNext()){
+        	Row row = rowIterator.next();
+            for (String cell:row.getCells().keySet()){
+            	proveSet.add(cell+row.getCell(cell).getValue());
+            }
+        }
+
+    }
     
     @Test
     public void selectFromTable() throws UnsupportedException,  com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {

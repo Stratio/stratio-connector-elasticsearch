@@ -134,6 +134,7 @@ public class ElasticsearchConnector implements IConnector {
 			elasticClient.close();
 			logger.info("Disconnected from Elasticsearch");
 		}
+		//close Node
 		elasticClient = null;
 		elasticStorageEngine = null;
 		elasticQueryEngine = null;

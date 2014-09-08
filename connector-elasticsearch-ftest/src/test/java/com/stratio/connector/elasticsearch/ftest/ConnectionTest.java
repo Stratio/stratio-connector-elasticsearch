@@ -17,6 +17,7 @@ package com.stratio.connector.elasticsearch.ftest;
 
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -95,7 +96,7 @@ public class ConnectionTest {
     }
     
     
-    private void deleteSet(String catalog){
+    public void deleteSet(String catalog){
     	try {
     		client.admin().indices().delete(new DeleteIndexRequest(catalog)).actionGet();
 		} catch (Exception e) {
@@ -109,7 +110,9 @@ public class ConnectionTest {
     }
     protected void refresh(String catalog){
     	try {
-    	client.admin().indices().flush(new FlushRequest(catalog)).actionGet();
+    	
+    	client.admin().indices().refresh(new RefreshRequest(catalog)).actionGet();
+    	//client.admin().indices().flush(new FlushRequest(catalog)).actionGet();
     	} catch (Exception e) {
 			// TODO: handle exception
 		}

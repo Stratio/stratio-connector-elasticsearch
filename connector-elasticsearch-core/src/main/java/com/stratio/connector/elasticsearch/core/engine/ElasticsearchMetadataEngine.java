@@ -32,6 +32,7 @@ import com.stratio.meta.common.logicalplan.LogicalPlan;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
+import com.stratio.meta.common.metadata.structures.ColumnType;
 import com.stratio.meta.common.result.QueryResult;
 
 /**
@@ -64,7 +65,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
         cells.put(key, new Cell(metadata));
         row.setCells(cells);
 		try {
-			storageEngine.insert(INDEX, TYPE, row);
+			storageEngine.insert(INDEX, TYPE, row, key);
 		} catch (UnsupportedOperationException | ExecutionException e) {
 			// TODO Incluir throws... Auto-generated catch block
 			e.printStackTrace();
@@ -74,37 +75,47 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
 	/* (non-Javadoc)
 	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
+	 * TODO null if not exist
 	 */
 	@Override
 	public String get(String key) {
-		//TODO getID, getPK
+		Object value;
+		Cell cell;
+		if ((cell= queryEngine.getRowByID(INDEX, TYPE, key).getCell(key)) != null){
+			if ((value =cell.getValue()) != null){
+				return (value instanceof String) ? (String) value : null;
+			} else return null;
+		}else return null;
+				
 
-		List<LogicalStep> stepList = new ArrayList<>();
-        List<ColumnMetadata> columns = Arrays.asList(new ColumnMetadata(TYPE,key));
-        Project project = new Project(INDEX, TYPE,columns);
-        stepList.add(project);
-		LogicalPlan logicalPlan = new LogicalPlan(stepList);
 		
-		
-        QueryResult queryResult = null;
-		try {
-			queryResult = (QueryResult) queryEngine.execute(logicalPlan);
-		} catch (UnsupportedOperationException | ExecutionException
-				| UnsupportedException e) {
-			// TODO throws Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
-        Row row = null;
-        while(rowIterator.hasNext()){
-        	if(row != null) {
-        		row = null; break;//TODO throw new Exception
-        	}else row = rowIterator.next();
-        	
-        }
-        
-        return (String) row.getCells().get(key).getValue();
+		//TODO getID, getPK
+//		List<LogicalStep> stepList = new ArrayList<>();
+//        List<ColumnMetadata> columns = Arrays.asList(new ColumnMetadata(TYPE,key));
+//        Project project = new Project(INDEX, TYPE,columns);
+//        stepList.add(project);
+//		LogicalPlan logicalPlan = new LogicalPlan(stepList);
+//		
+//		
+//        QueryResult queryResult = null;
+//		try {
+//			queryResult = (QueryResult) queryEngine.execute(logicalPlan);
+//		} catch (UnsupportedOperationException | ExecutionException
+//				| UnsupportedException e) {
+//			// TODO throws Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        
+//        Iterator<Row> rowIterator = queryResult.getResultSet().iterator();
+//        Row row = null;
+//        while(rowIterator.hasNext()){
+//        	if(row != null) {
+//        		row = null; break;//TODO throw new Exception
+//        	}else row = rowIterator.next();
+//        	
+//        }
+//        
+//        return (String) row.getCells().get(key).getValue();
         
 	}
 

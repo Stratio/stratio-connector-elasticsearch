@@ -40,6 +40,7 @@ public class LimitModifier{
 		if (limit != null) { 
 			if(type == SearchType.SCAN) requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN); 
 			else if(type == SearchType.QUERY_THEN_FETCH) requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
+			else if(type == SearchType.DFS_QUERY_THEN_FETCH) requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.DFS_QUERY_THEN_FETCH); 
 			//TODO else throw new ExecutionException("SearchType unexpected: "+ type);
 		}else requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
 		

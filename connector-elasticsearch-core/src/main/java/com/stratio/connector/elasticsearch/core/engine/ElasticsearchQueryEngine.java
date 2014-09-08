@@ -15,12 +15,23 @@
 */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import org.elasticsearch.client.Client;
+import java.util.Map;
 
+import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
+
+import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.meta.ElasticsearchResultSet;
 import com.stratio.connector.meta.ICallBack;
 import com.stratio.connector.meta.IResultSet;
 import com.stratio.meta.common.connector.IQueryEngine;
+import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalPlan;
@@ -52,6 +63,19 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
     }
     
 
+    protected Row getRowByID(String index, String type, String id){
+    	GetResponse response= elasticClient.prepareGet(index, type, id).execute().actionGet();
+    	
+    	Row row = new Row();
+    	
+    	if(!response.isSourceEmpty()){
+			for (Map.Entry<String, Object> entry : response.getSourceAsMap().entrySet())	{
+				row.addCell(entry.getKey(), new Cell(entry.getValue()));
+			}
+    	}
+    	return row;
+    	
+    }
 	
 	  /**
 * Set the connection.

@@ -51,6 +51,7 @@ import com.stratio.connector.meta.Match;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.LogicalPlan;
@@ -91,11 +92,11 @@ public class LogicalPlanExecutor {
  * Construct a new logical plan executor ready to execute the query
  * @param logicalPlan the logical plan to build the query
  * @param elasticClient the Elasticsearch client
- * @throws ElasticsearchQueryException if any trouble happen executing the query
  * @throws com.stratio.connector.meta.exception.UnsupportedOperationException if any operation is not allowed.
  * @throws UnsupportedException
+ * @throws ExecutionException 
  */
-public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException{
+public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException, ExecutionException{
 		this.elasticClient = elasticClient;
 		
 		readLogicalPlan(logicalPlan);
@@ -117,7 +118,7 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 		for (LogicalStep lStep : logicalSteps) { //TODO validate??
 			if (lStep instanceof Project) {
 				if (projection == null) projection = (Project) lStep;
-				else throw new ElasticsearchQueryException(" # Project > 1", null);
+				else throw new UnsupportedOperationException(" # Project > 1", null);
 			} else if (lStep instanceof Sort) {
 				sortList.add((Sort) lStep);
 			} else if (lStep instanceof Limit) {
@@ -142,7 +143,7 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 
 
 
-	private void buildQuery() throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+	private void buildQuery() throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
 		//TODO Multisearch? elasticClient.prepareMultiSearch().add(requestBuilder);
 		//TODO if count or distinct => prepare Count?? or aggregation
 		requestBuilder = elasticClient.prepareSearch();
@@ -171,10 +172,13 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 	 * 
 	 */
 	private void setSearchType() {
-		if(limitValue == null) searchType = SearchType.SCAN;
+		if(limitValue == null) searchType = SearchType.SCAN;//TODO or limit < XX
 		else {
-			//TODO IF SORT IS EMPTY=> SCAN o QUERY_THEN_FETCH o setSort(Empty)(default=>score?)
-			searchType = (sortList.isEmpty()) ? SearchType.QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
+			if(!matchList.isEmpty()) searchType = SearchType.DFS_QUERY_THEN_FETCH; //TODO check if query is constant filtered?
+			else //TODO IF SORT IS EMPTY=> SCAN o QUERY_THEN_FETCH o setSort(Empty)(default=>score?)
+				searchType = (sortList.isEmpty()) ? SearchType.QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
+			
+		
 		}		
 	}
 
@@ -183,12 +187,15 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 	 */
 
 	public QueryResult executeQuery() {
-		
+
+		//TODO
+		System.out.println(requestBuilder);
+
 		ElasticsearchResultSet resultSet = new ElasticsearchResultSet();		
 		resultSet.setColumnMetadata(projection.getColumnList());// needed??
 		SearchResponse scrollResp;
 		
-		if(searchType == SearchType.QUERY_THEN_FETCH){ 
+		if(searchType == SearchType.QUERY_THEN_FETCH || searchType ==SearchType.DFS_QUERY_THEN_FETCH){ 
 			scrollResp = requestBuilder.execute().actionGet();
 			for (SearchHit hit : scrollResp.getHits()) {
 				resultSet.add(createRow(hit));
@@ -201,7 +208,7 @@ public LogicalPlanExecutor(LogicalPlan logicalPlan, Client elasticClient) throws
 			    for (SearchHit hit : scrollResp.getHits()) {
 			    	resultSet.add(createRow(hit));
 			    }
-			}while(scrollResp.getHits().getHits().length == 0);
+			}while(scrollResp.getHits().getHits().length != 0);
 			   
 		}
 		

@@ -13,38 +13,12 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
 package com.stratio.connector.meta;
 
-
-import com.stratio.meta.common.logicalplan.LogicalStep;
-
-public class Sort extends LogicalStep{
-
-	
-	public static final int ASC = 1;
-	public static final int DESC = 2;
-	public static final int SCORE = 3;
-	
-	private String fieldName;
-	private int type;
-	
-	public Sort(String field,int type){
-		fieldName = field;
-		this.type = type;
-	}
-
-	public Sort(int type){
-		this.type = type;
-	}
-	
-	public String getField() {
-		return fieldName;
-	}
-
-	public int getType() {
-		return type;
-	}
-	
+/**
+ * @author darroyo
+ *
+ */
+public class SortField {
 
 }
