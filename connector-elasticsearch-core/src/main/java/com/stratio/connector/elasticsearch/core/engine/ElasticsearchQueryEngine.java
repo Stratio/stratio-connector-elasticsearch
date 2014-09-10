@@ -16,28 +16,25 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
+
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
-
-import java.util.Map;
 
 
 public class ElasticsearchQueryEngine implements IQueryEngine {
 
-    ElasticSearchConnectionHandle connectionHandle;
+    ElasticSearchConnectionHandler connectionHandle;
 
-    public ElasticsearchQueryEngine(ElasticSearchConnectionHandle connectionHandle) {
+    public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
 
         this.connectionHandle = connectionHandle;
 
@@ -50,6 +47,8 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
             queryResult = execute(recoveredClient(targetCluster), workflow);
         } catch (UnsupportedOperationException e) {
             e.printStackTrace(); //TODO
+        } catch (HandlerConnectionException e) {
+            e.printStackTrace();
         }
         return queryResult;
     }
@@ -67,7 +66,7 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
 	
 
 
-    private Client recoveredClient(ClusterName targetCluster) {
+    private Client recoveredClient(ClusterName targetCluster) throws HandlerConnectionException {
         return (Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection();
     }
 

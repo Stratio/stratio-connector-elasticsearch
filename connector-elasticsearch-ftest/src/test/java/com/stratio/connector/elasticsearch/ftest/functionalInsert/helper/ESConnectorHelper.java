@@ -18,7 +18,7 @@ package com.stratio.connector.elasticsearch.ftest.functionalInsert.helper;
 
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.mock;
  */
 public class ESConnectorHelper implements IConnectorHelper{
 
-private   ElasticSearchConnectionHandle connectorHandle;
+private ElasticSearchConnectionHandler connectorHandle;
 
     protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60";//"localhost";//"172.19.0.77"
      private String SERVER_PORT = "9300,9300,9300";

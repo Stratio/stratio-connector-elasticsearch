@@ -35,7 +35,7 @@ import static com.stratio.connector.elasticsearch.core.configuration.Configurati
  * The configuration for Elasticsearch.
  */
 
-public class ElasticsearchClientConfiguration implements IConfiguration {
+public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
 
     /**
      * The parser.

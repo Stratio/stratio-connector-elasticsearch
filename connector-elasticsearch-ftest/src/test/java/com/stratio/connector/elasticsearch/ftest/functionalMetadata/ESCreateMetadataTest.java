@@ -24,7 +24,7 @@ import com.stratio.meta.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESCreateTest extends GenericCreateTest {
+public class ESCreateMetadataTest extends GenericMetadataCreateTest {
 
 
     @Override

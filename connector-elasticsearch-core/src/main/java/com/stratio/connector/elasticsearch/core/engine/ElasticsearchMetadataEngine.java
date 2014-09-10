@@ -1,21 +1,24 @@
-/**
-* Copyright (C) 2014 Stratio (http://stratio.com)
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/*
+ * Stratio Meta
+ *
+ *   Copyright (c) 2014, Stratio, All rights reserved.
+ *
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
+ */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
+
+
+import com.stratio.connector.commons.connection.ConnectionHandler;
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -30,116 +33,94 @@ import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRespon
 import org.elasticsearch.client.Client;
 
 /**
+ *
+ * This class is the responsible of manage the ElasticSearchMetadata
  * @author darroyo
  *
  */
 public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
-	private transient ElasticSearchConnectionHandle connectionHandle;
+    /**
+     * The connection handle.
+     */
+	private transient ConnectionHandler connectionHandler;
 
-    public ElasticsearchMetadataEngine(ElasticSearchConnectionHandle connectionHandle) {
-
-        this.connectionHandle = connectionHandle;
+    /**
+     * Constructor.
+     * @param  connectionHandler the connector handle.
+     */
+    public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
     }
 
 
+    /**
+     * This method create a index in ES.
+     * @param  targetCluster the cluster to be created.
+     * @param  indexMetaData the index configuration.
+     */
+
     @Override
-    public void createCatalog(ClusterName targetCluster, CatalogMetadata catalogMetadata) throws UnsupportedException  {
-    	//TODO index settings?
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData) throws UnsupportedException  {
+        throw new UnsupportedException("Not yet supported");
+    }
+    /**
+     * This method create a type in ES.
+     * @param  targetCluster the cluster to be created.
+     * @param  typeMetaData the type configuration.
+     */
+
+    @Override
+    public void createTable(ClusterName targetCluster, TableMetadata typeMetaData) throws UnsupportedException  {
         throw new UnsupportedException("Not yet supported");
     }
 
-    @Override
-    public void createTable(ClusterName targetCluster, TableMetadata tableMetadata) throws UnsupportedException  {
-        //TODO type mappings?
-        throw new UnsupportedException("Not yet supported");
-    }
+    /**
+     * This method drop a index in ES.
+     * @param  targetCluster the cluster to be created.
+     * @param  indexName the index name.
+     */
 
     @Override
-    public void dropCatalog(ClusterName targetCluster, CatalogName name) throws ExecutionException {
-    	//TODO getName o qualifiedName?
-    	DeleteIndexResponse delete = recoveredClient(targetCluster).admin().indices().delete(new DeleteIndexRequest(name.getName())).actionGet();
-        if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
+    public void dropCatalog(ClusterName targetCluster, CatalogName indexName) throws ExecutionException {
+        DeleteIndexResponse delete = null;
+        try {
+            delete = recoveredClient(targetCluster).admin().indices().delete(new DeleteIndexRequest(indexName.getName())).actionGet();
+            if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
+        } catch (HandlerConnectionException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
+    /**
+     * This method drop a type in ES.
+     * @param  targetCluster the cluster to be created.
+     * @param  typeName the type name.
+     */
     @Override
-    public void dropTable(ClusterName targetCluster, TableName name) throws  ExecutionException {
-    	 //drop mapping => the table will be deleted
-    	//TODO name.getCatalogName() y targetCluster.getName().
-        DeleteMappingResponse delete =recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName()).execute().actionGet();
-        if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
-        //TODO configure level??
-    }
-    
-    
+    public void dropTable(ClusterName targetCluster, TableName typeName) throws  ExecutionException {
+        DeleteMappingResponse delete = null;
+        try {
+            delete = recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(typeName.getCatalogName().getName()).setType(typeName.getName()).execute().actionGet();
+            if (!delete.isAcknowledged()) throw new ExecutionException("dropTable request has not been acknowledged");
+        } catch (HandlerConnectionException e) {
+            e.printStackTrace(); //TODO
+        }
 
-    
-    private Client recoveredClient(ClusterName targetCluster) {
-        return (Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection();
+
+
     }
 
 
-
-
-//    //TODO fields used in old MetadataEngine (put,get) interface
-//    private static final String INDEX = "metadata_storage";
-//    private static String TYPE = "default";
-//    private ElasticsearchStorageEngine storageEngine = null;
-//    private ElasticsearchQueryEngine queryEngine = null;
-//    	/* (non-Javadoc)
-//	 * @see com.stratio.meta.common.connector.IMetadataEngine#put(java.lang.String, java.lang.String)
-//	 */
-//	@Override
-//	public void put(String key, String metadata) {
-//		//TODO validate? key exist? =>key=type y id=1
-//		//get then insert?
-//
-//		Row row = new Row();
-//        Map<String, Cell> cells = new HashMap<>();
-//        cells.put(key, new Cell(metadata));
-//        row.setCells(cells);
-//		try {
-//			storageEngine.insert(INDEX, TYPE, row, key);
-//		} catch (UnsupportedOperationException | ExecutionException e) {
-//			// TODO Incluir throws... Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//	}
-//
-//
-//	/* (non-Javadoc)
-//	 * @see com.stratio.meta.common.connector.IMetadataEngine#get(java.lang.String)
-//	 * TODO null if not exist
-//	 */
-//    @Override
-//	public String get(String key) {
-//		//TODO getID, getPK
-//		Object value;
-//		Cell cell;
-//		if ((cell= queryEngine.getRowByID(INDEX, TYPE, key).getCell(key)) != null){
-//			if ((value =cell.getValue()) != null){
-//				return (value instanceof String) ? (String) value : null;
-//			} else return null;
-//		}else return null;
-//
-//	}
-//
-//		/**
-//	 * @param elasticStorageEngine
-//	 */
-//    public void setStorageEngine(ElasticsearchStorageEngine elasticStorageEngine) {
-//        storageEngine = elasticStorageEngine;
-//
-//    }
-//
-//    /**
-//     * @param elasticQueryEngine
-//     */
-//    public void setQueryEngine(ElasticsearchQueryEngine elasticQueryEngine) {
-//        queryEngine  = elasticQueryEngine;
-//
-//    }
+    /**
+     * This method return the concrete ES Client for a cluster,
+     * @param targetCluster the cluster identification.
+     * @return the ES Client.
+     */
+    private Client recoveredClient(ClusterName targetCluster) throws HandlerConnectionException {
+        return (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+    }
 }
 

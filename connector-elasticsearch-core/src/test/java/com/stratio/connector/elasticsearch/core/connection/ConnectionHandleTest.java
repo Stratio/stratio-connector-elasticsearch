@@ -16,7 +16,10 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
-import com.stratio.connector.connection.Connection;
+
+import com.stratio.connector.commons.connection.Connection;
+
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
@@ -48,20 +51,20 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 
-@PrepareForTest(value = {ElasticSearchConnectionHandle.class})
+@PrepareForTest(value = {ElasticSearchConnectionHandler.class})
 
 public class ConnectionHandleTest {
 
 
     private static final String CLUSTER_NAME = "CLUSTER_NAME";
-    private ElasticSearchConnectionHandle connectionHandle = null;
+    private ElasticSearchConnectionHandler connectionHandle = null;
     @Mock
     private IConfiguration iConfiguration;
 
 
     @Before
     public void before() throws Exception {
-        connectionHandle = new ElasticSearchConnectionHandle(iConfiguration);
+        connectionHandle = new ElasticSearchConnectionHandler(iConfiguration);
 
     }
 
@@ -73,7 +76,7 @@ public class ConnectionHandleTest {
      * Method: createConnection(String clusterName, Connection connection)
      */
     @Test
-    public void testCreateNodeConnection() throws Exception {
+    public void testCreateNodeConnection() throws Exception, HandlerConnectionException {
 
 
         ICredentials credentials = mock(ICredentials.class);
@@ -98,7 +101,7 @@ public class ConnectionHandleTest {
     }
 
     @Test
-    public void testCreateTransportConnection() throws Exception {
+    public void testCreateTransportConnection() throws Exception, HandlerConnectionException {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> options = new HashMap<>();
@@ -139,7 +142,7 @@ public class ConnectionHandleTest {
     }
 
     @Test
-    public void testGetConnection() {
+    public void testGetConnection() throws HandlerConnectionException {
         Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox.getInternalState(connectionHandle, "connections");
         NodeConnection connection = mock(NodeConnection.class);
         mapConnection.put(CLUSTER_NAME, connection);

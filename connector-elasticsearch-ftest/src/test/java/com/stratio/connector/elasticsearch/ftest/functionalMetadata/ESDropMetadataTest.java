@@ -24,7 +24,7 @@ import com.stratio.meta.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESDropTest extends GenericDropTest {
+public class ESDropMetadataTest extends GenericMetadataDropTest {
 
 
     @Override

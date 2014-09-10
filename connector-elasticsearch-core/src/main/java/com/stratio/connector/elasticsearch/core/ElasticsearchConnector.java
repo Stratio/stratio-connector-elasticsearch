@@ -17,21 +17,20 @@
 package com.stratio.connector.elasticsearch.core;
 
 
-import com.stratio.connector.elasticsearch.core.configuration.ConnectionConfigurationCreator;
-import com.stratio.connector.elasticsearch.core.configuration.SupportedOperationsCreator;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
+
+
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
-import com.stratio.connector.meta.ConnectionConfiguration;
+
 import com.stratio.meta.common.connector.*;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.Set;
 
 
 /**
@@ -46,9 +45,9 @@ public class ElasticsearchConnector implements IConnector {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * The connectionHandle.
+     * The connectionHandler.
      */
-    private ElasticSearchConnectionHandle connectionHandle = null;
+    private ElasticSearchConnectionHandler connectionHandler = null;
 
 
     /**
@@ -62,7 +61,7 @@ public class ElasticsearchConnector implements IConnector {
     @Override
     public void init(IConfiguration configuration) {
 
-        connectionHandle = new ElasticSearchConnectionHandle(configuration);
+        connectionHandler = new ElasticSearchConnectionHandler(configuration);
 
     }
 
@@ -75,7 +74,11 @@ public class ElasticsearchConnector implements IConnector {
      */
     @Override
     public void connect(ICredentials credentials, ConnectorClusterConfig config) {
-        connectionHandle.createConnection(credentials, config);
+        try {
+            connectionHandler.createConnection(credentials, config);
+        } catch (HandlerConnectionException e) {
+            e.printStackTrace(); //TODO
+        }
     }
 
 
@@ -86,7 +89,7 @@ public class ElasticsearchConnector implements IConnector {
      */
     @Override
     public void close(ClusterName name) {
-        connectionHandle.closeConnection(name.getName());
+        connectionHandler.closeConnection(name.getName());
 
     }
 
@@ -114,7 +117,7 @@ public class ElasticsearchConnector implements IConnector {
     @Override
     public IStorageEngine getStorageEngine() {
 
-        return new ElasticsearchStorageEngine(connectionHandle);
+        return new ElasticsearchStorageEngine(connectionHandler);
 
     }
 
@@ -127,7 +130,7 @@ public class ElasticsearchConnector implements IConnector {
     @Override
     public IQueryEngine getQueryEngine() {
 
-        return new ElasticsearchQueryEngine(connectionHandle);
+        return new ElasticsearchQueryEngine(connectionHandler);
     }
 
     /**
@@ -137,28 +140,10 @@ public class ElasticsearchConnector implements IConnector {
      */
     @Override
     public IMetadataEngine getMetadataEngine() {
-        return new ElasticsearchMetadataEngine(connectionHandle);
+        return new ElasticsearchMetadataEngine(connectionHandler);
     }
 
 
-    /**
-     * Return the supported operations
-     *
-     * @return the supported operations.
-     */
-    public Map<Operations, Boolean> getSupportededOperations() {
-        return SupportedOperationsCreator.getSupportedOperations();
-    }
-
-
-    /**
-     * Return the supported configuration options
-     *
-     * @return the the supported configuration options.
-     */
-    public Set<ConnectionConfiguration> getConnectionConfiguration() {
-        return ConnectionConfigurationCreator.getConfiguration();
-    }
 
 
     /**
@@ -170,7 +155,7 @@ public class ElasticsearchConnector implements IConnector {
     @Override
     public boolean isConnected(ClusterName name) {
 
-        return connectionHandle.isConnected(name.getName());
+        return connectionHandler.isConnected(name.getName());
 
     }
 

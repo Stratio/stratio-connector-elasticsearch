@@ -1,3 +1,4 @@
+.clover
 *.out
 */**/*.out
 */**/target

@@ -16,7 +16,9 @@
 
 package com.stratio.connector.elasticsearch.core;
 
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandle;
+
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
@@ -72,7 +74,7 @@ public class ElasticsearchConnectorTest {
         elasticsearchConnector.init(iconfiguration);
 
 
-        ElasticSearchConnectionHandle connectionHandle = (ElasticSearchConnectionHandle) Whitebox.getInternalState(elasticsearchConnector, "connectionHandle");
+        ElasticSearchConnectionHandler connectionHandle = (ElasticSearchConnectionHandler) Whitebox.getInternalState(elasticsearchConnector, "connectionHandler");
         Object recoveredConfiguration = Whitebox.getInternalState(connectionHandle, "configuration");
 
 
@@ -85,14 +87,14 @@ public class ElasticsearchConnectorTest {
      * Method: close()
      */
     @Test
-    public void testConnect() throws Exception {
+    public void testConnect() throws Exception, HandlerConnectionException {
 
         ICredentials iCredentials = mock(ICredentials.class);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
         Map<String, String> options = new HashMap<>();
         ConnectorClusterConfig config = new ConnectorClusterConfig(clusterName, options);
-        ElasticSearchConnectionHandle connectionHandle = mock(ElasticSearchConnectionHandle.class);
-        Whitebox.setInternalState(elasticsearchConnector, "connectionHandle", connectionHandle);
+        ElasticSearchConnectionHandler connectionHandle = mock(ElasticSearchConnectionHandler.class);
+        Whitebox.setInternalState(elasticsearchConnector, "connectionHandler", connectionHandle);
 
 
         elasticsearchConnector.connect(iCredentials, config);
@@ -102,4 +104,4 @@ public class ElasticsearchConnectorTest {
     }
 
 
-} 
+}

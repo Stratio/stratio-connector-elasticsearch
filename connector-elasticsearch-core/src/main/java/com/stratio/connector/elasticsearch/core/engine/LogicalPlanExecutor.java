@@ -24,6 +24,7 @@ import com.stratio.connector.meta.ElasticsearchResultSet;
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -40,6 +41,7 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
@@ -178,40 +180,47 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 
 	public QueryResult executeQuery(Client elasticClient) {
 
-		//TODO 
-		System.out.println(requestBuilder);
+		//TODO
+        QueryResult queryResult = null;
+		try {
 
-		ElasticsearchResultSet resultSet = new ElasticsearchResultSet();
-        //resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
-        SearchResponse scrollResp;
-        
-        
-		if(searchType == SearchType.QUERY_THEN_FETCH || searchType ==SearchType.DFS_QUERY_THEN_FETCH){ 
-			scrollResp = requestBuilder.execute().actionGet();
-			for (SearchHit hit : scrollResp.getHits()) {
-				resultSet.add(createRow(hit));
-		    }
-		}else if ( searchType == SearchType.SCAN){
-			//Prepare to SCAN
-			scrollResp = requestBuilder.execute().actionGet();
-			do{
-			    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
-			    for (SearchHit hit : scrollResp.getHits()) {
-			    	resultSet.add(createRow(hit));
-			    }
-			}while(scrollResp.getHits().getHits().length != 0);
-			   
-		}
+            ElasticsearchResultSet resultSet = new ElasticsearchResultSet();
+            //resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
+            SearchResponse scrollResp;
+
+
+            if (searchType == SearchType.QUERY_THEN_FETCH || searchType == SearchType.DFS_QUERY_THEN_FETCH) {
+                scrollResp = requestBuilder.execute().actionGet();
+                for (SearchHit hit : scrollResp.getHits()) {
+                    resultSet.add(createRow(hit));
+                }
+            } else if (searchType == SearchType.SCAN) {
+                //Prepare to SCAN
+                scrollResp = requestBuilder.execute().actionGet();
+                do {
+                    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+                    for (SearchHit hit : scrollResp.getHits()) {
+                        resultSet.add(createRow(hit));
+                    }
+                } while (scrollResp.getHits().getHits().length != 0);
+
+            }
 
 //		if(groupBy != null){ //REVIEW a la espera de meta
 //			Aggregation agg = scrollResp.getAggregations().get("keys");
 //			agg.
 //			response.getAggregations().get("keys");
 //			Collection<Terms.Bucket> buckets = terms.getBuckets();
-        //}
+            //}
 
-
-        return QueryResult.createQueryResult(resultSet);
+            queryResult = QueryResult.createQueryResult(resultSet);
+        }catch (IndexMissingException e){
+            if (logger.isDebugEnabled()){
+                logger.debug("The index not exists. The ES connector returns an empty QueryResult");
+            }
+            queryResult = QueryResult.createQueryResult(new ElasticsearchResultSet());
+        }
+        return queryResult;
     }
 
 
