@@ -19,6 +19,7 @@ package com.stratio.connector.elasticsearch.core.engine;
 
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.engine.utils.DeepContentBuilder;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -27,10 +28,18 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
 import org.elasticsearch.client.Client;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
+
 
 /**
  *
@@ -39,6 +48,13 @@ import org.elasticsearch.client.Client;
  *
  */
 public class ElasticsearchMetadataEngine implements IMetadataEngine{
+
+
+    DeepContentBuilder deepContentBuilder = new DeepContentBuilder();
+    /**
+     * The Log.
+     */
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The connection handle.
@@ -58,21 +74,43 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
      * This method create a index in ES.
      * @param  targetCluster the cluster to be created.
      * @param  indexMetaData the index configuration.
+     *
+     * @throws UnsupportedException if any operation is not supported.
+     * @throws  ExecutionException if an error occur.
      */
 
     @Override
-    public void createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData) throws UnsupportedException  {
-        throw new UnsupportedException("Not yet supported");
+    public void createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData) throws UnsupportedException, ExecutionException {
+        try {
+
+            createIndex(targetCluster, indexMetaData);
+            addAllTypesInTheCatalog(targetCluster, indexMetaData.getTables());
+        } catch (HandlerConnectionException e) {
+            throwHandlerConnectionException(e, "createCatalog");
+        }
     }
+
+
+
+
     /**
      * This method create a type in ES.
      * @param  targetCluster the cluster to be created.
-     * @param  typeMetaData the type configuration.
+     * @param  typeMetadata the type configuration.
+     *
+     * @throws UnsupportedException if any operation is not supported.
+     * @throws  ExecutionException if an error occur.
+     *
      */
-
     @Override
-    public void createTable(ClusterName targetCluster, TableMetadata typeMetaData) throws UnsupportedException  {
-        throw new UnsupportedException("Not yet supported");
+    public void createTable(ClusterName targetCluster, TableMetadata typeMetadata)   throws UnsupportedException,
+            ExecutionException{
+        try {
+
+                recoveredClient(targetCluster).admin().indices().preparePutMapping().setIndices(typeMetadata.getName().getCatalogName().getName()).setType(typeMetadata.getName().getName()).setSource(deepContentBuilder.createTypeSource(typeMetadata)).execute().actionGet();
+        } catch (HandlerConnectionException e) {
+            throwHandlerConnectionException(e, "createTable");
+        }
     }
 
     /**
@@ -88,9 +126,8 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
             delete = recoveredClient(targetCluster).admin().indices().delete(new DeleteIndexRequest(indexName.getName())).actionGet();
             if (!delete.isAcknowledged()) throw new ExecutionException("dropCatalog request has not been acknowledged");
         } catch (HandlerConnectionException e) {
-            e.printStackTrace();
+            throwHandlerConnectionException(e, "dropCatalog");
         }
-
 
     }
 
@@ -106,11 +143,15 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
             delete = recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(typeName.getCatalogName().getName()).setType(typeName.getName()).execute().actionGet();
             if (!delete.isAcknowledged()) throw new ExecutionException("dropTable request has not been acknowledged");
         } catch (HandlerConnectionException e) {
-            e.printStackTrace(); //TODO
+            throwHandlerConnectionException(e, "dropTable");
+
         }
+    }
 
-
-
+    private void throwHandlerConnectionException(HandlerConnectionException e, String operation) throws ExecutionException {
+        String msg = "Error find ElasticSearch client in "+ operation +". "+e.getMessage();
+        logger.error(msg);
+        throw new ExecutionException(msg,e);
     }
 
 
@@ -121,6 +162,24 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
      */
     private Client recoveredClient(ClusterName targetCluster) throws HandlerConnectionException {
         return (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+    }
+
+
+    private void createIndex(ClusterName targetCluster, CatalogMetadata indexMetaData) throws HandlerConnectionException {
+        CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(targetCluster).admin().indices().prepareCreate(indexMetaData.getName().getName());
+        createIndexRequestBuilder.setSettings(indexMetaData.getOptions());
+        createIndexRequestBuilder.execute().actionGet();
+
+
+    }
+
+
+    private void addAllTypesInTheCatalog(ClusterName targetCluster, Map<TableName, TableMetadata> types) throws UnsupportedException, ExecutionException {
+        if (types!=null) {
+            for (TableName tableName : types.keySet()) {
+                createTable(targetCluster, types.get(tableName));
+            }
+        }
     }
 }
 

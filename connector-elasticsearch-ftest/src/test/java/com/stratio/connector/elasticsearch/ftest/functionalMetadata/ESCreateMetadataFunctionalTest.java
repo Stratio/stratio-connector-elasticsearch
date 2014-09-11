@@ -16,7 +16,7 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
-import com.stratio.connector.elasticsearch.ftest.functionalInsert.helper.ESConnectorHelper;
+import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
@@ -24,7 +24,7 @@ import com.stratio.meta.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESCreateMetadataTest extends GenericMetadataCreateTest {
+public class ESCreateMetadataFunctionalTest extends GenericMetadataCreateTest {
 
 
     @Override

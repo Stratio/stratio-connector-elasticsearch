@@ -120,7 +120,7 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 	            }
 
 	        }
-	        if (projection == null) throw new ElasticsearchQueryException("no projection founded", null);
+	        if (projection == null) throw new ElasticsearchQueryException("no projection found", null);
 	        if (!sortList.isEmpty() && limitValue == null)
 	            throw new com.stratio.connector.meta.exception.UnsupportedOperationException("cannot sort: limit is required");
 

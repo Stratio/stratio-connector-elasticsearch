@@ -39,11 +39,14 @@ import org.elasticsearch.action.deletebyquery.IndexDeleteByQueryResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 
@@ -52,8 +55,6 @@ import java.util.*;
  */
 
 public class ElasticsearchStorageEngine implements IStorageEngine {
-
-
 
 
     /**
@@ -84,6 +85,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      * @param targetTable the targetName.
      * @param row         the row.
      * @throws ExecutionException in case of failure during the execution.
+     * @throws UnsupportedException it the operation is not supported.
      */
 
     @Override
@@ -173,8 +175,9 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
         if (pk!=null){
             indexRequestBuilder =  elasticClient.prepareIndex(index,type,pk).setSource(dataInsert);
         }else {
-            indexRequestBuilder =elasticClient.prepareIndex(index, type).setSource(dataInsert);
+            indexRequestBuilder = elasticClient.prepareIndex(index, type).setSource(dataInsert);
         }
+     //   indexRequestBuilder.putHeader("index.mapper.dynamic",false);
         return indexRequestBuilder;
     }
 
@@ -199,12 +202,14 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
         if (!(tempPK instanceof  String)) throw new UnsupportedException("The PK only can has String values");
     }
 
-    private Map<String, Object> createInsertMap(Row row) {
+    private Map<String, Object>     createInsertMap(Row row) {
         Map<String, Object> dataInsert = new HashMap<String, Object>();
         for (Map.Entry<String, Cell> entry : row.getCells().entrySet()) {
             Object cellValue = entry.getValue().getValue();
             dataInsert.put(entry.getKey(), cellValue);
         }
+
+
         return dataInsert;
     }
 

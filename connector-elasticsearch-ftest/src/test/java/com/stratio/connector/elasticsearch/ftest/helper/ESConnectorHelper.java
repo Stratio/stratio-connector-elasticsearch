@@ -14,12 +14,10 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalInsert.helper;
+package com.stratio.connector.elasticsearch.ftest.helper;
 
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.connector.IConnector;
@@ -27,14 +25,18 @@ import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import com.stratio.meta2.common.metadata.ColumnType;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.elasticsearch.action.support.IndicesOptions;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.hppc.cursors.ObjectObjectCursor;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
 import static org.mockito.Mockito.mock;
@@ -44,9 +46,9 @@ import static org.mockito.Mockito.mock;
  */
 public class ESConnectorHelper implements IConnectorHelper{
 
-private ElasticSearchConnectionHandler connectorHandle;
 
-    protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60";//"localhost";//"172.19.0.77"
+
+    protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60";
      private String SERVER_PORT = "9300,9300,9300";
 
 
@@ -77,6 +79,7 @@ private ElasticSearchConnectionHandler connectorHandle;
         optionsNode.put(NODE_TYPE.getOptionName(), "false");
         optionsNode.put(HOST.getOptionName(), SERVER_IP);
         optionsNode.put(PORT.getOptionName(), SERVER_PORT);
+
         return new ConnectorClusterConfig(clusterName,optionsNode);
     }
 
@@ -86,14 +89,45 @@ private ElasticSearchConnectionHandler connectorHandle;
     }
 
     @Override
-    public void deleteSet(String schema) {
-            try {
-                if (auxConection != null) auxConection.admin().indices().delete(new DeleteIndexRequest(schema)).actionGet();
-            } catch (IndexMissingException e) {
-                System.out.println("Index not exist");
-            }
+    public Map<String, Object> recoveredCatalogSettings(String indexName) {
 
+        Map<String, Object> result = new HashMap<>();
+
+        GetSettingsRequest getSettings = new GetSettingsRequest();
+        getSettings.indices(indexName);
+        getSettings.indicesOptions(IndicesOptions.strictExpandOpen());
+        GetSettingsResponse settingsResponse= auxConection.admin().indices().getSettings(getSettings).actionGet();
+        for (ObjectObjectCursor<String, Settings> setting :settingsResponse.getIndexToSettings()){
+            result =  convertMap(new HashMap(setting.value.getAsMap()));
+        }
+        return result;
     }
+
+    @Override
+    public Collection<ColumnType> getAllSupportedColumnType() {
+        Set<ColumnType> allColumntTypes = new HashSet<>();
+
+        allColumntTypes.add(ColumnType.BIGINT);
+        allColumntTypes.add(ColumnType.BOOLEAN);
+        allColumntTypes.add(ColumnType.DOUBLE);
+        allColumntTypes.add(ColumnType.FLOAT);
+        allColumntTypes.add(ColumnType.INT);
+        allColumntTypes.add(ColumnType.TEXT);
+        allColumntTypes.add(ColumnType.VARCHAR);
+        return allColumntTypes ;
+    }
+
+    private Map<String, Object> convertMap(HashMap<String, Object> hashMap) {
+
+        HashMap transformMap = new HashMap();
+        for (String key: hashMap.keySet()){
+            String[] aux = key.split("\\.");
+            transformMap.put(aux[aux.length-1],  hashMap.get(key));
+
+        }
+        return transformMap;
+    }
+
 
     @Override
     public void refresh(String schema) {

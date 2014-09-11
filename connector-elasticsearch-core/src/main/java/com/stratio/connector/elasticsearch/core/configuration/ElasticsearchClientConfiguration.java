@@ -55,6 +55,10 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
         setting.put(NODE_MASTER.getOptionName(), addSetting(configuration.getOptions(), NODE_MASTER));
         setting.put(TRANSPORT_SNIFF.getOptionName(), addSetting(configuration.getOptions(), TRANSPORT_SNIFF));
         setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
+        setting.put("index.mapping.coerce", "false");
+        setting.put("index.mapper.dynamic", "false");
+        //setting.put("index.mapping.ignore_malformed", "false");
+
 
         return ImmutableSettings.settingsBuilder().put(setting).build();
 
