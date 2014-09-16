@@ -31,8 +31,6 @@ public class ProjectModifier {
 
     public static void modify(SearchRequestBuilder requestBuilder, Project projection) {
 
-
-        //REVIEW comentado por que no existen estos metodos.
         requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
 
         List<ColumnName> columnMetadataList = projection.getColumnList();
@@ -43,10 +41,10 @@ public class ProjectModifier {
             String[] fields = new String[columnMetadataList.size()];
             int i = 0;
             for (ColumnName columnMetadata : columnMetadataList) {
-                fields[i] = columnMetadata.getName();//TODO o ALIAS??
+                fields[i] = columnMetadata.getName();
                 i++;
             }
-            //TODO IF NOT STORED=> GET_SOURCE => addField(_all).
+
             requestBuilder.addFields(fields);
         }
     }

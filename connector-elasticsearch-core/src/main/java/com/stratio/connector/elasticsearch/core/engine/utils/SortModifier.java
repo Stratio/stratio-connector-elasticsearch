@@ -36,9 +36,9 @@ public class SortModifier {
         boolean containsField = false;
         boolean containsScore = false;
 
-        //TODO missings fields?
+
         for (Sort sortElem : sortList) {
-            //TODO scoreSort?
+
             if (sortElem.getType() == Sort.SCORE) {
                 requestBuilder.addSort(SortBuilders.scoreSort().order(SortOrder.DESC));
                 containsScore = true;
@@ -48,10 +48,9 @@ public class SortModifier {
                 containsField = true;
             }
         }
-        //TODO implement user-defined query?
+
         if (containsField && containsScore) {
             requestBuilder.setTrackScores(true);
-            // throw new ExecutionException("Sort by score and field unsupported");
         }
     }
 

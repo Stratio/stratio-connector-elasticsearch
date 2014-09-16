@@ -38,57 +38,18 @@ public class FilterBuilderHelper {
 
     public static FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
 
-
-        Relation relation;
-        Operator operator;
-
-        FilterBuilder filterBuilder = null;
-        BoolFilterBuilder boolFilterBuilder = null;
-
-        boolFilterBuilder = (filters.size() > 1) ? FilterBuilders.boolFilter() : null;
-
-        for (Filter filter : filters) {
-            relation = filter.getRelation();
-            operator = relation.getOperator();
-
-            FilterBuilder localFilterBuilder = handleCompareFilter(relation);
-            if (boolFilterBuilder == null && localFilterBuilder != null) {
-                filterBuilder = localFilterBuilder;
-            } else {
-                if (operator == Operator.DISTINCT) {
-                    boolFilterBuilder.mustNot(localFilterBuilder);
-                } else
-                    boolFilterBuilder.must(localFilterBuilder);
-
-            }
-
+        BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
+          for (Filter filter : filters) {
+            Relation relation = filter.getRelation();
+            boolFilterBuilder.must(handleCompareFilter(relation));
         }
 
-
-        if (boolFilterBuilder != null) return boolFilterBuilder;
-        else return filterBuilder;
+        return boolFilterBuilder;
 
     }
 
 
-    /**
-     * @param relation
-     * @return
-     */
-    private static FilterBuilder handleInFilter(Relation relation) {
-//		Relation relIn = (RelationIn) relation;
-//		// check integer, number, string,date, etc...??
-//
-//		ArrayList inTerms = new ArrayList();
-//		for (Term<?> term : relIn.getTerms()) {
-//			// TODO check if insert the field or not
-//			inTerms.add(term.getTermValue());
-//		}
-//
-//		return FilterBuilders.inFilter(relation.getIdentifiers().get(0).getField(),inTerms.toArray());
-        throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
 
-    }
 
     private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
 
@@ -101,8 +62,10 @@ public class FilterBuilderHelper {
         switch (relation.getOperator()) {
             case COMPARE:
             case ASSIGN:
-            case DISTINCT /*The not is modify in FilterBuilder method */: //REVIEW el distinct
                 localFilterBuilder = FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm));
+                break;
+            case DISTINCT:
+                localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm)));
                 break;
             case LT:
                 localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lt(getSelectorField(rightTerm));
@@ -138,22 +101,14 @@ public class FilterBuilderHelper {
             field = String.valueOf(integerSelector.getValue());
         } else if (selector instanceof StringSelector) {
             field = ((StringSelector) selector).getValue();
-        } else throw new RuntimeException("Not implemented yet.");//TODO
+        } else throw new RuntimeException("Not implemented yet.");
 
 
         return field;
     }
 
 
-    private static FilterBuilder handleBetweenFilter(Relation relation) {
 
-//		RelationBetween relBetween = (RelationBetween) relation;
-//		return FilterBuilders.rangeFilter(relation.getIdentifiers().get(0).getField())
-//				.gte(relBetween.getTerms().get(0).getTermValue())
-//				.lte(relBetween.getTerms().get(1).getTermValue());
-
-        throw new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW
-    }
 
 
 }

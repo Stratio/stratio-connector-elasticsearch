@@ -111,7 +111,7 @@ public class ContentBuilderCreator {
                 type = "string";
                 break;
             default:
-                throw new UnsupportedException("The typo [" + columnType + "] is not supported in ElasticSearch");
+                throw new UnsupportedException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;
     }

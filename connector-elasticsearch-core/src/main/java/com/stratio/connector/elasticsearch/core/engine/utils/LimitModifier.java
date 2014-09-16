@@ -25,9 +25,8 @@ import org.elasticsearch.common.unit.TimeValue;
  */
 public class LimitModifier {
 
-    //TODO move to configuration
+
     public static final int SCAN_TIMEOUT_MILLIS = 600000;
-    //public static final int SIZE_QUERY_ANDTHEN_FETCH = 10;
     public static final int SIZE_SCAN = 10;
 
 
@@ -42,14 +41,13 @@ public class LimitModifier {
                 requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
             else if (type == SearchType.DFS_QUERY_THEN_FETCH)
                 requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-            //TODO else throw new ExecutionException("SearchType unexpected: "+ type);
         } else {
             requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);
         }
 
     }
 
-    //TODO different requests?
+
 
 
 }
