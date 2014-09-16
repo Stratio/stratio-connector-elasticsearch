@@ -32,7 +32,7 @@ public class ConfigurationImplem implements IConfiguration {
 
     static {
                 /*
-		    	public static final int SCAN_TIMEOUT_MILLIS = 600000;
+                public static final int SCAN_TIMEOUT_MILLIS = 600000;
 		    	public static final int SIZE_QUERY_ANDTHEN_FETCH = 10;
 		    	public static final int SIZE_SCAN = 10;
     			 */

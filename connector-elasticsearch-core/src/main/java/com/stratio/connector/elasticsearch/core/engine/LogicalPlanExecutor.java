@@ -24,7 +24,6 @@ import com.stratio.connector.meta.ElasticsearchResultSet;
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -69,69 +68,44 @@ public class LogicalPlanExecutor {
     //	private GroupBy groupBy = null;
 //	private ArrayList<Match> matchList = null; //REVIEW a la espera de meta
     private SearchRequestBuilder requestBuilder = null;
-    
-    
-    
-/**
- * Construct a new logical plan executor ready to execute the query
- *
- * @param logicalPlan   the logical plan to build the query
- * @param elasticClient the Elasticsearch client
- * @throws ElasticsearchQueryException                                        if any trouble happen executing the query
- * @throws com.stratio.connector.meta.exception.UnsupportedOperationException if any operation is not allowed.
- * @throws UnsupportedException
- */
-public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException, UnsupportedException {
 
 
-    readLogicalPlan(logicalPlan);
-    setSearchType();
-    try {
-		buildQuery(elasticClient);
-	} catch (ExecutionException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+    public void readLogicalPlan(LogicalWorkflow logicalWorkFlow) throws ElasticsearchQueryException, UnsupportedOperationException {
 
-    if (logger.isDebugEnabled()) {
-        logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
+        List<LogicalStep> logicalSteps = logicalWorkFlow.getInitialSteps();
+        sortList = new ArrayList<Sort>();
+        filterList = new ArrayList<Filter>();
+
+
+        for (LogicalStep lStep : logicalSteps) {
+
+            if (lStep instanceof Project) {
+                if (projection == null) projection = (Project) lStep;
+                else throw new UnsupportedOperationException(" # Project > 1");
+            } else if (lStep instanceof Sort) {
+                sortList.add((Sort) lStep);
+            } else if (lStep instanceof Limit) {
+                if (limitValue == null) limitValue = (Limit) lStep;
+                else throw new UnsupportedOperationException(" # Limit > 1");
+            } else if (lStep instanceof Filter) {
+                filterList.add((Filter) lStep);
+            } else
+                throw new UnsupportedOperationException("LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");
+
+        }
+
+        checkSupportedQuery();
+
     }
-}
+
+    private void checkSupportedQuery() {
+        if (projection == null) throw new UnsupportedOperationException("no projection found", null);
+        if (!sortList.isEmpty() && limitValue == null)
+            throw new UnsupportedOperationException("cannot sort: limit is required");
+    }
 
 
-	 private void readLogicalPlan(LogicalWorkflow logicalPlan) throws ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
-
-	        List<LogicalStep> logicalSteps = logicalPlan.getInitialSteps(); //REVIEW cambiado por cambio de interfaz
-	        sortList = new ArrayList<Sort>();
-	        filterList = new ArrayList<Filter>();
-	        //matchList = new ArrayList<Match>(); //REVIEW a la espera de meta
-
-	        for (LogicalStep lStep : logicalSteps) { //TODO validate??
-	            if (lStep instanceof Project) {
-	                if (projection == null) projection = (Project) lStep;
-	                else throw new ElasticsearchQueryException(" # Project > 1");
-	            } else if (lStep instanceof Sort) {
-	                sortList.add((Sort) lStep);
-	            } else if (lStep instanceof Limit) {
-	                if (limitValue == null) limitValue = (Limit) lStep;
-	                else throw new ElasticsearchQueryException(" # Limit > 1");
-	            } else if (lStep instanceof Filter) {
-	                filterList.add((Filter) lStep);
-	            }
-
-	        }
-	        if (projection == null) throw new ElasticsearchQueryException("no projection found", null);
-	        if (!sortList.isEmpty() && limitValue == null)
-	            throw new com.stratio.connector.meta.exception.UnsupportedOperationException("cannot sort: limit is required");
-
-	    }
-	 
-	 
-
-
-	
-
-    private void buildQuery(Client elasticClient) throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
+    public void buildQuery(Client elasticClient) throws UnsupportedException, com.stratio.connector.meta.exception.UnsupportedOperationException, ExecutionException {
         //TODO Multisearch? elasticClient.prepareMultiSearch().add(requestBuilder);
         //TODO if count or distinct => prepare Count?? or aggregation
         requestBuilder = elasticClient.prepareSearch();
@@ -154,35 +128,39 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 
         //	if (groupBy != null) GroupByModifier.modify(requestBuilder, groupBy);  //REVIEW a la espera de meta
 
+        if (logger.isDebugEnabled()) {
+            logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
+        }
+
     }
 
 
-
-	/**
-	 * 
-	 */
-	private void setSearchType() {
-		if(limitValue == null) searchType = SearchType.SCAN;//TODO or limit < XX
-		else {
-			/*//REVIEW 
-			 * if(!matchList.isEmpty()) searchType = SearchType.DFS_QUERY_THEN_FETCH; //TODO check if query is constant filtered?
+    /**
+     *
+     */
+    public void setSearchType() {
+        if (limitValue == null) searchType = SearchType.SCAN;//TODO or limit < XX
+        else {
+            /*//REVIEW
+             * if(!matchList.isEmpty()) searchType = SearchType.DFS_QUERY_THEN_FETCH; //TODO check if query is constant filtered?
 			else //TODO IF SORT IS EMPTY=> SCAN o QUERY_THEN_FETCH o setSort(Empty)(default=>score?)
-			*/	searchType = (sortList.isEmpty()) ? SearchType.QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
-			
-		
-		}		
-	}
-	
+			*/
+            searchType = (sortList.isEmpty()) ? SearchType.QUERY_THEN_FETCH : SearchType.QUERY_THEN_FETCH;
 
-	/**
-	 * Queries for objects in a collection
-	 */
 
-	public QueryResult executeQuery(Client elasticClient) {
+        }
+    }
 
-		//TODO
+
+    /**
+     * Queries for objects in a collection
+     */
+
+    public QueryResult executeQuery(Client elasticClient) {
+
+        //TODO
         QueryResult queryResult = null;
-		try {
+        try {
 
             ElasticsearchResultSet resultSet = new ElasticsearchResultSet();
             //resultSet.setColumnMetadata(projection.getColumnList());// needed?? //REVIEW comentado por que este metodo ya no existe.
@@ -214,8 +192,8 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
             //}
 
             queryResult = QueryResult.createQueryResult(resultSet);
-        }catch (IndexMissingException e){
-            if (logger.isDebugEnabled()){
+        } catch (IndexMissingException e) {
+            if (logger.isDebugEnabled()) {
                 logger.debug("The index not exists. The ES connector returns an empty QueryResult");
             }
             queryResult = QueryResult.createQueryResult(new ElasticsearchResultSet());
@@ -235,7 +213,7 @@ public LogicalPlanExecutor(LogicalWorkflow logicalPlan, Client elasticClient) th
 
         //TODO match?lucene filter?
         /*
-		 * //check score
+         * //check score
 		//get fields instead of get source?
 		for (Map.Entry<String, Object> entry : hit.getSource().entrySet())	{
 				row.addCell(entry.getKey(), new Cell(entry.getValue()));

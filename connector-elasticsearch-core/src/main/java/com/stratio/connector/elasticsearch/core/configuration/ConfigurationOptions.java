@@ -34,19 +34,18 @@ public enum ConfigurationOptions {
     private final String optionName;
     private final String[] defaultValue;
 
+    ConfigurationOptions(String optionName, String... defaultValue) {
+        this.optionName = optionName;
+        this.defaultValue = defaultValue;
+
+    }
+
     public String[] getDefaultValue() {
         return defaultValue;
     }
 
     public String getOptionName() {
         return optionName;
-    }
-
-
-    ConfigurationOptions(String optionName, String... defaultValue) {
-        this.optionName = optionName;
-        this.defaultValue = defaultValue;
-
     }
 
 

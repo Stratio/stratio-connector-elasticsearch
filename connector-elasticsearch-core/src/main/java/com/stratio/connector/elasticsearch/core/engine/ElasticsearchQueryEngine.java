@@ -16,10 +16,12 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
-
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
@@ -27,12 +29,14 @@ import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 
 
 public class ElasticsearchQueryEngine implements IQueryEngine {
 
-    ElasticSearchConnectionHandler connectionHandle;
+    private ElasticSearchConnectionHandler connectionHandle;
+
 
     public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
 
@@ -44,7 +48,7 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
         QueryResult queryResult = null;
         try {
-            queryResult = execute(recoveredClient(targetCluster), workflow);
+            queryResult = execute((Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), workflow);
         } catch (UnsupportedOperationException e) {
             e.printStackTrace(); //TODO
         } catch (HandlerConnectionException e) {
@@ -53,37 +57,20 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
         return queryResult;
     }
 
-    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalPlan) throws UnsupportedException, ElasticsearchQueryException, com.stratio.connector.meta.exception.UnsupportedOperationException {
+    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow) throws UnsupportedException, ExecutionException, UnsupportedOperationException {
 
-        QueryResult resultSet = null;
-        LogicalPlanExecutor executor = new LogicalPlanExecutor(logicalPlan, elasticClient);
-        resultSet = executor.executeQuery(elasticClient);
+
+        ConnectorQueryParser queryParser = new ConnectorQueryParser();
+        ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkFlow);
+        ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
+        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
+        ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
+        QueryResult resultSet = queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
+
+
         return resultSet;
 
     }
-    
 
-	
-
-
-    private Client recoveredClient(ClusterName targetCluster) throws HandlerConnectionException {
-        return (Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection();
-    }
-
-
-
-//    protected Row getRowByID(Client elasticClient, String index, String type, String id){
-//    	GetResponse response= elasticClient.prepareGet(index, type, id).execute().actionGet();
-//
-//    	Row row = new Row();
-//
-//    	if(!response.isSourceEmpty()){
-//			for (Map.Entry<String, Object> entry : response.getSourceAsMap().entrySet())	{
-//				row.addCell(entry.getKey(), new Cell(entry.getValue()));
-//			}
-//    	}
-//    	return row;
-//
-//    }
 
 }

@@ -31,39 +31,39 @@ public class MatchBuilderHelper {
     }
 
 
-	public static QueryBuilder createMatchBuilder(ArrayList<Match> matchList) throws UnsupportedException{
-		
-		QueryBuilder queryBuilder = null;
-		BoolQueryBuilder boolQueryBuilder = null;
-		
-		if(matchList.isEmpty()){
-			return QueryBuilders.matchAllQuery();
-			//TODO wrapper with QueryBuilders.IdQuery?. Equivalent to requestQuery.setIndices?
-		}else{
-			
-			
-			boolQueryBuilder = (matchList.size() > 1) ? QueryBuilders.boolQuery() : null ;
-			
-			for(Match match: matchList){
-				QueryBuilder localQueryBuilder;
-				//TODO only exact terms query implemented
-				
-				localQueryBuilder = QueryBuilders.termsQuery(match.getField(),match.getTerms()).minimumMatch(match.getMinimumMatch());
-				
-				if (boolQueryBuilder == null) queryBuilder = localQueryBuilder;
-				else {
-					
-					boolQueryBuilder.must(localQueryBuilder);
-				}
-				/*TODO if(match.computeScore())
-				else*/
-			}
-			
-			
-		}
-	
-		if (boolQueryBuilder != null) return boolQueryBuilder;
-		else return queryBuilder;
+    public static QueryBuilder createMatchBuilder(ArrayList<Match> matchList) throws UnsupportedException {
+
+        QueryBuilder queryBuilder = null;
+        BoolQueryBuilder boolQueryBuilder = null;
+
+        if (matchList.isEmpty()) {
+            return QueryBuilders.matchAllQuery();
+            //TODO wrapper with QueryBuilders.IdQuery?. Equivalent to requestQuery.setIndices?
+        } else {
+
+
+            boolQueryBuilder = (matchList.size() > 1) ? QueryBuilders.boolQuery() : null;
+
+            for (Match match : matchList) {
+                QueryBuilder localQueryBuilder;
+                //TODO only exact terms query implemented
+
+                localQueryBuilder = QueryBuilders.termsQuery(match.getField(), match.getTerms()).minimumMatch(match.getMinimumMatch());
+
+                if (boolQueryBuilder == null) queryBuilder = localQueryBuilder;
+                else {
+
+                    boolQueryBuilder.must(localQueryBuilder);
+                }
+                /*TODO if(match.computeScore())
+                else*/
+            }
+
+
+        }
+
+        if (boolQueryBuilder != null) return boolQueryBuilder;
+        else return queryBuilder;
 
 
     }

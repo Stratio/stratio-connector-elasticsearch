@@ -17,7 +17,6 @@ package com.stratio.connector.meta;
 
 /**
  * @author darroyo
- *
  */
 public class SortField {
 

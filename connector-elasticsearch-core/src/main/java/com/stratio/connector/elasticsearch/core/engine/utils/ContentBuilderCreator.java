@@ -35,7 +35,7 @@ import java.util.Map;
  * This class is responsible to create ContentBuilders'
  * Created by jmgomez on 11/09/14.
  */
-public class DeepContentBuilder {
+public class ContentBuilderCreator {
 
     /**
      * The Log.
@@ -44,6 +44,7 @@ public class DeepContentBuilder {
 
     /**
      * This method creates the XContentBuilder for a type.
+     *
      * @param typeMetadata the type metadata.
      * @return the XContentBuilder that represent the type.
      * @throws UnsupportedException if the type metadata is not supported.
@@ -54,27 +55,26 @@ public class DeepContentBuilder {
         XContentBuilder xContentBuilder = null;
         try {
 
-            xContentBuilder =  XContentFactory.jsonBuilder().startObject().startObject("properties");
+            xContentBuilder = XContentFactory.jsonBuilder().startObject().startObject("properties");
 
             Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
-            for (ColumnName column: columns.keySet()){
-               String columnType = convertType(columns.get(column).getColumnType());
+            for (ColumnName column : columns.keySet()) {
+                String columnType = convertType(columns.get(column).getColumnType());
                 String name = column.getName();
-                xContentBuilder =  xContentBuilder.startObject(name).field("type",columnType).endObject();
+                xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
             }
             xContentBuilder = xContentBuilder.endObject().endObject();
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Crete type ["+typeMetadata.getName().getName()+"] in index ["+typeMetadata.getName().getCatalogName()+"]");
-                logger.debug("Mapping : "+xContentBuilder.string());
+                logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index [" + typeMetadata.getName().getCatalogName() + "]");
+                logger.debug("Mapping : " + xContentBuilder.string());
             }
 
         } catch (IOException e) {
-            String msg ="Error create type metadata. "+e.getMessage();
+            String msg = "Error create type metadata. " + e.getMessage();
             logger.error(msg);
-            throw new ExecutionException(msg,e);
+            throw new ExecutionException(msg, e);
         }
-
 
 
         return xContentBuilder;
@@ -82,6 +82,7 @@ public class DeepContentBuilder {
 
     /**
      * This method translates the meta columnType to ElasticSearch type.
+     *
      * @param columnType the meta column type.
      * @return the ElasticSearch columnType.
      * @throws UnsupportedException if the type is not supported.
@@ -89,15 +90,28 @@ public class DeepContentBuilder {
     private String convertType(ColumnType columnType) throws UnsupportedException {
 
         String type = "";
-        switch (columnType){
-            case BIGINT:  type ="long";break;
-            case BOOLEAN:type ="boolean";break;
-            case DOUBLE:type ="double";break;
-            case FLOAT:type ="float";break;
-            case INT: type="integer";break;
+        switch (columnType) {
+            case BIGINT:
+                type = "long";
+                break;
+            case BOOLEAN:
+                type = "boolean";
+                break;
+            case DOUBLE:
+                type = "double";
+                break;
+            case FLOAT:
+                type = "float";
+                break;
+            case INT:
+                type = "integer";
+                break;
             case TEXT:
-            case VARCHAR: type="string";break;
-            default: throw new UnsupportedException("The typo ["+columnType+"] is not supported in ElasticSearch");
+            case VARCHAR:
+                type = "string";
+                break;
+            default:
+                throw new UnsupportedException("The typo [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;
     }

@@ -16,18 +16,19 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 
-import com.stratio.connector.meta.exception.UnsupportedOperationException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
 import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
-import java.util.List;
+import java.util.Collection;
 
 
 public class FilterBuilderHelper {
@@ -35,7 +36,7 @@ public class FilterBuilderHelper {
     private FilterBuilderHelper() {
     }
 
-    public static FilterBuilder createFilterBuilder(List<Filter> filters) throws UnsupportedOperationException {
+    public static FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
 
 
         Relation relation;
@@ -54,7 +55,6 @@ public class FilterBuilderHelper {
             if (boolFilterBuilder == null && localFilterBuilder != null) {
                 filterBuilder = localFilterBuilder;
             } else {
-                // TODO update when or is implemented
                 if (operator == Operator.DISTINCT) {
                     boolFilterBuilder.mustNot(localFilterBuilder);
                 } else
@@ -62,58 +62,6 @@ public class FilterBuilderHelper {
 
             }
 
-//			switch (operator) {
-//
-//			case BETWEEN:
-//
-//				// TODO update when or is implemented
-//				if (boolFilterBuilder == null) filterBuilder = localFilterBuilder;
-//				else {
-//
-//					boolFilterBuilder.must(localFilterBuilder);
-//				}
-//			break;
-//
-//			case COMPARE:
-//
-//				if (boolFilterBuilder == null && localFilterBuilder != null)
-//					filterBuilder = localFilterBuilder;
-//				else {
-//					// TODO update when or is implemented
-//					if (operator == Operator.DISTINCT) {
-//						boolFilterBuilder.mustNot(localFilterBuilder);
-//					} else
-//						boolFilterBuilder.must(localFilterBuilder);
-//
-//				}
-//
-//				break;
-//
-//			case IN:
-//
-//
-//
-//
-//				if (boolFilterBuilder == null)
-//					filterBuilder = localFilterBuilder;
-//				else {
-//					// TODO update when or is implemented
-//					boolFilterBuilder.must(localFilterBuilder);
-//				}
-//
-//				break;
-//
-//			// case TOKEN:
-//			// TODO get instead of search
-//			// //GetResponse response = client.prepareGet("twitter", "tweet",
-//			// "1")
-//			// // .execute()
-//			// // .actionGet();
-//			// break;
-//
-//			default: throw new UnsupportedOperationException("Relation type unsupported");
-//
-//			}
         }
 
 
@@ -142,7 +90,7 @@ public class FilterBuilderHelper {
 
     }
 
-    private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedOperationException {
+    private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
 
         FilterBuilder localFilterBuilder = null;
         // TermFilter: Filters documents that have fields that contain a
@@ -152,6 +100,7 @@ public class FilterBuilderHelper {
         Selector rightTerm = relation.getRightTerm();
         switch (relation.getOperator()) {
             case COMPARE:
+            case ASSIGN:
             case DISTINCT /*The not is modify in FilterBuilder method */: //REVIEW el distinct
                 localFilterBuilder = FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm));
                 break;
@@ -168,9 +117,9 @@ public class FilterBuilderHelper {
                 localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gte(getSelectorField(rightTerm));
                 break;
             case BETWEEN:
-                new RuntimeException("A la espera de que se implemente por Meta"); //REVIEW mewtodo  handleBetweenFilter
+                new RuntimeException(" Between not implemented yet");
             default:
-                throw new UnsupportedOperationException("Not implemented yet.");  //TODO
+                throw new UnsupportedException("Not implemented yet. [" + relation.getOperator() + "]");
 
         }
 
@@ -187,6 +136,8 @@ public class FilterBuilderHelper {
         } else if (selector instanceof IntegerSelector) {
             IntegerSelector integerSelector = (IntegerSelector) selector;
             field = String.valueOf(integerSelector.getValue());
+        } else if (selector instanceof StringSelector) {
+            field = ((StringSelector) selector).getValue();
         } else throw new RuntimeException("Not implemented yet.");//TODO
 
 

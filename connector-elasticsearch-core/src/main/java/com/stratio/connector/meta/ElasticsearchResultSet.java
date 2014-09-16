@@ -52,6 +52,15 @@ public class ElasticsearchResultSet extends ResultSet implements Serializable, I
     }
 
     /**
+     * Get the rows of the Result Set.
+     *
+     * @return A List of {@link com.stratio.meta.common.data.Row}
+     */
+    public List<Row> getRows() {
+        return rows;
+    }
+
+    /**
      * Set the list of rows.
      *
      * @param rows The list.
@@ -61,12 +70,12 @@ public class ElasticsearchResultSet extends ResultSet implements Serializable, I
     }
 
     /**
-     * Get the rows of the Result Set.
+     * Get the column metadata in order.
      *
-     * @return A List of {@link com.stratio.meta.common.data.Row}
+     * @return A list of {@link com.stratio.meta.common.metadata.structures.ColumnMetadata}.
      */
-    public List<Row> getRows() {
-        return rows;
+    public List<ColumnMetadata> getColumnMetadata() {
+        return columnMetadata;
     }
 
     /**
@@ -77,15 +86,6 @@ public class ElasticsearchResultSet extends ResultSet implements Serializable, I
      */
     public void setColumnMetadata(List<ColumnMetadata> columnMetadata) {
         this.columnMetadata = columnMetadata;
-    }
-
-    /**
-     * Get the column metadata in order.
-     *
-     * @return A list of {@link com.stratio.meta.common.metadata.structures.ColumnMetadata}.
-     */
-    public List<ColumnMetadata> getColumnMetadata() {
-        return columnMetadata;
     }
 
     /**

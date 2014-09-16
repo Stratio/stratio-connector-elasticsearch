@@ -1,0 +1,98 @@
+/*
+ * Stratio Meta
+ *
+ *   Copyright (c) 2014, Stratio, All rights reserved.
+ *
+ *   This library is free software; you can redistribute it and/or modify it under the terms of the
+ *   GNU Lesser General Public License as published by the Free Software Foundation; either version
+ *   3.0 of the License, or (at your option) any later version.
+ *
+ *   This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ *   even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *   Lesser General Public License for more details.
+ *
+ *   You should have received a copy of the GNU Lesser General Public License along with this library.
+ */
+
+package com.stratio.connector.elasticsearch.core.engine.query;
+
+import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderHelper;
+import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
+import com.stratio.connector.elasticsearch.core.engine.utils.ProjectModifier;
+import com.stratio.connector.elasticsearch.core.engine.utils.SortModifier;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Created by jmgomez on 15/09/14.
+ */
+public class ConnectorQueryBuilder {
+
+    /**
+     * The log.
+     */
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+
+    private SearchRequestBuilder requestBuilder;
+
+    /**
+     * @param elasticClient the elasticSearch Client.
+     * @param queryData     the query representation,
+     * @return The searchBuilder.
+     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException   if the method fails during execution.
+     */
+    public SearchRequestBuilder buildQuery(Client elasticClient, ConnectorQueryData queryData) throws UnsupportedException, ExecutionException {
+
+        createRequestBuilder(elasticClient);
+        createFilter(queryData);
+        createProjection(queryData);
+        createLimit(queryData);
+
+        logQuery();
+
+        return requestBuilder;
+    }
+
+    private void createRequestBuilder(Client elasticClient) {
+        requestBuilder = elasticClient.prepareSearch();
+    }
+
+    private void logQuery() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
+        }
+    }
+
+    private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
+        LimitModifier.modify(requestBuilder, queryData.getLimit(), queryData.getSearchType());
+        if (queryData.hasSortList()) {
+            SortModifier.modify(requestBuilder, queryData.getSortList());
+        }
+    }
+
+    private void createProjection(ConnectorQueryData queryData) {
+        ProjectModifier.modify(requestBuilder, queryData.getProjection());
+    }
+
+    private void createFilter(ConnectorQueryData queryData) throws UnsupportedException {
+        QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
+        FilterBuilder filterBuilder = FilterBuilderHelper.createFilterBuilder(queryData.getFilter());
+
+        if (filterBuilder != null) {
+            requestBuilder.setQuery(QueryBuilders.filteredQuery(queryBuilder, filterBuilder));
+        } else {
+            requestBuilder.setQuery(queryBuilder);
+        }
+    }
+
+
+}

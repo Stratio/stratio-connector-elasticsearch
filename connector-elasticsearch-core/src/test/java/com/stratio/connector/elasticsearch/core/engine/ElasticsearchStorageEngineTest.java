@@ -1,8 +1,9 @@
-package com.stratio.connector.elasticsearch.core.engine; 
+package com.stratio.connector.elasticsearch.core.engine;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
@@ -15,116 +16,152 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import org.elasticsearch.action.ListenableActionFuture;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.hamcrest.CoreMatchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before; 
-import org.junit.After;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.*;
 
-
-import static org.hamcrest.CoreMatchers.is;
-
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 
-
-/** 
-* ElasticsearchStorageEngine Tester. 
-* 
-* @author <Authors name> 
-* @since <pre>sep 10, 2014</pre> 
-* @version 1.0 
-*/
+/**
+ * ElasticsearchStorageEngine Tester.
+ *
+ * @author <Authors name>
+ * @version 1.0
+ * @since <pre>sep 10, 2014</pre>
+ */
 @RunWith(PowerMockRunner.class)
 public class ElasticsearchStorageEngineTest {
-
-    public static final Integer INTEGER_CELL_VALUE = new Integer(5);
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     private static final String CLUSTER_NAME = "CLUSTER NAME";
     private static final String INDEX_NAME = "INDEX_NAME";
     private static final String TYPE_NAME = "TYPE_NAME";
-    public static final String ROW_NAME = "row_name";
-    public static final String CELL_VALUE = "cell_value";
-    private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME" ;
+    private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
+    private static final String ROW_NAME = "row_name";
+    private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME";
+    private static final String CELL_VALUE = "cell_value";
+    private static final Object OTHER_CELL_VALUE = "other cell value";
+    private static final Integer INTEGER_CELL_VALUE = new Integer(5);
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
 
-    ElasticsearchStorageEngine elasticsearchStorageEngine;
+    @Mock
+    private IndexRequestBuilderCreator indexRequestBuilderCreator;
+    @Mock
+    private ElasticSearchConnectionHandler connectionHandler;
+    @Mock
+    private Connection<Client> connection;
+    @Mock
+    private Client client;
 
-
-
-    private TableName table_name = new TableName(INDEX_NAME, TYPE_NAME);
+    private ElasticsearchStorageEngine elasticsearchStorageEngine;
     private Map<ColumnName, ColumnMetadata> columns = null;
     private Map<String, Object> options = null;
     private Map<IndexName, IndexMetadata> indexes = null;
     private ClusterName clusterRef = null;
     private List<ColumnName> partirionKey = Collections.emptyList();
-    private List<ColumnName> clusterKey  = Collections.emptyList();
-
-    @Mock private ElasticSearchConnectionHandler connectionHandler;
-    @Mock private Connection<Client> connection;
-    @Mock private Client client;
+    private List<ColumnName> clusterKey = Collections.emptyList();
 
 
     @Before
     public void before() throws HandlerConnectionException {
+
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
         when(connection.getNativeConnection()).thenReturn(client);
         elasticsearchStorageEngine = new ElasticsearchStorageEngine(connectionHandler);
+
+        Whitebox.setInternalState(elasticsearchStorageEngine, "indexRequestBuilderCreator", indexRequestBuilderCreator);
+
     }
 
-@After
-public void after() throws Exception { 
-} 
+    @After
+    public void after() throws Exception {
+    }
 
-/** 
-* 
-* Method: insert(ClusterName targetCluster, TableMetadata targetTable, Row row) 
-* 
-*/ 
-@Test
-public void testInsertOne() throws UnsupportedException, ExecutionException {
+    /**
+     * Method: insert(ClusterName targetCluster, TableMetadata targetTable, Row row)
+     */
+    @Test
+    public void testInsertOne() throws UnsupportedException, ExecutionException {
 
-    ClusterName clusterName = new ClusterName(CLUSTER_NAME);
+        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
 
-
-    TableMetadata targetTable = new TableMetadata(table_name,options,columns,indexes,clusterRef, partirionKey,clusterKey);
-    Row row = createRow(ROW_NAME, CELL_VALUE);
-
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        Row row = createRow(ROW_NAME, CELL_VALUE);
 
 
-    IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-    Map<String, Object> map = new HashMap<>();
-    map.put(ROW_NAME,CELL_VALUE);
-    when(indexRequestBuilder.setSource(eq(map))).thenReturn(indexRequestBuilder);
-    when(client.prepareIndex(INDEX_NAME, TYPE_NAME)).thenReturn(indexRequestBuilder);
-    ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
-    when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
+        IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(indexRequestBuilder);
+
+        ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
+        when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
 
-    elasticsearchStorageEngine.insert(clusterName, targetTable, row);
+        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
 
 
-    verify(listenableActionFuture,times(1)).actionGet();
+        verify(listenableActionFuture, times(1)).actionGet();
 
-}
+    }
 
+
+    @Test
+    public void testInserBulk() throws UnsupportedException, ExecutionException, java.util.concurrent.ExecutionException, InterruptedException {
+
+        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
+
+
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        Collection<Row> row = new ArrayList<>();
+        Row row1 = createRow(ROW_NAME, CELL_VALUE);
+        row.add(row1);
+        Row row2 = createRow(OTHER_ROW_NAME, OTHER_CELL_VALUE);
+        row.add(row2);
+
+
+        IndexRequestBuilder indexRequestBuilder1 = mock(IndexRequestBuilder.class);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row1)).thenReturn(indexRequestBuilder1);
+        IndexRequestBuilder indexRequestBuilder2 = mock(IndexRequestBuilder.class);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row2)).thenReturn(indexRequestBuilder2);
+
+
+        BulkResponse bulkResponse = mock(BulkResponse.class);
+        when(bulkResponse.hasFailures()).thenReturn(false);
+
+        ListenableActionFuture<BulkResponse> listenableActionFuture = mock(ListenableActionFuture.class);
+        when(listenableActionFuture.actionGet()).thenReturn(bulkResponse);
+
+        BulkRequestBuilder bulkRequesBuilder = mock(BulkRequestBuilder.class);
+        when(bulkRequesBuilder.execute()).thenReturn(listenableActionFuture);
+
+        when(client.prepareBulk()).thenReturn(bulkRequesBuilder);
+
+
+        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
+
+
+        verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder1);
+        verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder2);
+        verify(listenableActionFuture, times(1)).actionGet();
+
+    }
 
 
     @Test
@@ -133,18 +170,15 @@ public void testInsertOne() throws UnsupportedException, ExecutionException {
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
         partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME,TYPE_NAME, ROW_NAME));
+        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
 
-        TableMetadata targetTable = new TableMetadata(table_name,options,columns,indexes,clusterRef, partirionKey,clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
 
-
-
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        Map<String, Object> map = new HashMap<>();
-        map.put(ROW_NAME,CELL_VALUE);
-        when(indexRequestBuilder.setSource(eq(map))).thenReturn(indexRequestBuilder);
-        when(client.prepareIndex(INDEX_NAME, TYPE_NAME, CELL_VALUE)).thenReturn(indexRequestBuilder);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(indexRequestBuilder);
+
+
         ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
@@ -152,248 +186,16 @@ public void testInsertOne() throws UnsupportedException, ExecutionException {
         elasticsearchStorageEngine.insert(clusterName, targetTable, row);
 
 
-        verify(listenableActionFuture,times(1)).actionGet();
+        verify(listenableActionFuture, times(1)).actionGet();
 
     }
 
 
-    @Test
-    public void testExceptionInsertTwoPK() throws UnsupportedException, ExecutionException {
-
-        exception.expect(UnsupportedException.class);
-        exception.expectMessage("Only one PK is allowed");
-
-        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-
-        partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME,TYPE_NAME, ROW_NAME));
-        partirionKey.add(new ColumnName(INDEX_NAME,TYPE_NAME, OTHER_ROW_NAME));
-
-        TableMetadata targetTable = new TableMetadata(table_name,options,columns,indexes,clusterRef, partirionKey,clusterKey);
-        Row row = createRow(ROW_NAME, CELL_VALUE);
-        row.addCell(OTHER_ROW_NAME,new Cell(CELL_VALUE));
-
-
-
-        IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        Map<String, Object> map = new HashMap<>();
-        map.put(ROW_NAME,CELL_VALUE);
-
-
-        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
-
-    }
-
-    @Test
-    public void testExceptionInsertIntegerPK() throws UnsupportedException, ExecutionException {
-
-        exception.expect(UnsupportedException.class);
-        exception.expectMessage("The PK only can has String values");
-
-        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-
-        partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME,TYPE_NAME, ROW_NAME));
-
-
-        TableMetadata targetTable = new TableMetadata(table_name,options,columns,indexes,clusterRef, partirionKey,clusterKey);
-        Row row = createRow(ROW_NAME, INTEGER_CELL_VALUE);
-
-
-        IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        Map<String, Object> map = new HashMap<>();
-        map.put(ROW_NAME,INTEGER_CELL_VALUE);
-
-
-
-        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
-
-    }
-
-
-    @Test
-    public void testInsertExecutionException() throws HandlerConnectionException, UnsupportedException, ExecutionException {
-
-       exception.expect(ExecutionException.class);
-        exception.expectMessage("Fail Connecting elasticSearch. Msg");
-
-
-
-        when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new HandlerConnectionException("Msg"));
-
-        TableMetadata targetTable = new TableMetadata(table_name,options,columns,indexes,clusterRef, partirionKey,clusterKey);
-        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-
-
-           elasticsearchStorageEngine.insert(clusterName, targetTable, createRow(ROW_NAME, INTEGER_CELL_VALUE));
-
-
-    }
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
-        Row row = new Row(rowKey,cell);
+        Row row = new Row(rowKey, cell);
         return row;
     }
 
-    /**
-* 
-* Method: insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) 
-* 
-*/ 
-@Test
-public void testInsertForTargetClusterTargetTableRows() throws Exception { 
-//TODO: Test goes here... 
-} 
 
-/** 
-* 
-* Method: insert(Client elasticClient, String index, String type, Row row, String id) 
-* 
-*/ 
-@Test
-public void testInsertForElasticClientIndexTypeRowId() throws Exception { 
-//TODO: Test goes here... 
-} 
-
-
-/** 
-* 
-* Method: insert(Client client, TableMetadata targetTable, Row row) 
-* 
-*/ 
-@Test
-public void testInsertForClientTargetTableRow() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("insert", Client.class, TableMetadata.class, Row.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: insert(Client elasticClient, TableMetadata targetTable, Collection<Row> rows) 
-* 
-*/ 
-@Test
-public void testInsertForElasticClientTargetTableRows() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("insert", Client.class, TableMetadata.class, Collection<Row>.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: createIndexRequestBuilder(TableMetadata targetTable, Client elasticClient, String index, String type, Row row) 
-* 
-*/ 
-@Test
-public void testCreateIndexRequestBuilderForTargetTableElasticClientIndexTypeRow() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("createIndexRequestBuilder", TableMetadata.class, Client.class, String.class, String.class, Row.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: delete(Client elasticClient, String index, String type, Filter... filters) 
-* 
-*/ 
-@Test
-public void testDelete() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("delete", Client.class, String.class, String.class, Filter....class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: createIndexRequestBuilder(Client elasticClient, String index, String type, Row row, String id) 
-* 
-*/ 
-@Test
-public void testCreateIndexRequestBuilderForElasticClientIndexTypeRowId() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("createIndexRequestBuilder", Client.class, String.class, String.class, Row.class, String.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: validateDelete(DeleteByQueryResponse response) 
-* 
-*/ 
-@Test
-public void testValidateDelete() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("validateDelete", DeleteByQueryResponse.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-/** 
-* 
-* Method: isEmpty(String value) 
-* 
-*/ 
-@Test
-public void testIsEmpty() throws Exception { 
-//TODO: Test goes here... 
-/* 
-try { 
-   Method method = ElasticsearchStorageEngine.getClass().getMethod("isEmpty", String.class); 
-   method.setAccessible(true); 
-   method.invoke(<Object>, <Parameters>); 
-} catch(NoSuchMethodException e) { 
-} catch(IllegalAccessException e) { 
-} catch(InvocationTargetException e) { 
-} 
-*/ 
-} 
-
-} 
+}

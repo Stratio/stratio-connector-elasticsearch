@@ -16,10 +16,9 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
-
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.engine.utils.DeepContentBuilder;
+import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
@@ -27,43 +26,42 @@ import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
 import org.elasticsearch.client.Client;
-
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
 
-
 /**
- *
  * This class is the responsible of manage the ElasticSearchMetadata
- * @author darroyo
  *
+ * @author darroyo
  */
-public class ElasticsearchMetadataEngine implements IMetadataEngine{
+public class ElasticsearchMetadataEngine implements IMetadataEngine {
 
 
-    DeepContentBuilder deepContentBuilder = new DeepContentBuilder();
     /**
      * The Log.
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    ContentBuilderCreator deepContentBuilder = new ContentBuilderCreator();
     /**
      * The connection handle.
      */
-	private transient ConnectionHandler connectionHandler;
+    private transient ConnectionHandler connectionHandler;
 
     /**
      * Constructor.
-     * @param  connectionHandler the connector handle.
+     *
+     * @param connectionHandler the connector handle.
      */
     public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
         this.connectionHandler = connectionHandler;
@@ -72,11 +70,11 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
     /**
      * This method create a index in ES.
-     * @param  targetCluster the cluster to be created.
-     * @param  indexMetaData the index configuration.
      *
+     * @param targetCluster the cluster to be created.
+     * @param indexMetaData the index configuration.
      * @throws UnsupportedException if any operation is not supported.
-     * @throws  ExecutionException if an error occur.
+     * @throws ExecutionException   if an error occur.
      */
 
     @Override
@@ -91,23 +89,23 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
     }
 
 
-
-
     /**
      * This method create a type in ES.
-     * @param  targetCluster the cluster to be created.
-     * @param  typeMetadata the type configuration.
      *
+     * @param targetCluster the cluster to be created.
+     * @param typeMetadata  the type configuration.
      * @throws UnsupportedException if any operation is not supported.
-     * @throws  ExecutionException if an error occur.
-     *
+     * @throws ExecutionException   if an error occur.
      */
     @Override
-    public void createTable(ClusterName targetCluster, TableMetadata typeMetadata)   throws UnsupportedException,
-            ExecutionException{
+    public void createTable(ClusterName targetCluster, TableMetadata typeMetadata) throws UnsupportedException,
+            ExecutionException {
         try {
 
-                recoveredClient(targetCluster).admin().indices().preparePutMapping().setIndices(typeMetadata.getName().getCatalogName().getName()).setType(typeMetadata.getName().getName()).setSource(deepContentBuilder.createTypeSource(typeMetadata)).execute().actionGet();
+            String indexName = typeMetadata.getName().getCatalogName().getName();
+            XContentBuilder xContentBuilder = deepContentBuilder.createTypeSource(typeMetadata);
+
+            recoveredClient(targetCluster).admin().indices().preparePutMapping().setIndices(indexName).setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute().actionGet();
         } catch (HandlerConnectionException e) {
             throwHandlerConnectionException(e, "createTable");
         }
@@ -115,8 +113,9 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
     /**
      * This method drop a index in ES.
-     * @param  targetCluster the cluster to be created.
-     * @param  indexName the index name.
+     *
+     * @param targetCluster the cluster to be created.
+     * @param indexName     the index name.
      */
 
     @Override
@@ -133,11 +132,12 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
     /**
      * This method drop a type in ES.
-     * @param  targetCluster the cluster to be created.
-     * @param  typeName the type name.
+     *
+     * @param targetCluster the cluster to be created.
+     * @param typeName      the type name.
      */
     @Override
-    public void dropTable(ClusterName targetCluster, TableName typeName) throws  ExecutionException {
+    public void dropTable(ClusterName targetCluster, TableName typeName) throws ExecutionException {
         DeleteMappingResponse delete = null;
         try {
             delete = recoveredClient(targetCluster).admin().indices().prepareDeleteMapping(typeName.getCatalogName().getName()).setType(typeName.getName()).execute().actionGet();
@@ -148,15 +148,26 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
         }
     }
 
+    @Override
+    public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata) throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported");
+    }
+
+    @Override
+    public void dropIndex(ClusterName targetCluster, IndexMetadata indexMetadata) throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported");
+    }
+
     private void throwHandlerConnectionException(HandlerConnectionException e, String operation) throws ExecutionException {
-        String msg = "Error find ElasticSearch client in "+ operation +". "+e.getMessage();
+        String msg = "Error find ElasticSearch client in " + operation + ". " + e.getMessage();
         logger.error(msg);
-        throw new ExecutionException(msg,e);
+        throw new ExecutionException(msg, e);
     }
 
 
     /**
      * This method return the concrete ES Client for a cluster,
+     *
      * @param targetCluster the cluster identification.
      * @return the ES Client.
      */
@@ -175,7 +186,7 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine{
 
 
     private void addAllTypesInTheCatalog(ClusterName targetCluster, Map<TableName, TableMetadata> types) throws UnsupportedException, ExecutionException {
-        if (types!=null) {
+        if (types != null) {
             for (TableName tableName : types.keySet()) {
                 createTable(targetCluster, types.get(tableName));
             }

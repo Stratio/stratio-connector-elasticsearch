@@ -21,7 +21,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
-import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -32,28 +32,27 @@ public class SortModifier {
     private SortModifier() {
     }
 
-	public static void modify(SearchRequestBuilder requestBuilder, ArrayList<Sort> sortList) throws ExecutionException {
-		boolean containsField= false;
-		boolean containsScore = false;
-		
-		//TODO missings fields?
-		for (Sort sortElem : sortList) { 
-			//TODO scoreSort?
-			if(sortElem.getType() == Sort.SCORE){
-				requestBuilder.addSort(SortBuilders.scoreSort().order(SortOrder.DESC));
-				containsScore = true;
-			}
-			else{
-				SortOrder sOrder = ( sortElem.getType() == Sort.ASC ) ? SortOrder.ASC : SortOrder.DESC;
-				requestBuilder.addSort(SortBuilders.fieldSort(sortElem.getField()).order( sOrder));
-				containsField = true;
-			}
-		}	
-		//TODO implement user-defined query?
-		if(containsField && containsScore){
-			requestBuilder.setTrackScores(true);
-			// throw new ExecutionException("Sort by score and field unsupported");
-		}
-	}
+    public static void modify(SearchRequestBuilder requestBuilder, Collection<Sort> sortList) throws ExecutionException {
+        boolean containsField = false;
+        boolean containsScore = false;
+
+        //TODO missings fields?
+        for (Sort sortElem : sortList) {
+            //TODO scoreSort?
+            if (sortElem.getType() == Sort.SCORE) {
+                requestBuilder.addSort(SortBuilders.scoreSort().order(SortOrder.DESC));
+                containsScore = true;
+            } else {
+                SortOrder sOrder = (sortElem.getType() == Sort.ASC) ? SortOrder.ASC : SortOrder.DESC;
+                requestBuilder.addSort(SortBuilders.fieldSort(sortElem.getField()).order(sOrder));
+                containsField = true;
+            }
+        }
+        //TODO implement user-defined query?
+        if (containsField && containsScore) {
+            requestBuilder.setTrackScores(true);
+            // throw new ExecutionException("Sort by score and field unsupported");
+        }
+    }
 
 }

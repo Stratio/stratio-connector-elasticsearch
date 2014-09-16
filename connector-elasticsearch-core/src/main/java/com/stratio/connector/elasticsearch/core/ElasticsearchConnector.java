@@ -17,20 +17,16 @@
 package com.stratio.connector.elasticsearch.core;
 
 
-
-
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
-
 import com.stratio.meta.common.connector.*;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 
 /**
@@ -142,8 +138,6 @@ public class ElasticsearchConnector implements IConnector {
     public IMetadataEngine getMetadataEngine() {
         return new ElasticsearchMetadataEngine(connectionHandler);
     }
-
-
 
 
     /**

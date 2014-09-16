@@ -16,8 +16,10 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
+import com.stratio.connector.commons.ftest.functionalTestQuery.GenericQueryFilterTest;
+import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
-import com.stratio.connector.elasticsearch.ftest.helper.IConnectorHelper;
+
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 

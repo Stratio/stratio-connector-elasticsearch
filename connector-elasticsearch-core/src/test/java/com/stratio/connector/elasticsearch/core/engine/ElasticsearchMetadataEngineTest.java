@@ -18,12 +18,10 @@ package com.stratio.connector.elasticsearch.core.engine;
 
 
 import com.stratio.connector.commons.connection.Connection;
-
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.engine.utils.DeepContentBuilder;
+import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
@@ -57,78 +55,75 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
+
 /**
-* ElasticsearchMetadataEngine Tester. 
-* 
-* @author <Authors name> 
-* @since <pre>sep 9, 2014</pre> 
-* @version 1.0 
-*/
+ * ElasticsearchMetadataEngine Tester.
+ *
+ * @author <Authors name>
+ * @version 1.0
+ * @since <pre>sep 9, 2014</pre>
+ */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = {Client.class,DeleteIndexResponse.class,ActionResponse.class,ActionFuture.class,DeleteMappingResponse.class, XContentBuilder.class,DeepContentBuilder.class})
+@PrepareForTest(value = {Client.class, DeleteIndexResponse.class, ActionResponse.class, ActionFuture.class, DeleteMappingResponse.class, XContentBuilder.class, ContentBuilderCreator.class})
 public class ElasticsearchMetadataEngineTest {
 
 
-    private static final String TYPE_NAME = "tableName";
     public static final String CATALOG_NAME = "CATALOG_NAME";
+    private static final String TYPE_NAME = "tableName";
+    private final String CLUSTER_NAME = "clusterName";
+    private final String INDEX_NAME = "indexName";
     ElasticsearchMetadataEngine elasticsearchMetadataEngine;
     @Mock
     ConnectionHandler connectionHandler;
     @Mock
     Connection<Client> connection;
-    @Mock Client client;
+    @Mock
+    Client client;
+    @Mock
+    ContentBuilderCreator deepContentBuilder;
 
-    @Mock DeepContentBuilder deepContentBuilder;
-
-    private final String CLUSTER_NAME = "clusterName";
-    private final String INDEX_NAME = "indexName";
-
-   @Before
-public void before() throws HandlerConnectionException, Exception {
+    @Before
+    public void before() throws HandlerConnectionException, Exception {
 
 
-    when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
-    when(connection.getNativeConnection()).thenReturn(client);
-    elasticsearchMetadataEngine = new ElasticsearchMetadataEngine(connectionHandler);
-       Whitebox.setInternalState(elasticsearchMetadataEngine,"deepContentBuilder",deepContentBuilder);
-} 
+        when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
+        when(connection.getNativeConnection()).thenReturn(client);
+        elasticsearchMetadataEngine = new ElasticsearchMetadataEngine(connectionHandler);
+        Whitebox.setInternalState(elasticsearchMetadataEngine, "deepContentBuilder", deepContentBuilder);
+    }
 
 
-
-/** 
-* 
-* Method: createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData) 
-* 
-*/ 
-@Test
-public void testCreateCatalog() throws Exception {
+    /**
+     * Method: createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData)
+     */
+    @Test
+    public void testCreateCatalog() throws Exception {
 
 
-    ListenableActionFuture<CreateIndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
-    CreateIndexRequestBuilder createIndexRequestBluilder = mock(CreateIndexRequestBuilder.class);
+        ListenableActionFuture<CreateIndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
+        CreateIndexRequestBuilder createIndexRequestBluilder = mock(CreateIndexRequestBuilder.class);
 
-    when(createIndexRequestBluilder.execute()).thenReturn(listenableActionFuture);
-    IndicesAdminClient indicesAdminClient = mock(IndicesAdminClient.class);
+        when(createIndexRequestBluilder.execute()).thenReturn(listenableActionFuture);
+        IndicesAdminClient indicesAdminClient = mock(IndicesAdminClient.class);
 
-    when(indicesAdminClient.prepareCreate(CATALOG_NAME)).thenReturn(createIndexRequestBluilder);
+        when(indicesAdminClient.prepareCreate(CATALOG_NAME)).thenReturn(createIndexRequestBluilder);
 
-    AdminClient adminClient = mock(AdminClient.class);
-    when (adminClient.indices()).thenReturn(indicesAdminClient);
+        AdminClient adminClient = mock(AdminClient.class);
+        when(adminClient.indices()).thenReturn(indicesAdminClient);
 
-    when(client.admin()).thenReturn(adminClient);
+        when(client.admin()).thenReturn(adminClient);
 
 
-    Map<String, Object> options = Collections.EMPTY_MAP;
-    Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
-    CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
-    elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
+        Map<String, Object> options = Collections.EMPTY_MAP;
+        Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
+        CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
+        elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
-    verify(createIndexRequestBluilder,times(1)).setSettings(options);
-    verify(listenableActionFuture,times(1)).actionGet();
-}
+        verify(createIndexRequestBluilder, times(1)).setSettings(options);
+        verify(listenableActionFuture, times(1)).actionGet();
+    }
 
 
     @Test
@@ -144,32 +139,28 @@ public void testCreateCatalog() throws Exception {
         when(indicesAdminClient.prepareCreate(CATALOG_NAME)).thenReturn(createIndexRequestBluilder);
 
         AdminClient adminClient = mock(AdminClient.class);
-        when (adminClient.indices()).thenReturn(indicesAdminClient);
+        when(adminClient.indices()).thenReturn(indicesAdminClient);
 
         when(client.admin()).thenReturn(adminClient);
 
 
         Map<String, Object> options = new HashMap<>();
-        options.put("key1","value1");
+        options.put("key1", "value1");
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
         CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
-        verify(createIndexRequestBluilder,times(1)).setSettings(options);
-        verify(listenableActionFuture,times(1)).actionGet();
+        verify(createIndexRequestBluilder, times(1)).setSettings(options);
+        verify(listenableActionFuture, times(1)).actionGet();
     }
-
 
 
     @Test
     public void testCreateTable() throws Exception {
 
 
-        TableName tableName = new TableName(INDEX_NAME,TYPE_NAME);
+        TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
         TableMetadata tableMetadata = new TableMetadata(tableName, null, null, null, null, null, null);
-
-
-
 
 
         XContentBuilder xContentBuilder = mock(XContentBuilder.class);
@@ -186,7 +177,7 @@ public void testCreateCatalog() throws Exception {
         when(indicesAdminClient.preparePutMapping()).thenReturn(putMappingRequest);
 
         AdminClient adminClient = mock(AdminClient.class);
-        when (adminClient.indices()).thenReturn(indicesAdminClient);
+        when(adminClient.indices()).thenReturn(indicesAdminClient);
 
         when(client.admin()).thenReturn(adminClient);
 
@@ -197,29 +188,24 @@ public void testCreateCatalog() throws Exception {
         elasticsearchMetadataEngine.createTable(new ClusterName(CLUSTER_NAME), tableMetadata);
 
 
-        verify(listenableActionFuture,times(1)).actionGet();
+        verify(listenableActionFuture, times(1)).actionGet();
     }
 
 
+    /**
+     * Method: dropCatalog(ClusterName targetCluster, CatalogName indexName)
+     */
+    @Test
+    public void testDropCatalog() throws Exception {
 
 
-/** 
-* 
-* Method: dropCatalog(ClusterName targetCluster, CatalogName indexName) 
-* 
-*/ 
-@Test
-public void testDropCatalog() throws Exception {
+        ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(false, true);
 
 
-    ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(false,true);
+        elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME), new CatalogName(INDEX_NAME));
 
-
-
-    elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME),new CatalogName(INDEX_NAME));
-
-    verify(actionFuture,times(1)).actionGet();
-}
+        verify(actionFuture, times(1)).actionGet();
+    }
 
     private ActionFuture<DeleteIndexResponse> createActionFuture(boolean isListenableActionFuture, boolean indexResponse) throws Exception {
 
@@ -233,7 +219,7 @@ public void testDropCatalog() throws Exception {
         DeleteIndexRequest delelteIndexRequest = mock(DeleteIndexRequest.class);
         whenNew(DeleteIndexRequest.class).withParameterTypes(String.class).withArguments(INDEX_NAME).thenReturn(delelteIndexRequest);
 
-        DeleteMappingResponse deletemappingResponse =  mock(DeleteMappingResponse.class);
+        DeleteMappingResponse deletemappingResponse = mock(DeleteMappingResponse.class);
         when(deletemappingResponse.isAcknowledged()).thenReturn(indexResponse);
 
         ListenableActionFuture<DeleteMappingResponse> listenableActionFuture = mock(ListenableActionFuture.class);
@@ -253,8 +239,8 @@ public void testDropCatalog() throws Exception {
         when(client.admin()).thenReturn(adminClient);
 
         ActionFuture returnActionFuture = actionFuture;
-        if (isListenableActionFuture){
-            returnActionFuture=listenableActionFuture;
+        if (isListenableActionFuture) {
+            returnActionFuture = listenableActionFuture;
         }
         return returnActionFuture;
     }
@@ -263,47 +249,37 @@ public void testDropCatalog() throws Exception {
     public void testDropCatalogException() throws Exception {
 
 
+        createActionFuture(false, false);
 
-
-        createActionFuture(false,false);
-
-        elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME),new CatalogName(INDEX_NAME));
+        elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME), new CatalogName(INDEX_NAME));
 
 
     }
 
 
-
-
     /**
-* 
-* Method: dropTable(ClusterName targetCluster, TableName typeName) 
-* 
-*/ 
-@Test
-public void testDropTable() throws Exception {
+     * Method: dropTable(ClusterName targetCluster, TableName typeName)
+     */
+    @Test
+    public void testDropTable() throws Exception {
 
 
+        ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(true, true);
 
-    ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(true,true);
+        elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME, TYPE_NAME));
 
-    elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME,TYPE_NAME));
+        verify(actionFuture, times(1)).actionGet();
 
-    verify(actionFuture,times(1)).actionGet();
-    
-    
-}
+
+    }
 
     @Test(expected = ExecutionException.class)
     public void testDropTableException() throws Exception {
 
 
+        createActionFuture(true, false);
 
-         createActionFuture(true,false);
-
-        elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME,TYPE_NAME));
-
-
+        elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME, TYPE_NAME));
 
 
     }
@@ -316,8 +292,4 @@ public void testDropTable() throws Exception {
     }
 
 
-
-
-
-
-} 
+}

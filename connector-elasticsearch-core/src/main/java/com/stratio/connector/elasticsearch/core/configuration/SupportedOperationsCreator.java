@@ -34,7 +34,7 @@ public class SupportedOperationsCreator implements IConfiguration {
     static {
 
         support = new EnumMap<Operations, Boolean>(Operations.class);
-        support.put(Operations.CREATE_CATALOG,  Boolean.FALSE);
+        support.put(Operations.CREATE_CATALOG, Boolean.FALSE);
         support.put(Operations.DROP_CATALOG, Boolean.TRUE);
         support.put(Operations.CREATE_TABLE, Boolean.FALSE);
         support.put(Operations.DROP_TABLE, Boolean.TRUE);

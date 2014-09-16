@@ -18,7 +18,6 @@ package com.stratio.connector.elasticsearch.core.configuration;
 
 import com.stratio.connector.commons.util.Parser;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.exceptions.InitializationException;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;

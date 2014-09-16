@@ -23,22 +23,22 @@ import com.stratio.meta.common.logicalplan.LogicalStep;
 import java.util.List;
 
 
-public class Sort extends LogicalStep{
+public class Sort extends LogicalStep {
 
-	
-	public static final int ASC = 1;
-	public static final int DESC = 2;
-	public static final int SCORE = 3;
-	
-	private String fieldName;
-	private int type;
-	
-	 public Sort(Operations operation) {
-	        super(operation);
-	    }
-	 
+
+    public static final int ASC = 1;
+    public static final int DESC = 2;
+    public static final int SCORE = 3;
+
+    private String fieldName;
+    private int type;
+
+    public Sort(Operations operation) {
+        super(operation);
+    }
+
 	/*public Sort(String field,int type){
-		fieldName = field;
+        fieldName = field;
 		this.type = type;
 	}
 
@@ -46,26 +46,24 @@ public class Sort extends LogicalStep{
 		this.type = type;
 	}
 	*/
-	 
-	public String getField() {
-		return fieldName;
-	}
 
-	public int getType() {
-		return type;
-	}
-	
-	   @Override
-	    public List<LogicalStep> getPreviousSteps() {
-	        return null;
-	    }
+    public String getField() {
+        return fieldName;
+    }
 
-	    @Override
-	    public LogicalStep getFirstPrevious() {
-	        return null;
-	    }
+    public int getType() {
+        return type;
+    }
+
+    @Override
+    public List<LogicalStep> getPreviousSteps() {
+        return null;
+    }
+
+    @Override
+    public LogicalStep getFirstPrevious() {
+        return null;
+    }
 
 
-
- 
 }

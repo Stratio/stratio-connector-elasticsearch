@@ -16,6 +16,7 @@
 
 package com.stratio.connector.elasticsearch.ftest.helper;
 
+import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by jmgomez on 4/09/14.
  */
-public class ESConnectorHelper implements IConnectorHelper{
+public class ESConnectorHelper implements IConnectorHelper {
 
 
 

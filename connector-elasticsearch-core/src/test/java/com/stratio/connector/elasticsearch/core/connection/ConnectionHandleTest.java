@@ -18,7 +18,6 @@ package com.stratio.connector.elasticsearch.core.connection;
 
 
 import com.stratio.connector.commons.connection.Connection;
-
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
