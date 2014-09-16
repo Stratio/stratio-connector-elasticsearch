@@ -19,7 +19,6 @@ package com.stratio.connector.elasticsearch.ftest.functionalInsert;
 import com.stratio.connector.commons.ftest.functionalInsert.GenericBulkInsertTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
-
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
@@ -37,16 +36,15 @@ public class ESBulkInsertTest extends GenericBulkInsertTest {
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;
-        try{
+        try {
             esConnectorHelper = new ESConnectorHelper(getClusterName());
-        }catch(InitializationException e){
+        } catch (InitializationException e) {
             e.printStackTrace();
         } catch (ConnectionException e) {
             e.printStackTrace();
         }
         return esConnectorHelper;
     }
-
 
 
 }

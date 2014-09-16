@@ -48,25 +48,24 @@ import static org.mockito.Mockito.mock;
 public class ESConnectorHelper implements IConnectorHelper {
 
 
-
     protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60";
-     private String SERVER_PORT = "9300,9300,9300";
+    private String SERVER_PORT = "9300,9300,9300";
 
 
     private TransportClient auxConection;
 
     private ClusterName clusterName;
 
-    public  ESConnectorHelper(ClusterName clusterName) throws ConnectionException, InitializationException {
+    public ESConnectorHelper(ClusterName clusterName) throws ConnectionException, InitializationException {
         super();
-        this.clusterName =clusterName;
+        this.clusterName = clusterName;
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
                 .addTransportAddresses(new ElasticsearchClientConfiguration().getTransporAddress(getConnectorClusterConfig()));
     }
 
     @Override
     public IConnector getConnector() {
-           return new ElasticsearchConnector();
+        return new ElasticsearchConnector();
     }
 
     @Override
@@ -81,7 +80,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         optionsNode.put(HOST.getOptionName(), SERVER_IP);
         optionsNode.put(PORT.getOptionName(), SERVER_PORT);
 
-        return new ConnectorClusterConfig(clusterName,optionsNode);
+        return new ConnectorClusterConfig(clusterName, optionsNode);
     }
 
     @Override
@@ -97,9 +96,9 @@ public class ESConnectorHelper implements IConnectorHelper {
         GetSettingsRequest getSettings = new GetSettingsRequest();
         getSettings.indices(indexName);
         getSettings.indicesOptions(IndicesOptions.strictExpandOpen());
-        GetSettingsResponse settingsResponse= auxConection.admin().indices().getSettings(getSettings).actionGet();
-        for (ObjectObjectCursor<String, Settings> setting :settingsResponse.getIndexToSettings()){
-            result =  convertMap(new HashMap(setting.value.getAsMap()));
+        GetSettingsResponse settingsResponse = auxConection.admin().indices().getSettings(getSettings).actionGet();
+        for (ObjectObjectCursor<String, Settings> setting : settingsResponse.getIndexToSettings()) {
+            result = convertMap(new HashMap(setting.value.getAsMap()));
         }
         return result;
     }
@@ -115,15 +114,15 @@ public class ESConnectorHelper implements IConnectorHelper {
         allColumntTypes.add(ColumnType.INT);
         allColumntTypes.add(ColumnType.TEXT);
         allColumntTypes.add(ColumnType.VARCHAR);
-        return allColumntTypes ;
+        return allColumntTypes;
     }
 
     private Map<String, Object> convertMap(HashMap<String, Object> hashMap) {
 
         HashMap transformMap = new HashMap();
-        for (String key: hashMap.keySet()){
+        for (String key : hashMap.keySet()) {
             String[] aux = key.split("\\.");
-            transformMap.put(aux[aux.length-1],  hashMap.get(key));
+            transformMap.put(aux[aux.length - 1], hashMap.get(key));
 
         }
         return transformMap;
@@ -132,12 +131,12 @@ public class ESConnectorHelper implements IConnectorHelper {
 
     @Override
     public void refresh(String schema) {
-       try{
-            if (auxConection !=null) {
+        try {
+            if (auxConection != null) {
                 auxConection.admin().indices().refresh(new RefreshRequest(schema).force(true)).actionGet();
                 auxConection.admin().indices().flush(new FlushRequest(schema).force(true)).actionGet();
             }
-        }catch(IndexMissingException e){
+        } catch (IndexMissingException e) {
             System.out.println("Index missing");
         }
 

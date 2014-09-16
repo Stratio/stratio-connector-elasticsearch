@@ -46,12 +46,11 @@ public class ConnectorQueryExecutor {
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     *
      * This method execute a query in elasticSearch.
-     * @param  elasticClient the elasticSearch Client.
-     * @param  requestBuilder the query to execute.
-     * @param queryData the queryData.
      *
+     * @param elasticClient  the elasticSearch Client.
+     * @param requestBuilder the query to execute.
+     * @param queryData      the queryData.
      * @return the query result.
      */
 

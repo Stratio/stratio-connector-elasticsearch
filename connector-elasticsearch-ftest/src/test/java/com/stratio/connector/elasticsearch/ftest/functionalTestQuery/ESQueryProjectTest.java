@@ -19,7 +19,6 @@ package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 import com.stratio.connector.commons.ftest.functionalTestQuery.GenericQueryProjectTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
-
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
@@ -29,7 +28,7 @@ import com.stratio.meta.common.exceptions.InitializationException;
 public class ESQueryProjectTest extends GenericQueryProjectTest {
 
     @Override
-    protected Integer getRowsToSearch( ){
+    protected Integer getRowsToSearch() {
         return 2000;
     }
 

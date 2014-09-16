@@ -19,12 +19,8 @@ package com.stratio.connector.elasticsearch.ftest.functionalDelete;
 import com.stratio.connector.commons.ftest.functionalDelete.GenericDeleteTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
-
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
-
-
-
 
 
 public class DeleteTest extends GenericDeleteTest {
@@ -43,7 +39,5 @@ public class DeleteTest extends GenericDeleteTest {
         return esConnectorHelper;
     }
 
- 
- 
- 
+
 }

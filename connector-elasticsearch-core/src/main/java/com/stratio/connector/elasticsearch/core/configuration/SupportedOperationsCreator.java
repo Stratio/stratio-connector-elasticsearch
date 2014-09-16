@@ -41,6 +41,7 @@ public class SupportedOperationsCreator implements IConfiguration {
         support.put(Operations.INSERT, Boolean.TRUE);
         support.put(Operations.DELETE, Boolean.FALSE);
         support.put(Operations.PROJECT, Boolean.TRUE);
+        support.put(Operations.SELECT_OPERATOR, Boolean.FALSE);
         support.put(Operations.SELECT_WINDOW, Boolean.FALSE);
         support.put(Operations.SELECT_LIMIT, Boolean.FALSE);
         support.put(Operations.SELECT_INNER_JOIN, Boolean.FALSE);
