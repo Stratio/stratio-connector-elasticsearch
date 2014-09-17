@@ -26,10 +26,9 @@ import java.util.List;
  */
 public class ProjectModifier {
 
-    private ProjectModifier() {
-    }
 
-    public static void modify(SearchRequestBuilder requestBuilder, Project projection) {
+
+    public  void modify(SearchRequestBuilder requestBuilder, Project projection) {
 
         requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
 

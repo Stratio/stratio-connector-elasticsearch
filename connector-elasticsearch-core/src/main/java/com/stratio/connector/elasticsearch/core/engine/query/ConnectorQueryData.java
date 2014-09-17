@@ -51,6 +51,11 @@ public class ConnectorQueryData {
      * The filters.
      */
     private Collection<Filter> filterList = new ArrayList<>();
+    /**
+     * The matchList;
+     */
+    private Collection<Filter> matchList  = new ArrayList<>();
+    private ArrayList<Filter> marchList;
 
 
     /**
@@ -181,4 +186,41 @@ public class ConnectorQueryData {
         this.searchType = searchType;
     }
 
+    /**
+     * Add filter to the matchList.
+     * @param filter the filter to add.
+     */
+    public void addMatch(Filter filter) {
+
+        matchList.add(filter);
+    }
+
+
+    /**
+     * This method ask query if has match list.
+     *
+     * @return true if the query has match list. False in other case.
+     */
+
+    public boolean hasMatchList() {
+
+        return !matchList.isEmpty();
+    }
+
+    /**
+     * Return The matchList
+     * @return the matchList
+     */
+    public Collection<Filter> getMatchList() {
+        return matchList;
+    }
+
+    /**
+     * This method ask query if has filter list.
+     *
+     * @return true if the query has filter list. False in other case.
+     */
+    public boolean hasFilterList() {
+        return  !filterList.isEmpty();
+    }
 }

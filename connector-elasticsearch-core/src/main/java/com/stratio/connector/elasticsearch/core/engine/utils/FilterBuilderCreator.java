@@ -27,16 +27,19 @@ import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.QueryBuilders;
 
 import java.util.Collection;
 
 
-public class FilterBuilderHelper {
+public class FilterBuilderCreator {
 
-    private FilterBuilderHelper() {
-    }
 
-    public static FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
+
+    private SelectorHelper selectorHelper = new SelectorHelper();
+
+    public  FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
+
 
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
           for (Filter filter : filters) {
@@ -51,38 +54,37 @@ public class FilterBuilderHelper {
 
 
 
-    private static FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
+    private  FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
 
         FilterBuilder localFilterBuilder = null;
         // TermFilter: Filters documents that have fields that contain a
         // term (not analyzed)
 
-        Selector leftTerm = relation.getLeftTerm();
-        Selector rightTerm = relation.getRightTerm();
+        String leftTerm = selectorHelper.getSelectorField(relation.getLeftTerm());
+        String rightTerm = selectorHelper.getSelectorField(relation.getRightTerm());
         switch (relation.getOperator()) {
             case COMPARE:
             case ASSIGN:
-                localFilterBuilder = FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm));
+                localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
                 break;
             case DISTINCT:
-                localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(getSelectorField(leftTerm), getSelectorField(rightTerm)));
+                localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
                 break;
             case LT:
-                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lt(getSelectorField(rightTerm));
+                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lt(rightTerm);
                 break;
             case LET:
-                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).lte(getSelectorField(rightTerm));
+                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lte(rightTerm);
                 break;
             case GT:
-                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gt(getSelectorField(rightTerm));
+                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gt(rightTerm);
                 break;
             case GET:
-                localFilterBuilder = FilterBuilders.rangeFilter(getSelectorField(leftTerm)).gte(getSelectorField(rightTerm));
+                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
                 break;
-            case BETWEEN:
-                new RuntimeException(" Between not implemented yet");
+
             default:
-                throw new UnsupportedException("Not implemented yet. [" + relation.getOperator() + "]");
+                throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
 
         }
 
@@ -91,21 +93,7 @@ public class FilterBuilderHelper {
 
     }
 
-    private static String getSelectorField(Selector selector) {
-        String field = "";
-        if (selector instanceof ColumnSelector) {
-            ColumnSelector columnSelector = (ColumnSelector) selector;
-            field = columnSelector.getName().getName();
-        } else if (selector instanceof IntegerSelector) {
-            IntegerSelector integerSelector = (IntegerSelector) selector;
-            field = String.valueOf(integerSelector.getValue());
-        } else if (selector instanceof StringSelector) {
-            field = ((StringSelector) selector).getValue();
-        } else throw new RuntimeException("Not implemented yet.");
 
-
-        return field;
-    }
 
 
 

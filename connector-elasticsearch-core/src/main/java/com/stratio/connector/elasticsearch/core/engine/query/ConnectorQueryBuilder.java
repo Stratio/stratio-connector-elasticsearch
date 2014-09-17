@@ -16,10 +16,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderHelper;
-import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
-import com.stratio.connector.elasticsearch.core.engine.utils.ProjectModifier;
-import com.stratio.connector.elasticsearch.core.engine.utils.SortModifier;
+import com.stratio.connector.elasticsearch.core.engine.utils.*;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -56,6 +53,7 @@ public class ConnectorQueryBuilder {
         createFilter(queryData);
         createProjection(queryData);
         createLimit(queryData);
+        
 
         logQuery();
 
@@ -73,24 +71,31 @@ public class ConnectorQueryBuilder {
     }
 
     private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
-        LimitModifier.modify(requestBuilder, queryData.getLimit(), queryData.getSearchType());
+        LimitModifier limitModifier = new LimitModifier();
+        limitModifier.modify(requestBuilder, queryData.getLimit(), queryData.getSearchType());
         if (queryData.hasSortList()) {
             SortModifier.modify(requestBuilder, queryData.getSortList());
         }
     }
 
     private void createProjection(ConnectorQueryData queryData) {
-        ProjectModifier.modify(requestBuilder, queryData.getProjection());
+        ProjectModifier projectModifier = new ProjectModifier();
+        projectModifier.modify(requestBuilder, queryData.getProjection());
     }
 
     private void createFilter(ConnectorQueryData queryData) throws UnsupportedException {
-        QueryBuilder queryBuilder = QueryBuilders.matchAllQuery();
-        FilterBuilder filterBuilder = FilterBuilderHelper.createFilterBuilder(queryData.getFilter());
 
-        if (filterBuilder != null) {
+        QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList());
+
+
+        if (queryData.hasFilterList()) {
+            FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
+            FilterBuilder filterBuilder = filterBuilderCreator.createFilterBuilder(queryData.getFilter());
             requestBuilder.setQuery(QueryBuilders.filteredQuery(queryBuilder, filterBuilder));
         } else {
             requestBuilder.setQuery(queryBuilder);
+
         }
     }
 

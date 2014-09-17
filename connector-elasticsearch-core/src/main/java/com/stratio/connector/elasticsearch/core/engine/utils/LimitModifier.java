@@ -30,10 +30,9 @@ public class LimitModifier {
     public static final int SIZE_SCAN = 10;
 
 
-    private LimitModifier() {
-    }
 
-    public static void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type) {
+
+    public  void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type) {
         if (limit != null) {
             if (type == SearchType.SCAN)
                 requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN).setSearchType(SearchType.SCAN);

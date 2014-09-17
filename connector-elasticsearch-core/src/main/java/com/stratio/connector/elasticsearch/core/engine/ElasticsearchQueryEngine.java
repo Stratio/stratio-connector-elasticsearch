@@ -31,10 +31,21 @@ import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ElasticsearchQueryEngine implements IQueryEngine {
 
+
+    /**
+     * The log.
+     */
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The connection handler.
+     */
     private ElasticSearchConnectionHandler connectionHandle;
 
 
@@ -49,15 +60,16 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
         QueryResult queryResult = null;
         try {
             queryResult = execute((Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), workflow);
-        } catch (UnsupportedOperationException e) {
-            e.printStackTrace(); //TODO
+
         } catch (HandlerConnectionException e) {
-            e.printStackTrace();
+            String msg = "Error recovered ElasticSearch connection. "+e.getMessage();
+            logger.error(msg);
+            throw new ExecutionException(msg,e);
         }
         return queryResult;
     }
 
-    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow) throws UnsupportedException, ExecutionException, UnsupportedOperationException {
+    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow) throws UnsupportedException, ExecutionException {
 
 
         ConnectorQueryParser queryParser = new ConnectorQueryParser();

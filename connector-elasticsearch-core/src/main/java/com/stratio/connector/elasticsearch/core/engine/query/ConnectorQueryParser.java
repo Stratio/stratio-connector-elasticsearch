@@ -19,10 +19,12 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
+import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.statements.structures.relationships.Operator;
 import org.elasticsearch.action.search.SearchType;
 
 import java.util.List;
@@ -33,7 +35,7 @@ import java.util.List;
 public class ConnectorQueryParser {
 
 
-    public ConnectorQueryData transformLogicalWorkFlow(LogicalWorkflow logicalWorkFlow) throws ElasticsearchQueryException, UnsupportedOperationException {
+    public ConnectorQueryData transformLogicalWorkFlow(LogicalWorkflow logicalWorkFlow) throws ElasticsearchQueryException, UnsupportedException     {
 
         ConnectorQueryData queryData = new ConnectorQueryData();
 
@@ -54,9 +56,15 @@ public class ConnectorQueryParser {
                 if (!queryData.hasLimitStep()) queryData.setLimit((Limit) lStep);
                 else throw new UnsupportedOperationException(" # Limit > 1");
             } else if (lStep instanceof Filter) {
-                queryData.addFilter((Filter) lStep);
+
+                Filter step = (Filter) lStep;
+                if (Operator.MATCH == step.getRelation().getOperator()) {
+                    queryData.addMatch((Filter) lStep);
+                }else{
+                    queryData.addFilter((Filter) lStep);
+                }
             } else {
-                throw new UnsupportedOperationException("LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");
+                throw new UnsupportedException("LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");
             }
 
         }
