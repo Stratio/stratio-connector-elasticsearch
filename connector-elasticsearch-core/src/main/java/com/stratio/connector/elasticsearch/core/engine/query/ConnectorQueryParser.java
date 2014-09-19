@@ -20,10 +20,7 @@ import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryExc
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.LogicalWorkflow;
-import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.*;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import org.elasticsearch.action.search.SearchType;
 
@@ -44,6 +41,7 @@ public class ConnectorQueryParser {
 
         for (LogicalStep lStep : logicalSteps) {
 
+        do {
             if (lStep instanceof Project) {
                 if (!queryData.hasProjection()) {
                     queryData.setProjection((Project) lStep);
@@ -60,12 +58,20 @@ public class ConnectorQueryParser {
                 Filter step = (Filter) lStep;
                 if (Operator.MATCH == step.getRelation().getOperator()) {
                     queryData.addMatch((Filter) lStep);
-                }else{
+                } else {
                     queryData.addFilter((Filter) lStep);
                 }
-            } else {
+            } else  if (lStep instanceof Select) {
+                queryData.addSelect((Select)lStep);
+
+            }else{
                 throw new UnsupportedException("LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");
             }
+
+
+            lStep = lStep.getNextStep();
+
+        }while(lStep!=null);
 
         }
 

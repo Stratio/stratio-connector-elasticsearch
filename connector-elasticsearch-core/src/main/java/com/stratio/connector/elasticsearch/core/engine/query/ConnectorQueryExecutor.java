@@ -20,7 +20,9 @@ import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.meta.ElasticsearchResultSet;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.QualifiedNames;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -69,16 +71,19 @@ public class ConnectorQueryExecutor {
                 if (searchType == SearchType.SCAN) {
                     scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
                 }
+
                 for (SearchHit hit : scrollResp.getHits()) {
-                    resultSet.add(createRow(hit));
+                    resultSet.add(createRow(hit,queryData));
+
                 }
+
             } while (scrollResp.getHits().getHits().length != 0);
 
 
             queryResult = QueryResult.createQueryResult(resultSet);
         } catch (IndexMissingException e) {
             if (logger.isDebugEnabled()) {
-                logger.debug("The index not exists. The ES connector returns an empty QueryResult");
+                logger.debug("The index not exists. The ES connector returns an empty QueryResult. "+e.getMessage());
             }
             queryResult = QueryResult.createQueryResult(new ElasticsearchResultSet());
         }
@@ -89,13 +94,23 @@ public class ConnectorQueryExecutor {
      * This method creates a row from a mongoResult
      *
      * @param hit the Elasticsearch SearchHit.
+     * @param queryData
      * @return the row.
      */
-    private Row createRow(SearchHit hit) {
+    private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
         Row row = new Row();
-
+           Map<String, String> alias = queryData.getAlias();
         for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
-            row.addCell(entry.getKey(), new Cell(entry.getValue().getValue()));
+
+            String key = entry.getKey();
+            Project projection = queryData.getProjection();
+            String qualifiedFieldName = QualifiedNames.getColumnQualifiedName(projection.getCatalogName(),projection.getTableName().getName(),key);
+
+            if (alias.containsKey(qualifiedFieldName)){
+                key = alias.get(qualifiedFieldName);
+            }
+
+            row.addCell(key, new Cell(entry.getValue().getValue()));
         }
 
         return row;

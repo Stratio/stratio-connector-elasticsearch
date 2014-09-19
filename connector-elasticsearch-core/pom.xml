@@ -26,6 +26,8 @@
     <packaging>jar</packaging>
     <description>The ElasticSearch's connector core</description>
     <dependencies>
+
+
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>

@@ -17,12 +17,14 @@
 package com.stratio.connector.elasticsearch.core;
 
 
+
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
 import com.stratio.meta.common.connector.*;
+import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.slf4j.Logger;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
  * This class implements the connector for Elasticsearch.
  */
 public class ElasticsearchConnector implements IConnector {
+
 
 
     /**
@@ -67,13 +70,17 @@ public class ElasticsearchConnector implements IConnector {
      *
      * @param credentials the credentials.
      * @param config      the connection configuration.
+     *
+     * @throws ConnectionException if the connection fail.
      */
     @Override
-    public void connect(ICredentials credentials, ConnectorClusterConfig config) {
+    public void connect(ICredentials credentials, ConnectorClusterConfig config) throws ConnectionException {
         try {
             connectionHandler.createConnection(credentials, config);
         } catch (HandlerConnectionException e) {
-            e.printStackTrace(); //TODO
+            String msg ="fail creating the Connection. "+e.getMessage();
+            logger.error(msg);
+            throw new ConnectionException(msg, e);
         }
     }
 

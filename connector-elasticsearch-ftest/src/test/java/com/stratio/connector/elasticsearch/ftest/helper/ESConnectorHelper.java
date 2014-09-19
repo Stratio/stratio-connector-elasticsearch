@@ -136,10 +136,12 @@ public class ESConnectorHelper implements IConnectorHelper {
                 auxConection.admin().indices().refresh(new RefreshRequest(schema).force(true)).actionGet();
                 auxConection.admin().indices().flush(new FlushRequest(schema).force(true)).actionGet();
             }
+
+
+
         } catch (IndexMissingException e) {
             System.out.println("Index missing");
         }
-
 
     }
 

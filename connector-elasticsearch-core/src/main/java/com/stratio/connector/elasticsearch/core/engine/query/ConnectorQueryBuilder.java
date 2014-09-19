@@ -54,6 +54,7 @@ public class ConnectorQueryBuilder {
         createProjection(queryData);
         createLimit(queryData);
         
+        
 
         logQuery();
 

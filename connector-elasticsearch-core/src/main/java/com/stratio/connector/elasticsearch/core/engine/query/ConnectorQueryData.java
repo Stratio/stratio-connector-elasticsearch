@@ -16,14 +16,18 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
+
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.Select;
 import org.elasticsearch.action.search.SearchType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class is a representation of a ElasticSearch query.
@@ -55,7 +59,15 @@ public class ConnectorQueryData {
      * The matchList;
      */
     private Collection<Filter> matchList  = new ArrayList<>();
+    /**
+     * The matchList;
+     */
     private ArrayList<Filter> marchList;
+
+    /**
+     * The alias.
+     */
+    private Map<String, String> alias = new HashMap<>();
 
 
     /**
@@ -222,5 +234,22 @@ public class ConnectorQueryData {
      */
     public boolean hasFilterList() {
         return  !filterList.isEmpty();
+    }
+
+    /**
+     * Add a select type.
+     * @param select the select.
+     */
+    public void addSelect(Select select) {
+        alias.putAll(select.getColumnMap());
+
+    }
+
+    /**
+     * return the alias.
+     * @return the alias.
+     */
+    public Map<String, String> getAlias() {
+        return alias;
     }
 }

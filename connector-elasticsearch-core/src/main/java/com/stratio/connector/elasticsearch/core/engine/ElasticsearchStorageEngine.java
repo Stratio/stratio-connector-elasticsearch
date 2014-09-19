@@ -29,6 +29,7 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.mapper.SourceToParse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,9 +140,11 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 
+        int i = 0;
         for (Row row : rows) {
             IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, elasticClient, row);
             bulkRequest.add(indexRequestBuilder);
+;
         }
         return bulkRequest;
     }
