@@ -6,6 +6,7 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +51,7 @@ public class ContentBuilderCreatorTest {
     public void testCreateTable() throws Exception {
 
         Map indexex = Collections.EMPTY_MAP;
-        Map<String, Object> options = Collections.EMPTY_MAP;
+        Map<Selector, Selector> options = Collections.EMPTY_MAP;
         List<ColumnName> partitionKey = Collections.EMPTY_LIST;
         List<ColumnName> clusterKey = Collections.EMPTY_LIST;
 

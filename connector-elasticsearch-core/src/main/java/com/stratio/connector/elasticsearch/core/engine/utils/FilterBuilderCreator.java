@@ -16,6 +16,7 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 
+import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
@@ -60,8 +61,8 @@ public class FilterBuilderCreator {
         // TermFilter: Filters documents that have fields that contain a
         // term (not analyzed)
 
-        String leftTerm = selectorHelper.getSelectorField(relation.getLeftTerm());
-        String rightTerm = selectorHelper.getSelectorField(relation.getRightTerm());
+        String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
+        String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
         switch (relation.getOperator()) {
             case COMPARE:
             case ASSIGN:

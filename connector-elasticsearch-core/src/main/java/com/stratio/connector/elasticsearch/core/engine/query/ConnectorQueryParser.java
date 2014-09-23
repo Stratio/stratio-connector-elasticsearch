@@ -62,7 +62,7 @@ public class ConnectorQueryParser {
                     queryData.addFilter((Filter) lStep);
                 }
             } else  if (lStep instanceof Select) {
-                queryData.addSelect((Select)lStep);
+                queryData.setSelect((Select) lStep);
 
             }else{
                 throw new UnsupportedException("LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");

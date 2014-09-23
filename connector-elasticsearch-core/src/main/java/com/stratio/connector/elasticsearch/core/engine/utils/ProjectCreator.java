@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author darroyo
  */
-public class ProjectModifier {
+public class ProjectCreator {
 
 
 
@@ -34,18 +34,7 @@ public class ProjectModifier {
 
         List<ColumnName> columnMetadataList = projection.getColumnList();
 
-        if (columnMetadataList == null || columnMetadataList.isEmpty()) {
-            //throw new ValidationException? or select *
-        } else {
-            String[] fields = new String[columnMetadataList.size()];
-            int i = 0;
-            for (ColumnName columnMetadata : columnMetadataList) {
-                fields[i] = columnMetadata.getName();
-                i++;
-            }
 
-            requestBuilder.addFields(fields);
-        }
     }
 
 }

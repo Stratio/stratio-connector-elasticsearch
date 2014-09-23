@@ -34,6 +34,8 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -70,6 +72,7 @@ public class ConnectorQueryExecutor {
             do {
                 if (searchType == SearchType.SCAN) {
                     scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+
                 }
 
                 for (SearchHit hit : scrollResp.getHits()) {
@@ -99,22 +102,39 @@ public class ConnectorQueryExecutor {
      */
     private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
         Row row = new Row();
-           Map<String, String> alias = queryData.getAlias();
-        for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
+        Map<String, String> alias = Collections.EMPTY_MAP;
+        if (queryData.getSelect() != null) {
+            alias = queryData.getSelect().getColumnMap();
+        }
 
-            String key = entry.getKey();
+        Map<String, Object> fields = hit.getSource();
+
+        if (fields == null) {
+            fields = new HashMap<>();
+            for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
+
+                fields.put(entry.getKey(), entry.getValue().getValue());
+            }
+        }
+        for (String field : fields.keySet()) {
+
+            Object value = fields.get(field);
             Project projection = queryData.getProjection();
-            String qualifiedFieldName = QualifiedNames.getColumnQualifiedName(projection.getCatalogName(),projection.getTableName().getName(),key);
+            String qualifiedFieldName = QualifiedNames.getColumnQualifiedName(projection.getCatalogName(), projection.getTableName().getName(), field);
 
-            if (alias.containsKey(qualifiedFieldName)){
-                key = alias.get(qualifiedFieldName);
+            if (alias.containsKey(qualifiedFieldName)) {
+                field = alias.get(qualifiedFieldName);
             }
 
-            row.addCell(key, new Cell(entry.getValue().getValue()));
+            row.addCell(field, new Cell(value));
         }
 
         return row;
     }
+
+
+
+
 
 
 }

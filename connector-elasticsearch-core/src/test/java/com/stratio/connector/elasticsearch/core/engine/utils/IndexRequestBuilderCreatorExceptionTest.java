@@ -30,6 +30,7 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.After;
@@ -67,7 +68,7 @@ public class IndexRequestBuilderCreatorExceptionTest {
     public ExpectedException exception = ExpectedException.none();
     IndexRequestBuilderCreator indexRequestBuilderCreator;
     private Map<ColumnName, ColumnMetadata> columns = null;
-    private Map<String, Object> options = null;
+    private Map<Selector, Selector> options = null;
     private Map<IndexName, IndexMetadata> indexes = null;
     private ClusterName clusterRef = null;
     private List<ColumnName> partirionKey = Collections.emptyList();

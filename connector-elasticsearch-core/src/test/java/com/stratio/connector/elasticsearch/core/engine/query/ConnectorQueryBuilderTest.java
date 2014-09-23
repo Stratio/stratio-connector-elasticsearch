@@ -3,6 +3,7 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.data.ColumnName;
@@ -25,11 +26,14 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * QueryBuilder Tester.
@@ -49,6 +53,7 @@ public class ConnectorQueryBuilderTest {
     private static final String STRING_SELECTOR_VALUE = "string value";
     private static final String COLUMN_1 = "COLUMN_NAME_1";
     private static final String COLUMN_2 = "COLUMN_NAME_2";
+    private static final String COLUMN_3 = "COLUMN_NAME_3";
     static Client client;
     ConnectorQueryBuilder queryBuilder;
 
@@ -102,8 +107,8 @@ public class ConnectorQueryBuilderTest {
         SearchSourceBuilder searchSourceBuilder = (SearchSourceBuilder) Whitebox.getInternalState(searchRequestBuilder, "sourceBuilder");
         ArrayList fieldNames = (ArrayList) Whitebox.getInternalState(searchSourceBuilder, "fieldNames");
         assertEquals("the fieldNames length is correct", 2, fieldNames.size());
-        assertEquals("The fieldNames is correct", COLUMN_1, fieldNames.get(0));
-        assertEquals("The fieldNames is correct", COLUMN_2, fieldNames.get(1));
+        assertTrue("The fieldNames is correct", fieldNames.contains(COLUMN_1));
+        assertTrue("The fieldNames is correct",  fieldNames.contains(COLUMN_2));
 
 
     }
@@ -114,10 +119,14 @@ public class ConnectorQueryBuilderTest {
         Relation relation = new Relation(new ColumnSelector(columnName), Operator.COMPARE, new StringSelector(STRING_SELECTOR_VALUE));
 
         queryData.addFilter(new Filter(Operations.FILTER_NON_INDEXED_EQ, relation));
-
+        Map<String, String> alias = new HashMap<>();
+        alias.put(COLUMN_1, COLUMN_1);
+        alias.put(COLUMN_2, COLUMN_2);
+        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ,alias));
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
+        columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_3));
         queryData.setProjection(new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME), columnList));
 
 

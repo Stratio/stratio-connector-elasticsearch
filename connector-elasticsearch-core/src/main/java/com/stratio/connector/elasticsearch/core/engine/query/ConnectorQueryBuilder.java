@@ -53,12 +53,21 @@ public class ConnectorQueryBuilder {
         createFilter(queryData);
         createProjection(queryData);
         createLimit(queryData);
+        createSelect(queryData);
         
         
 
         logQuery();
 
         return requestBuilder;
+    }
+
+    private void createSelect(ConnectorQueryData queryData) {
+        if (queryData.getSelect()!=null && queryData.getSelect().getColumnMap()!=null) {
+            SelectCreator selectCreator = new SelectCreator();
+
+            selectCreator.modify(requestBuilder, queryData.getSelect());
+        }
     }
 
     private void createRequestBuilder(Client elasticClient) {
@@ -80,7 +89,7 @@ public class ConnectorQueryBuilder {
     }
 
     private void createProjection(ConnectorQueryData queryData) {
-        ProjectModifier projectModifier = new ProjectModifier();
+        ProjectCreator projectModifier = new ProjectCreator();
         projectModifier.modify(requestBuilder, queryData.getProjection());
     }
 

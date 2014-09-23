@@ -58,6 +58,8 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
     @Override
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
         QueryResult queryResult = null;
+
+
         try {
             queryResult = execute((Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), workflow);
 

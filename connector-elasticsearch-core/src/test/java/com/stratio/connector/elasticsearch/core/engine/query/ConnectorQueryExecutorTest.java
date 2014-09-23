@@ -1,8 +1,11 @@
 package com.stratio.connector.elasticsearch.core.engine.query;
 
 import com.stratio.connector.meta.ElasticsearchResultSet;
+import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.TableName;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -100,9 +103,9 @@ public class ConnectorQueryExecutorTest {
 
         QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, queryData);
 
-        ElasticsearchResultSet resulset = (ElasticsearchResultSet) queryResult.getResultSet();
-        assertEquals("The resulset size is correct", 1, resulset.getRows().size());
-        Row row = resulset.getRows().get(0);
+        ElasticsearchResultSet resultset = (ElasticsearchResultSet) queryResult.getResultSet();
+        assertEquals("The resultset size is correct", 1, resultset.getRows().size());
+        Row row = resultset.getRows().get(0);
         assertEquals("The rows number is correct", 1, row.size());
         assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(COLUMN_NAME).getValue());
 
@@ -154,11 +157,9 @@ public class ConnectorQueryExecutorTest {
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
 
-        Map<String, SearchHitField> map = new HashMap<>();
-        SearchHitField value = mock(SearchHitField.class);
-        when(value.getValue()).thenReturn(COLUMN_STRING_VALUE);
-        map.put(COLUMN_NAME, value);
-        when(searchHit.fields()).thenReturn(map);
+        Map<String, Object> map = new HashMap<>();
+        map.put(COLUMN_NAME, COLUMN_STRING_VALUE);
+        when(searchHit.getSource()).thenReturn(map);
         return searchHit;
     }
 
@@ -166,6 +167,8 @@ public class ConnectorQueryExecutorTest {
         ConnectorQueryData connectorQueryData = new ConnectorQueryData();
 
         connectorQueryData.setSearchType(searchType);
+        Project projection = new Project(Operations.FILTER_INDEXED_EQ,new TableName(INDEX_NAME,TYPE_NAME));
+        connectorQueryData.setProjection(projection);
 
 
         return connectorQueryData;

@@ -24,13 +24,26 @@ import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexed
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.InitializationException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+
+import static org.junit.Assert.fail;
 
 /**
  * Created by jmgomez on 5/09/14.
  */
 public class ESQueryNoPKFilterStringTest extends GenericNotIndexedQueryStringFilterTest {
 
+    @Override
+    public void selectNotIndexedFilterUpperCaseEqual() throws ExecutionException, UnsupportedException {
+        fail("Not yet ElasticSearch supported");
+    }
+
+    @Override
+    public void selectNotIndexedFilterUpperCaseDistinct() throws UnsupportedException, ExecutionException {
+        fail("Not yet ElasticSearch supported");
+    }
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

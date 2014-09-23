@@ -65,9 +65,9 @@ public class ConnectorQueryData {
     private ArrayList<Filter> marchList;
 
     /**
-     * The alias.
+     * The select.
      */
-    private Map<String, String> alias = new HashMap<>();
+    private Select select ;
 
 
     /**
@@ -240,16 +240,16 @@ public class ConnectorQueryData {
      * Add a select type.
      * @param select the select.
      */
-    public void addSelect(Select select) {
-        alias.putAll(select.getColumnMap());
+    public void setSelect(Select select) {
+        this.select = select;
 
     }
 
     /**
-     * return the alias.
-     * @return the alias.
+     * return the select.
+     * @return the select.
      */
-    public Map<String, String> getAlias() {
-        return alias;
+    public Select getSelect() {
+        return select;
     }
 }

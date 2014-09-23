@@ -18,6 +18,8 @@ package com.stratio.connector.elasticsearch.core.engine;
 
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.commons.engine.CommonsMetadataEngine;
+import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.exceptions.ExecutionException;
@@ -28,6 +30,7 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -37,6 +40,7 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -45,7 +49,7 @@ import java.util.Map;
  *
  * @author darroyo
  */
-public class ElasticsearchMetadataEngine implements IMetadataEngine {
+public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
 
 
     /**
@@ -178,10 +182,20 @@ public class ElasticsearchMetadataEngine implements IMetadataEngine {
 
     private void createIndex(ClusterName targetCluster, CatalogMetadata indexMetaData) throws HandlerConnectionException {
         CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(targetCluster).admin().indices().prepareCreate(indexMetaData.getName().getName());
-        createIndexRequestBuilder.setSettings(indexMetaData.getOptions());
+        createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
         createIndexRequestBuilder.execute().actionGet();
 
 
+    }
+
+    private Map<String, String> transformOptions(CatalogMetadata indexMetaData) {
+        SelectorHelper selectorHelper = new SelectorHelper();
+        Map<String,String> transformOptions = new HashMap<>();
+        Map<Selector, Selector> options = indexMetaData.getOptions();
+        for (Selector key: options.keySet()){
+            transformOptions.put(selectorHelper.getStringFieldValue(key), selectorHelper.getStringFieldValue(options.get(key)));
+        }
+        return transformOptions;
     }
 
 
