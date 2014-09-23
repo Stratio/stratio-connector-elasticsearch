@@ -16,10 +16,10 @@
 
 package com.stratio.connector.meta;
 
+import java.io.Serializable;
+
 import com.stratio.connector.meta.exception.UnsupportedOperationException;
 import com.stratio.meta.common.exceptions.ExecutionException;
-
-import java.io.Serializable;
 
 /**
  * Created by jmgomez on 10/07/14.

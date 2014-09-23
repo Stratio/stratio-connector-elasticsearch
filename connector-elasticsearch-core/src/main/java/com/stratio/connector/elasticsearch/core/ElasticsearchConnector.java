@@ -16,28 +16,29 @@
 
 package com.stratio.connector.elasticsearch.core;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
-import com.stratio.meta.common.connector.*;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.connector.IConfiguration;
+import com.stratio.meta.common.connector.IConnector;
+import com.stratio.meta.common.connector.IMetadataEngine;
+import com.stratio.meta.common.connector.IQueryEngine;
+import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * This class implements the connector for Elasticsearch.
  */
 public class ElasticsearchConnector implements IConnector {
-
-
 
     /**
      * The Log.
@@ -48,7 +49,6 @@ public class ElasticsearchConnector implements IConnector {
      * The connectionHandler.
      */
     private ElasticSearchConnectionHandler connectionHandler = null;
-
 
     /**
      * Create a connection to Elasticsearch.
@@ -65,13 +65,11 @@ public class ElasticsearchConnector implements IConnector {
 
     }
 
-
     /**
      * Create a connection with ElasticSearch.
      *
      * @param credentials the credentials.
      * @param config      the connection configuration.
-     *
      * @throws ConnectionException if the connection fail.
      */
     @Override
@@ -79,12 +77,11 @@ public class ElasticsearchConnector implements IConnector {
         try {
             connectionHandler.createConnection(credentials, config);
         } catch (HandlerConnectionException e) {
-            String msg ="fail creating the Connection. "+e.getMessage();
+            String msg = "fail creating the Connection. " + e.getMessage();
             logger.error(msg);
             throw new ConnectionException(msg, e);
         }
     }
-
 
     /**
      * It close the  connection to ElasticSearch.
@@ -102,7 +99,6 @@ public class ElasticsearchConnector implements IConnector {
 
     }
 
-
     @Override
     public String getConnectorName() {
         return "ElasticSearch";
@@ -115,7 +111,7 @@ public class ElasticsearchConnector implements IConnector {
      */
     @Override
     public String[] getDatastoreName() {
-        return new String[]{"ElasticSearch"};
+        return new String[] { "ElasticSearch" };
     }
 
     /**
@@ -129,7 +125,6 @@ public class ElasticsearchConnector implements IConnector {
         return new ElasticsearchStorageEngine(connectionHandler);
 
     }
-
 
     /**
      * Return the QueryEngine.
@@ -152,7 +147,6 @@ public class ElasticsearchConnector implements IConnector {
         return new ElasticsearchMetadataEngine(connectionHandler);
     }
 
-
     /**
      * The connection status.
      *
@@ -165,6 +159,5 @@ public class ElasticsearchConnector implements IConnector {
         return connectionHandler.isConnected(name.getName());
 
     }
-
 
 }

@@ -16,30 +16,29 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.security.ICredentials;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.security.ICredentials;
 
 /**
  * This class represents a logic connection.
  * Created by jmgomez on 28/08/14.
  */
-public class NodeConnection implements Connection<Client> {
+public class NodeConnection extends Connection<Client> {
 
     /**
      * The Log.
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-
 
     /**
      * The Elasticsearch client.
@@ -48,7 +47,6 @@ public class NodeConnection implements Connection<Client> {
 
     private Node node = null;
     private boolean isConnect = false;
-
 
     /**
      * Constructor.

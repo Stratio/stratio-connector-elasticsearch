@@ -27,7 +27,6 @@ import com.stratio.meta.common.exceptions.InitializationException;
  */
 public class ESGroupByTest extends GenericGroupByTest {
 
-
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;

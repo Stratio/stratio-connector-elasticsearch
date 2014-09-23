@@ -16,6 +16,23 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.client.Client;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
@@ -31,19 +48,6 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mock;
-
-import java.util.*;
-
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * IndexRequestBuilderCreator Tester.
@@ -53,7 +57,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  * @since <pre>sep 12, 2014</pre>
  */
 public class IndexRequestBuilderCreatorExceptionTest {
-
 
     private static final String CLUSTER_NAME = "CLUSTER NAME";
     private static final String INDEX_NAME = "INDEX_NAME";
@@ -89,28 +92,26 @@ public class IndexRequestBuilderCreatorExceptionTest {
     public void after() throws Exception {
     }
 
-
     @Test
     public void testCreateIndesRequestTwoPK() throws UnsupportedException, ExecutionException {
 
         exception.expect(UnsupportedException.class);
         exception.expectMessage("Only one PK is allowed");
 
-
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, OTHER_ROW_NAME));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
         row.addCell(OTHER_ROW_NAME, new Cell(CELL_VALUE));
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(indexRequestBuilder);
-
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
+                .thenReturn(indexRequestBuilder);
 
         indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
-
 
     }
 
@@ -125,27 +126,22 @@ public class IndexRequestBuilderCreatorExceptionTest {
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
 
-
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(ROW_NAME, INTEGER_CELL_VALUE);
-
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
         Map<String, Object> map = new HashMap<>();
         map.put(ROW_NAME, INTEGER_CELL_VALUE);
 
-
         indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
 
-
     }
-
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
         Row row = new Row(rowKey, cell);
         return row;
     }
-
 
 }

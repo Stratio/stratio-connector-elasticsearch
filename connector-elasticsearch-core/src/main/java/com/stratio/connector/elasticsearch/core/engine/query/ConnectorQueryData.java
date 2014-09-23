@@ -16,18 +16,16 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.elasticsearch.action.search.SearchType;
 
 import com.stratio.connector.meta.Limit;
 import com.stratio.connector.meta.Sort;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
-import org.elasticsearch.action.search.SearchType;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This class is a representation of a ElasticSearch query.
@@ -58,7 +56,7 @@ public class ConnectorQueryData {
     /**
      * The matchList;
      */
-    private Collection<Filter> matchList  = new ArrayList<>();
+    private Collection<Filter> matchList = new ArrayList<>();
     /**
      * The matchList;
      */
@@ -67,8 +65,7 @@ public class ConnectorQueryData {
     /**
      * The select.
      */
-    private Select select ;
-
+    private Select select;
 
     /**
      * Add a sort.
@@ -89,7 +86,6 @@ public class ConnectorQueryData {
     public boolean hasSortList() {
         return !sortList.isEmpty();
     }
-
 
     /**
      * Return the sort list.
@@ -200,13 +196,13 @@ public class ConnectorQueryData {
 
     /**
      * Add filter to the matchList.
+     *
      * @param filter the filter to add.
      */
     public void addMatch(Filter filter) {
 
         matchList.add(filter);
     }
-
 
     /**
      * This method ask query if has match list.
@@ -221,6 +217,7 @@ public class ConnectorQueryData {
 
     /**
      * Return The matchList
+     *
      * @return the matchList
      */
     public Collection<Filter> getMatchList() {
@@ -233,23 +230,25 @@ public class ConnectorQueryData {
      * @return true if the query has filter list. False in other case.
      */
     public boolean hasFilterList() {
-        return  !filterList.isEmpty();
+        return !filterList.isEmpty();
+    }
+
+    /**
+     * return the select.
+     *
+     * @return the select.
+     */
+    public Select getSelect() {
+        return select;
     }
 
     /**
      * Add a select type.
+     *
      * @param select the select.
      */
     public void setSelect(Select select) {
         this.select = select;
 
-    }
-
-    /**
-     * return the select.
-     * @return the select.
-     */
-    public Select getSelect() {
-        return select;
     }
 }

@@ -1,5 +1,27 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.client.Client;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
@@ -14,24 +36,6 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.*;
-
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * IndexRequestBuilderCreator Tester.
@@ -41,9 +45,8 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  * @since <pre>sep 12, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = {Client.class})
+@PrepareForTest(value = { Client.class })
 public class IndexRequestBuilderCreatorTest {
-
 
     private static final String CLUSTER_NAME = "CLUSTER NAME";
     private static final String INDEX_NAME = "INDEX_NAME";
@@ -79,51 +82,46 @@ public class IndexRequestBuilderCreatorTest {
     public void after() throws Exception {
     }
 
-
     @Test
     public void createIndexRequestBuilderTest() throws UnsupportedException {
 
-
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
         row.addCell(COLUMN_NAME, new Cell(CELL_VALUE));
 
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
 
-
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
 
         Map other = new HashMap<>();
         other.put(COLUMN_NAME, CELL_VALUE);
-
 
         IndexRequestBuilder indexRequiestBuilder = mock(IndexRequestBuilder.class);
         when(indexRequiestBuilder.setSource(eq(other))).thenReturn(indexRequiestBuilder);
         when(client.prepareIndex(INDEX_NAME, TYPE_NAME, CELL_VALUE)).thenReturn(indexRequiestBuilder);
 
-        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
+        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
+                .createIndexRequestBuilder(targetTable, client, row);
 
         assertNotNull("The index request builder is not null", indexRequestBuilder);
 
-
     }
-
 
     @Test
     public void createIndexRequestBuilderWithPkTest() throws UnsupportedException {
 
-
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
         row.addCell(COLUMN_NAME, new Cell(CELL_VALUE));
 
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
-
 
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
@@ -131,24 +129,21 @@ public class IndexRequestBuilderCreatorTest {
         Map other = new HashMap<>();
         other.put(COLUMN_NAME, CELL_VALUE);
 
-
         IndexRequestBuilder indexRequiestBuilder = mock(IndexRequestBuilder.class);
         when(indexRequiestBuilder.setSource(eq(other))).thenReturn(indexRequiestBuilder);
         when(client.prepareIndex(INDEX_NAME, TYPE_NAME)).thenReturn(indexRequiestBuilder);
 
-        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
+        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
+                .createIndexRequestBuilder(targetTable, client, row);
 
         assertNotNull("The index request builder is not null", indexRequestBuilder);
 
-
     }
-
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
         Row row = new Row(rowKey, cell);
         return row;
     }
-
 
 }

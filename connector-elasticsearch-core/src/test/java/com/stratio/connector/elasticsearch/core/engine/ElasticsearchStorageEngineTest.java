@@ -1,21 +1,16 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.IndexName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.IndexMetadata;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -32,11 +27,22 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.*;
-
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
+import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.meta2.common.data.IndexName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
+import com.stratio.meta2.common.metadata.IndexMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 
 /**
  * ElasticsearchStorageEngine Tester.
@@ -61,7 +67,6 @@ public class ElasticsearchStorageEngineTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-
     @Mock
     private IndexRequestBuilderCreator indexRequestBuilderCreator;
     @Mock
@@ -78,7 +83,6 @@ public class ElasticsearchStorageEngineTest {
     private ClusterName clusterRef = null;
     private List<ColumnName> partirionKey = Collections.emptyList();
     private List<ColumnName> clusterKey = Collections.emptyList();
-
 
     @Before
     public void before() throws HandlerConnectionException {
@@ -103,45 +107,44 @@ public class ElasticsearchStorageEngineTest {
 
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
 
-
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(indexRequestBuilder);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
+                .thenReturn(indexRequestBuilder);
 
         ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
-
         elasticsearchStorageEngine.insert(clusterName, targetTable, row);
-
 
         verify(listenableActionFuture, times(1)).actionGet();
 
     }
 
-
     @Test
-    public void testInserBulk() throws UnsupportedException, ExecutionException, java.util.concurrent.ExecutionException, InterruptedException {
+    public void testInserBulk()
+            throws UnsupportedException, ExecutionException, java.util.concurrent.ExecutionException,
+            InterruptedException {
 
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Collection<Row> row = new ArrayList<>();
         Row row1 = createRow(ROW_NAME, CELL_VALUE);
         row.add(row1);
         Row row2 = createRow(OTHER_ROW_NAME, OTHER_CELL_VALUE);
         row.add(row2);
 
-
         IndexRequestBuilder indexRequestBuilder1 = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row1)).thenReturn(indexRequestBuilder1);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row1))
+                .thenReturn(indexRequestBuilder1);
         IndexRequestBuilder indexRequestBuilder2 = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row2)).thenReturn(indexRequestBuilder2);
-
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row2))
+                .thenReturn(indexRequestBuilder2);
 
         BulkResponse bulkResponse = mock(BulkResponse.class);
         when(bulkResponse.hasFailures()).thenReturn(false);
@@ -154,16 +157,13 @@ public class ElasticsearchStorageEngineTest {
 
         when(client.prepareBulk()).thenReturn(bulkRequesBuilder);
 
-
         elasticsearchStorageEngine.insert(clusterName, targetTable, row);
-
 
         verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder1);
         verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder2);
         verify(listenableActionFuture, times(1)).actionGet();
 
     }
-
 
     @Test
     public void testInsertOnePK() throws UnsupportedException, ExecutionException {
@@ -173,30 +173,27 @@ public class ElasticsearchStorageEngineTest {
         partirionKey = new ArrayList<>();
         partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(indexRequestBuilder);
-
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
+                .thenReturn(indexRequestBuilder);
 
         ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
-
         elasticsearchStorageEngine.insert(clusterName, targetTable, row);
-
 
         verify(listenableActionFuture, times(1)).actionGet();
 
     }
-
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
         Row row = new Row(rowKey, cell);
         return row;
     }
-
 
 }

@@ -15,20 +15,17 @@
  */
 package com.stratio.connector.elasticsearch.core.configuration;
 
+import java.util.EnumMap;
+import java.util.Map;
 
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.connector.Operations;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 /**
  */
 public class SupportedOperationsCreator implements IConfiguration {
 
-
     private static final Map<Operations, Boolean> support;
-
 
     //TODO
     static {
@@ -77,7 +74,6 @@ public class SupportedOperationsCreator implements IConfiguration {
         support.put(Operations.FILTER_FUNCTION_DISTINCT, Boolean.FALSE);
     }
 
-
     private SupportedOperationsCreator() {
     }
 
@@ -89,6 +85,5 @@ public class SupportedOperationsCreator implements IConfiguration {
     public static Map<Operations, Boolean> getSupportedOperations() {
         return support;
     }
-
 
 }

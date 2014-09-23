@@ -16,11 +16,11 @@
 
 package com.stratio.connector.meta;
 
-import com.stratio.meta.common.connector.Operations;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.stratio.meta.common.connector.Operations;
+import com.stratio.meta.common.logicalplan.LogicalStep;
 
 public class Match extends LogicalStep {
 
@@ -106,6 +106,5 @@ public class Match extends LogicalStep {
         // TODO Auto-generated method stub
         return null;
     }
-
 
 }

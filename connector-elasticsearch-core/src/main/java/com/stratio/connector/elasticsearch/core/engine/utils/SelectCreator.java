@@ -15,24 +15,18 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.logicalplan.Select;
-import com.stratio.meta2.common.data.ColumnName;
+import java.util.Set;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
-import java.util.List;
-import java.util.Set;
+import com.stratio.meta.common.logicalplan.Select;
 
 /**
  * @author darroyo
  */
 public class SelectCreator {
 
-
-
-    public  void modify(SearchRequestBuilder requestBuilder, Select select) {
-
-
+    public void modify(SearchRequestBuilder requestBuilder, Select select) {
 
         Set<String> columnMetadataList = select.getColumnMap().keySet();
 
@@ -42,7 +36,7 @@ public class SelectCreator {
             int i = 0;
             for (String columnName : columnMetadataList) {
                 String[] splitColumnName = columnName.split("\\.");
-                fields[i] = splitColumnName[splitColumnName.length-1];
+                fields[i] = splitColumnName[splitColumnName.length - 1];
                 i++;
             }
 

@@ -16,12 +16,12 @@
 
 package com.stratio.connector.meta;
 
-import com.stratio.meta.common.connector.IConfiguration;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.stratio.meta.common.connector.IConfiguration;
 
 /**
  * Created by jmgomez on 14/07/14.
@@ -42,17 +42,16 @@ public class ConfigurationImplem implements IConfiguration {
         //Connector client acts as a node within the cluster (with benefits). Otherwise, client connect remotely to the ES cluster
         config.put("elasticsearch.stratio.nodeclient", "false");
 
-
         //NODE => Development configuration
         config.put("elasticsearch.node.data", "false");
         config.put("elasticsearch.node.master", "false");
-
 
         //PATHS => NO
         //PLUGIN =>NO
 
         //CLIENT
-        config.put("elasticsearch.client.transport.sniff", "true");//The client allows to sniff the rest of the cluster, and add those into its list of machines to use
+        config.put("elasticsearch.client.transport.sniff",
+                "true");//The client allows to sniff the rest of the cluster, and add those into its list of machines to use
         //config.put("client.transport.ignore_cluster_name", "true");
         //client.transport.ping_timeout 5s
         //client.transport.nodes_sampler_interval 5s
@@ -61,7 +60,6 @@ public class ConfigurationImplem implements IConfiguration {
         config.put("elasticsearch.cluster.name", "david_cluster");
         //add as many as you want
 
-
         //NETWORK
         //config.put("network.host", "127.0.0.1");
 
@@ -69,9 +67,9 @@ public class ConfigurationImplem implements IConfiguration {
         //config.put("gateway.type", "none");
 
         //INDEX (foreach index?)
-//    	        config.put("index.store.type", "memory")
-//				config.put("index.number_of_shards", 1)
-//				config.put("index.number_of_replicas", 1)
+        //    	        config.put("index.store.type", "memory")
+        //				config.put("index.number_of_shards", 1)
+        //				config.put("index.number_of_replicas", 1)
 
         //timeout en delete, search, etc..
         //acknowledge => shards, shards and replicas, etc...
@@ -122,6 +120,5 @@ public class ConfigurationImplem implements IConfiguration {
     public List<String> getSeeds() {
         return seeds;
     }
-
 
 }

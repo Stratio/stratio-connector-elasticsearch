@@ -16,19 +16,18 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.CatalogMetadata;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.ListenableActionFuture;
@@ -52,13 +51,18 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.connection.ConnectionHandler;
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta2.common.data.CatalogName;
+import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 /**
  * ElasticsearchMetadataEngine Tester.
@@ -68,9 +72,9 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  * @since <pre>sep 9, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = {Client.class, DeleteIndexResponse.class, ActionResponse.class, ActionFuture.class, DeleteMappingResponse.class, XContentBuilder.class, ContentBuilderCreator.class})
+@PrepareForTest(value = { Client.class, DeleteIndexResponse.class, ActionResponse.class, ActionFuture.class,
+        DeleteMappingResponse.class, XContentBuilder.class, ContentBuilderCreator.class })
 public class ElasticsearchMetadataEngineTest {
-
 
     public static final String CATALOG_NAME = "CATALOG_NAME";
     private static final String TYPE_NAME = "tableName";
@@ -89,20 +93,17 @@ public class ElasticsearchMetadataEngineTest {
     @Before
     public void before() throws HandlerConnectionException, Exception {
 
-
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
         when(connection.getNativeConnection()).thenReturn(client);
         elasticsearchMetadataEngine = new ElasticsearchMetadataEngine(connectionHandler);
         Whitebox.setInternalState(elasticsearchMetadataEngine, "deepContentBuilder", deepContentBuilder);
     }
 
-
     /**
      * Method: createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData)
      */
     @Test
     public void testCreateCatalog() throws Exception {
-
 
         ListenableActionFuture<CreateIndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         CreateIndexRequestBuilder createIndexRequestBluilder = mock(CreateIndexRequestBuilder.class);
@@ -116,7 +117,6 @@ public class ElasticsearchMetadataEngineTest {
         when(adminClient.indices()).thenReturn(indicesAdminClient);
 
         when(client.admin()).thenReturn(adminClient);
-
 
         Map<Selector, Selector> options = Collections.EMPTY_MAP;
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
@@ -127,10 +127,8 @@ public class ElasticsearchMetadataEngineTest {
         verify(listenableActionFuture, times(1)).actionGet();
     }
 
-
     @Test
     public void testCreateCatalogWithOptions() throws Exception {
-
 
         ListenableActionFuture<CreateIndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         CreateIndexRequestBuilder createIndexRequestBluilder = mock(CreateIndexRequestBuilder.class);
@@ -144,7 +142,6 @@ public class ElasticsearchMetadataEngineTest {
         when(adminClient.indices()).thenReturn(indicesAdminClient);
 
         when(client.admin()).thenReturn(adminClient);
-
 
         Map<Selector, Selector> options = new HashMap<>();
         options.put(new StringSelector("key1"), new StringSelector("value1"));
@@ -160,14 +157,11 @@ public class ElasticsearchMetadataEngineTest {
         verify(listenableActionFuture, times(1)).actionGet();
     }
 
-
     @Test
     public void testCreateTable() throws Exception {
 
-
         TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
         TableMetadata tableMetadata = new TableMetadata(tableName, null, null, null, null, null, null);
-
 
         XContentBuilder xContentBuilder = mock(XContentBuilder.class);
         when(deepContentBuilder.createTypeSource(tableMetadata)).thenReturn(xContentBuilder);
@@ -187,16 +181,12 @@ public class ElasticsearchMetadataEngineTest {
 
         when(client.admin()).thenReturn(adminClient);
 
-
         Map<String, Object> options = Collections.EMPTY_MAP;
-
 
         elasticsearchMetadataEngine.createTable(new ClusterName(CLUSTER_NAME), tableMetadata);
 
-
         verify(listenableActionFuture, times(1)).actionGet();
     }
-
 
     /**
      * Method: dropCatalog(ClusterName targetCluster, CatalogName indexName)
@@ -204,17 +194,15 @@ public class ElasticsearchMetadataEngineTest {
     @Test
     public void testDropCatalog() throws Exception {
 
-
         ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(false, true);
-
 
         elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME), new CatalogName(INDEX_NAME));
 
         verify(actionFuture, times(1)).actionGet();
     }
 
-    private ActionFuture<DeleteIndexResponse> createActionFuture(boolean isListenableActionFuture, boolean indexResponse) throws Exception {
-
+    private ActionFuture<DeleteIndexResponse> createActionFuture(boolean isListenableActionFuture,
+            boolean indexResponse) throws Exception {
 
         DeleteIndexResponse deleteIndexResponse = mock(DeleteIndexResponse.class);
         when(deleteIndexResponse.isAcknowledged()).thenReturn(indexResponse);
@@ -223,14 +211,14 @@ public class ElasticsearchMetadataEngineTest {
         when(actionFuture.actionGet()).thenReturn(deleteIndexResponse);
 
         DeleteIndexRequest delelteIndexRequest = mock(DeleteIndexRequest.class);
-        whenNew(DeleteIndexRequest.class).withParameterTypes(String.class).withArguments(INDEX_NAME).thenReturn(delelteIndexRequest);
+        whenNew(DeleteIndexRequest.class).withParameterTypes(String.class).withArguments(INDEX_NAME)
+                .thenReturn(delelteIndexRequest);
 
         DeleteMappingResponse deletemappingResponse = mock(DeleteMappingResponse.class);
         when(deletemappingResponse.isAcknowledged()).thenReturn(indexResponse);
 
         ListenableActionFuture<DeleteMappingResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(listenableActionFuture.actionGet()).thenReturn(deletemappingResponse);
-
 
         DeleteMappingRequestBuilder deleteMappingRequestBuilder = mock(DeleteMappingRequestBuilder.class);
         when(deleteMappingRequestBuilder.setType(TYPE_NAME)).thenReturn(deleteMappingRequestBuilder);
@@ -254,14 +242,11 @@ public class ElasticsearchMetadataEngineTest {
     @Test(expected = ExecutionException.class)
     public void testDropCatalogException() throws Exception {
 
-
         createActionFuture(false, false);
 
         elasticsearchMetadataEngine.dropCatalog(new ClusterName(CLUSTER_NAME), new CatalogName(INDEX_NAME));
 
-
     }
-
 
     /**
      * Method: dropTable(ClusterName targetCluster, TableName typeName)
@@ -269,33 +254,27 @@ public class ElasticsearchMetadataEngineTest {
     @Test
     public void testDropTable() throws Exception {
 
-
         ActionFuture<DeleteIndexResponse> actionFuture = createActionFuture(true, true);
 
         elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME, TYPE_NAME));
 
         verify(actionFuture, times(1)).actionGet();
 
-
     }
 
     @Test(expected = ExecutionException.class)
     public void testDropTableException() throws Exception {
 
-
         createActionFuture(true, false);
 
         elasticsearchMetadataEngine.dropTable(new ClusterName(CLUSTER_NAME), new TableName(INDEX_NAME, TYPE_NAME));
 
-
     }
-
 
     private void createAdminClient(IndicesAdminClient indicesAdminClient) {
         AdminClient adminClient = mock(AdminClient.class);
         when(adminClient.indices()).thenReturn(indicesAdminClient);
         when(client.admin()).thenReturn(adminClient);
     }
-
 
 }

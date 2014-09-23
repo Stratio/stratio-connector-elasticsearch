@@ -16,7 +16,6 @@
 
 package com.stratio.connector.elasticsearch.ftest.workflow;
 
-
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.commons.ftest.workFlow.ExampleWorkflowsTest;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;

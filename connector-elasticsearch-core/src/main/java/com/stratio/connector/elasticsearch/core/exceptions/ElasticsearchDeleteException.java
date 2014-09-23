@@ -15,9 +15,7 @@
  */
 package com.stratio.connector.elasticsearch.core.exceptions;
 
-
 import com.stratio.meta.common.exceptions.ExecutionException;
-
 
 public class ElasticsearchDeleteException extends ExecutionException {
 

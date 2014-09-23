@@ -15,33 +15,31 @@
  */
 package com.stratio.connector.elasticsearch.core.engine;
 
+import java.util.Collection;
 
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
-import com.stratio.meta.common.connector.IStorageEngine;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.metadata.TableMetadata;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.index.mapper.SourceToParse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-
 
 /**
  * This class performs operations insert and delete in Elasticsearch.
  */
 
-public class ElasticsearchStorageEngine implements IStorageEngine {
-
+public class ElasticsearchStorageEngine extends CommonsStorageEngine {
 
     /**
      * The Log.
@@ -51,11 +49,6 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      * The index creator builder.
      */
     private IndexRequestBuilderCreator indexRequestBuilderCreator = new IndexRequestBuilderCreator();
-    /**
-     * The connection handler.
-     */
-    private transient ElasticSearchConnectionHandler connectionHandler;
-
 
     /**
      * Constructor.
@@ -64,9 +57,8 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      */
     public ElasticsearchStorageEngine(ElasticSearchConnectionHandler connectionHandler) {
 
-        this.connectionHandler = connectionHandler;
+        super(connectionHandler);
     }
-
 
     /**
      * Insert a document in Elasticsearch.
@@ -79,15 +71,15 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      */
 
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row) throws UnsupportedException, ExecutionException {
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row, Connection connection)
+            throws UnsupportedException, ExecutionException {
 
         try {
 
-            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetCluster, targetTable, row);
+            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetCluster, targetTable, row, connection);
             indexRequestBuilder.execute().actionGet();
 
             loggInsert(targetTable);
-
 
         } catch (HandlerConnectionException e) {
 
@@ -97,7 +89,6 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
 
     }
 
-
     /**
      * Insert a set of documents in Elasticsearch.
      *
@@ -106,15 +97,15 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException if the operation is not supported.
      */
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows,
+            Connection connection) throws UnsupportedException, ExecutionException {
 
         try {
-            BulkRequestBuilder bulkRequest = createBulkRequest(targetCluster, targetTable, rows);
+            BulkRequestBuilder bulkRequest = createBulkRequest(targetCluster, targetTable, rows, connection);
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
             validateBulkResponse(bulkResponse);
-
 
             logBulkInsert(targetTable, rows);
 
@@ -122,38 +113,38 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
             throwHandlerException(e, "insert bulk");
         }
 
-
     }
 
+    private IndexRequestBuilder createIndexRequest(ClusterName targetCluster, TableMetadata targetTable, Row row,
+            Connection connection) throws HandlerConnectionException, UnsupportedException {
 
-    private IndexRequestBuilder createIndexRequest(ClusterName targetCluster, TableMetadata targetTable, Row row) throws HandlerConnectionException, UnsupportedException {
-
-        Client client = (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+        Client client = (Client) connection.getNativeConnection();
 
         return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
     }
 
+    private BulkRequestBuilder createBulkRequest(ClusterName targetCluster, TableMetadata targetTable,
+            Collection<Row> rows, Connection connection) throws HandlerConnectionException, UnsupportedException {
 
-    private BulkRequestBuilder createBulkRequest(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws HandlerConnectionException, UnsupportedException {
-
-        Client elasticClient = (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+        Client elasticClient = (Client) connection.getNativeConnection();
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 
         int i = 0;
         for (Row row : rows) {
-            IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, elasticClient, row);
+            IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
+                    .createIndexRequestBuilder(targetTable, elasticClient, row);
             bulkRequest.add(indexRequestBuilder);
-;
+            ;
         }
         return bulkRequest;
     }
 
-
     private void validateBulkResponse(BulkResponse bulkResponse) throws ExecutionException {
-        if (bulkResponse.hasFailures()) throw new ExecutionException(bulkResponse.buildFailureMessage());
+        if (bulkResponse.hasFailures()) {
+            throw new ExecutionException(bulkResponse.buildFailureMessage());
+        }
     }
-
 
     private void loggInsert(TableMetadata targetTable) {
         if (logger.isDebugEnabled()) {
@@ -167,10 +158,11 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
         if (logger.isDebugEnabled()) {
             String index = targetTable.getName().getCatalogName().getName();
             String type = targetTable.getName().getName();
-            logger.debug("Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type [" + type + "]");
+            logger.debug(
+                    "Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type [" + type
+                            + "]");
         }
     }
-
 
     private void throwHandlerException(HandlerConnectionException e, String method) throws ExecutionException {
         String exceptionMessage = "Fail Connecting elasticSearch in " + method + " method. " + e.getMessage();

@@ -16,9 +16,9 @@
 
 package com.stratio.connector.meta;
 
-import com.stratio.meta.common.statements.structures.selectors.SelectorIdentifier;
-
 import java.io.Serializable;
+
+import com.stratio.meta.common.statements.structures.selectors.SelectorIdentifier;
 
 public class Ordering implements Serializable {
 

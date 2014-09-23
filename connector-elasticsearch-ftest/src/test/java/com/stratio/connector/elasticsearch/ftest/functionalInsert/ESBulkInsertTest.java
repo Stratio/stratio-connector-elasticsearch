@@ -22,12 +22,10 @@ import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
-
 /**
  * Created by jmgomez on 4/09/14.
  */
 public class ESBulkInsertTest extends GenericBulkInsertTest {
-
 
     protected int getRowToInsert() {
         return 1000;
@@ -45,6 +43,5 @@ public class ESBulkInsertTest extends GenericBulkInsertTest {
         }
         return esConnectorHelper;
     }
-
 
 }

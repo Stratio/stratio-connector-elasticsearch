@@ -1,5 +1,16 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
@@ -7,16 +18,6 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * DeepContentBuilder Tester.
@@ -26,7 +27,6 @@ import static org.junit.Assert.assertEquals;
  * @since <pre>sep 11, 2014</pre>
  */
 public class ContentBuilderCreatorTest {
-
 
     public static final String INDEX_NAME = "index";
     public static final String TYPE_NAME = "type";
@@ -55,7 +55,6 @@ public class ContentBuilderCreatorTest {
         List<ColumnName> partitionKey = Collections.EMPTY_LIST;
         List<ColumnName> clusterKey = Collections.EMPTY_LIST;
 
-
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         columns.putAll(creteColumns("column_1", ColumnType.BIGINT));
         columns.putAll(creteColumns("column_2", ColumnType.BOOLEAN));
@@ -67,11 +66,12 @@ public class ContentBuilderCreatorTest {
 
         ClusterName cluteref = new ClusterName(CLUSTER_NAME);
 
-        TableMetadata tableMetadata = new TableMetadata(new TableName(INDEX_NAME, TYPE_NAME), options, columns, indexex, cluteref, partitionKey, clusterKey);
-        assertEquals("The JSON is correct", RESULT_CREATE_TABLE, (deepContentBuilder.createTypeSource(tableMetadata).string()));
+        TableMetadata tableMetadata = new TableMetadata(new TableName(INDEX_NAME, TYPE_NAME), options, columns, indexex,
+                cluteref, partitionKey, clusterKey);
+        assertEquals("The JSON is correct", RESULT_CREATE_TABLE,
+                (deepContentBuilder.createTypeSource(tableMetadata).string()));
 
     }
-
 
     private Map<ColumnName, ColumnMetadata> creteColumns(String columnName, ColumnType columnType) {
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
@@ -80,6 +80,5 @@ public class ContentBuilderCreatorTest {
 
         return columns;
     }
-
 
 }

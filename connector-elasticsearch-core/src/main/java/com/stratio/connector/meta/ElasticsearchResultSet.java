@@ -14,17 +14,16 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-
 package com.stratio.connector.meta;
-
-import com.stratio.meta.common.data.ResultSet;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import com.stratio.meta.common.data.ResultSet;
+import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 
 public class ElasticsearchResultSet extends ResultSet implements Serializable, IResultSet {
 

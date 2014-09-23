@@ -16,14 +16,18 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IConfiguration;
-import com.stratio.meta.common.security.ICredentials;
-import com.stratio.meta2.common.data.ClusterName;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,12 +37,13 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.connector.IConfiguration;
+import com.stratio.meta.common.security.ICredentials;
+import com.stratio.meta2.common.data.ClusterName;
 
 /**
  * ConnectionHandle Tester.
@@ -50,16 +55,14 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
 
-@PrepareForTest(value = {ElasticSearchConnectionHandler.class})
+@PrepareForTest(value = { ElasticSearchConnectionHandler.class })
 
 public class ConnectionHandleTest {
-
 
     private static final String CLUSTER_NAME = "CLUSTER_NAME";
     private ElasticSearchConnectionHandler connectionHandle = null;
     @Mock
     private IConfiguration iConfiguration;
-
 
     @Before
     public void before() throws Exception {
@@ -77,7 +80,6 @@ public class ConnectionHandleTest {
     @Test
     public void testCreateNodeConnection() throws Exception, HandlerConnectionException {
 
-
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> options = new HashMap<>();
         options.put(ConfigurationOptions.NODE_TYPE.getOptionName(), "true");
@@ -86,16 +88,15 @@ public class ConnectionHandleTest {
         NodeConnection connection = mock(NodeConnection.class);
         whenNew(NodeConnection.class).withArguments(credentials, config).thenReturn(connection);
 
-
         connectionHandle.createConnection(credentials, config);
 
-        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox.getInternalState(connectionHandle, "connections");
+        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox
+                .getInternalState(connectionHandle, "connections");
 
         NodeConnection recoveredConnection = mapConnection.get(CLUSTER_NAME);
 
         assertNotNull("The connection is not null", recoveredConnection);
         assertEquals("The recoveredConnection is correct", connection, recoveredConnection);
-
 
     }
 
@@ -110,46 +111,43 @@ public class ConnectionHandleTest {
         TransportConnection connection = mock(TransportConnection.class);
         whenNew(TransportConnection.class).withArguments(credentials, config).thenReturn(connection);
 
-
         connectionHandle.createConnection(credentials, config);
 
-        Map<String, Connection> mapConnection = (Map<String, Connection>) Whitebox.getInternalState(connectionHandle, "connections");
+        Map<String, Connection> mapConnection = (Map<String, Connection>) Whitebox
+                .getInternalState(connectionHandle, "connections");
 
         TransportConnection recoveredConnection = (TransportConnection) mapConnection.get(CLUSTER_NAME);
 
         assertNotNull("The connection is not null", recoveredConnection);
         assertEquals("The recoveredConnection is correct", connection, recoveredConnection);
 
-
     }
-
 
     @Test
     public void testCloseConnection() throws Exception {
 
-        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox.getInternalState(connectionHandle, "connections");
+        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox
+                .getInternalState(connectionHandle, "connections");
         NodeConnection connection = mock(NodeConnection.class);
         mapConnection.put(CLUSTER_NAME, connection);
 
         connectionHandle.closeConnection(CLUSTER_NAME);
 
-
         assertFalse(mapConnection.containsKey(CLUSTER_NAME));
         verify(connection, times(1)).close();
-
 
     }
 
     @Test
     public void testGetConnection() throws HandlerConnectionException {
-        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox.getInternalState(connectionHandle, "connections");
+        Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox
+                .getInternalState(connectionHandle, "connections");
         NodeConnection connection = mock(NodeConnection.class);
         mapConnection.put(CLUSTER_NAME, connection);
 
         Connection recoveredConnection = connectionHandle.getConnection(CLUSTER_NAME);
         assertNotNull("The connection is not null", recoveredConnection);
         assertSame("The connection is correct", connection, recoveredConnection);
-
 
     }
 

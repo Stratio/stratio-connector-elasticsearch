@@ -16,23 +16,23 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.client.Client;
+
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.TableMetadata;
-import org.elasticsearch.action.index.IndexRequestBuilder;
-import org.elasticsearch.client.Client;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by jmgomez on 12/09/14.
  */
 public class IndexRequestBuilderCreator {
-
 
     /**
      * Returns an IndexRequestBuilder. Adds the json created from the row
@@ -42,8 +42,8 @@ public class IndexRequestBuilderCreator {
      * @param row           the row to insert.
      * @throws UnsupportedException if the opperation is not supported.
      */
-    public IndexRequestBuilder createIndexRequestBuilder(TableMetadata targetTable, Client elasticClient, Row row) throws UnsupportedException {
-
+    public IndexRequestBuilder createIndexRequestBuilder(TableMetadata targetTable, Client elasticClient, Row row)
+            throws UnsupportedException {
 
         Map<String, Object> dataInsert = createInsertMap(row);
         String pk = createPrimaryKey(targetTable, dataInsert);
@@ -51,15 +51,14 @@ public class IndexRequestBuilderCreator {
 
         return indexRequestBuilder;
 
-
     }
 
-    private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, TableMetadata targetTable, Map<String, Object> dataInsert, String pk) {
+    private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, TableMetadata targetTable,
+            Map<String, Object> dataInsert, String pk) {
         IndexRequestBuilder indexRequestBuilder;
 
         String index = targetTable.getName().getCatalogName().getName();
         String type = targetTable.getName().getName();
-
 
         if (pk != null) {
             indexRequestBuilder = elasticClient.prepareIndex(index, type, pk).setSource(dataInsert);
@@ -78,7 +77,8 @@ public class IndexRequestBuilderCreator {
      * @return the value of PK. Null if don't exist PK.
      * @throws UnsupportedException if the pk type is not supported.
      */
-    private String createPrimaryKey(TableMetadata targetTable, Map<String, Object> dataInsert) throws UnsupportedException {
+    private String createPrimaryKey(TableMetadata targetTable, Map<String, Object> dataInsert)
+            throws UnsupportedException {
         String pk = null;
 
         for (String rowName : dataInsert.keySet()) {
@@ -102,10 +102,13 @@ public class IndexRequestBuilderCreator {
      * @throws UnsupportedException if the PK is not supported.
      */
     private void checkPkTypeSupport(String pk, Object tempPK) throws UnsupportedException {
-        if (pk != null) throw new UnsupportedException("Only one PK is allowed");
-        if (!(tempPK instanceof String)) throw new UnsupportedException("The PK only can has String values");
+        if (pk != null) {
+            throw new UnsupportedException("Only one PK is allowed");
+        }
+        if (!(tempPK instanceof String)) {
+            throw new UnsupportedException("The PK only can has String values");
+        }
     }
-
 
     /**
      * this method converts a ROW in a MAP

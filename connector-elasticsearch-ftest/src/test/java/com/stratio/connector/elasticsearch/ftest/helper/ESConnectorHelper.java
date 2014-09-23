@@ -16,6 +16,28 @@
 
 package com.stratio.connector.elasticsearch.ftest.helper;
 
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_TYPE;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.elasticsearch.action.admin.indices.flush.FlushRequest;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.elasticsearch.action.support.IndicesOptions;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.hppc.cursors.ObjectObjectCursor;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.indices.IndexMissingException;
+
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
@@ -27,30 +49,14 @@ import com.stratio.meta.common.exceptions.InitializationException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.metadata.ColumnType;
-import org.elasticsearch.action.admin.indices.flush.FlushRequest;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
-import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
-import org.elasticsearch.action.support.IndicesOptions;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.hppc.cursors.ObjectObjectCursor;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.indices.IndexMissingException;
-
-import java.util.*;
-
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
-import static org.mockito.Mockito.mock;
 
 /**
  * Created by jmgomez on 4/09/14.
  */
 public class ESConnectorHelper implements IConnectorHelper {
 
-
     protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60";
     private String SERVER_PORT = "9300,9300,9300";
-
 
     private TransportClient auxConection;
 
@@ -60,7 +66,8 @@ public class ESConnectorHelper implements IConnectorHelper {
         super();
         this.clusterName = clusterName;
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
-                .addTransportAddresses(new ElasticsearchClientConfiguration().getTransporAddress(getConnectorClusterConfig()));
+                .addTransportAddresses(
+                        new ElasticsearchClientConfiguration().getTransporAddress(getConnectorClusterConfig()));
     }
 
     @Override
@@ -117,6 +124,18 @@ public class ESConnectorHelper implements IConnectorHelper {
         return allColumntTypes;
     }
 
+    @Override
+    public boolean containsIndex(String catalogName, String collectionName, String indexName) {
+        fail("Not yet ES supported");
+        return false;
+    }
+
+    @Override
+    public int countIndexes(String catalogName, String collectionName) {
+        fail("Not yet ES supported");
+        return 0;
+    }
+
     private Map<String, Object> convertMap(HashMap<String, Object> hashMap) {
 
         HashMap transformMap = new HashMap();
@@ -128,7 +147,6 @@ public class ESConnectorHelper implements IConnectorHelper {
         return transformMap;
     }
 
-
     @Override
     public void refresh(String schema) {
         try {
@@ -136,8 +154,6 @@ public class ESConnectorHelper implements IConnectorHelper {
                 auxConection.admin().indices().refresh(new RefreshRequest(schema).force(true)).actionGet();
                 auxConection.admin().indices().flush(new FlushRequest(schema).force(true)).actionGet();
             }
-
-
 
         } catch (IndexMissingException e) {
             System.out.println("Index missing");

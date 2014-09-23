@@ -16,15 +16,15 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
+import java.util.Collection;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.meta.common.logicalplan.Filter;
+import com.stratio.meta.common.statements.structures.relationships.Relation;
 
 /**
  * Created by jmgomez on 17/09/14.
@@ -33,21 +33,20 @@ public class QueryBuilderCreator {
 
     private SelectorHelper selectorHelper = new SelectorHelper();
 
-
     public QueryBuilder createBuilder(Collection<Filter> matchList) {
 
         QueryBuilder queryBuilder;
 
         if (matchList.isEmpty()) {
             queryBuilder = QueryBuilders.matchAllQuery();
-        } else{
-                 BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        for (Filter filter : matchList) {
-            Relation relation = filter.getRelation();
-            String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
-            String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
+        } else {
+            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+            for (Filter filter : matchList) {
+                Relation relation = filter.getRelation();
+                String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
+                String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
 
-            boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm));
+                boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm));
 
             }
 

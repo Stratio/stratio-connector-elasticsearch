@@ -15,14 +15,14 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.connector.meta.Sort;
-import com.stratio.meta.common.exceptions.ExecutionException;
+import java.util.Collection;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
-import java.util.Collection;
-
+import com.stratio.connector.meta.Sort;
+import com.stratio.meta.common.exceptions.ExecutionException;
 
 /**
  * @author darroyo
@@ -32,10 +32,10 @@ public class SortModifier {
     private SortModifier() {
     }
 
-    public static void modify(SearchRequestBuilder requestBuilder, Collection<Sort> sortList) throws ExecutionException {
+    public static void modify(SearchRequestBuilder requestBuilder, Collection<Sort> sortList)
+            throws ExecutionException {
         boolean containsField = false;
         boolean containsScore = false;
-
 
         for (Sort sortElem : sortList) {
 

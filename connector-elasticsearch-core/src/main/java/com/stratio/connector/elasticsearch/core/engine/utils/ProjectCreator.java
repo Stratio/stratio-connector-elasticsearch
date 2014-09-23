@@ -15,25 +15,23 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta2.common.data.ColumnName;
+import java.util.List;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
-import java.util.List;
+import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta2.common.data.ColumnName;
 
 /**
  * @author darroyo
  */
 public class ProjectCreator {
 
-
-
-    public  void modify(SearchRequestBuilder requestBuilder, Project projection) {
+    public void modify(SearchRequestBuilder requestBuilder, Project projection) {
 
         requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
 
         List<ColumnName> columnMetadataList = projection.getColumnList();
-
 
     }
 

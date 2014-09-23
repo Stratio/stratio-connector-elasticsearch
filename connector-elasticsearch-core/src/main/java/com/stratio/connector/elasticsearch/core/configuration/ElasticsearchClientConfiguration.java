@@ -15,20 +15,24 @@
  */
 package com.stratio.connector.elasticsearch.core.configuration;
 
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.CLUSTER_NAME;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_DATA;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_MASTER;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.TRANSPORT_SNIFF;
 
-import com.stratio.connector.commons.util.Parser;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.exceptions.InitializationException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
-
+import com.stratio.connector.commons.util.Parser;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.exceptions.InitializationException;
 
 /**
  * The configuration for Elasticsearch.
@@ -58,11 +62,9 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
         setting.put("index.mapper.dynamic", "false");
         //setting.put("index.mapping.ignore_malformed", "false");
 
-
         return ImmutableSettings.settingsBuilder().put(setting).build();
 
     }
-
 
     private static String addSetting(Map<String, String> configuration, ConfigurationOptions nodeData) {
         String option;
@@ -74,14 +76,14 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
         return option;
     }
 
-
     public TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
 
         String[] hosts = (String[]) parser.hosts(config.getOptions().get(HOST.getOptionName()));
         String[] ports = (String[]) parser.ports(config.getOptions().get(PORT.getOptionName()));
         TransportAddress[] transportAddresses = new TransportAddress[1];
         for (int i = 0; i < hosts.length; i++) {
-            transportAddresses[0] = new InetSocketTransportAddress(hosts[i], Integer.decode(ports[i])); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
+            transportAddresses[0] = new InetSocketTransportAddress(hosts[i], Integer.decode(
+                    ports[i])); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
         }
         return transportAddresses;
 

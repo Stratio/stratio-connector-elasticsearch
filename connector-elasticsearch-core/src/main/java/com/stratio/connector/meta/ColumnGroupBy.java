@@ -14,11 +14,9 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-
 package com.stratio.connector.meta;
 
 import com.stratio.meta.common.statements.structures.selectors.GroupByFunction;
-
 
 public class ColumnGroupBy {
 

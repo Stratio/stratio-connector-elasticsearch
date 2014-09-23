@@ -15,35 +15,25 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.Collection;
+
+import org.elasticsearch.index.query.BoolFilterBuilder;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
-import org.elasticsearch.index.query.BoolFilterBuilder;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.QueryBuilders;
-
-import java.util.Collection;
-
 
 public class FilterBuilderCreator {
 
-
-
     private SelectorHelper selectorHelper = new SelectorHelper();
 
-    public  FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
-
+    public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
 
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
-          for (Filter filter : filters) {
+        for (Filter filter : filters) {
             Relation relation = filter.getRelation();
             boolFilterBuilder.must(handleCompareFilter(relation));
         }
@@ -52,10 +42,7 @@ public class FilterBuilderCreator {
 
     }
 
-
-
-
-    private  FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
+    private FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
 
         FilterBuilder localFilterBuilder = null;
         // TermFilter: Filters documents that have fields that contain a
@@ -64,40 +51,33 @@ public class FilterBuilderCreator {
         String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
         String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
         switch (relation.getOperator()) {
-            case COMPARE:
-            case ASSIGN:
-                localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
-                break;
-            case DISTINCT:
-                localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
-                break;
-            case LT:
-                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lt(rightTerm);
-                break;
-            case LET:
-                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lte(rightTerm);
-                break;
-            case GT:
-                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gt(rightTerm);
-                break;
-            case GET:
-                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
-                break;
+        case EQ:
+        case ASSIGN:
+            localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
+            break;
+        case DISTINCT:
+            localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
+            break;
+        case LT:
+            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lt(rightTerm);
+            break;
+        case LET:
+            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lte(rightTerm);
+            break;
+        case GT:
+            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gt(rightTerm);
+            break;
+        case GET:
+            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
+            break;
 
-            default:
-                throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
+        default:
+            throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
 
         }
-
 
         return localFilterBuilder;
 
     }
-
-
-
-
-
-
 
 }

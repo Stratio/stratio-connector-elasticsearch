@@ -16,10 +16,10 @@
 
 package com.stratio.connector.meta;
 
+import java.util.List;
+
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.LogicalStep;
-
-import java.util.List;
 
 public class Limit extends LogicalStep {
 
@@ -31,7 +31,7 @@ public class Limit extends LogicalStep {
     public Limit(Operations operations) {
         super(operations);
     }
-//	public Limit(int num){
+    //	public Limit(int num){
     //number = num;
     //}
 

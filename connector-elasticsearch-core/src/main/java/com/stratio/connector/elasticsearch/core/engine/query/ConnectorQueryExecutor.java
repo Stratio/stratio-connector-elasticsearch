@@ -16,13 +16,10 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
-import com.stratio.connector.meta.ElasticsearchResultSet;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.data.QualifiedNames;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
@@ -34,10 +31,13 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
+import com.stratio.connector.meta.ElasticsearchResultSet;
+import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.QualifiedNames;
 
 /**
  * Created by jmgomez on 15/09/14.
@@ -58,7 +58,8 @@ public class ConnectorQueryExecutor {
      * @return the query result.
      */
 
-    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder, ConnectorQueryData queryData) {
+    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
+            ConnectorQueryData queryData) {
 
         SearchType searchType = queryData.getSearchType();
 
@@ -68,25 +69,24 @@ public class ConnectorQueryExecutor {
             ElasticsearchResultSet resultSet = new ElasticsearchResultSet();
             SearchResponse scrollResp = requestBuilder.execute().actionGet();
 
-
             do {
                 if (searchType == SearchType.SCAN) {
-                    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId()).setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+                    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
+                            .setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
 
                 }
 
                 for (SearchHit hit : scrollResp.getHits()) {
-                    resultSet.add(createRow(hit,queryData));
+                    resultSet.add(createRow(hit, queryData));
 
                 }
 
             } while (scrollResp.getHits().getHits().length != 0);
 
-
             queryResult = QueryResult.createQueryResult(resultSet);
         } catch (IndexMissingException e) {
             if (logger.isDebugEnabled()) {
-                logger.debug("The index not exists. The ES connector returns an empty QueryResult. "+e.getMessage());
+                logger.debug("The index not exists. The ES connector returns an empty QueryResult. " + e.getMessage());
             }
             queryResult = QueryResult.createQueryResult(new ElasticsearchResultSet());
         }
@@ -96,7 +96,7 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates a row from a mongoResult
      *
-     * @param hit the Elasticsearch SearchHit.
+     * @param hit       the Elasticsearch SearchHit.
      * @param queryData
      * @return the row.
      */
@@ -120,7 +120,8 @@ public class ConnectorQueryExecutor {
 
             Object value = fields.get(field);
             Project projection = queryData.getProjection();
-            String qualifiedFieldName = QualifiedNames.getColumnQualifiedName(projection.getCatalogName(), projection.getTableName().getName(), field);
+            String qualifiedFieldName = QualifiedNames
+                    .getColumnQualifiedName(projection.getCatalogName(), projection.getTableName().getName(), field);
 
             if (alias.containsKey(qualifiedFieldName)) {
                 field = alias.get(qualifiedFieldName);
@@ -131,10 +132,5 @@ public class ConnectorQueryExecutor {
 
         return row;
     }
-
-
-
-
-
 
 }

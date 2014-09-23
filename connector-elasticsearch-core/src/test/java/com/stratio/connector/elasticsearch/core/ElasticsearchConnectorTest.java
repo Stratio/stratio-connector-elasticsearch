@@ -16,14 +16,15 @@
 
 package com.stratio.connector.elasticsearch.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IConfiguration;
-import com.stratio.meta.common.security.ICredentials;
-import com.stratio.meta2.common.data.ClusterName;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +33,13 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
+import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
+import com.stratio.meta.common.connector.ConnectorClusterConfig;
+import com.stratio.meta.common.connector.IConfiguration;
+import com.stratio.meta.common.security.ICredentials;
+import com.stratio.meta2.common.data.ClusterName;
 
 /**
  * ElasticsearchConnector Tester.
@@ -48,7 +50,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(PowerMockRunner.class)
 
-@PrepareForTest(value = {NodeConnection.class, ElasticsearchConnector.class})
+@PrepareForTest(value = { NodeConnection.class, ElasticsearchConnector.class })
 public class ElasticsearchConnectorTest {
 
     private static final String CLUSTER_NAME = "CLUSTER_NAME";
@@ -73,10 +75,9 @@ public class ElasticsearchConnectorTest {
         IConfiguration iconfiguration = mock(IConfiguration.class);
         elasticsearchConnector.init(iconfiguration);
 
-
-        ElasticSearchConnectionHandler connectionHandle = (ElasticSearchConnectionHandler) Whitebox.getInternalState(elasticsearchConnector, "connectionHandler");
+        ElasticSearchConnectionHandler connectionHandle = (ElasticSearchConnectionHandler) Whitebox
+                .getInternalState(elasticsearchConnector, "connectionHandler");
         Object recoveredConfiguration = Whitebox.getInternalState(connectionHandle, "configuration");
-
 
         assertNotNull("The configuration is not null", recoveredConfiguration);
         assertEquals("The configuration is correct", iconfiguration, recoveredConfiguration);
@@ -96,12 +97,10 @@ public class ElasticsearchConnectorTest {
         ElasticSearchConnectionHandler connectionHandle = mock(ElasticSearchConnectionHandler.class);
         Whitebox.setInternalState(elasticsearchConnector, "connectionHandler", connectionHandle);
 
-
         elasticsearchConnector.connect(iCredentials, config);
 
         verify(connectionHandle, times(1)).createConnection(iCredentials, config);
 
     }
-
 
 }

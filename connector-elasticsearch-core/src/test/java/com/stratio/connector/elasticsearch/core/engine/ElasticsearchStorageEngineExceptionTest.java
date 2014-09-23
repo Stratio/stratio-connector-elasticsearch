@@ -16,6 +16,21 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.elasticsearch.client.Client;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.internal.util.reflection.Whitebox;
+
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
@@ -32,21 +47,6 @@ import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
-import org.elasticsearch.client.Client;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.internal.util.reflection.Whitebox;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
 
 /**
  * ElasticsearchStorageEngine Tester.
@@ -68,7 +68,6 @@ public class ElasticsearchStorageEngineExceptionTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-
     private IndexRequestBuilderCreator indexRequestBuilderCreator;
     private ElasticSearchConnectionHandler connectionHandler;
     private Connection<Client> connection;
@@ -81,7 +80,6 @@ public class ElasticsearchStorageEngineExceptionTest {
     private ClusterName clusterRef = null;
     private List<ColumnName> partirionKey = Collections.emptyList();
     private List<ColumnName> clusterKey = Collections.emptyList();
-
 
     @Before
     public void before() throws HandlerConnectionException {
@@ -101,31 +99,27 @@ public class ElasticsearchStorageEngineExceptionTest {
     public void after() throws Exception {
     }
 
-
     @Test
-    public void testInsertExecutionException() throws ExecutionException, HandlerConnectionException, UnsupportedException {
+    public void testInsertExecutionException()
+            throws ExecutionException, HandlerConnectionException, UnsupportedException {
 
         exception.expect(ExecutionException.class);
-        exception.expectMessage("Fail Connecting elasticSearch in insert method. Msg");
-
+        exception.expectMessage("Error find Connection in CLUSTER NAME. Msg");
 
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new HandlerConnectionException("Msg"));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey, clusterKey);
+        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+                clusterKey);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-
 
         elasticsearchStorageEngine.insert(clusterName, targetTable, createRow(ROW_NAME, INTEGER_CELL_VALUE));
 
-
     }
-
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
         Row row = new Row(rowKey, cell);
         return row;
     }
-
 
 }

@@ -31,7 +31,6 @@ public class ConnectionConfiguration {
         this.multivalued = multivalued;
     }
 
-
     public Boolean isMandatory() {
         return mandatory;
     }
@@ -40,20 +39,24 @@ public class ConnectionConfiguration {
         return multivalued;
     }
 
-
     public ConnectionOption getConnectionOption() {
         return connectionOption;
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         ConnectionConfiguration that = (ConnectionConfiguration) o;
 
-        if (connectionOption != that.connectionOption) return false;
+        if (connectionOption != that.connectionOption) {
+            return false;
+        }
 
         return true;
     }

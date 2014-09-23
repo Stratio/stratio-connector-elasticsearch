@@ -15,64 +15,55 @@
  */
 package com.stratio.connector.elasticsearch.core.engine;
 
-
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
-import com.stratio.connector.meta.exception.UnsupportedOperationException;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalWorkflow;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.data.ClusterName;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.engine.CommonsQueryEngine;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
+import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.ClusterName;
 
-public class ElasticsearchQueryEngine implements IQueryEngine {
-
+public class ElasticsearchQueryEngine extends CommonsQueryEngine {
 
     /**
      * The log.
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The connection handler.
-     */
-    private ElasticSearchConnectionHandler connectionHandle;
-
-
     public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
 
-        this.connectionHandle = connectionHandle;
+        super(connectionHandle);
 
     }
 
     @Override
-    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
+    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow, Connection connection)
+            throws ExecutionException, UnsupportedException {
         QueryResult queryResult = null;
 
-
         try {
-            queryResult = execute((Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), workflow);
+            queryResult = execute((Client) connection.getNativeConnection(), workflow);
 
-        } catch (HandlerConnectionException e) {
-            String msg = "Error recovered ElasticSearch connection. "+e.getMessage();
+        } catch (Exception e) {
+            String msg = "Error recovered ElasticSearch connection. " + e.getMessage();
             logger.error(msg);
-            throw new ExecutionException(msg,e);
+            throw new ExecutionException(msg, e);
         }
         return queryResult;
     }
 
-    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow) throws UnsupportedException, ExecutionException {
-
+    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow)
+            throws UnsupportedException, ExecutionException {
 
         ConnectorQueryParser queryParser = new ConnectorQueryParser();
         ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkFlow);
@@ -81,10 +72,8 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
         ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
         QueryResult resultSet = queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
 
-
         return resultSet;
 
     }
-
 
 }

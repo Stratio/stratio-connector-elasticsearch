@@ -16,15 +16,12 @@
 
 package com.stratio.connector.meta;
 
+import java.util.List;
 
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 
-import java.util.List;
-
-
 public class Sort extends LogicalStep {
-
 
     public static final int ASC = 1;
     public static final int DESC = 2;
@@ -64,6 +61,5 @@ public class Sort extends LogicalStep {
     public LogicalStep getFirstPrevious() {
         return null;
     }
-
 
 }

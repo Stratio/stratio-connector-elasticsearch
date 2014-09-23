@@ -27,7 +27,6 @@ import com.stratio.meta.common.exceptions.InitializationException;
  */
 public class ESDropMetadataTest extends GenericMetadataDropTest {
 
-
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;

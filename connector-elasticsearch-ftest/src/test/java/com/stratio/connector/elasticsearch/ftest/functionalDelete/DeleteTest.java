@@ -22,7 +22,6 @@ import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
-
 public class DeleteTest extends GenericDeleteTest {
 
     @Override
@@ -38,6 +37,5 @@ public class DeleteTest extends GenericDeleteTest {
         }
         return esConnectorHelper;
     }
-
 
 }

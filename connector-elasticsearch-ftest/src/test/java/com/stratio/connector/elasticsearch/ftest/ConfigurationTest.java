@@ -16,16 +16,13 @@
 
 package com.stratio.connector.elasticsearch.ftest;
 
-
 import com.stratio.connector.commons.ftest.GenericConfigurationTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.meta.common.exceptions.ConnectionException;
 import com.stratio.meta.common.exceptions.InitializationException;
 
-
 public class ConfigurationTest extends GenericConfigurationTest {
-
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -40,6 +37,5 @@ public class ConfigurationTest extends GenericConfigurationTest {
         }
         return esConnectorHelper;
     }
-
 
 }

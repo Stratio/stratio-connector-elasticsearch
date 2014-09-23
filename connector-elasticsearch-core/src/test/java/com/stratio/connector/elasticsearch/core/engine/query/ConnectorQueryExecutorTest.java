@@ -1,11 +1,14 @@
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import com.stratio.connector.meta.ElasticsearchResultSet;
-import com.stratio.meta.common.connector.Operations;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.data.TableName;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -14,7 +17,6 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.SearchHits;
 import org.junit.After;
 import org.junit.Before;
@@ -23,15 +25,12 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
+import com.stratio.connector.meta.ElasticsearchResultSet;
+import com.stratio.meta.common.connector.Operations;
+import com.stratio.meta.common.data.Row;
+import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.TableName;
 
 /**
  * ConnectorQueryExecutor Tester.
@@ -41,9 +40,9 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  * @since <pre>sep 16, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = {Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class, SearchHit[].class})
+@PrepareForTest(
+        value = { Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class, SearchHit[].class })
 public class ConnectorQueryExecutorTest {
-
 
     private static final String TYPE_NAME = "TYPE NAME";
     private static final String INDEX_NAME = "INDEX NAME";
@@ -74,7 +73,6 @@ public class ConnectorQueryExecutorTest {
         hits.add(createHit());
         when(searchHits.iterator()).thenReturn(hits.iterator());
 
-
         SearchResponse searchResponse = mock(SearchResponse.class);
         when(searchResponse.getScrollId()).thenReturn(SCROLL_ID);
 
@@ -87,17 +85,14 @@ public class ConnectorQueryExecutorTest {
 
         when(listenableActionFuture.actionGet()).thenReturn(searchResponse);
 
-
         SearchScrollRequestBuilder searchScrollRequestBuilder = mock(SearchScrollRequestBuilder.class);
         when(searchScrollRequestBuilder.setScroll(any(TimeValue.class))).thenReturn(searchScrollRequestBuilder);
         when(searchScrollRequestBuilder.execute()).thenReturn(listenableActionFuture);
         Client client = mock(Client.class);
         when(client.prepareSearchScroll(SCROLL_ID)).thenReturn(searchScrollRequestBuilder);
 
-
         SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
         when(requestBuilder.execute()).thenReturn(listenableActionFuture);
-
 
         ConnectorQueryData queryData = createQueryData(SearchType.SCAN);
 
@@ -111,7 +106,6 @@ public class ConnectorQueryExecutorTest {
 
     }
 
-
     @Test
     public void testExecuteFetchFilterQuery() throws Exception {
 
@@ -120,9 +114,7 @@ public class ConnectorQueryExecutorTest {
         hits.add(createHit());
         when(searchHits.iterator()).thenReturn(hits.iterator());
 
-
         SearchResponse searchResponse = mock(SearchResponse.class);
-
 
         when(searchResponse.getHits()).thenReturn(searchHits);
         SearchHit[] aHits = new SearchHit[0];
@@ -133,13 +125,10 @@ public class ConnectorQueryExecutorTest {
 
         when(listenableActionFuture.actionGet()).thenReturn(searchResponse);
 
-
         Client client = mock(Client.class);
-
 
         SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
         when(requestBuilder.execute()).thenReturn(listenableActionFuture);
-
 
         ConnectorQueryData queryData = createQueryData(SearchType.QUERY_THEN_FETCH);
 
@@ -152,7 +141,6 @@ public class ConnectorQueryExecutorTest {
         assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(COLUMN_NAME).getValue());
 
     }
-
 
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
@@ -167,12 +155,10 @@ public class ConnectorQueryExecutorTest {
         ConnectorQueryData connectorQueryData = new ConnectorQueryData();
 
         connectorQueryData.setSearchType(searchType);
-        Project projection = new Project(Operations.FILTER_INDEXED_EQ,new TableName(INDEX_NAME,TYPE_NAME));
+        Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME));
         connectorQueryData.setProjection(projection);
-
 
         return connectorQueryData;
     }
-
 
 }

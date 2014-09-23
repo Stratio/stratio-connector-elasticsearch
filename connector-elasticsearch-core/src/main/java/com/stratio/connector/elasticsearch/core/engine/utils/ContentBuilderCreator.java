@@ -16,20 +16,20 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.io.IOException;
+import java.util.Map;
+
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Map;
-
 
 /**
  * This class is responsible to create ContentBuilders'
@@ -50,7 +50,8 @@ public class ContentBuilderCreator {
      * @throws UnsupportedException if the type metadata is not supported.
      * @thros ExecutionException if a error occurs.
      */
-    public XContentBuilder createTypeSource(TableMetadata typeMetadata) throws UnsupportedException, ExecutionException {
+    public XContentBuilder createTypeSource(TableMetadata typeMetadata)
+            throws UnsupportedException, ExecutionException {
 
         XContentBuilder xContentBuilder = null;
         try {
@@ -66,7 +67,8 @@ public class ContentBuilderCreator {
             xContentBuilder = xContentBuilder.endObject().endObject();
 
             if (logger.isDebugEnabled()) {
-                logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index [" + typeMetadata.getName().getCatalogName() + "]");
+                logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index [" + typeMetadata.getName()
+                        .getCatalogName() + "]");
                 logger.debug("Mapping : " + xContentBuilder.string());
             }
 
@@ -75,7 +77,6 @@ public class ContentBuilderCreator {
             logger.error(msg);
             throw new ExecutionException(msg, e);
         }
-
 
         return xContentBuilder;
     }
@@ -91,27 +92,27 @@ public class ContentBuilderCreator {
 
         String type = "";
         switch (columnType) {
-            case BIGINT:
-                type = "long";
-                break;
-            case BOOLEAN:
-                type = "boolean";
-                break;
-            case DOUBLE:
-                type = "double";
-                break;
-            case FLOAT:
-                type = "float";
-                break;
-            case INT:
-                type = "integer";
-                break;
-            case TEXT:
-            case VARCHAR:
-                type = "string";
-                break;
-            default:
-                throw new UnsupportedException("The type [" + columnType + "] is not supported in ElasticSearch");
+        case BIGINT:
+            type = "long";
+            break;
+        case BOOLEAN:
+            type = "boolean";
+            break;
+        case DOUBLE:
+            type = "double";
+            break;
+        case FLOAT:
+            type = "float";
+            break;
+        case INT:
+            type = "integer";
+            break;
+        case TEXT:
+        case VARCHAR:
+            type = "string";
+            break;
+        default:
+            throw new UnsupportedException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;
     }
