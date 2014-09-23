@@ -63,7 +63,7 @@ public class FilterBuilderCreator {
         String leftTerm = selectorHelper.getSelectorField(relation.getLeftTerm());
         String rightTerm = selectorHelper.getSelectorField(relation.getRightTerm());
         switch (relation.getOperator()) {
-            case COMPARE:
+            case EQ:
             case ASSIGN:
                 localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
                 break;

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * This class represents a logic connection.
  * Created by jmgomez on 28/08/14.
  */
-public class TransportConnection implements Connection<Client> {
+public class TransportConnection extends Connection<Client> {
 
 
     /**

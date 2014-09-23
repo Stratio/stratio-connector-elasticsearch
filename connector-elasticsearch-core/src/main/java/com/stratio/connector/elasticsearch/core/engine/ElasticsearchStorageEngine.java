@@ -16,7 +16,9 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
+import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.meta.common.connector.IStorageEngine;
@@ -40,7 +42,7 @@ import java.util.Collection;
  * This class performs operations insert and delete in Elasticsearch.
  */
 
-public class ElasticsearchStorageEngine implements IStorageEngine {
+public class ElasticsearchStorageEngine extends CommonsStorageEngine {
 
 
     /**
@@ -51,10 +53,6 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      * The index creator builder.
      */
     private IndexRequestBuilderCreator indexRequestBuilderCreator = new IndexRequestBuilderCreator();
-    /**
-     * The connection handler.
-     */
-    private transient ElasticSearchConnectionHandler connectionHandler;
 
 
     /**
@@ -64,7 +62,7 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      */
     public ElasticsearchStorageEngine(ElasticSearchConnectionHandler connectionHandler) {
 
-        this.connectionHandler = connectionHandler;
+       super(connectionHandler);
     }
 
 
@@ -79,11 +77,11 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      */
 
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row) throws UnsupportedException, ExecutionException {
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row, Connection connection) throws UnsupportedException, ExecutionException {
 
         try {
 
-            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetCluster, targetTable, row);
+            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetCluster, targetTable, row,connection);
             indexRequestBuilder.execute().actionGet();
 
             loggInsert(targetTable);
@@ -106,10 +104,10 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException if the operation is not supported.
      */
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws UnsupportedException, ExecutionException {
+    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows,Connection  connection) throws UnsupportedException, ExecutionException {
 
         try {
-            BulkRequestBuilder bulkRequest = createBulkRequest(targetCluster, targetTable, rows);
+            BulkRequestBuilder bulkRequest = createBulkRequest(targetCluster, targetTable, rows,connection);
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
@@ -126,17 +124,17 @@ public class ElasticsearchStorageEngine implements IStorageEngine {
     }
 
 
-    private IndexRequestBuilder createIndexRequest(ClusterName targetCluster, TableMetadata targetTable, Row row) throws HandlerConnectionException, UnsupportedException {
+    private IndexRequestBuilder createIndexRequest(ClusterName targetCluster, TableMetadata targetTable, Row row,Connection  connection) throws HandlerConnectionException, UnsupportedException {
 
-        Client client = (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+        Client client = (Client) connection.getNativeConnection();
 
         return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
     }
 
 
-    private BulkRequestBuilder createBulkRequest(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows) throws HandlerConnectionException, UnsupportedException {
+    private BulkRequestBuilder createBulkRequest(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows,Connection  connection) throws HandlerConnectionException, UnsupportedException {
 
-        Client elasticClient = (Client) connectionHandler.getConnection(targetCluster.getName()).getNativeConnection();
+        Client elasticClient = (Client) connection.getNativeConnection();
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 

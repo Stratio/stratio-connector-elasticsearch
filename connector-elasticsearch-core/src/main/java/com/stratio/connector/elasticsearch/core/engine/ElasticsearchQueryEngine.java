@@ -16,7 +16,9 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 
+import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+import com.stratio.connector.commons.engine.CommonsQueryEngine;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
@@ -35,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ElasticsearchQueryEngine implements IQueryEngine {
+public class ElasticsearchQueryEngine extends CommonsQueryEngine {
 
 
     /**
@@ -43,25 +45,22 @@ public class ElasticsearchQueryEngine implements IQueryEngine {
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The connection handler.
-     */
-    private ElasticSearchConnectionHandler connectionHandle;
+
 
 
     public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
 
-        this.connectionHandle = connectionHandle;
+        super(connectionHandle);
 
     }
 
     @Override
-    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow) throws ExecutionException, UnsupportedException {
+    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow, Connection connection) throws ExecutionException, UnsupportedException {
         QueryResult queryResult = null;
         try {
-            queryResult = execute((Client) connectionHandle.getConnection(targetCluster.getName()).getNativeConnection(), workflow);
+            queryResult = execute((Client) connection.getNativeConnection(), workflow);
 
-        } catch (HandlerConnectionException e) {
+        } catch (Exception e) {
             String msg = "Error recovered ElasticSearch connection. "+e.getMessage();
             logger.error(msg);
             throw new ExecutionException(msg,e);

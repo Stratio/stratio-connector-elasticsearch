@@ -33,7 +33,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
  * This class represents a logic connection.
  * Created by jmgomez on 28/08/14.
  */
-public class NodeConnection implements Connection<Client> {
+public class NodeConnection extends Connection<Client> {
 
     /**
      * The Log.

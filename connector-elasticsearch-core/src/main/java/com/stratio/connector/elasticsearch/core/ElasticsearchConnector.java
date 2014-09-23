@@ -25,6 +25,7 @@ import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
 import com.stratio.meta.common.connector.*;
 import com.stratio.meta.common.exceptions.ConnectionException;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 import org.slf4j.Logger;
@@ -93,6 +94,11 @@ public class ElasticsearchConnector implements IConnector {
     @Override
     public void close(ClusterName name) {
         connectionHandler.closeConnection(name.getName());
+
+    }
+
+    @Override
+    public void shutdown() throws ExecutionException {
 
     }
 

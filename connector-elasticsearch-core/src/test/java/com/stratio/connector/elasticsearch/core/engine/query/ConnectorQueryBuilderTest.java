@@ -111,7 +111,7 @@ public class ConnectorQueryBuilderTest {
     private ConnectorQueryData createQueryData() {
         ConnectorQueryData queryData = new ConnectorQueryData();
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
-        Relation relation = new Relation(new ColumnSelector(columnName), Operator.COMPARE, new StringSelector(STRING_SELECTOR_VALUE));
+        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector(STRING_SELECTOR_VALUE));
 
         queryData.addFilter(new Filter(Operations.FILTER_NON_INDEXED_EQ, relation));
 

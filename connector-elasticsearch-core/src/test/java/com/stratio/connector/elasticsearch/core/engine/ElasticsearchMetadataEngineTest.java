@@ -27,6 +27,8 @@ import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 import org.elasticsearch.action.ActionFuture;
 import org.elasticsearch.action.ActionResponse;
 import org.elasticsearch.action.ListenableActionFuture;
@@ -116,7 +118,7 @@ public class ElasticsearchMetadataEngineTest {
         when(client.admin()).thenReturn(adminClient);
 
 
-        Map<String, Object> options = Collections.EMPTY_MAP;
+        Map<Selector, Selector> options = Collections.EMPTY_MAP;
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
         CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
@@ -144,8 +146,8 @@ public class ElasticsearchMetadataEngineTest {
         when(client.admin()).thenReturn(adminClient);
 
 
-        Map<String, Object> options = new HashMap<>();
-        options.put("key1", "value1");
+        Map<Selector, Selector> options = new HashMap<>();
+        options.put(new StringSelector("key1"), new StringSelector("value1"));
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
         CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);

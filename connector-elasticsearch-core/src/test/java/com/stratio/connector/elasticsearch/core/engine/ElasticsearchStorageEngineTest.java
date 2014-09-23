@@ -15,6 +15,7 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -72,7 +73,7 @@ public class ElasticsearchStorageEngineTest {
 
     private ElasticsearchStorageEngine elasticsearchStorageEngine;
     private Map<ColumnName, ColumnMetadata> columns = null;
-    private Map<String, Object> options = null;
+    private Map<Selector, Selector> options = null;
     private Map<IndexName, IndexMetadata> indexes = null;
     private ClusterName clusterRef = null;
     private List<ColumnName> partirionKey = Collections.emptyList();

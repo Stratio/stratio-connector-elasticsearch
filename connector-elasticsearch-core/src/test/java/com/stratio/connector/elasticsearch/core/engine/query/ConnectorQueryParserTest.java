@@ -68,7 +68,7 @@ public class ConnectorQueryParserTest {
         assertEquals("The filter operation is correct", Operations.FILTER_FUNCTION_EQ, filter.getOperation());
         assertEquals("The left term is type correct,", ColumnSelector.class.getCanonicalName(), filter.getRelation().getLeftTerm().getClass().getCanonicalName());
         assertEquals("The filter table is correct", TYPE_NAME, ((ColumnSelector) filter.getRelation().getLeftTerm()).getName().getTableName().getName());
-        assertEquals("The operator is correct", Operator.COMPARE, filter.getRelation().getOperator());
+        assertEquals("The operator is correct", Operator.EQ, filter.getRelation().getOperator());
         assertEquals("The right term is correct", STRING_COLUMN_VALUE, ((StringSelector) filter.getRelation().getRightTerm()).getValue());
 
 
@@ -88,7 +88,7 @@ public class ConnectorQueryParserTest {
 
         List<LogicalStep> initalSteps = new ArrayList<>();
 
-        Relation filterRelation = new Relation(new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME)), Operator.COMPARE, new StringSelector(STRING_COLUMN_VALUE));
+        Relation filterRelation = new Relation(new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME)), Operator.EQ, new StringSelector(STRING_COLUMN_VALUE));
         initalSteps.add(new Filter(operations, filterRelation));
 
         initalSteps.add(new Project(operations, new TableName(INDEX_NAME, TYPE_NAME)));
