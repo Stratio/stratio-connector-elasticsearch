@@ -30,7 +30,7 @@ import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 
-import com.stratio.connector.commons.util.Parser;
+import com.stratio.connector.commons.util.ConnectorParser;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.exceptions.InitializationException;
 
@@ -40,10 +40,6 @@ import com.stratio.meta.common.exceptions.InitializationException;
 
 public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
 
-    /**
-     * The parser.
-     */
-    private Parser parser = new Parser();
 
     /**
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
@@ -78,8 +74,8 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
 
     public TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
 
-        String[] hosts = (String[]) parser.hosts(config.getOptions().get(HOST.getOptionName()));
-        String[] ports = (String[]) parser.ports(config.getOptions().get(PORT.getOptionName()));
+        String[] hosts =  ConnectorParser.hosts(config.getOptions().get(HOST.getOptionName()));
+        String[] ports =  ConnectorParser.ports(config.getOptions().get(PORT.getOptionName()));
         TransportAddress[] transportAddresses = new TransportAddress[1];
         for (int i = 0; i < hosts.length; i++) {
             transportAddresses[0] = new InetSocketTransportAddress(hosts[i], Integer.decode(

@@ -19,6 +19,7 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -101,23 +102,28 @@ public class ConnectorQueryExecutor {
      * @return the row.
      */
     private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
+
+        Map<String, String> alias = returnAlias(queryData);
+        Map<String, Object> fields = getFields(hit);
+        Row row = setRowValues(queryData, alias, fields);
+
+        return row;
+    }
+
+    private Row setRowValues(ConnectorQueryData queryData, Map<String, String> alias, Map<String, Object> fields) {
         Row row = new Row();
-        Map<String, String> alias = Collections.EMPTY_MAP;
-        if (queryData.getSelect() != null) {
-            alias = queryData.getSelect().getColumnMap();
+        Set<String> fieldNames;
+
+        if(queryData.getSelect()==null) {
+            fieldNames = fields.keySet();
+        }else{
+            fieldNames = queryData.getSelect().getColumnMap().keySet();
         }
-
-        Map<String, Object> fields = hit.getSource();
-
-        if (fields == null) {
-            fields = new HashMap<>();
-            for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
-
-                fields.put(entry.getKey(), entry.getValue().getValue());
+        for (String field : fieldNames) {
+            if (field.contains(".")){
+                String[] aField = field.split("\\.");
+                field = aField[aField.length-1];
             }
-        }
-        for (String field : fields.keySet()) {
-
             Object value = fields.get(field);
             Project projection = queryData.getProjection();
             String qualifiedFieldName = QualifiedNames
@@ -129,8 +135,27 @@ public class ConnectorQueryExecutor {
 
             row.addCell(field, new Cell(value));
         }
-
         return row;
+    }
+
+    private Map<String, Object> getFields(SearchHit hit) {
+        Map<String, Object> fields = hit.getSource();
+
+        if (fields == null) {
+            fields = new HashMap<>();
+            for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
+
+                fields.put(entry.getKey(), entry.getValue().getValue());
+            }
+        } return fields;
+    }
+
+    private Map<String, String> returnAlias(ConnectorQueryData queryData) {
+        Map<String, String> alias = Collections.EMPTY_MAP;
+        if (queryData.getSelect() != null) {
+            alias = queryData.getSelect().getColumnMap();
+        }
+        return alias;
     }
 
 }
