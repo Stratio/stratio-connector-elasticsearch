@@ -21,8 +21,7 @@ import java.util.Collection;
 
 import org.elasticsearch.action.search.SearchType;
 
-import com.stratio.connector.meta.Limit;
-import com.stratio.connector.meta.Sort;
+
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
@@ -41,14 +40,8 @@ public class ConnectorQueryData {
      * The projection.
      */
     private Project projection = null;
-    /**
-     * The sort.
-     */
-    private Collection<Sort> sortList = new ArrayList<>();
-    /**
-     * The limit.
-     */
-    private Limit limit = null;
+
+
     /**
      * The filters.
      */
@@ -57,55 +50,14 @@ public class ConnectorQueryData {
      * The matchList;
      */
     private Collection<Filter> matchList = new ArrayList<>();
-    /**
-     * The matchList;
-     */
-    private ArrayList<Filter> marchList;
 
     /**
      * The select.
      */
     private Select select;
 
-    /**
-     * Add a sort.
-     *
-     * @param sort a sort.
-     */
-    public void addSort(Sort sort) {
 
-        sortList.add(sort);
-    }
 
-    /**
-     * This method ask query if has sort list.
-     *
-     * @return true if the query has sort list. False in other case.
-     */
-
-    public boolean hasSortList() {
-        return !sortList.isEmpty();
-    }
-
-    /**
-     * Return the sort list.
-     *
-     * @return the sort list.
-     */
-    public Collection<Sort> getSortList() {
-        return sortList;
-    }
-
-    /**
-     * This method ask query if has limit.
-     *
-     * @return true if the query has limit. False in other case.
-     */
-
-    public boolean hasLimitStep() {
-
-        return limit != null;
-    }
 
     /**
      * Add a filter.
@@ -147,24 +99,7 @@ public class ConnectorQueryData {
         this.projection = projection;
     }
 
-    /**
-     * get the limit.
-     *
-     * @return the limit.
-     */
-    public Limit getLimit() {
 
-        return limit;
-    }
-
-    /**
-     * Set the limit.
-     *
-     * @param limit the limit.
-     */
-    public void setLimit(Limit limit) {
-        this.limit = limit;
-    }
 
     /**
      * Get the filter.
@@ -251,4 +186,6 @@ public class ConnectorQueryData {
         this.select = select;
 
     }
+
+
 }

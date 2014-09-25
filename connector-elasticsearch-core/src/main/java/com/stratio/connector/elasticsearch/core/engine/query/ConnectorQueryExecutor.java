@@ -16,8 +16,10 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,26 +31,33 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
-import com.stratio.connector.meta.ElasticsearchResultSet;
+
+
 import com.stratio.meta.common.data.Cell;
+import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.metadata.structures.ColumnMetadata;
+
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.QualifiedNames;
-
+import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
 /**
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryExecutor {
 
+
+
     /**
      * The log.
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private boolean isMetadataCreate = false;
 
     /**
      * This method execute a query in elasticSearch.
@@ -67,19 +76,19 @@ public class ConnectorQueryExecutor {
         QueryResult queryResult = null;
         try {
 
-            ElasticsearchResultSet resultSet = new ElasticsearchResultSet();
+            ResultSet resultSet = new ResultSet();
             SearchResponse scrollResp = requestBuilder.execute().actionGet();
 
             do {
-                if (searchType == SearchType.SCAN) {
-                    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
-                            .setScroll(new TimeValue(LimitModifier.SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+                   scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
+                            .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
 
-                }
+
+
 
                 for (SearchHit hit : scrollResp.getHits()) {
                     resultSet.add(createRow(hit, queryData));
-
+                    resultSet.setColumnMetadata(creteMetadata(queryData));
                 }
 
             } while (scrollResp.getHits().getHits().length != 0);
@@ -89,10 +98,38 @@ public class ConnectorQueryExecutor {
             if (logger.isDebugEnabled()) {
                 logger.debug("The index not exists. The ES connector returns an empty QueryResult. " + e.getMessage());
             }
-            queryResult = QueryResult.createQueryResult(new ElasticsearchResultSet());
+            queryResult = QueryResult.createQueryResult(new ResultSet());
         }
         return queryResult;
     }
+
+
+    private List<ColumnMetadata> creteMetadata(ConnectorQueryData queryData) {
+
+
+        List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
+        if (!isMetadataCreate){
+
+
+            for (String field: queryData.getSelect().getColumnMap().keySet()){
+                if (field.contains(".")){
+                    String[] aField = field.split("\\.");
+                    field = aField[aField.length-1];
+                }
+
+                ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
+                        field,queryData.getSelect().getTypeMap().get(field));
+                columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
+                retunColumnMetadata.add(columnMetadata);
+            }
+
+            isMetadataCreate = true;
+        }
+
+        return retunColumnMetadata;
+    }
+
+
 
     /**
      * This method creates a row from a mongoResult
@@ -102,6 +139,7 @@ public class ConnectorQueryExecutor {
      * @return the row.
      */
     private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
+
 
         Map<String, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);

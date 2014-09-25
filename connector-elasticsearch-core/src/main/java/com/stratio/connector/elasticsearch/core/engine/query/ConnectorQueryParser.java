@@ -21,8 +21,7 @@ import java.util.List;
 import org.elasticsearch.action.search.SearchType;
 
 import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
-import com.stratio.connector.meta.Limit;
-import com.stratio.connector.meta.Sort;
+
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.LogicalStep;
@@ -52,14 +51,6 @@ public class ConnectorQueryParser {
                     } else {
                         throw new UnsupportedOperationException(" # Project > 1");
                     }
-                } else if (lStep instanceof Sort) {
-                    queryData.addSort((Sort) lStep);
-                } else if (lStep instanceof Limit) {
-                    if (!queryData.hasLimitStep()) {
-                        queryData.setLimit((Limit) lStep);
-                    } else {
-                        throw new UnsupportedOperationException(" # Limit > 1");
-                    }
                 } else if (lStep instanceof Filter) {
 
                     Filter step = (Filter) lStep;
@@ -82,13 +73,7 @@ public class ConnectorQueryParser {
 
         }
 
-        SearchType searchType = null;
-        if (queryData.getLimit() == null) {
-            searchType = SearchType.SCAN;
-        } else {
-            searchType = (queryData.hasSortList()) ? SearchType.QUERY_THEN_FETCH : SearchType.SCAN;
-        }
-        queryData.setSearchType(searchType);
+        queryData.setSearchType( SearchType.SCAN);
 
         checkSupportedQuery(queryData);
 
@@ -99,9 +84,10 @@ public class ConnectorQueryParser {
         if (!queryData.hasProjection()) {
             throw new UnsupportedOperationException("no projection found");
         }
-        if (queryData.hasSortList() && queryData.getLimit() == null) {
-            throw new UnsupportedOperationException("cannot sort: limit is required");
+        if (queryData.getSelect()==null) {
+            throw new UnsupportedOperationException("no select found");
         }
+
     }
 
 }

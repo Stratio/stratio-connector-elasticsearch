@@ -35,6 +35,13 @@ import com.stratio.meta2.common.data.ClusterName;
 
 public class ElasticsearchQueryEngine extends CommonsQueryEngine {
 
+
+    private ConnectorQueryParser queryParser = new ConnectorQueryParser();
+
+    private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
+
+    private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
+
     /**
      * The log.
      */
@@ -49,27 +56,21 @@ public class ElasticsearchQueryEngine extends CommonsQueryEngine {
     @Override
     public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow, Connection connection)
             throws ExecutionException, UnsupportedException {
-        QueryResult queryResult = null;
 
-        try {
-            queryResult = execute((Client) connection.getNativeConnection(), workflow);
+        QueryResult  queryResult = execute((Client) connection.getNativeConnection(), workflow);
 
-        } catch (Exception e) {
-            String msg = "Error recovered ElasticSearch connection. " + e.getMessage();
-            logger.error(msg);
-            throw new ExecutionException(msg, e);
-        }
+
         return queryResult;
     }
 
     private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow)
             throws UnsupportedException, ExecutionException {
 
-        ConnectorQueryParser queryParser = new ConnectorQueryParser();
+
         ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkFlow);
-        ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
+
         SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
-        ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
+
         QueryResult resultSet = queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
 
         return resultSet;

@@ -25,12 +25,16 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.meta.ElasticsearchResultSet;
+
 import com.stratio.meta.common.connector.Operations;
+import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta.common.result.Result;
 import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.ColumnType;
 
 /**
  * ConnectorQueryExecutor Tester.
@@ -98,7 +102,7 @@ public class ConnectorQueryExecutorTest {
 
         QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, queryData);
 
-        ElasticsearchResultSet resultset = (ElasticsearchResultSet) queryResult.getResultSet();
+        ResultSet resultset =  queryResult.getResultSet();
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
         Row row = resultset.getRows().get(0);
         assertEquals("The rows number is correct", 1, row.size());
@@ -106,41 +110,6 @@ public class ConnectorQueryExecutorTest {
 
     }
 
-    @Test
-    public void testExecuteFetchFilterQuery() throws Exception {
-
-        SearchHits searchHits = mock(SearchHits.class);
-        ArrayList<SearchHit> hits = new ArrayList<>();
-        hits.add(createHit());
-        when(searchHits.iterator()).thenReturn(hits.iterator());
-
-        SearchResponse searchResponse = mock(SearchResponse.class);
-
-        when(searchResponse.getHits()).thenReturn(searchHits);
-        SearchHit[] aHits = new SearchHit[0];
-
-        when(searchHits.getHits()).thenReturn(aHits);
-
-        ListenableActionFuture<SearchResponse> listenableActionFuture = mock(ListenableActionFuture.class);
-
-        when(listenableActionFuture.actionGet()).thenReturn(searchResponse);
-
-        Client client = mock(Client.class);
-
-        SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
-        when(requestBuilder.execute()).thenReturn(listenableActionFuture);
-
-        ConnectorQueryData queryData = createQueryData(SearchType.QUERY_THEN_FETCH);
-
-        QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, queryData);
-
-        ElasticsearchResultSet resulset = (ElasticsearchResultSet) queryResult.getResultSet();
-        assertEquals("The resulset size is correct", 1, resulset.getRows().size());
-        Row row = resulset.getRows().get(0);
-        assertEquals("The rows number is correct", 1, row.size());
-        assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(COLUMN_NAME).getValue());
-
-    }
 
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
@@ -158,6 +127,13 @@ public class ConnectorQueryExecutorTest {
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME));
         connectorQueryData.setProjection(projection);
 
+        Map<String, String> column = new HashMap<>();
+        column.put(COLUMN_NAME,COLUMN_NAME);
+
+        Map<String, ColumnType> type = new HashMap<>();
+        type.put(COLUMN_NAME,ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR,column,type);
+        connectorQueryData.setSelect(select);
         return connectorQueryData;
     }
 

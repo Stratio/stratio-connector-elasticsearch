@@ -29,7 +29,6 @@ import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.elasticsearch.core.engine.utils.ProjectCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.SortModifier;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 
@@ -86,11 +85,10 @@ public class ConnectorQueryBuilder {
 
     private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();
-        limitModifier.modify(requestBuilder, queryData.getLimit(), queryData.getSearchType());
-        if (queryData.hasSortList()) {
-            SortModifier.modify(requestBuilder, queryData.getSortList());
-        }
+        limitModifier.modify(requestBuilder,  queryData.getSearchType());
+
     }
+
 
     private void createProjection(ConnectorQueryData queryData) {
         ProjectCreator projectModifier = new ProjectCreator();

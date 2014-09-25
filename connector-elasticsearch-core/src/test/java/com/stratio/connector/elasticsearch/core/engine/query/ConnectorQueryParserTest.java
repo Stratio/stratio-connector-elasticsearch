@@ -5,7 +5,9 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -16,10 +18,12 @@ import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
+import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
@@ -89,9 +93,21 @@ public class ConnectorQueryParserTest {
 
         Relation filterRelation = new Relation(new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME)),
                 Operator.EQ, new StringSelector(STRING_COLUMN_VALUE));
-        initalSteps.add(new Filter(operations, filterRelation));
+        Filter filter = new Filter(operations, filterRelation);
 
-        initalSteps.add(new Project(operations, new TableName(INDEX_NAME, TYPE_NAME)));
+
+        Project project = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME));
+        project.setNextStep(filter);
+        initalSteps.add(project);
+
+        Map<String, String> column = new HashMap<>();
+        column.put(COLUMN_NAME,COLUMN_NAME);
+
+        Map<String, ColumnType> type = new HashMap<>();
+        type.put(COLUMN_NAME,ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR,column,type);
+        filter.setNextStep(select);
+
 
         LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);
 

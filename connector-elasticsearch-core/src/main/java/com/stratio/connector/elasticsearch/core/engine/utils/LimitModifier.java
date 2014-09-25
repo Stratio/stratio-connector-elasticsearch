@@ -19,7 +19,7 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.stratio.connector.meta.Limit;
+
 
 /**
  * @author darroyo
@@ -29,20 +29,10 @@ public class LimitModifier {
     public static final int SCAN_TIMEOUT_MILLIS = 600000;
     public static final int SIZE_SCAN = 10;
 
-    public void modify(SearchRequestBuilder requestBuilder, Limit limit, SearchType type) {
-        if (limit != null) {
-            if (type == SearchType.SCAN) {
-                requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
-                        .setSearchType(SearchType.SCAN);
-            } else if (type == SearchType.QUERY_THEN_FETCH) {
-                requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.QUERY_THEN_FETCH);
-            } else if (type == SearchType.DFS_QUERY_THEN_FETCH) {
-                requestBuilder.setSize(limit.getLimit()).setSearchType(SearchType.DFS_QUERY_THEN_FETCH);
-            }
-        } else {
+    public void modify(SearchRequestBuilder requestBuilder, SearchType type) {
             requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
                     .setSearchType(SearchType.SCAN);
-        }
+
 
     }
 
