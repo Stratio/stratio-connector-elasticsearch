@@ -31,6 +31,7 @@ import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
@@ -54,6 +55,7 @@ public class ConnectorQueryBuilderTest {
     private static final String COLUMN_1 = "COLUMN_NAME_1";
     private static final String COLUMN_2 = "COLUMN_NAME_2";
     private static final String COLUMN_3 = "COLUMN_NAME_3";
+    private static final String CLUSTER_NAME = "CLUSTER_NAME";
     static Client client;
     ConnectorQueryBuilder queryBuilder;
 
@@ -124,7 +126,9 @@ public class ConnectorQueryBuilderTest {
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_3));
         queryData.setProjection(
-                new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME), columnList));
+                new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
+                        new ClusterName(CLUSTER_NAME), columnList
+                       ));
 
         return queryData;
     }

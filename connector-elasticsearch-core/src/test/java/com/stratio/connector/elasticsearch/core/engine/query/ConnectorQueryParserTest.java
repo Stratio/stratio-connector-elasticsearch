@@ -21,6 +21,7 @@ import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.statements.structures.relationships.Operator;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnType;
@@ -40,6 +41,7 @@ public class ConnectorQueryParserTest {
     private static final String TYPE_NAME = "TYPE_NAME";
     private static final String COLUMN_NAME = "COLUMN_NAME";
     private static final String STRING_COLUMN_VALUE = "STRING_COLUMN_VALUE";
+    private static final String CLUSTER_NAME = "CLUSTER_NAME";
     ConnectorQueryParser queryParser;
 
     @Before
@@ -96,7 +98,7 @@ public class ConnectorQueryParserTest {
         Filter filter = new Filter(operations, filterRelation);
 
 
-        Project project = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME));
+        Project project = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME),new ClusterName(CLUSTER_NAME));
         project.setNextStep(filter);
         initalSteps.add(project);
 

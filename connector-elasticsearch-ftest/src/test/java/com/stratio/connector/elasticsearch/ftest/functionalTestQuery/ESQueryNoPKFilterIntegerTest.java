@@ -45,7 +45,8 @@ public class ESQueryNoPKFilterIntegerTest extends GenericNotIndexedQueryIntegerF
         return esConnectorHelper;
     }
 
-    @Override public void selectNotIndexedFilterBetween() throws ExecutionException, UnsupportedException {
-        fail("Not yet ElasticSearchcd  supported");
+    @Override
+    public void selectNotIndexedFilterBetween() throws ExecutionException, UnsupportedException {
+        fail("Not yet ElasticSearch  supported");
     }
 }

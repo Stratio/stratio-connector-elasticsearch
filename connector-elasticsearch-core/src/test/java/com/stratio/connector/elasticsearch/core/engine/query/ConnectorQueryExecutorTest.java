@@ -33,6 +33,7 @@ import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
+import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnType;
 
@@ -53,6 +54,7 @@ public class ConnectorQueryExecutorTest {
     private static final String COLUMN_NAME = "COLUMN NAME";
     private static final String COLUMN_STRING_VALUE = "COLUMN VALUE";
     private static final java.lang.String SCROLL_ID = "1";
+    private static final String CLUSTER_NAME = "CLUSTER_NAME";
 
     private ConnectorQueryExecutor connectorQueryExecutor;
 
@@ -124,7 +126,8 @@ public class ConnectorQueryExecutorTest {
         ConnectorQueryData connectorQueryData = new ConnectorQueryData();
 
         connectorQueryData.setSearchType(searchType);
-        Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME));
+        Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
+                new ClusterName(CLUSTER_NAME));
         connectorQueryData.setProjection(projection);
 
         Map<String, String> column = new HashMap<>();

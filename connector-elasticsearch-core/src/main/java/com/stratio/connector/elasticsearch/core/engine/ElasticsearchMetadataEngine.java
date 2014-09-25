@@ -68,19 +68,19 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     /**
      * This method create a index in ES.
      *
-     * @param targetCluster the cluster to be created.
+
      * @param indexMetaData the index configuration.
      * @throws UnsupportedException if any operation is not supported.
      * @throws ExecutionException   if an error occur.
      */
 
     @Override
-    public void createCatalog(ClusterName targetCluster, CatalogMetadata indexMetaData, Connection connection)
+    protected void createCatalog( CatalogMetadata indexMetaData, Connection connection)
             throws UnsupportedException, ExecutionException {
         try {
 
             createESIndex(indexMetaData, connection);
-            addAllTypesInTheCatalog(targetCluster, indexMetaData.getTables());
+            addAllTypesInTheCatalog(indexMetaData.getTables(),connection);
         } catch (HandlerConnectionException e) {
             throwHandlerConnectionException(e, "createCatalog");
         }
@@ -89,13 +89,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     /**
      * This method create a type in ES.
      *
-     * @param targetCluster the cluster to be created.
+     *
      * @param typeMetadata  the type configuration.
      * @throws UnsupportedException if any operation is not supported.
      * @throws ExecutionException   if an error occur.
      */
     @Override
-    public void createTable(ClusterName targetCluster, TableMetadata typeMetadata, Connection connection)
+    protected void createTable(TableMetadata typeMetadata, Connection connection)
             throws UnsupportedException,
             ExecutionException {
         try {
@@ -113,12 +113,12 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     /**
      * This method drop a index in ES.
      *
-     * @param targetCluster the cluster to be created.
+
      * @param indexName     the index name.
      */
 
     @Override
-    public void dropCatalog(ClusterName targetCluster, CatalogName indexName, Connection connection)
+    protected void dropCatalog(CatalogName indexName, Connection connection)
             throws ExecutionException {
         DeleteIndexResponse delete = null;
         try {
@@ -136,11 +136,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     /**
      * This method drop a type in ES.
      *
-     * @param targetCluster the cluster to be created.
+     *
      * @param typeName      the type name.
      */
     @Override
-    public void dropTable(ClusterName targetCluster, TableName typeName, Connection connection)
+    protected void dropTable( TableName typeName, Connection connection)
             throws ExecutionException {
         DeleteMappingResponse delete = null;
         try {
@@ -157,13 +157,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     }
 
     @Override
-    public void createIndex(ClusterName targetCluster, IndexMetadata indexMetadata, Connection connection)
+    protected void createIndex( IndexMetadata indexMetadata, Connection connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Not yet supported");
     }
 
     @Override
-    public void dropIndex(ClusterName targetCluster, IndexMetadata indexMetadata, Connection connection)
+    protected void dropIndex(IndexMetadata indexMetadata, Connection connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Not yet supported");
     }
@@ -205,13 +205,15 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
         return transformOptions;
     }
 
-    private void addAllTypesInTheCatalog(ClusterName targetCluster, Map<TableName, TableMetadata> types)
+    private void addAllTypesInTheCatalog( Map<TableName, TableMetadata> types, Connection connection)
             throws UnsupportedException, ExecutionException {
         if (types != null) {
             for (TableName tableName : types.keySet()) {
-                createTable(targetCluster, types.get(tableName));
+                createTable(types.get(tableName),connection);
             }
         }
     }
+
+
 }
 

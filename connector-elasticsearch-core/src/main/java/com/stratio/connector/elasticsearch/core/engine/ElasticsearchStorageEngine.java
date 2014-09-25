@@ -63,7 +63,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
     /**
      * Insert a document in Elasticsearch.
      *
-     * @param targetCluster the cluster.
+     *
      * @param targetTable   the targetName.
      * @param row           the row.
      * @throws ExecutionException   in case of failure during the execution.
@@ -71,12 +71,12 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
      */
 
     @Override
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Row row, Connection connection)
+    protected void insert(TableMetadata targetTable, Row row, Connection connection)
             throws UnsupportedException, ExecutionException {
 
         try {
 
-            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetCluster, targetTable, row, connection);
+            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetTable, row, connection);
             indexRequestBuilder.execute().actionGet();
 
             loggInsert(targetTable);
@@ -92,16 +92,16 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
     /**
      * Insert a set of documents in Elasticsearch.
      *
-     * @param targetTable the target table.
+     *
      * @param rows        the set of rows.
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException if the operation is not supported.
      */
-    public void insert(ClusterName targetCluster, TableMetadata targetTable, Collection<Row> rows,
+    protected void insert( TableMetadata targetTable, Collection<Row> rows,
             Connection connection) throws UnsupportedException, ExecutionException {
 
         try {
-            BulkRequestBuilder bulkRequest = createBulkRequest(targetCluster, targetTable, rows, connection);
+            BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
@@ -115,7 +115,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
 
     }
 
-    private IndexRequestBuilder createIndexRequest(ClusterName targetCluster, TableMetadata targetTable, Row row,
+    private IndexRequestBuilder createIndexRequest(TableMetadata targetTable, Row row,
             Connection connection) throws HandlerConnectionException, UnsupportedException {
 
         Client client = (Client) connection.getNativeConnection();
@@ -123,7 +123,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
         return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
     }
 
-    private BulkRequestBuilder createBulkRequest(ClusterName targetCluster, TableMetadata targetTable,
+    private BulkRequestBuilder createBulkRequest(TableMetadata targetTable,
             Collection<Row> rows, Connection connection) throws HandlerConnectionException, UnsupportedException {
 
         Client elasticClient = (Client) connection.getNativeConnection();

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.engine.CommonsQueryEngine;
+import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
@@ -33,7 +34,7 @@ import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
 
-public class ElasticsearchQueryEngine extends CommonsQueryEngine {
+public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine {
 
 
     private ConnectorQueryParser queryParser = new ConnectorQueryParser();
@@ -53,15 +54,8 @@ public class ElasticsearchQueryEngine extends CommonsQueryEngine {
 
     }
 
-    @Override
-    public QueryResult execute(ClusterName targetCluster, LogicalWorkflow workflow, Connection connection)
-            throws ExecutionException, UnsupportedException {
-
-        QueryResult  queryResult = execute((Client) connection.getNativeConnection(), workflow);
 
 
-        return queryResult;
-    }
 
     private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow)
             throws UnsupportedException, ExecutionException {
@@ -77,4 +71,14 @@ public class ElasticsearchQueryEngine extends CommonsQueryEngine {
 
     }
 
+    @Override
+    protected QueryResult execute(LogicalWorkflow logicalWorkflow, Connection connection)
+            throws UnsupportedException, ExecutionException {
+
+                QueryResult  queryResult = execute((Client) connection.getNativeConnection(), logicalWorkflow);
+
+
+        return queryResult;
+
+    }
 }

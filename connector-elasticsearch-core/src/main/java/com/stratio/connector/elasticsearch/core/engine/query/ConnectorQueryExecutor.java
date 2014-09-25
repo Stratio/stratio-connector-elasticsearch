@@ -132,7 +132,7 @@ public class ConnectorQueryExecutor {
 
 
     /**
-     * This method creates a row from a mongoResult
+     * This method creates a row.
      *
      * @param hit       the Elasticsearch SearchHit.
      * @param queryData
