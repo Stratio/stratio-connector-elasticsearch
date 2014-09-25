@@ -168,6 +168,8 @@ public class ConnectorQueryExecutor {
 
             if (alias.containsKey(qualifiedFieldName)) {
                 field = alias.get(qualifiedFieldName);
+            }else if (alias.containsKey(field)){
+            	field = alias.get(field);
             }
 
             row.addCell(field, new Cell(value));

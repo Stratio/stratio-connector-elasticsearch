@@ -26,7 +26,7 @@ public class ServerConnector {
     public static void main(String[] args) {
 
         ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(new ElasticsearchConnector());
+        //connectorApp.startup(new ElasticsearchConnector());
     }
 
 }
