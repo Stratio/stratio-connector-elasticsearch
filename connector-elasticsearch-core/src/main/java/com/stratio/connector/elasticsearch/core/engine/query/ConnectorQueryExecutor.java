@@ -31,7 +31,6 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
-import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,7 +87,7 @@ public class ConnectorQueryExecutor {
 
                 for (SearchHit hit : scrollResp.getHits()) {
                     resultSet.add(createRow(hit, queryData));
-                    resultSet.setColumnMetadata(creteMetadata(queryData));
+                    resultSet.setColumnMetadata(createMetadata(queryData));
                 }
 
             } while (scrollResp.getHits().getHits().length != 0);
@@ -104,7 +103,7 @@ public class ConnectorQueryExecutor {
     }
 
 
-    private List<ColumnMetadata> creteMetadata(ConnectorQueryData queryData) {
+    private List<ColumnMetadata> createMetadata(ConnectorQueryData queryData) {
 
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
