@@ -39,7 +39,7 @@ import com.stratio.meta2.common.metadata.TableMetadata;
  * This class performs operations insert and delete in Elasticsearch.
  */
 
-public class ElasticsearchStorageEngine extends CommonsStorageEngine {
+public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * The Log.
@@ -71,7 +71,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
      */
 
     @Override
-    protected void insert(TableMetadata targetTable, Row row, Connection connection)
+    protected void insert(TableMetadata targetTable, Row row, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
         try {
@@ -98,7 +98,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
      * @throws UnsupportedException if the operation is not supported.
      */
     protected void insert( TableMetadata targetTable, Collection<Row> rows,
-            Connection connection) throws UnsupportedException, ExecutionException {
+            Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         try {
             BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
@@ -116,7 +116,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
     }
 
     private IndexRequestBuilder createIndexRequest(TableMetadata targetTable, Row row,
-            Connection connection) throws HandlerConnectionException, UnsupportedException {
+            Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
 
         Client client = (Client) connection.getNativeConnection();
 
@@ -124,9 +124,9 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine {
     }
 
     private BulkRequestBuilder createBulkRequest(TableMetadata targetTable,
-            Collection<Row> rows, Connection connection) throws HandlerConnectionException, UnsupportedException {
+            Collection<Row> rows, Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
 
-        Client elasticClient = (Client) connection.getNativeConnection();
+        Client elasticClient =  connection.getNativeConnection();
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 

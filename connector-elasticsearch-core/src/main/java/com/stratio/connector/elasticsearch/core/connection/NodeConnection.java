@@ -43,11 +43,12 @@ public class NodeConnection extends Connection<Client> {
     /**
      * The Elasticsearch client.
      */
-    private Client elasticClient = null;  //REVIEW posiblemente esta clase desaparezca ya que la conexion no esta aqui.
+    private Client elasticClient = null;
 
     private Node node = null;
     private boolean isConnect = false;
 
+    private String connectionName;
     /**
      * Constructor.
      *
@@ -60,6 +61,7 @@ public class NodeConnection extends Connection<Client> {
         node = nodeBuilder.settings(ElasticsearchClientConfiguration.getSettings(config)).node();
         elasticClient = node.client();
         isConnect = true;
+        connectionName  = config.getName().getName();
         logger.info("Elasticsearch Node connection established ");
 
     }
@@ -70,7 +72,7 @@ public class NodeConnection extends Connection<Client> {
             isConnect = false;
             node = null;
             elasticClient = null;
-
+            logger.info("ElasticSearch  connection ["+connectionName+"] close");
         }
 
     }

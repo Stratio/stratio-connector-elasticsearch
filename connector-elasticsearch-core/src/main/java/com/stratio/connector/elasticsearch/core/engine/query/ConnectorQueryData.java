@@ -23,6 +23,7 @@ import org.elasticsearch.action.search.SearchType;
 
 
 import com.stratio.meta.common.logicalplan.Filter;
+import com.stratio.meta.common.logicalplan.Limit;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 
@@ -55,9 +56,7 @@ public class ConnectorQueryData {
      * The select.
      */
     private Select select;
-
-
-
+    private Limit limit;
 
     /**
      * Add a filter.
@@ -187,5 +186,11 @@ public class ConnectorQueryData {
 
     }
 
+    public void setLimit(Limit limit) {
+        this.limit = limit;
+    }
 
+    public Limit getLimit() {
+        return limit;
+    }
 }

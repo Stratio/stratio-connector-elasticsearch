@@ -48,7 +48,7 @@ import com.stratio.meta2.common.statements.structures.selectors.Selector;
  *
  * @author darroyo
  */
-public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
+public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * The Log.
@@ -75,7 +75,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
      */
 
     @Override
-    protected void createCatalog( CatalogMetadata indexMetaData, Connection connection)
+    protected void createCatalog( CatalogMetadata indexMetaData, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         try {
 
@@ -95,7 +95,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
      * @throws ExecutionException   if an error occur.
      */
     @Override
-    protected void createTable(TableMetadata typeMetadata, Connection connection)
+    protected void createTable(TableMetadata typeMetadata, Connection<Client> connection)
             throws UnsupportedException,
             ExecutionException {
         try {
@@ -118,7 +118,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
      */
 
     @Override
-    protected void dropCatalog(CatalogName indexName, Connection connection)
+    protected void dropCatalog(CatalogName indexName, Connection<Client> connection)
             throws ExecutionException {
         DeleteIndexResponse delete = null;
         try {
@@ -140,7 +140,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
      * @param typeName      the type name.
      */
     @Override
-    protected void dropTable( TableName typeName, Connection connection)
+    protected void dropTable( TableName typeName, Connection<Client> connection)
             throws ExecutionException {
         DeleteMappingResponse delete = null;
         try {
@@ -157,13 +157,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine {
     }
 
     @Override
-    protected void createIndex( IndexMetadata indexMetadata, Connection connection)
+    protected void createIndex( IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Not yet supported");
     }
 
     @Override
-    protected void dropIndex(IndexMetadata indexMetadata, Connection connection)
+    protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Not yet supported");
     }

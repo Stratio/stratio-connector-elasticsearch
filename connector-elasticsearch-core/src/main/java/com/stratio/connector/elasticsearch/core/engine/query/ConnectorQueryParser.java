@@ -20,10 +20,12 @@ import java.util.List;
 
 import org.elasticsearch.action.search.SearchType;
 
+
 import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
+import com.stratio.meta.common.logicalplan.Limit;
 import com.stratio.meta.common.logicalplan.LogicalStep;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.logicalplan.Project;
@@ -62,7 +64,9 @@ public class ConnectorQueryParser {
                 } else if (lStep instanceof Select) {
                     queryData.setSelect((Select) lStep);
 
-                } else {
+                } else if (lStep instanceof Limit) {
+                    queryData.setLimit((Limit) lStep);
+                }else{
                     throw new UnsupportedException(
                             "LogicalStep [" + lStep.getClass().getCanonicalName() + " not supported");
                 }
