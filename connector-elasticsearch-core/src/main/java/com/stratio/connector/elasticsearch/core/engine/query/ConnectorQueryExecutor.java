@@ -56,7 +56,7 @@ public class ConnectorQueryExecutor {
      * The log.
      */
     final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private boolean isMetadataCreate = false;
+   ;
 
     /**
      * This method execute a query in elasticSearch.
@@ -73,11 +73,20 @@ public class ConnectorQueryExecutor {
         SearchType searchType = queryData.getSearchType();
 
         QueryResult queryResult = null;
+     
         try {
 
             ResultSet resultSet = new ResultSet();
             SearchResponse scrollResp = requestBuilder.execute().actionGet();
-
+            long countResult = 0;
+            boolean isLimit =false;
+            long limit = 0; 
+            boolean endQuery = false;
+            if (queryData.getLimit()!=null){
+            	isLimit =true;
+            	limit = queryData.getLimit().getLimit();
+            }
+            resultSet.setColumnMetadata(createMetadata(queryData));
             do {
                    scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
                             .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
@@ -86,11 +95,17 @@ public class ConnectorQueryExecutor {
 
 
                 for (SearchHit hit : scrollResp.getHits()) {
+                    if (isLimit && countResult==limit){
+                    	endQuery = true;
+                    	break;
+                    }
+                    countResult++;
                     resultSet.add(createRow(hit, queryData));
-                    resultSet.setColumnMetadata(createMetadata(queryData));
+                    
+                    
                 }
 
-            } while (scrollResp.getHits().getHits().length != 0);
+            } while (scrollResp.getHits().getHits().length != 0 && !endQuery);
 
             queryResult = QueryResult.createQueryResult(resultSet);
         } catch (IndexMissingException e) {
@@ -107,7 +122,7 @@ public class ConnectorQueryExecutor {
 
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
-        if (!isMetadataCreate){
+     
 
 
             for (String field: queryData.getSelect().getColumnMap().keySet()){
@@ -122,8 +137,7 @@ public class ConnectorQueryExecutor {
                 retunColumnMetadata.add(columnMetadata);
             }
 
-            isMetadataCreate = true;
-        }
+      
 
         return retunColumnMetadata;
     }

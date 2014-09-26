@@ -34,9 +34,7 @@ public class LimitModifier {
     public void modify(SearchRequestBuilder requestBuilder, ConnectorQueryData type) {
             requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
                     .setSearchType(SearchType.SCAN);
-        if (type.getLimit()!=null){
-            requestBuilder.setPostFilter(FilterBuilders.limitFilter(type.getLimit().getLimit()));
-        }
+       
 
 
     }
