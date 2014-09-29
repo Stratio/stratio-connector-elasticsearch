@@ -167,4 +167,8 @@ public class ESConnectorHelper implements IConnectorHelper {
 		return false;
 	}
 
+    @Override public boolean isTableMandatory() {
+        return true;
+    }
+
 }
