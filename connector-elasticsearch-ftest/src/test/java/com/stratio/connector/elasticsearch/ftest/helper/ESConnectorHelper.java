@@ -55,8 +55,8 @@ import com.stratio.meta2.common.metadata.ColumnType;
  */
 public class ESConnectorHelper implements IConnectorHelper {
 
-    protected String SERVER_IP = "192.168.0.3";// 10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.62";
-    private String SERVER_PORT = "9300";//,9300,9300,9300,9300";
+    protected String SERVER_IP = /*"192.168.0.3";*/ "10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.61, 10.200.0.62";
+    private String SERVER_PORT = "9300,9300,9300,9300,9300";
 
     private TransportClient auxConection;
 
