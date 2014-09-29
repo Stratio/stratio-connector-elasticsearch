@@ -21,8 +21,10 @@ import java.util.List;
 import org.elasticsearch.action.search.SearchType;
 
 
-import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 
+
+
+import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Limit;
@@ -37,14 +39,11 @@ import com.stratio.meta.common.statements.structures.relationships.Operator;
  */
 public class ConnectorQueryParser {
 
-    public ConnectorQueryData transformLogicalWorkFlow(LogicalWorkflow logicalWorkFlow)
+    public ConnectorQueryData transformLogicalWorkFlow(Project logicalWorkFlow)
             throws ElasticsearchQueryException, UnsupportedException {
 
         ConnectorQueryData queryData = new ConnectorQueryData();
-
-        List<LogicalStep> logicalSteps = logicalWorkFlow.getInitialSteps();
-
-        for (LogicalStep lStep : logicalSteps) {
+        LogicalStep lStep = logicalWorkFlow;
 
             do {
                 if (lStep instanceof Project) {
@@ -75,7 +74,7 @@ public class ConnectorQueryParser {
 
             } while (lStep != null);
 
-        }
+        
 
         queryData.setSearchType( SearchType.SCAN);
 
@@ -85,9 +84,6 @@ public class ConnectorQueryParser {
     }
 
     private void checkSupportedQuery(ConnectorQueryData queryData) {
-        if (!queryData.hasProjection()) {
-            throw new UnsupportedOperationException("no projection found");
-        }
         if (queryData.getSelect()==null) {
             throw new UnsupportedOperationException("no select found");
         }

@@ -60,7 +60,7 @@ public class ConnectorQueryParserTest {
     @Test
     public void testTransformSimpleWorkFlow() throws Exception {
 
-        LogicalWorkflow logicalWorkflow = createLogicalWorkFlow();
+        Project logicalWorkflow = createLogicalWorkFlow();
 
         ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkflow);
 
@@ -87,7 +87,7 @@ public class ConnectorQueryParserTest {
 
     }
 
-    private LogicalWorkflow createLogicalWorkFlow() {
+    private Project createLogicalWorkFlow() {
 
         Operations operations = Operations.FILTER_FUNCTION_EQ;
 
@@ -113,7 +113,7 @@ public class ConnectorQueryParserTest {
 
         LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);
 
-        return logicalWorkflow;
+        return project;
     }
 
 }

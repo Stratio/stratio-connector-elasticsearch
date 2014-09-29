@@ -198,9 +198,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         SelectorHelper selectorHelper = new SelectorHelper();
         Map<String, String> transformOptions = new HashMap<>();
         Map<Selector, Selector> options = indexMetaData.getOptions();
-        for (Selector key : options.keySet()) {
-            transformOptions
-                    .put(selectorHelper.getStringFieldValue(key), selectorHelper.getStringFieldValue(options.get(key)));
+        if (options!=null){
+        	for (Selector key : options.keySet()) {
+        		transformOptions
+        		.put(selectorHelper.getStringFieldValue(key), selectorHelper.getStringFieldValue(options.get(key)));
+        	}
         }
         return transformOptions;
     }

@@ -31,6 +31,7 @@ import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParse
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
+import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ClusterName;
 
@@ -57,7 +58,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
 
 
-    private QueryResult execute(Client elasticClient, LogicalWorkflow logicalWorkFlow)
+    private QueryResult execute(Client elasticClient, Project logicalWorkFlow)
             throws UnsupportedException, ExecutionException {
 
 
@@ -72,7 +73,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
     }
 
     @Override
-    protected QueryResult execute(LogicalWorkflow logicalWorkflow, Connection<Client> connection)
+    protected QueryResult execute(Project logicalWorkflow, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
                 QueryResult  queryResult = execute((Client) connection.getNativeConnection(), logicalWorkflow);
@@ -82,3 +83,5 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     }
 }
+    
+
