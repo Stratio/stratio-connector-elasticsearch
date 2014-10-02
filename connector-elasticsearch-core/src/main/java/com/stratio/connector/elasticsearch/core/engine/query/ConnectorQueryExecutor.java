@@ -19,9 +19,12 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -43,6 +46,7 @@ import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
 
 import com.stratio.meta.common.result.QueryResult;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.QualifiedNames;
 import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
 /**
@@ -125,14 +129,11 @@ public class ConnectorQueryExecutor {
      
 
 
-            for (String field: queryData.getSelect().getColumnMap().keySet()){
-                if (field.contains(".")){
-                    String[] aField = field.split("\\.");
-                    field = aField[aField.length-1];
-                }
+            for (ColumnName field: queryData.getSelect().getColumnMap().keySet()){
+                String columnName = field.getName();
 
                 ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
-                        field,queryData.getSelect().getTypeMap().get(field));
+                        columnName,queryData.getSelect().getTypeMap().get(columnName));
                 columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
                 retunColumnMetadata.add(columnMetadata);
             }
@@ -154,41 +155,41 @@ public class ConnectorQueryExecutor {
     private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
 
 
-        Map<String, String> alias = returnAlias(queryData);
+        Map<ColumnName, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
         Row row = setRowValues(queryData, alias, fields);
 
         return row;
     }
 
-    private Row setRowValues(ConnectorQueryData queryData, Map<String, String> alias, Map<String, Object> fields) {
+    private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields) {
         Row row = new Row();
         Set<String> fieldNames;
 
         if(queryData.getSelect()==null) {
             fieldNames = fields.keySet();
         }else{
-            fieldNames = queryData.getSelect().getColumnMap().keySet();
+            fieldNames = createFieldNames(queryData.getSelect().getColumnMap().keySet());
         }
         for (String field : fieldNames) {
-            if (field.contains(".")){
-                String[] aField = field.split("\\.");
-                field = aField[aField.length-1];
-            }
             Object value = fields.get(field);
-            Project projection = queryData.getProjection();
-            String qualifiedFieldName = QualifiedNames
-                    .getColumnQualifiedName(projection.getCatalogName(), projection.getTableName().getName(), field);
-
-            if (alias.containsKey(qualifiedFieldName)) {
-                field = alias.get(qualifiedFieldName);
-            }else if (alias.containsKey(field)){
-            	field = alias.get(field);
+            ColumnName columnName = new ColumnName(queryData.getProjection().getCatalogName(),
+                    queryData.getProjection().getTableName().getName(), field);
+            if (alias.containsKey(columnName)){
+            	field = alias.get(columnName);
             }
 
             row.addCell(field, new Cell(value));
         }
         return row;
+    }
+
+    private Set<String> createFieldNames(Set<ColumnName> columnNames) {
+        Set<String> fieldNames = new LinkedHashSet<>();
+        for (ColumnName columnName :columnNames){
+            fieldNames.add(columnName.getName());
+        }
+        return fieldNames;
     }
 
     private Map<String, Object> getFields(SearchHit hit) {
@@ -203,8 +204,8 @@ public class ConnectorQueryExecutor {
         } return fields;
     }
 
-    private Map<String, String> returnAlias(ConnectorQueryData queryData) {
-        Map<String, String> alias = Collections.EMPTY_MAP;
+    private Map<ColumnName, String> returnAlias(ConnectorQueryData queryData) {
+        Map<ColumnName, String> alias = Collections.EMPTY_MAP;
         if (queryData.getSelect() != null) {
             alias = queryData.getSelect().getColumnMap();
         }

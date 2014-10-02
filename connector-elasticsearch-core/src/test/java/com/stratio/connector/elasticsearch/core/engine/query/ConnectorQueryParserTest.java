@@ -102,8 +102,8 @@ public class ConnectorQueryParserTest {
         project.setNextStep(filter);
         initalSteps.add(project);
 
-        Map<String, String> column = new HashMap<>();
-        column.put(COLUMN_NAME,COLUMN_NAME);
+        Map<ColumnName, String> column = new HashMap<>();
+        column.put(new ColumnName(INDEX_NAME,TYPE_NAME, COLUMN_NAME),COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put(COLUMN_NAME,ColumnType.TEXT);

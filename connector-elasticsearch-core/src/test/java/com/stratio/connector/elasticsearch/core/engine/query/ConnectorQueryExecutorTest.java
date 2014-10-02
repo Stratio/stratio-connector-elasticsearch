@@ -34,6 +34,7 @@ import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta.common.result.Result;
 import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnType;
 
@@ -130,8 +131,8 @@ public class ConnectorQueryExecutorTest {
                 new ClusterName(CLUSTER_NAME));
         connectorQueryData.setProjection(projection);
 
-        Map<String, String> column = new HashMap<>();
-        column.put(COLUMN_NAME,COLUMN_NAME);
+        Map<ColumnName, String> column = new HashMap<>();
+        column.put(new ColumnName(INDEX_NAME,TYPE_NAME,COLUMN_NAME),COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put(COLUMN_NAME,ColumnType.TEXT);

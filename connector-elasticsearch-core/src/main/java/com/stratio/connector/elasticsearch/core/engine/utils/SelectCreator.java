@@ -15,11 +15,13 @@
  */
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
 import com.stratio.meta.common.logicalplan.Select;
+import com.stratio.meta2.common.data.ColumnName;
 
 /**
  * @author darroyo
@@ -28,7 +30,7 @@ public class SelectCreator {
 
     public void modify(SearchRequestBuilder requestBuilder, Select select) {
 
-        Set<String> columnMetadataList = select.getColumnMap().keySet();
+        Set<String> columnMetadataList = createFieldNames(select.getColumnMap().keySet());
 
         if (columnMetadataList != null && !columnMetadataList.isEmpty()) {
 
@@ -44,4 +46,11 @@ public class SelectCreator {
         }
     }
 
+    private Set<String> createFieldNames(Set<ColumnName> columnNames) {
+        Set<String> fieldNames = new HashSet<>();
+        for (ColumnName columnName :columnNames){
+            fieldNames.add(columnName.getName());
+        }
+        return fieldNames;
+    }
 }
