@@ -28,6 +28,7 @@ import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuild
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
+import com.stratio.meta.common.connector.IResultHandler;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
@@ -81,6 +82,16 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
         return queryResult;
 
+    }
+
+    @Override public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Async query not supported in ElasticSearch");
+
+    }
+
+    @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Stop query query not supported in ElasticSearch");
     }
 }
     

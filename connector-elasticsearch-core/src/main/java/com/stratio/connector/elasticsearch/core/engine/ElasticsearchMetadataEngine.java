@@ -53,8 +53,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * The Log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
-    ContentBuilderCreator deepContentBuilder = new ContentBuilderCreator();
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private ContentBuilderCreator deepContentBuilder = new ContentBuilderCreator();
 
     /**
      * Constructor.
@@ -80,7 +80,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         try {
 
             createESIndex(indexMetaData, connection);
-            addAllTypesInTheCatalog(indexMetaData.getTables(),connection);
+
         } catch (HandlerConnectionException e) {
             throwHandlerConnectionException(e, "createCatalog");
         }
@@ -185,7 +185,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         return (Client) connection.getNativeConnection();
     }
 
-    private void createESIndex(CatalogMetadata indexMetaData, Connection connection) throws HandlerConnectionException {
+    private void createESIndex(CatalogMetadata indexMetaData, Connection connection)
+            throws HandlerConnectionException, ExecutionException {
         CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
                 .prepareCreate(indexMetaData.getName().getName());
         createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
@@ -194,27 +195,21 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     }
 
-    private Map<String, String> transformOptions(CatalogMetadata indexMetaData) {
-        SelectorHelper selectorHelper = new SelectorHelper();
+    private Map<String, String> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
+
         Map<String, String> transformOptions = new HashMap<>();
         Map<Selector, Selector> options = indexMetaData.getOptions();
         if (options!=null){
         	for (Selector key : options.keySet()) {
         		transformOptions
-        		.put(selectorHelper.getStringFieldValue(key), selectorHelper.getStringFieldValue(options.get(key)));
+        		.put(SelectorHelper.getValue(String.class,key),
+                        SelectorHelper.getValue(String.class, options.get(key)));
         	}
         }
         return transformOptions;
     }
 
-    private void addAllTypesInTheCatalog( Map<TableName, TableMetadata> types, Connection connection)
-            throws UnsupportedException, ExecutionException {
-        if (types != null) {
-            for (TableName tableName : types.keySet()) {
-                createTable(types.get(tableName),connection);
-            }
-        }
-    }
+
 
 
 }

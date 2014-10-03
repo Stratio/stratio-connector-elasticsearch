@@ -23,6 +23,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 
@@ -31,9 +32,9 @@ import com.stratio.meta.common.statements.structures.relationships.Relation;
  */
 public class QueryBuilderCreator {
 
-    private SelectorHelper selectorHelper = new SelectorHelper();
 
-    public QueryBuilder createBuilder(Collection<Filter> matchList) {
+
+    public QueryBuilder createBuilder(Collection<Filter> matchList) throws ExecutionException {
 
         QueryBuilder queryBuilder;
 
@@ -43,8 +44,8 @@ public class QueryBuilderCreator {
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
             for (Filter filter : matchList) {
                 Relation relation = filter.getRelation();
-                String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
-                String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
+                String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
+                String rightTerm =  SelectorHelper.getValue(String.class, relation.getRightTerm());
 
                 boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm));
 

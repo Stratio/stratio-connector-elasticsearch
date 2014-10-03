@@ -95,7 +95,7 @@ public class ConnectorQueryBuilder {
         projectModifier.modify(requestBuilder, queryData.getProjection());
     }
 
-    private void createFilter(ConnectorQueryData queryData) throws UnsupportedException {
+    private void createFilter(ConnectorQueryData queryData) throws UnsupportedException, ExecutionException {
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList());

@@ -22,15 +22,17 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.statements.structures.relationships.Relation;
 
 public class FilterBuilderCreator {
 
-    private SelectorHelper selectorHelper = new SelectorHelper();
 
-    public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException {
+
+    public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException,
+            ExecutionException {
 
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
         for (Filter filter : filters) {
@@ -42,14 +44,14 @@ public class FilterBuilderCreator {
 
     }
 
-    private FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException {
+    private FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException, ExecutionException {
 
         FilterBuilder localFilterBuilder = null;
         // TermFilter: Filters documents that have fields that contain a
         // term (not analyzed)
 
-        String leftTerm = selectorHelper.getStringFieldValue(relation.getLeftTerm());
-        String rightTerm = selectorHelper.getStringFieldValue(relation.getRightTerm());
+        String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
+        String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
         switch (relation.getOperator()) {
         case EQ:
         case ASSIGN:
