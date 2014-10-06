@@ -31,7 +31,9 @@ public class ContentBuilderCreatorTest {
     public static final String INDEX_NAME = "index";
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
-    private static final String RESULT_CREATE_TABLE = "{\"properties\":{\"column_7\":{\"type\":\"string\"},\"column_5\":{\"type\":\"integer\"},\"column_1\":{\"type\":\"long\"},\"column_3\":{\"type\":\"double\"},\"column_2\":{\"type\":\"boolean\"},\"column_4\":{\"type\":\"float\"},\"column_6\":{\"type\":\"string\"}}}";
+    private static final String RESULT_CREATE_TABLE = "{\"properties\":{\"column_3\":{\"type\":\"double\"}," +
+            "\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"}," +
+            "\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}";
     ContentBuilderCreator deepContentBuilder;
 
     @Before

@@ -84,13 +84,15 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     }
 
-    @Override public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
+    @Override
+    public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Async query not supported in ElasticSearch");
 
     }
 
-    @Override public void stop(String queryId) throws UnsupportedException, ExecutionException {
+    @Override
+    public void stop(String queryId) throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Stop query query not supported in ElasticSearch");
     }
 }
