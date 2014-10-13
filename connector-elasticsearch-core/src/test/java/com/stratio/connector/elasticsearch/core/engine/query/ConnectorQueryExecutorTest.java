@@ -32,7 +32,7 @@ import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta.common.result.Result;
+
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
