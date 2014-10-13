@@ -133,7 +133,7 @@ public class ConnectorQueryExecutor {
                 String columnName = field.getName();
 
                 ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
-                        columnName,queryData.getSelect().getTypeMap().get(columnName));
+                        columnName,queryData.getSelect().getTypeMap().get(field.getQualifiedName()));
                 columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
                 retunColumnMetadata.add(columnMetadata);
             }
