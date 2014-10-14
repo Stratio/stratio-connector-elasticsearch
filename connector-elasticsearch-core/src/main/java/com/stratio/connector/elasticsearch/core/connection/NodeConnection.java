@@ -38,7 +38,7 @@ public class NodeConnection extends Connection<Client> {
     /**
      * The Log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * The Elasticsearch client.

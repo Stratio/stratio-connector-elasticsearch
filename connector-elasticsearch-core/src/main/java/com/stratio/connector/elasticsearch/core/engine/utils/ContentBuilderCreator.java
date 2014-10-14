@@ -40,7 +40,7 @@ public class ContentBuilderCreator {
     /**
      * The Log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * This method creates the XContentBuilder for a type.

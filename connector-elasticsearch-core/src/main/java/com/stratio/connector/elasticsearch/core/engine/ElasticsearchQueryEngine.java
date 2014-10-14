@@ -48,7 +48,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
     /**
      * The log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
 

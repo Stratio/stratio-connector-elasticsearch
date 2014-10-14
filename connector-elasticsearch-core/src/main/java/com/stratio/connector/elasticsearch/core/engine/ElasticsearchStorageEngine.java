@@ -44,7 +44,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * The Log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     /**
      * The index creator builder.
      */

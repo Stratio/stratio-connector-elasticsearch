@@ -59,8 +59,8 @@ public class ConnectorQueryExecutor {
     /**
      * The log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
-   ;
+   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     /**
      * This method execute a query in elasticSearch.

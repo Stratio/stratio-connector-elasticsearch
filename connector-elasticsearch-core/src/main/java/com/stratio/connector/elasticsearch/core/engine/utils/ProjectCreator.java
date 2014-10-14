@@ -31,7 +31,7 @@ public class ProjectCreator {
 
         requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
 
-        List<ColumnName> columnMetadataList = projection.getColumnList();
+
 
     }
 

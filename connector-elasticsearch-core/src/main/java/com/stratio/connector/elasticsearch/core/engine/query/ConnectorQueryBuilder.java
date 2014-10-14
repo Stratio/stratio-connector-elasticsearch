@@ -40,7 +40,7 @@ public class ConnectorQueryBuilder {
     /**
      * The log.
      */
-    final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private SearchRequestBuilder requestBuilder;
 
