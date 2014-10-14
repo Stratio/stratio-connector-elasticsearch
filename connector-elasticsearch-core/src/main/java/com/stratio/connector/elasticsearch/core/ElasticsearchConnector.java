@@ -19,6 +19,7 @@ package com.stratio.connector.elasticsearch.core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.CommonsConnector;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
@@ -38,7 +39,7 @@ import com.stratio.meta2.common.data.ClusterName;
 /**
  * This class implements the connector for Elasticsearch.
  */
-public class ElasticsearchConnector implements IConnector {
+public class ElasticsearchConnector extends CommonsConnector {
 
     /**
      * The Log.
@@ -65,39 +66,9 @@ public class ElasticsearchConnector implements IConnector {
 
     }
 
-    /**
-     * Create a connection with ElasticSearch.
-     *
-     * @param credentials the credentials.
-     * @param config      the connection configuration.
-     * @throws ConnectionException if the connection fail.
-     */
-    @Override
-    public void connect(ICredentials credentials, ConnectorClusterConfig config) throws ConnectionException {
-        try {
-            connectionHandler.createConnection(credentials, config);
-        } catch (HandlerConnectionException e) {
-            String msg = "fail creating the Connection. " + e.getMessage();
-            logger.error(msg);
-            throw new ConnectionException(msg, e);
-        }
-    }
 
-    /**
-     * It close the  connection to ElasticSearch.
-     *
-     * @param name the connection identifier.
-     */
-    @Override
-    public void close(ClusterName name) {
-        connectionHandler.closeConnection(name.getName());
 
-    }
 
-    @Override
-    public void shutdown() throws ExecutionException {
-
-    }
 
     @Override
     public String getConnectorName() {
@@ -147,17 +118,5 @@ public class ElasticsearchConnector implements IConnector {
         return new ElasticsearchMetadataEngine(connectionHandler);
     }
 
-    /**
-     * The connection status.
-     *
-     * @param name the cluster Name.
-     * @return true if the driver's client is not null.
-     */
-    @Override
-    public boolean isConnected(ClusterName name) {
-
-        return connectionHandler.isConnected(name.getName());
-
-    }
 
 }
