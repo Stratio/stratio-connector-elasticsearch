@@ -85,9 +85,9 @@ public class IndexRequestBuilderCreator {
             TableName tableName = targetTable.getName();
 
             if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(), rowName))) {
-                Object tempPK = dataInsert.get(rowName);
-                checkPkTypeSupport(pk, tempPK);
-                pk = (String) tempPK;
+                String tempPK = dataInsert.get(rowName).toString();
+                checkPkTypeSupport(pk);
+                pk = tempPK;
             }
         }
 
@@ -98,16 +98,14 @@ public class IndexRequestBuilderCreator {
      * Check if the PK type is support.
      *
      * @param pk     the actual PK.
-     * @param tempPK the new PK.
+
      * @throws UnsupportedException if the PK is not supported.
      */
-    private void checkPkTypeSupport(String pk, Object tempPK) throws UnsupportedException {
+    private void checkPkTypeSupport(String pk) throws UnsupportedException {
         if (pk != null) {
             throw new UnsupportedException("Only one PK is allowed");
         }
-        if (!(tempPK instanceof String)) {
-            throw new UnsupportedException("The PK only can has String values");
-        }
+
     }
 
     /**

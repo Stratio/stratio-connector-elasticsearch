@@ -77,7 +77,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
     protected QueryResult execute(Project logicalWorkflow, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-                QueryResult  queryResult = execute((Client) connection.getNativeConnection(), logicalWorkflow);
+                QueryResult  queryResult = execute( connection.getNativeConnection(), logicalWorkflow);
 
 
         return queryResult;
