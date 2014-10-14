@@ -47,7 +47,7 @@ public class QueryBuilderCreator {
                 String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
                 String rightTerm =  SelectorHelper.getValue(String.class, relation.getRightTerm());
 
-                boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm));
+                boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase()));
 
             }
 

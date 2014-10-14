@@ -15,6 +15,9 @@
  */
 package com.stratio.connector.elasticsearch.core.engine;
 
+import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,8 +40,10 @@ import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.CatalogName;
 import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
+import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
@@ -103,12 +108,16 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             String indexName = typeMetadata.getName().getCatalogName().getName();
             XContentBuilder xContentBuilder = deepContentBuilder.createTypeSource(typeMetadata);
 
+
+
             recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
-                    .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute().actionGet();
+                    .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
+                    .actionGet();
         } catch (HandlerConnectionException e) {
             throwHandlerConnectionException(e, "createTable");
         }
     }
+
 
     /**
      * This method drop a index in ES.
@@ -168,7 +177,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         throw new UnsupportedException("Not yet supported");
     }
 
-    private void throwHandlerConnectionException(HandlerConnectionException e, String operation)
+    private void throwHandlerConnectionException(Exception e, String operation)
             throws ExecutionException {
         String msg = "Error find ElasticSearch client in " + operation + ". " + e.getMessage();
         logger.error(msg);

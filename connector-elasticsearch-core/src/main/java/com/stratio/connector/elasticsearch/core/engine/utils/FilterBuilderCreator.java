@@ -60,7 +60,10 @@ public class FilterBuilderCreator {
                 .getOperation().equals(Operations.FILTER_PK_LT)){
             leftTerm  = "_id";
         }
-        String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
+        Object rightTerm = SelectorHelper.getValue(relation.getRightTerm());
+        if (rightTerm instanceof String){
+            rightTerm = ((String) rightTerm).toLowerCase();
+        }
         switch (relation.getOperator()) {
         case EQ:
         case ASSIGN:

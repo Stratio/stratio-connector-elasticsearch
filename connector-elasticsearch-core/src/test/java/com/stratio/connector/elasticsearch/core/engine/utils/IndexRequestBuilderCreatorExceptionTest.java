@@ -32,7 +32,9 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
@@ -56,6 +58,8 @@ import com.stratio.meta2.common.statements.structures.selectors.Selector;
  * @version 1.0
  * @since <pre>sep 12, 2014</pre>
  */
+
+
 public class IndexRequestBuilderCreatorExceptionTest {
 
     private static final String CLUSTER_NAME = "CLUSTER NAME";
@@ -85,6 +89,8 @@ public class IndexRequestBuilderCreatorExceptionTest {
 
     @Before
     public void before() throws Exception {
+
+        client  = mock(Client.class);
         indexRequestBuilderCreator = new IndexRequestBuilderCreator();
     }
 
@@ -115,28 +121,7 @@ public class IndexRequestBuilderCreatorExceptionTest {
 
     }
 
-    @Test
-    public void testCreateIndesRequestIntegerPK() throws UnsupportedException, ExecutionException {
 
-        exception.expect(UnsupportedException.class);
-        exception.expectMessage("The PK only can has String values");
-
-        ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-
-        partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
-
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
-                clusterKey);
-        Row row = createRow(ROW_NAME, INTEGER_CELL_VALUE);
-
-        IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        Map<String, Object> map = new HashMap<>();
-        map.put(ROW_NAME, INTEGER_CELL_VALUE);
-
-        indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
-
-    }
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
