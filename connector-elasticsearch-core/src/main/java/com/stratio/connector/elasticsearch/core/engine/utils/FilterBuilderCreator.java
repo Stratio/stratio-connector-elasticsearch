@@ -22,6 +22,7 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.Filter;
@@ -36,21 +37,29 @@ public class FilterBuilderCreator {
 
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
         for (Filter filter : filters) {
-            Relation relation = filter.getRelation();
-            boolFilterBuilder.must(handleCompareFilter(relation));
+
+
+            boolFilterBuilder.must(handleCompareFilter(filter));
         }
 
         return boolFilterBuilder;
 
     }
 
-    private FilterBuilder handleCompareFilter(Relation relation) throws UnsupportedException, ExecutionException {
+    private FilterBuilder handleCompareFilter(Filter filter) throws UnsupportedException, ExecutionException {
+        Relation relation = filter.getRelation();
 
         FilterBuilder localFilterBuilder = null;
         // TermFilter: Filters documents that have fields that contain a
         // term (not analyzed)
 
         String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
+        if (filter.getOperation().equals(Operations.FILTER_PK_DISTINCT) || filter.getOperation().equals(Operations
+                .FILTER_PK_EQ) || filter.getOperation().equals(Operations.FILTER_PK_GET) || filter.getOperation()
+                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET ) || filter
+                .getOperation().equals(Operations.FILTER_PK_LT)){
+            leftTerm  = "_id";
+        }
         String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
         switch (relation.getOperator()) {
         case EQ:

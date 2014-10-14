@@ -18,11 +18,20 @@
 <DataStore>
     <Name>ElasticSearch</Name>
     <Version>1.0.0</Version>
-    <RequiredProperties/>
+    <RequiredProperties>
+    <Property>
+        <Name>host</Name>
+        <Description>The list of hosts ips</Description>
+    </Property>
+    <Property>
+        <Name>port</Name>
+        <Description>The list of hosts ports</Description>
+    </Property>
+     </RequiredProperties>
     <OptionalProperties/>
     <OptionalProperties/>
     <Behaviors>
-        <Behavior>ALL_INDEX</Behavior>
+        <Behavior>ALL_INDEXED</Behavior>
     </Behaviors>
 </DataStore>
 

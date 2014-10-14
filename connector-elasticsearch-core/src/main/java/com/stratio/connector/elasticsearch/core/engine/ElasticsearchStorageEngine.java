@@ -118,7 +118,8 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     private IndexRequestBuilder createIndexRequest(TableMetadata targetTable, Row row,
             Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
 
-        Client client = (Client) connection.getNativeConnection();
+        Client client =  connection.getNativeConnection();
+
 
         return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
     }
