@@ -97,8 +97,7 @@ public class IndexRequestBuilderCreator {
     /**
      * Check if the PK type is support.
      *
-     * @param pk     the actual PK.
-
+     * @param pk the actual PK.
      * @throws UnsupportedException if the PK is not supported.
      */
     private void checkPkTypeSupport(String pk) throws UnsupportedException {

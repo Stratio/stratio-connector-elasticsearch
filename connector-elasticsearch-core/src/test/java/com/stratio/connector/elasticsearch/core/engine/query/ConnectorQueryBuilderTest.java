@@ -118,9 +118,9 @@ public class ConnectorQueryBuilderTest {
 
         queryData.addFilter(new Filter(Operations.FILTER_NON_INDEXED_EQ, relation));
         Map<ColumnName, String> alias = new HashMap<>();
-        alias.put(new ColumnName(INDEX_NAME,TYPE_NAME,COLUMN_1), COLUMN_1);
-        alias.put(new ColumnName(INDEX_NAME,TYPE_NAME,COLUMN_2), COLUMN_2);
-        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ, alias,null));
+        alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1), COLUMN_1);
+        alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2), COLUMN_2);
+        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ, alias, null));
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
@@ -128,7 +128,7 @@ public class ConnectorQueryBuilderTest {
         queryData.setProjection(
                 new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                         new ClusterName(CLUSTER_NAME), columnList
-                       ));
+                ));
 
         return queryData;
     }

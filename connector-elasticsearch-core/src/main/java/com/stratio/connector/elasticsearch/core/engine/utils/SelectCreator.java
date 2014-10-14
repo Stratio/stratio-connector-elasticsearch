@@ -48,7 +48,7 @@ public class SelectCreator {
 
     private Set<String> createFieldNames(Set<ColumnName> columnNames) {
         Set<String> fieldNames = new HashSet<>();
-        for (ColumnName columnName :columnNames){
+        for (ColumnName columnName : columnNames) {
             fieldNames.add(columnName.getName());
         }
         return fieldNames;

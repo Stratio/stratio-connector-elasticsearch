@@ -16,8 +16,6 @@
 
 package com.stratio.connector.elasticsearch.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -37,7 +35,6 @@ import com.stratio.connector.commons.connection.exceptions.HandlerConnectionExce
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
 import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.security.ICredentials;
 import com.stratio.meta2.common.data.ClusterName;
 
@@ -69,20 +66,6 @@ public class ElasticsearchConnectorTest {
     /**
      * Method: init(IConfiguration configuration)
      */
-    @Test
-    public void testInit() throws Exception {
-
-        IConfiguration iconfiguration = mock(IConfiguration.class);
-        elasticsearchConnector.init(iconfiguration);
-
-        ElasticSearchConnectionHandler connectionHandle = (ElasticSearchConnectionHandler) Whitebox
-                .getInternalState(elasticsearchConnector, "connectionHandler");
-        Object recoveredConfiguration = Whitebox.getInternalState(connectionHandle, "configuration");
-
-        assertNotNull("The configuration is not null", recoveredConfiguration);
-        assertEquals("The configuration is correct", iconfiguration, recoveredConfiguration);
-        assertNotNull("The connection handle is not null", connectionHandle);
-    }
 
     /**
      * Method: close()

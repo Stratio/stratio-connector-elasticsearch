@@ -21,7 +21,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,9 +31,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
@@ -58,7 +55,6 @@ import com.stratio.meta2.common.statements.structures.selectors.Selector;
  * @version 1.0
  * @since <pre>sep 12, 2014</pre>
  */
-
 
 public class IndexRequestBuilderCreatorExceptionTest {
 
@@ -90,7 +86,7 @@ public class IndexRequestBuilderCreatorExceptionTest {
     @Before
     public void before() throws Exception {
 
-        client  = mock(Client.class);
+        client = mock(Client.class);
         indexRequestBuilderCreator = new IndexRequestBuilderCreator();
     }
 
@@ -120,8 +116,6 @@ public class IndexRequestBuilderCreatorExceptionTest {
         indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
 
     }
-
-
 
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);

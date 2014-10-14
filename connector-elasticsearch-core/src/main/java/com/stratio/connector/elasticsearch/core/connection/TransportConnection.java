@@ -35,14 +35,14 @@ public class TransportConnection extends Connection<Client> {
     /**
      * The Log.
      */
-   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private ElasticsearchClientConfiguration elasticsearchClientConfiguration = new ElasticsearchClientConfiguration();
+
 
     /**
      * The Elasticsearch client.
      */
-    private Client elasticClient = null;  //REVIEW posiblemente esta clase desaparezca ya que la conexion no esta aqui.
+    private Client elasticClient = null;
     private boolean isConnect = false;
 
     /**
@@ -54,7 +54,7 @@ public class TransportConnection extends Connection<Client> {
     public TransportConnection(ICredentials credentiasl, ConnectorClusterConfig config) {
 
         elasticClient = new TransportClient(ElasticsearchClientConfiguration.getSettings(config))
-                .addTransportAddresses(elasticsearchClientConfiguration.getTransporAddress(config));
+                .addTransportAddresses(ElasticsearchClientConfiguration.getTransportAddress(config));
         logger.info("Elasticsearch Transport connection established ");
 
         isConnect = true;

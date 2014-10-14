@@ -97,19 +97,17 @@ public class ConnectorQueryParserTest {
                 Operator.EQ, new StringSelector(STRING_COLUMN_VALUE));
         Filter filter = new Filter(operations, filterRelation);
 
-
-        Project project = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME),new ClusterName(CLUSTER_NAME));
+        Project project = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME), new ClusterName(CLUSTER_NAME));
         project.setNextStep(filter);
         initalSteps.add(project);
 
         Map<ColumnName, String> column = new HashMap<>();
-        column.put(new ColumnName(INDEX_NAME,TYPE_NAME, COLUMN_NAME),COLUMN_NAME);
+        column.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME), COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put(COLUMN_NAME,ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR,column,type);
+        type.put(COLUMN_NAME, ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type);
         filter.setNextStep(select);
-
 
         LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);
 

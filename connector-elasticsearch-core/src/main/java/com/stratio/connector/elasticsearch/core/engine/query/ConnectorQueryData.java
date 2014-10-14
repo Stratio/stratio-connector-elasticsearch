@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import org.elasticsearch.action.search.SearchType;
 
-
 import com.stratio.meta.common.logicalplan.Filter;
 import com.stratio.meta.common.logicalplan.Limit;
 import com.stratio.meta.common.logicalplan.Project;
@@ -41,7 +40,6 @@ public class ConnectorQueryData {
      * The projection.
      */
     private Project projection = null;
-
 
     /**
      * The filters.
@@ -97,8 +95,6 @@ public class ConnectorQueryData {
 
         this.projection = projection;
     }
-
-
 
     /**
      * Get the filter.
@@ -186,11 +182,11 @@ public class ConnectorQueryData {
 
     }
 
-    public void setLimit(Limit limit) {
-        this.limit = limit;
-    }
-
     public Limit getLimit() {
         return limit;
+    }
+
+    public void setLimit(Limit limit) {
+        this.limit = limit;
     }
 }

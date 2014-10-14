@@ -25,14 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.metadata.TableMetadata;
 
 /**
@@ -55,7 +55,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      *
      * @param connectionHandler the connection handler.
      */
-    public ElasticsearchStorageEngine(ElasticSearchConnectionHandler connectionHandler) {
+    public ElasticsearchStorageEngine(ConnectionHandler connectionHandler) {
 
         super(connectionHandler);
     }
@@ -63,9 +63,8 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Insert a document in Elasticsearch.
      *
-     *
-     * @param targetTable   the targetName.
-     * @param row           the row.
+     * @param targetTable the targetName.
+     * @param row         the row.
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException it the operation is not supported.
      */
@@ -92,12 +91,11 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Insert a set of documents in Elasticsearch.
      *
-     *
-     * @param rows        the set of rows.
+     * @param rows the set of rows.
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException if the operation is not supported.
      */
-    protected void insert( TableMetadata targetTable, Collection<Row> rows,
+    protected void insert(TableMetadata targetTable, Collection<Row> rows,
             Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         try {
@@ -118,16 +116,16 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     private IndexRequestBuilder createIndexRequest(TableMetadata targetTable, Row row,
             Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
 
-        Client client =  connection.getNativeConnection();
-
+        Client client = connection.getNativeConnection();
 
         return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
     }
 
     private BulkRequestBuilder createBulkRequest(TableMetadata targetTable,
-            Collection<Row> rows, Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
+            Collection<Row> rows, Connection<Client> connection)
+            throws HandlerConnectionException, UnsupportedException {
 
-        Client elasticClient =  connection.getNativeConnection();
+        Client elasticClient = connection.getNativeConnection();
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 

@@ -26,10 +26,10 @@
 
     </RequiredProperties>
     <OptionalProperties>
-    <Property>
-        <Name>node_type</Name>
-        <Description>If the connection is Node or Transport</Description>
-    </Property>
+        <Property>
+            <Name>node_type</Name>
+            <Description>If the connection is Node or Transport</Description>
+        </Property>
     </OptionalProperties>
     <SupportedOperations>
         <operation>CREATE_CATALOG</operation>

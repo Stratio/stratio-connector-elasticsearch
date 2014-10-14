@@ -16,7 +16,6 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
-import com.stratio.connector.commons.ftest.functionalTestQuery.GenericOrderByTest;
 import com.stratio.connector.commons.ftest.functionalTestQuery.GenericPKQueryIntegerFilterTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
@@ -27,7 +26,6 @@ import com.stratio.meta.common.exceptions.InitializationException;
  * Created by jmgomez on 5/09/14.
  */
 public class ESPKQueryIntegerFilterTest extends GenericPKQueryIntegerFilterTest {
-
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

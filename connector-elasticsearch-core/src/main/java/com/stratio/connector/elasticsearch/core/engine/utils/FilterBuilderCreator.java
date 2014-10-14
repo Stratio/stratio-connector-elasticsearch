@@ -30,14 +30,11 @@ import com.stratio.meta.common.statements.structures.relationships.Relation;
 
 public class FilterBuilderCreator {
 
-
-
     public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException,
             ExecutionException {
 
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
         for (Filter filter : filters) {
-
 
             boolFilterBuilder.must(handleCompareFilter(filter));
         }
@@ -56,12 +53,12 @@ public class FilterBuilderCreator {
         String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
         if (filter.getOperation().equals(Operations.FILTER_PK_DISTINCT) || filter.getOperation().equals(Operations
                 .FILTER_PK_EQ) || filter.getOperation().equals(Operations.FILTER_PK_GET) || filter.getOperation()
-                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET ) || filter
-                .getOperation().equals(Operations.FILTER_PK_LT)){
-            leftTerm  = "_id";
+                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET) || filter
+                .getOperation().equals(Operations.FILTER_PK_LT)) {
+            leftTerm = "_id";
         }
         Object rightTerm = SelectorHelper.getValue(relation.getRightTerm());
-        if (rightTerm instanceof String){
+        if (rightTerm instanceof String) {
             rightTerm = ((String) rightTerm).toLowerCase();
         }
         switch (relation.getOperator()) {

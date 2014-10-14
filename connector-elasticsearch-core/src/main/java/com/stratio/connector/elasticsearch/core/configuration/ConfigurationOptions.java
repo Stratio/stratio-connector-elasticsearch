@@ -27,7 +27,11 @@ public enum ConfigurationOptions {
     TRANSPORT_SNIFF("client.transport.sniff", "true"),
     CLUSTER_NAME("cluster.name", "cluster_name"),
     HOST("Hosts", new String[] { "localhost" }),
-    PORT("Port", new String[] { "9300" });
+    PORT("Port", new String[] { "9300" }),
+    COERCE("index.mapping.coerce","false"),
+    DYNAMIC("index.mapper.dynamic","false")
+    ;
+
 
     private final String optionName;
     private final String[] defaultValue;

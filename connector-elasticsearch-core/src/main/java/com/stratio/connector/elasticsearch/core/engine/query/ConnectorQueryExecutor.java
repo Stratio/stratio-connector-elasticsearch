@@ -16,15 +16,15 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
+import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -37,30 +37,22 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.metadata.structures.ColumnMetadata;
-
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.QualifiedNames;
-import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
+
 /**
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryExecutor {
 
-
-
     /**
      * The log.
      */
-   private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * This method execute a query in elasticSearch.
@@ -77,36 +69,32 @@ public class ConnectorQueryExecutor {
         SearchType searchType = queryData.getSearchType();
 
         QueryResult queryResult = null;
-     
+
         try {
 
             ResultSet resultSet = new ResultSet();
             SearchResponse scrollResp = requestBuilder.execute().actionGet();
             long countResult = 0;
-            boolean isLimit =false;
-            long limit = 0; 
+            boolean isLimit = false;
+            long limit = 0;
             boolean endQuery = false;
-            if (queryData.getLimit()!=null){
-            	isLimit =true;
-            	limit = queryData.getLimit().getLimit();
+            if (queryData.getLimit() != null) {
+                isLimit = true;
+                limit = queryData.getLimit().getLimit();
             }
             resultSet.setColumnMetadata(createMetadata(queryData));
             do {
-                   scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
-                            .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
-
-
-
+                scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
+                        .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
 
                 for (SearchHit hit : scrollResp.getHits()) {
-                    if (isLimit && countResult==limit){
-                    	endQuery = true;
-                    	break;
+                    if (isLimit && countResult == limit) {
+                        endQuery = true;
+                        break;
                     }
                     countResult++;
                     resultSet.add(createRow(hit, queryData));
-                    
-                    
+
                 }
 
             } while (scrollResp.getHits().getHits().length != 0 && !endQuery);
@@ -121,29 +109,21 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
-
     private List<ColumnMetadata> createMetadata(ConnectorQueryData queryData) {
 
-
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
-     
 
+        for (ColumnName field : queryData.getSelect().getColumnMap().keySet()) {
+            String columnName = field.getName();
 
-            for (ColumnName field: queryData.getSelect().getColumnMap().keySet()){
-                String columnName = field.getName();
-
-                ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
-                        columnName,queryData.getSelect().getTypeMap().get(field.getQualifiedName()));
-                columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
-                retunColumnMetadata.add(columnMetadata);
-            }
-
-      
+            ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
+                    columnName, queryData.getSelect().getTypeMap().get(field.getQualifiedName()));
+            columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
+            retunColumnMetadata.add(columnMetadata);
+        }
 
         return retunColumnMetadata;
     }
-
-
 
     /**
      * This method creates a row.
@@ -153,7 +133,6 @@ public class ConnectorQueryExecutor {
      * @return the row.
      */
     private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
-
 
         Map<ColumnName, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
@@ -166,17 +145,17 @@ public class ConnectorQueryExecutor {
         Row row = new Row();
         Set<String> fieldNames;
 
-        if(queryData.getSelect()==null) {
+        if (queryData.getSelect() == null) {
             fieldNames = fields.keySet();
-        }else{
+        } else {
             fieldNames = createFieldNames(queryData.getSelect().getColumnMap().keySet());
         }
         for (String field : fieldNames) {
             Object value = fields.get(field);
             ColumnName columnName = new ColumnName(queryData.getProjection().getCatalogName(),
                     queryData.getProjection().getTableName().getName(), field);
-            if (alias.containsKey(columnName)){
-            	field = alias.get(columnName);
+            if (alias.containsKey(columnName)) {
+                field = alias.get(columnName);
             }
 
             row.addCell(field, new Cell(value));
@@ -186,7 +165,7 @@ public class ConnectorQueryExecutor {
 
     private Set<String> createFieldNames(Set<ColumnName> columnNames) {
         Set<String> fieldNames = new LinkedHashSet<>();
-        for (ColumnName columnName :columnNames){
+        for (ColumnName columnName : columnNames) {
             fieldNames.add(columnName.getName());
         }
         return fieldNames;
@@ -201,7 +180,8 @@ public class ConnectorQueryExecutor {
 
                 fields.put(entry.getKey(), entry.getValue().getValue());
             }
-        } return fields;
+        }
+        return fields;
     }
 
     private Map<ColumnName, String> returnAlias(ConnectorQueryData queryData) {

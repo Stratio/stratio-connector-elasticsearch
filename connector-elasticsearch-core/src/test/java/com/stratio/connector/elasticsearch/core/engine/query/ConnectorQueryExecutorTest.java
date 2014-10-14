@@ -25,14 +25,12 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
 import com.stratio.meta.common.result.QueryResult;
-
 import com.stratio.meta2.common.data.ClusterName;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
@@ -105,14 +103,13 @@ public class ConnectorQueryExecutorTest {
 
         QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, queryData);
 
-        ResultSet resultset =  queryResult.getResultSet();
+        ResultSet resultset = queryResult.getResultSet();
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
         Row row = resultset.getRows().get(0);
         assertEquals("The rows number is correct", 1, row.size());
         assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(COLUMN_NAME).getValue());
 
     }
-
 
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
@@ -132,11 +129,11 @@ public class ConnectorQueryExecutorTest {
         connectorQueryData.setProjection(projection);
 
         Map<ColumnName, String> column = new HashMap<>();
-        column.put(new ColumnName(INDEX_NAME,TYPE_NAME,COLUMN_NAME),COLUMN_NAME);
+        column.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME), COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put(COLUMN_NAME,ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR,column,type);
+        type.put(COLUMN_NAME, ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type);
         connectorQueryData.setSelect(select);
         return connectorQueryData;
     }

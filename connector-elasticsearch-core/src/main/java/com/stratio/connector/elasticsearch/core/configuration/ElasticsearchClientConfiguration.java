@@ -16,6 +16,8 @@
 package com.stratio.connector.elasticsearch.core.configuration;
 
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.CLUSTER_NAME;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.COERCE;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.DYNAMIC;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_DATA;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_MASTER;
@@ -35,11 +37,11 @@ import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.exceptions.InitializationException;
 
 /**
- * The configuration for Elasticsearch.
+ *
+he configuration for Elasticsearch.
  */
 
 public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
-
 
     /**
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
@@ -47,16 +49,16 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
      * @param configuration
      * @throws InitializationException
      */
-    public static Settings getSettings(ConnectorClusterConfig configuration) {
+    public static Settings  getSettings(ConnectorClusterConfig configuration) {
 
         Map<String, String> setting = new HashMap<String, String>();
         setting.put(NODE_DATA.getOptionName(), addSetting(configuration.getOptions(), NODE_DATA));
         setting.put(NODE_MASTER.getOptionName(), addSetting(configuration.getOptions(), NODE_MASTER));
         setting.put(TRANSPORT_SNIFF.getOptionName(), addSetting(configuration.getOptions(), TRANSPORT_SNIFF));
+        setting.put(COERCE.getOptionName(),addSetting(configuration.getOptions(), COERCE));
+        setting.put(DYNAMIC.getOptionName(),addSetting(configuration.getOptions(), DYNAMIC));
+
         setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
-        setting.put("index.mapping.coerce", "false");
-        setting.put("index.mapper.dynamic", "false");
-        //setting.put("index.mapping.ignore_malformed", "false");
 
         return ImmutableSettings.settingsBuilder().put(setting).build();
 
@@ -72,14 +74,15 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
         return option;
     }
 
-    public TransportAddress[] getTransporAddress(ConnectorClusterConfig config) {
+    public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 
-        String[] hosts =  ConnectorParser.hosts(config.getOptions().get(HOST.getOptionName()));
-        String[] ports =  ConnectorParser.ports(config.getOptions().get(PORT.getOptionName()));
-        TransportAddress[] transportAddresses = new TransportAddress[1];
+        String[] hosts = ConnectorParser.hosts(config.getOptions().get(HOST.getOptionName()));
+        String[] ports = ConnectorParser.ports(config.getOptions().get(PORT.getOptionName()));
+        TransportAddress[] transportAddresses = new TransportAddress[
+                hosts.length];
         for (int i = 0; i < hosts.length; i++) {
-            transportAddresses[0] = new InetSocketTransportAddress(hosts[i], Integer.decode(
-                    ports[i])); //TODO nos pasaran un String con los hosts separados, hay que hacer un parseador
+            transportAddresses[i] = new InetSocketTransportAddress(hosts[i], Integer.decode(
+                    ports[i]));
         }
         return transportAddresses;
 

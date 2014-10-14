@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.engine.CommonsQueryEngine;
+import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
@@ -34,34 +34,25 @@ import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta.common.logicalplan.LogicalWorkflow;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.data.ClusterName;
 
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
-
-
-    private ConnectorQueryParser queryParser = new ConnectorQueryParser();
-
-    private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
-
-    private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
 
     /**
      * The log.
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private ConnectorQueryParser queryParser = new ConnectorQueryParser();
+    private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
+    private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
 
-    public ElasticsearchQueryEngine(ElasticSearchConnectionHandler connectionHandle) {
+    public ElasticsearchQueryEngine(ConnectionHandler connectionHandle) {
 
         super(connectionHandle);
 
     }
 
-
-
-
     private QueryResult execute(Client elasticClient, Project logicalWorkFlow)
             throws UnsupportedException, ExecutionException {
-
 
         ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkFlow);
 
@@ -77,8 +68,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
     protected QueryResult execute(Project logicalWorkflow, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-                QueryResult  queryResult = execute( connection.getNativeConnection(), logicalWorkflow);
-
+        QueryResult queryResult = execute(connection.getNativeConnection(), logicalWorkflow);
 
         return queryResult;
 

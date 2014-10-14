@@ -18,8 +18,6 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 
@@ -32,10 +30,8 @@ public class LimitModifier {
     public static final int SIZE_SCAN = 10;
 
     public void modify(SearchRequestBuilder requestBuilder, ConnectorQueryData type) {
-            requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
-                    .setSearchType(SearchType.SCAN);
-       
-
+        requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
+                .setSearchType(SearchType.SCAN);
 
     }
 

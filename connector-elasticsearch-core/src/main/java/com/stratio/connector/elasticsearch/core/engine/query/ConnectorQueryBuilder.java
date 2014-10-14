@@ -85,10 +85,9 @@ public class ConnectorQueryBuilder {
 
     private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();
-        limitModifier.modify(requestBuilder,  queryData);
+        limitModifier.modify(requestBuilder, queryData);
 
     }
-
 
     private void createProjection(ConnectorQueryData queryData) {
         ProjectCreator projectModifier = new ProjectCreator();

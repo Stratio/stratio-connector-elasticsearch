@@ -15,9 +15,6 @@
  */
 package com.stratio.connector.elasticsearch.core.engine;
 
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,11 +36,8 @@ import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreat
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.CatalogName;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.CatalogMetadata;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.IndexMetadata;
 import com.stratio.meta2.common.metadata.TableMetadata;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
@@ -73,14 +67,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method create a index in ES.
      *
-
      * @param indexMetaData the index configuration.
      * @throws UnsupportedException if any operation is not supported.
      * @throws ExecutionException   if an error occur.
      */
 
     @Override
-    protected void createCatalog( CatalogMetadata indexMetaData, Connection<Client> connection)
+    protected void createCatalog(CatalogMetadata indexMetaData, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         try {
 
@@ -94,8 +87,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method create a type in ES.
      *
-     *
-     * @param typeMetadata  the type configuration.
+     * @param typeMetadata the type configuration.
      * @throws UnsupportedException if any operation is not supported.
      * @throws ExecutionException   if an error occur.
      */
@@ -108,8 +100,6 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             String indexName = typeMetadata.getName().getCatalogName().getName();
             XContentBuilder xContentBuilder = deepContentBuilder.createTypeSource(typeMetadata);
 
-
-
             recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
                     .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
                     .actionGet();
@@ -118,12 +108,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         }
     }
 
-
     /**
      * This method drop a index in ES.
      *
-
-     * @param indexName     the index name.
+     * @param indexName the index name.
      */
 
     @Override
@@ -145,11 +133,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method drop a type in ES.
      *
-     *
-     * @param typeName      the type name.
+     * @param typeName the type name.
      */
     @Override
-    protected void dropTable( TableName typeName, Connection<Client> connection)
+    protected void dropTable(TableName typeName, Connection<Client> connection)
             throws ExecutionException {
         DeleteMappingResponse delete = null;
         try {
@@ -166,7 +153,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     @Override
-    protected void createIndex( IndexMetadata indexMetadata, Connection<Client> connection)
+    protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Not yet supported");
     }
@@ -208,18 +195,15 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
         Map<String, String> transformOptions = new HashMap<>();
         Map<Selector, Selector> options = indexMetaData.getOptions();
-        if (options!=null){
-        	for (Selector key : options.keySet()) {
-        		transformOptions
-        		.put(SelectorHelper.getValue(String.class,key),
-                        SelectorHelper.getValue(String.class, options.get(key)));
-        	}
+        if (options != null) {
+            for (Selector key : options.keySet()) {
+                transformOptions
+                        .put(SelectorHelper.getValue(String.class, key),
+                                SelectorHelper.getValue(String.class, options.get(key)));
+            }
         }
         return transformOptions;
     }
-
-
-
 
 }
 

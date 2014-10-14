@@ -32,8 +32,6 @@ import com.stratio.meta.common.statements.structures.relationships.Relation;
  */
 public class QueryBuilderCreator {
 
-
-
     public QueryBuilder createBuilder(Collection<Filter> matchList) throws ExecutionException {
 
         QueryBuilder queryBuilder;
@@ -45,7 +43,7 @@ public class QueryBuilderCreator {
             for (Filter filter : matchList) {
                 Relation relation = filter.getRelation();
                 String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
-                String rightTerm =  SelectorHelper.getValue(String.class, relation.getRightTerm());
+                String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
 
                 boolQueryBuilder.must(QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase()));
 

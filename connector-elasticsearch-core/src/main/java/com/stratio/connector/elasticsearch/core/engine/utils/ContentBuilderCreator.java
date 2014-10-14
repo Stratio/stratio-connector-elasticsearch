@@ -16,8 +16,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.elasticsearch.common.xcontent.XContentFactory.jsonBuilder;
-
 import java.io.IOException;
 import java.util.Map;
 
@@ -58,8 +56,7 @@ public class ContentBuilderCreator {
         XContentBuilder xContentBuilder = null;
         try {
 
-
-            xContentBuilder = XContentFactory.jsonBuilder(). startObject()
+            xContentBuilder = XContentFactory.jsonBuilder().startObject()
                     .startObject("_id").field("index", "not_analyzed").endObject().startObject("properties");
 
             Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
@@ -83,7 +80,7 @@ public class ContentBuilderCreator {
         }
 
         try {
-            System.out.println("[[ "+xContentBuilder.string()+" ]]");
+            System.out.println("[[ " + xContentBuilder.string() + " ]]");
         } catch (IOException e) {
             e.printStackTrace();
         }
