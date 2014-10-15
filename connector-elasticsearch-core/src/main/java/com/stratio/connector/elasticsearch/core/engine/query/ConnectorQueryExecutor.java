@@ -37,7 +37,7 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stratio.connector.elasticsearch.core.engine.query.metdata.MetadataCreator;
+import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;

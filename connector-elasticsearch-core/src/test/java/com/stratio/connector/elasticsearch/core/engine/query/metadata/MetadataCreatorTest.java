@@ -1,4 +1,4 @@
-package com.stratio.connector.elasticsearch.core.engine.query.metdata; 
+package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.After;
 
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
+import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
 import com.stratio.meta.common.connector.Operations;
 import com.stratio.meta.common.logicalplan.Project;
 import com.stratio.meta.common.logicalplan.Select;
