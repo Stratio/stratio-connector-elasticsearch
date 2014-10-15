@@ -81,6 +81,7 @@
                 <version>0.1.0-SNAPSHOT</version>
                 <configuration>
                     <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
+                    <jmxPort>7190</jmxPort>
                 </configuration>
             </plugin>
 
