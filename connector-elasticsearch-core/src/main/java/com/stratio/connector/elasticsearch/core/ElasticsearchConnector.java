@@ -16,20 +16,30 @@
 
 package com.stratio.connector.elasticsearch.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.stratio.connector.commons.CommonsConnector;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
+import com.stratio.connectors.ConnectorApp;
 import com.stratio.meta.common.connector.IConfiguration;
 import com.stratio.meta.common.connector.IMetadataEngine;
 import com.stratio.meta.common.connector.IQueryEngine;
 import com.stratio.meta.common.connector.IStorageEngine;
+import com.stratio.meta.common.exceptions.ExecutionException;
 
 /**
  * This class implements the connector for Elasticsearch.
  */
 public class ElasticsearchConnector extends CommonsConnector {
+
+    /**
+     * The Log.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     /**
@@ -73,6 +83,26 @@ public class ElasticsearchConnector extends CommonsConnector {
         return new ElasticsearchStorageEngine(connectionHandler);
 
     }
+
+    public static void main(String[] args) {
+        ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
+        ConnectorApp connectorApp = new ConnectorApp();
+        connectorApp.startup(cassandraConnector);
+        cassandraConnector.attachShutDownHook();
+    }
+    public void attachShutDownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    shutdown();
+                } catch (ExecutionException e) {
+                    logger.error("Fail ShutDown");
+                }
+            }
+        });
+    }
+
 
     /**
      * Return the QueryEngine.
