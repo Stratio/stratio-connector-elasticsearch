@@ -50,14 +50,9 @@ public class FilterBuilderCreator {
         // TermFilter: Filters documents that have fields that contain a
         // term (not analyzed)
 
-        String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
-        if (filter.getOperation().equals(Operations.FILTER_PK_DISTINCT) || filter.getOperation().equals(Operations
-                .FILTER_PK_EQ) || filter.getOperation().equals(Operations.FILTER_PK_GET) || filter.getOperation()
-                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET) || filter
-                .getOperation().equals(Operations.FILTER_PK_LT)) {
-            leftTerm = "_id";
-        }
-        Object rightTerm = SelectorHelper.getValue(relation.getRightTerm());
+        String leftTerm = recoveredLeftTerm(filter, relation);
+        Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
+                relation.getRightTerm());
         if (rightTerm instanceof String) {
             rightTerm = ((String) rightTerm).toLowerCase();
         }
@@ -89,6 +84,22 @@ public class FilterBuilderCreator {
 
         return localFilterBuilder;
 
+    }
+
+    private String recoveredLeftTerm(Filter filter, Relation relation)
+            throws ExecutionException {
+        String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
+        if (isPK(filter)) {
+            leftTerm = "_id";
+        }
+        return leftTerm;
+    }
+
+    private boolean isPK(Filter filter) {
+        return filter.getOperation().equals(Operations.FILTER_PK_DISTINCT) || filter.getOperation().equals(Operations
+                .FILTER_PK_EQ) || filter.getOperation().equals(Operations.FILTER_PK_GET) || filter.getOperation()
+                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET) || filter
+                .getOperation().equals(Operations.FILTER_PK_LT);
     }
 
 }

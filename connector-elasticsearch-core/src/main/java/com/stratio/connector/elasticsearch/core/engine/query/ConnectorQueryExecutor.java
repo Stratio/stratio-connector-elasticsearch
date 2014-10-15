@@ -66,7 +66,7 @@ public class ConnectorQueryExecutor {
     public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
             ConnectorQueryData queryData) {
 
-        SearchType searchType = queryData.getSearchType();
+
 
         QueryResult queryResult = null;
 
@@ -124,6 +124,7 @@ public class ConnectorQueryExecutor {
 
         return retunColumnMetadata;
     }
+
 
     /**
      * This method creates a row.

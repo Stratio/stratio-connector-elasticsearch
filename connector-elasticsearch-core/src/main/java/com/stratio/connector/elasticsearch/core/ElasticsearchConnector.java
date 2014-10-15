@@ -85,6 +85,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     }
 
     public static void main(String[] args) {
+
         ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
         ConnectorApp connectorApp = new ConnectorApp();
         connectorApp.startup(cassandraConnector);

@@ -29,7 +29,7 @@
         </Property>
     </RequiredProperties>
     <OptionalProperties/>
-    <OptionalProperties/>
+
     <Behaviors>
         <Behavior>ALL_INDEXED</Behavior>
     </Behaviors>

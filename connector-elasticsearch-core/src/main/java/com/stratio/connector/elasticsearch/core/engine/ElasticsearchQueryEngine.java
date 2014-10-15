@@ -37,10 +37,7 @@ import com.stratio.meta.common.result.QueryResult;
 
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
-    /**
-     * The log.
-     */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private ConnectorQueryParser queryParser = new ConnectorQueryParser();
     private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
     private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
@@ -51,26 +48,20 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     }
 
-    private QueryResult execute(Client elasticClient, Project logicalWorkFlow)
-            throws UnsupportedException, ExecutionException {
-
-        ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkFlow);
-
-        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
-
-        QueryResult resultSet = queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
-
-        return resultSet;
-
-    }
 
     @Override
     protected QueryResult execute(Project logicalWorkflow, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        QueryResult queryResult = execute(connection.getNativeConnection(), logicalWorkflow);
 
-        return queryResult;
+        Client elasticClient = connection.getNativeConnection();
+        ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkflow);
+
+        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
+
+
+
+        return queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
 
     }
 

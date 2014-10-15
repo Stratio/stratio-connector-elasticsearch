@@ -72,6 +72,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws ExecutionException   if an error occur.
      */
 
+
     @Override
     protected void createCatalog(CatalogMetadata indexMetaData, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
