@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.stratio.connector</groupId>
         <artifactId>stratio-connector-elasticsearch</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.4.0</version>
     </parent>
     <artifactId>connector-elasticsearch-core</artifactId>
     <packaging>jar</packaging>
@@ -34,14 +34,9 @@
             <version>1.3.2</version>
         </dependency>
         <dependency>
-            <artifactId>meta-common</artifactId>
-            <groupId>com.stratio.meta</groupId>
-            <version>0.1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.stratio.connector</groupId>
             <artifactId>connector-commons-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -78,4 +73,17 @@
         </dependency>
 
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>meta-connector-maven-plugin</artifactId>
+                <groupId>com.stratio.meta</groupId>
+                <version>0.1.0-SNAPSHOT</version>
+                <configuration>
+                    <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

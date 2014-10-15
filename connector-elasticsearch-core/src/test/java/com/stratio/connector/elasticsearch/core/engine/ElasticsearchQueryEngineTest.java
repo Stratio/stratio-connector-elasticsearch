@@ -50,7 +50,7 @@ public class ElasticsearchQueryEngineTest {
     @Mock private ConnectorQueryExecutor queryExecutor;
 
 
-    ElasticsearchQueryEngine elasticsearchQueryEngine;
+   private ElasticsearchQueryEngine elasticsearchQueryEngine;
 
     @Mock ConnectionHandler connectionHandle;
 @Before

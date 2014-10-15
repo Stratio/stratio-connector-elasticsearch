@@ -28,7 +28,7 @@ import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
+
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
@@ -37,10 +37,11 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.elasticsearch.core.engine.query.metdata.MetadataCreator;
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
+
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ColumnName;
 
@@ -82,7 +83,10 @@ public class ConnectorQueryExecutor {
                 isLimit = true;
                 limit = queryData.getLimit().getLimit();
             }
-            resultSet.setColumnMetadata(createMetadata(queryData));
+
+            MetadataCreator metadataCreator = new MetadataCreator();
+            resultSet.setColumnMetadata(metadataCreator.createMetadata(queryData));
+
             do {
                 scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
                         .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
@@ -109,21 +113,7 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
-    private List<ColumnMetadata> createMetadata(ConnectorQueryData queryData) {
 
-        List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
-
-        for (ColumnName field : queryData.getSelect().getColumnMap().keySet()) {
-            String columnName = field.getName();
-
-            ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getName(),
-                    columnName, queryData.getSelect().getTypeMap().get(field.getQualifiedName()));
-            columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
-            retunColumnMetadata.add(columnMetadata);
-        }
-
-        return retunColumnMetadata;
-    }
 
 
     /**

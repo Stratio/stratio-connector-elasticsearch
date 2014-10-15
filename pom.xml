@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-elasticsearch</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.4.0</version>
     <description>Connector for ElasticSearch</description>
     <packaging>pom</packaging>
 
@@ -63,6 +63,14 @@
                 </configuration>
             </plugin>
 
+     <plugin>
+                <artifactId>meta-connector-maven-plugin</artifactId>
+                <groupId>com.stratio.meta</groupId>
+                <version>0.1.0-SNAPSHOT</version>
+                <configuration>
+                    <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>
