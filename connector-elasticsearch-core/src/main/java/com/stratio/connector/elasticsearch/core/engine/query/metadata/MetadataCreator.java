@@ -14,7 +14,7 @@
  *   You should have received a copy of the GNU Lesser General Public License along with this library.
  */
 
-package com.stratio.connector.elasticsearch.core.engine.query.metdata;
+package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
 import java.util.ArrayList;
 import java.util.List;
