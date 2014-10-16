@@ -23,7 +23,7 @@
         <DataStoreName>ElasticSearch</DataStoreName>
     </DataStores>
 
-    <Version>0.1.0</Version>
+    <Version>0.4.0</Version>
     <RequiredProperties>
 
     </RequiredProperties>
