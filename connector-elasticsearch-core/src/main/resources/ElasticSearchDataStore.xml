@@ -22,11 +22,11 @@
     <Version>0.4.0</Version>
     <RequiredProperties>
         <Property>
-            <Name>hosts</Name>
+            <Name>Hosts</Name>
             <Description>The list of hosts ips</Description>
         </Property>
         <Property>
-            <Name>ports</Name>
+            <Name>Port</Name>
             <Description>The list of hosts ports</Description>
         </Property>
     </RequiredProperties>
