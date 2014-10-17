@@ -26,12 +26,14 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.meta.common.exceptions.ExecutionException;
 import com.stratio.meta.common.exceptions.UnsupportedException;
 import com.stratio.meta2.common.data.ColumnName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.Selector;
 
 /**
  * This class is responsible to create ContentBuilders'
@@ -58,16 +60,12 @@ public class ContentBuilderCreator {
         XContentBuilder xContentBuilder = null;
         try {
 
-            xContentBuilder = XContentFactory.jsonBuilder().startObject()
-                    .startObject("_id").field("index", "not_analyzed").endObject().startObject("properties");
+            xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-            Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
-            for (ColumnName column : columns.keySet()) {
-                String columnType = convertType(columns.get(column).getColumnType());
-                String name = column.getName();
-                xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
-            }
-            xContentBuilder = xContentBuilder.endObject().endObject();
+             createId(xContentBuilder);
+            createIndexOptions(typeMetadata, xContentBuilder);
+            createFieldOptions(typeMetadata, xContentBuilder);
+            xContentBuilder.endObject();
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index [" + typeMetadata.getName()
@@ -87,6 +85,38 @@ public class ContentBuilderCreator {
             e.printStackTrace();
         }
         return xContentBuilder;
+    }
+
+    private void createIndexOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
+            throws IOException, ExecutionException {
+        xContentBuilder.startObject("settings").startObject("index");
+        Map<Selector, Selector> options = typeMetadata.getOptions();
+        for (Selector leftSelector : options.keySet()){
+            xContentBuilder.field(leftSelector.getStringValue(), SelectorHelper.getValue(options.get(leftSelector)));
+        }
+        xContentBuilder.endObject().endObject();
+
+    }
+
+    private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
+            throws IOException, UnsupportedException {
+        xContentBuilder.startObject("properties");
+
+        Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
+        for (ColumnName column : columns.keySet()) {
+            String columnType = convertType(columns.get(column).getColumnType());
+            String name = column.getName();
+            xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
+        }
+        xContentBuilder.endObject();
+
+    }
+
+    private void createId(XContentBuilder xContentBuilder) throws IOException {
+
+        xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
+
+
     }
 
     /**

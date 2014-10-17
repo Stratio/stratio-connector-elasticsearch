@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,10 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
+import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
+import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 
 /**
  * DeepContentBuilder Tester.
@@ -49,7 +53,7 @@ public class ContentBuilderCreatorTest {
     public static final String INDEX_NAME = "index";
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
-    private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"},\"properties\":{\"column_3\":{\"type\":\"double\"},\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"},\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}";
+    private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"},\"settings\":{\"index\":{\"number_of_shards\":5,\"number_of_replicas\":2,\"other\":\"String value\"}},\"properties\":{\"column_3\":{\"type\":\"double\"},\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"},\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}";
     ContentBuilderCreator deepContentBuilder;
 
     @Before
@@ -69,7 +73,10 @@ public class ContentBuilderCreatorTest {
     public void testCreateTable() throws Exception {
 
         Map indexex = Collections.EMPTY_MAP;
-        Map<Selector, Selector> options = Collections.EMPTY_MAP;
+        Map<Selector, Selector> options = new LinkedHashMap<>();
+        options.put(new StringSelector("number_of_shards"),new IntegerSelector(5));
+        options.put(new StringSelector("number_of_replicas"),new IntegerSelector(2));
+        options.put(new StringSelector("other"),new StringSelector("String value"));
         List<ColumnName> partitionKey = Collections.EMPTY_LIST;
         List<ColumnName> clusterKey = Collections.EMPTY_LIST;
 

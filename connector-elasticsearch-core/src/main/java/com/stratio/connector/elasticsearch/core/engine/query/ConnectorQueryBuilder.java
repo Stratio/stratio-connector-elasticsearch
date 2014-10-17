@@ -67,6 +67,7 @@ public class ConnectorQueryBuilder {
         return requestBuilder;
     }
 
+
     private void createSelect(ConnectorQueryData queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
             SelectCreator selectCreator = new SelectCreator();
