@@ -89,26 +89,33 @@ public class ContentBuilderCreator {
 
     private void createIndexOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, ExecutionException {
-        xContentBuilder.startObject("settings").startObject("index");
+
         Map<Selector, Selector> options = typeMetadata.getOptions();
-        for (Selector leftSelector : options.keySet()){
-            xContentBuilder.field(leftSelector.getStringValue(), SelectorHelper.getValue(options.get(leftSelector)));
+        if (!options.isEmpty()) {
+            xContentBuilder.startObject("settings").startObject("index");
+            for (Selector leftSelector : options.keySet()) {
+                xContentBuilder
+                        .field(leftSelector.getStringValue(), SelectorHelper.getValue(options.get(leftSelector)));
+            }
+            xContentBuilder.endObject().endObject();
         }
-        xContentBuilder.endObject().endObject();
 
     }
 
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
-        xContentBuilder.startObject("properties");
+
 
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
-        for (ColumnName column : columns.keySet()) {
-            String columnType = convertType(columns.get(column).getColumnType());
-            String name = column.getName();
-            xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
+        if (!columns.isEmpty()) {
+            xContentBuilder.startObject("properties");
+            for (ColumnName column : columns.keySet()) {
+                String columnType = convertType(columns.get(column).getColumnType());
+                String name = column.getName();
+                xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
+            }
+            xContentBuilder.endObject();
         }
-        xContentBuilder.endObject();
 
     }
 
