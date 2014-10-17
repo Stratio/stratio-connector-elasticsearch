@@ -62,7 +62,7 @@ public class ContentBuilderCreator {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-             createId(xContentBuilder);
+
             createIndexOptions(typeMetadata, xContentBuilder);
             createFieldOptions(typeMetadata, xContentBuilder);
             xContentBuilder.endObject();
@@ -105,7 +105,8 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
 
-
+        xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
+        createId(xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
         if (!columns.isEmpty()) {
             xContentBuilder.startObject("properties");
@@ -116,6 +117,7 @@ public class ContentBuilderCreator {
             }
             xContentBuilder.endObject();
         }
+        xContentBuilder.endObject().endObject();
 
     }
 
