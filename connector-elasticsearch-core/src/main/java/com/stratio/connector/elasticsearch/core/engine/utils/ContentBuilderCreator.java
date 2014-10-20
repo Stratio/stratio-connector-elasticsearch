@@ -65,6 +65,7 @@ public class ContentBuilderCreator {
 
             createIndexOptions(typeMetadata, xContentBuilder);
             createFieldOptions(typeMetadata, xContentBuilder);
+
             xContentBuilder.endObject();
 
             if (logger.isDebugEnabled()) {
@@ -78,7 +79,11 @@ public class ContentBuilderCreator {
             logger.error(msg);
             throw new ExecutionException(msg, e);
         }
-
+        try {
+            System.out.println(xContentBuilder.string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return xContentBuilder;
     }
 
@@ -100,7 +105,7 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
 
-        xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
+    //    xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
         createId(xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
         if (columns!=null && !columns.isEmpty()) {
@@ -112,13 +117,13 @@ public class ContentBuilderCreator {
             }
             xContentBuilder.endObject();
         }
-        xContentBuilder.endObject().endObject();
+    //    xContentBuilder.endObject().endObject();
 
     }
 
     private void createId(XContentBuilder xContentBuilder) throws IOException {
 
-        xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
+       // xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
 
 
     }

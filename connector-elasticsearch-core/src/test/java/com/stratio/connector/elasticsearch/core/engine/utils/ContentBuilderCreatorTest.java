@@ -54,7 +54,7 @@ public class ContentBuilderCreatorTest {
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
     private static final String RESULT_CREATE_TABLE = "{\"settings\":{\"index\":{\"number_of_shards\":5," +
-            "\"number_of_replicas\":2,\"other\":\"String value\"}},\"mappings\":{\"type\":{\"_id\":{\"index\":\"not_analyzed\"},\"properties\":{\"column_3\":{\"type\":\"double\"},\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"},\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}}}";
+            "\"number_of_replicas\":2,\"other\":\"String value\"}},\"properties\":{\"column_3\":{\"type\":\"double\"},\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"},\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}"M
     ContentBuilderCreator deepContentBuilder;
 
     @Before

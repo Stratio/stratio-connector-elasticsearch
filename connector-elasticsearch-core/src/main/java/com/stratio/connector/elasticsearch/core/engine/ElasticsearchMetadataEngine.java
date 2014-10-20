@@ -20,6 +20,7 @@ package com.stratio.connector.elasticsearch.core.engine;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -106,7 +107,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
                     .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
                     .actionGet();
-        } catch (HandlerConnectionException e) {
+        } catch (HandlerConnectionException | ElasticsearchException e) {
+            e.printStackTrace();
             throwHandlerConnectionException(e, "createTable");
         }
     }
