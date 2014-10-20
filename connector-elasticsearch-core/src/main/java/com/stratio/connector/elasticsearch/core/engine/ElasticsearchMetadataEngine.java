@@ -186,11 +186,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection)
             throws HandlerConnectionException, ExecutionException {
-        CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
-                .prepareCreate(indexMetaData.getName().getName());
-        createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
 
-        createIndexRequestBuilder.execute().actionGet();
+            CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
+                    .prepareCreate(indexMetaData.getName().getName());
+            createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
+
+            createIndexRequestBuilder.execute().actionGet();
+
 
     }
 

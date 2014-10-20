@@ -52,6 +52,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      *                      onnection.
      */
 
+
     @Override
     public void init(IConfiguration configuration) {
 
@@ -125,6 +126,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     @Override
     public IMetadataEngine getMetadataEngine() {
+
         return new ElasticsearchMetadataEngine(connectionHandler);
     }
 

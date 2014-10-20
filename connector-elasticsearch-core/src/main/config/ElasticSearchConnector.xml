@@ -24,12 +24,10 @@
     </DataStores>
 
     <Version>0.4.0</Version>
-    <RequiredProperties>
 
-    </RequiredProperties>
     <OptionalProperties>
         <Property>
-            <Name>node_type</Name>
+            <PropertyName>node_type</PropertyName>
             <Description>If the connection is Node or Transport</Description>
         </Property>
     </OptionalProperties>
