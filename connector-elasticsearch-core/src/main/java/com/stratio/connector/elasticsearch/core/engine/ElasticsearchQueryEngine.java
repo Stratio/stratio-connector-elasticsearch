@@ -19,13 +19,10 @@ package com.stratio.connector.elasticsearch.core.engine;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
@@ -39,7 +36,6 @@ import com.stratio.meta.common.result.QueryResult;
 
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
-
     private ConnectorQueryParser queryParser = new ConnectorQueryParser();
     private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
     private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
@@ -50,18 +46,14 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     }
 
-
     @Override
     protected QueryResult execute(Project logicalWorkflow, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-
 
         Client elasticClient = connection.getNativeConnection();
         ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(logicalWorkflow);
 
         SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
-
-
 
         return queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
 

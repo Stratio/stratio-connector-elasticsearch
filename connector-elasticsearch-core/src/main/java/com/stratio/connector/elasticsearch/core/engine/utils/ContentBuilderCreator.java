@@ -62,7 +62,6 @@ public class ContentBuilderCreator {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-
             createIndexOptions(typeMetadata, xContentBuilder);
             createFieldOptions(typeMetadata, xContentBuilder);
 
@@ -91,7 +90,7 @@ public class ContentBuilderCreator {
             throws IOException, ExecutionException {
 
         Map<Selector, Selector> options = typeMetadata.getOptions();
-        if (options!=null && !options.isEmpty()) {
+        if (options != null && !options.isEmpty()) {
             xContentBuilder.startObject("settings").startObject("index");
             for (Selector leftSelector : options.keySet()) {
                 xContentBuilder
@@ -105,10 +104,10 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
 
-    //    xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
+        //    xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
         createId(xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
-        if (columns!=null && !columns.isEmpty()) {
+        if (columns != null && !columns.isEmpty()) {
             xContentBuilder.startObject("properties");
             for (ColumnName column : columns.keySet()) {
                 String columnType = convertType(columns.get(column).getColumnType());
@@ -117,14 +116,13 @@ public class ContentBuilderCreator {
             }
             xContentBuilder.endObject();
         }
-    //    xContentBuilder.endObject().endObject();
+        //    xContentBuilder.endObject().endObject();
 
     }
 
     private void createId(XContentBuilder xContentBuilder) throws IOException {
 
-       // xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
-
+        // xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
 
     }
 

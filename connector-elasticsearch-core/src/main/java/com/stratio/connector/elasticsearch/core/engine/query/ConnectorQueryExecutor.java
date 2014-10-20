@@ -20,17 +20,14 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 
 import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
@@ -43,7 +40,6 @@ import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCr
 import com.stratio.meta.common.data.Cell;
 import com.stratio.meta.common.data.ResultSet;
 import com.stratio.meta.common.data.Row;
-
 import com.stratio.meta.common.result.QueryResult;
 import com.stratio.meta2.common.data.ColumnName;
 
@@ -68,8 +64,6 @@ public class ConnectorQueryExecutor {
 
     public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
             ConnectorQueryData queryData) {
-
-
 
         QueryResult queryResult = null;
 
@@ -114,9 +108,6 @@ public class ConnectorQueryExecutor {
         }
         return queryResult;
     }
-
-
-
 
     /**
      * This method creates a row.

@@ -2,7 +2,7 @@
 
 
 <DataStore>
-    <Name>ElasticSearch</Name>
+    <Name>elasticsearch</Name>
     <Version>0.4.0</Version>
     <RequiredProperties>
         <Property>

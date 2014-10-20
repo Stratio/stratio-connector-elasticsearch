@@ -18,9 +18,9 @@
   -->
 
 <Connector>
-    <ConnectorName>ElasticSearchConnector</ConnectorName>
+    <ConnectorName>ElasticSearch</ConnectorName>
     <DataStores>
-        <DataStoreName>ElasticSearch</DataStoreName>
+        <DataStoreName>elasticsearch</DataStoreName>
     </DataStores>
 
     <Version>0.4.0</Version>
@@ -32,12 +32,12 @@
         </Property>
     </OptionalProperties>
     <SupportedOperations>
+        <operation>PROJECT</operation>
         <operation>CREATE_CATALOG</operation>
         <operation>DROP_CATALOG</operation>
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
         <operation>INSERT</operation>
-        <operation>PROJECT</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_PK_GT</operation>

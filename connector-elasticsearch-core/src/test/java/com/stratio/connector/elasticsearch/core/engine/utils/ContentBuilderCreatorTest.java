@@ -36,7 +36,6 @@ import com.stratio.meta2.common.data.TableName;
 import com.stratio.meta2.common.metadata.ColumnMetadata;
 import com.stratio.meta2.common.metadata.ColumnType;
 import com.stratio.meta2.common.metadata.TableMetadata;
-
 import com.stratio.meta2.common.statements.structures.selectors.IntegerSelector;
 import com.stratio.meta2.common.statements.structures.selectors.Selector;
 import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
@@ -76,9 +75,9 @@ public class ContentBuilderCreatorTest {
 
         Map indexex = Collections.EMPTY_MAP;
         Map<Selector, Selector> options = new LinkedHashMap<>();
-        options.put(new StringSelector("number_of_shards"),new IntegerSelector(5));
-        options.put(new StringSelector("number_of_replicas"),new IntegerSelector(2));
-        options.put(new StringSelector("other"),new StringSelector("String value"));
+        options.put(new StringSelector("number_of_shards"), new IntegerSelector(5));
+        options.put(new StringSelector("number_of_replicas"), new IntegerSelector(2));
+        options.put(new StringSelector("other"), new StringSelector("String value"));
         List<ColumnName> partitionKey = Collections.EMPTY_LIST;
         List<ColumnName> clusterKey = Collections.EMPTY_LIST;
 

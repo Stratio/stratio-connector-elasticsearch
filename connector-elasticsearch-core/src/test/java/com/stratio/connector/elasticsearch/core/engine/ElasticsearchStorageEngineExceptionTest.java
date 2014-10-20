@@ -60,9 +60,9 @@ import com.stratio.meta2.common.statements.structures.selectors.Selector;
 
 public class ElasticsearchStorageEngineExceptionTest {
 
-    private static final String CLUSTER_NAME = "CLUSTER NAME";
-    private static final String INDEX_NAME = "INDEX_NAME";
-    private static final String TYPE_NAME = "TYPE_NAME";
+    private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
+    private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
+    private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
     private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
     private static final String ROW_NAME = "row_name";
     private static final Integer INTEGER_CELL_VALUE = new Integer(5);
@@ -106,7 +106,7 @@ public class ElasticsearchStorageEngineExceptionTest {
             throws ExecutionException, HandlerConnectionException, UnsupportedException {
 
         exception.expect(ExecutionException.class);
-        exception.expectMessage("Error find Connection in CLUSTER NAME. Msg");
+        exception.expectMessage("Error find Connection in " + CLUSTER_NAME + ". Msg");
 
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new HandlerConnectionException("Msg"));
 

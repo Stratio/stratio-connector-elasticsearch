@@ -30,10 +30,8 @@ public enum ConfigurationOptions {
     CLUSTER_NAME("cluster.name", "cluster_name"),
     HOST("Hosts", new String[] { "localhost" }),
     PORT("Port", new String[] { "9300" }),
-    COERCE("index.mapping.coerce","false"),
-    DYNAMIC("index.mapper.dynamic","false")
-    ;
-
+    COERCE("index.mapping.coerce", "false"),
+    DYNAMIC("index.mapper.dynamic", "false");
 
     private final String optionName;
     private final String[] defaultValue;

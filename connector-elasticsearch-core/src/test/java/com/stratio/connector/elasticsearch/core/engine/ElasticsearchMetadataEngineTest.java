@@ -78,10 +78,10 @@ import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
         DeleteMappingResponse.class, XContentBuilder.class, ContentBuilderCreator.class })
 public class ElasticsearchMetadataEngineTest {
 
-    public static final String CATALOG_NAME = "CATALOG_NAME";
-    private static final String TYPE_NAME = "tableName";
-    private final String CLUSTER_NAME = "clusterName";
-    private final String INDEX_NAME = "indexName";
+    public static final String CATALOG_NAME = "catalog_name";
+    private static final String TYPE_NAME = "tableName".toLowerCase();
+    private final String CLUSTER_NAME = "clusterName".toLowerCase();
+    private final String INDEX_NAME = "indexName".toLowerCase();
     ElasticsearchMetadataEngine elasticsearchMetadataEngine;
     @Mock
     ConnectionHandler connectionHandler;
@@ -163,7 +163,10 @@ public class ElasticsearchMetadataEngineTest {
     public void testCreateTable() throws Exception {
 
         TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
-        TableMetadata tableMetadata = new TableMetadata(tableName, null, null, null, null, null, null);
+        TableMetadata tableMetadata = new TableMetadata(tableName, Collections.EMPTY_MAP, Collections.EMPTY_MAP,
+                Collections.EMPTY_MAP, new ClusterName(CLUSTER_NAME),
+                Collections.EMPTY_LIST,
+                Collections.EMPTY_LIST);
 
         XContentBuilder xContentBuilder = mock(XContentBuilder.class);
         when(deepContentBuilder.createTypeSource(tableMetadata)).thenReturn(xContentBuilder);

@@ -39,8 +39,6 @@ public class TransportConnection extends Connection<Client> {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
-
     /**
      * The Elasticsearch client.
      */

@@ -43,6 +43,13 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    public static void main(String[] args) {
+
+        ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
+        ConnectorApp connectorApp = new ConnectorApp();
+        connectorApp.startup(cassandraConnector);
+        cassandraConnector.attachShutDownHook();
+    }
 
     /**
      * Create a connection to Elasticsearch.
@@ -51,7 +58,6 @@ public class ElasticsearchConnector extends CommonsConnector {
      * @param configuration the connection configuration. It must be not null.
      *                      onnection.
      */
-
 
     @Override
     public void init(IConfiguration configuration) {
@@ -87,13 +93,6 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
-    public static void main(String[] args) {
-
-        ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
-        ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(cassandraConnector);
-        cassandraConnector.attachShutDownHook();
-    }
     public void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -106,7 +105,6 @@ public class ElasticsearchConnector extends CommonsConnector {
             }
         });
     }
-
 
     /**
      * Return the QueryEngine.

@@ -66,14 +66,14 @@ import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
 @PrepareForTest(value = { Client.class })
 public class ConnectorQueryBuilderTest {
 
-    private static final String INDEX_NAME = "INDEX_NAME";
-    private static final String TYPE_NAME = "TYPE_NAME";
-    private static final String COLUMN_NAME = "COLUMN_NAME";
+    private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
+    private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
+    private static final String COLUMN_NAME = "COLUMN_NAME".toLowerCase();
     private static final String STRING_SELECTOR_VALUE = "string value";
-    private static final String COLUMN_1 = "COLUMN_NAME_1";
-    private static final String COLUMN_2 = "COLUMN_NAME_2";
-    private static final String COLUMN_3 = "COLUMN_NAME_3";
-    private static final String CLUSTER_NAME = "CLUSTER_NAME";
+    private static final String COLUMN_1 = "COLUMN_NAME_1".toLowerCase();
+    private static final String COLUMN_2 = "COLUMN_NAME_2".toLowerCase();
+    private static final String COLUMN_3 = "COLUMN_NAME_3".toLowerCase();
+    private static final String CLUSTER_NAME = "CLUSTER_NAME".toLowerCase();
     static Client client;
     ConnectorQueryBuilder queryBuilder;
 

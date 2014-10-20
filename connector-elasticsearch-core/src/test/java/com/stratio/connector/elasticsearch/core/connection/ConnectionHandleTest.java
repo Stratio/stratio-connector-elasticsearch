@@ -61,7 +61,7 @@ import com.stratio.meta2.common.data.ClusterName;
 
 public class ConnectionHandleTest {
 
-    private static final String CLUSTER_NAME = "CLUSTER_NAME";
+    private static final String CLUSTER_NAME = "cluster_name";
     private ElasticSearchConnectionHandler connectionHandle = null;
     @Mock
     private IConfiguration iConfiguration;

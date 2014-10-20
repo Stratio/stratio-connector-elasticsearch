@@ -39,8 +39,7 @@ import com.stratio.meta.common.connector.ConnectorClusterConfig;
 import com.stratio.meta.common.exceptions.InitializationException;
 
 /**
- *
-he configuration for Elasticsearch.
+ * he configuration for Elasticsearch.
  */
 
 public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
@@ -51,14 +50,14 @@ public class ElasticsearchClientConfiguration /*implements IConfiguration*/ {
      * @param configuration
      * @throws InitializationException
      */
-    public static Settings  getSettings(ConnectorClusterConfig configuration) {
+    public static Settings getSettings(ConnectorClusterConfig configuration) {
 
         Map<String, String> setting = new HashMap<String, String>();
         setting.put(NODE_DATA.getOptionName(), addSetting(configuration.getOptions(), NODE_DATA));
         setting.put(NODE_MASTER.getOptionName(), addSetting(configuration.getOptions(), NODE_MASTER));
         setting.put(TRANSPORT_SNIFF.getOptionName(), addSetting(configuration.getOptions(), TRANSPORT_SNIFF));
-        setting.put(COERCE.getOptionName(),addSetting(configuration.getOptions(), COERCE));
-        setting.put(DYNAMIC.getOptionName(),addSetting(configuration.getOptions(), DYNAMIC));
+        setting.put(COERCE.getOptionName(), addSetting(configuration.getOptions(), COERCE));
+        setting.put(DYNAMIC.getOptionName(), addSetting(configuration.getOptions(), DYNAMIC));
 
         setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
 

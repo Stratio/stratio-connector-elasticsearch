@@ -55,11 +55,11 @@ import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
  */
 public class ConnectorQueryParserTest {
 
-    private static final String INDEX_NAME = "INDEX_NAME";
-    private static final String TYPE_NAME = "TYPE_NAME";
-    private static final String COLUMN_NAME = "COLUMN_NAME";
-    private static final String STRING_COLUMN_VALUE = "STRING_COLUMN_VALUE";
-    private static final String CLUSTER_NAME = "CLUSTER_NAME";
+    private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
+    private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
+    private static final String COLUMN_NAME = "COLUMN_NAME".toLowerCase();
+    private static final String STRING_COLUMN_VALUE = "STRING_COLUMN_VALUE".toLowerCase();
+    private static final String CLUSTER_NAME = "CLUSTER_NAME".toLowerCase();
     ConnectorQueryParser queryParser;
 
     @Before

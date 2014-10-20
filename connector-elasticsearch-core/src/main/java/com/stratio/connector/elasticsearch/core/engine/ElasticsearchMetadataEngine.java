@@ -75,7 +75,6 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws ExecutionException   if an error occur.
      */
 
-
     @Override
     protected void createCatalog(CatalogMetadata indexMetaData, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
@@ -189,12 +188,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection)
             throws HandlerConnectionException, ExecutionException {
 
-            CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
-                    .prepareCreate(indexMetaData.getName().getName());
-            createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
+        CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
+                .prepareCreate(indexMetaData.getName().getName());
+        createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
 
-            createIndexRequestBuilder.execute().actionGet();
-
+        createIndexRequestBuilder.execute().actionGet();
 
     }
 

@@ -66,12 +66,12 @@ import com.stratio.meta2.common.metadata.ColumnType;
         value = { Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class, SearchHit[].class })
 public class ConnectorQueryExecutorTest {
 
-    private static final String TYPE_NAME = "TYPE NAME";
-    private static final String INDEX_NAME = "INDEX NAME";
-    private static final String COLUMN_NAME = "COLUMN NAME";
-    private static final String COLUMN_STRING_VALUE = "COLUMN VALUE";
+    private static final String TYPE_NAME = "TYPE NAME".toLowerCase();
+    private static final String INDEX_NAME = "INDEX NAME".toLowerCase();
+    private static final String COLUMN_NAME = "COLUMN NAME".toLowerCase();
+    private static final String COLUMN_STRING_VALUE = "COLUMN VALUE".toLowerCase();
     private static final java.lang.String SCROLL_ID = "1";
-    private static final String CLUSTER_NAME = "CLUSTER_NAME";
+    private static final String CLUSTER_NAME = "CLUSTER_NAME".toLowerCase();
 
     private ConnectorQueryExecutor connectorQueryExecutor;
 

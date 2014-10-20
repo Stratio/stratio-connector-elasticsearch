@@ -30,7 +30,6 @@ import com.stratio.meta2.common.data.ColumnName;
  */
 public class MetadataCreator {
 
-
     public List<ColumnMetadata> createMetadata(ConnectorQueryData queryData) {
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
@@ -38,7 +37,8 @@ public class MetadataCreator {
         for (ColumnName field : queryData.getSelect().getColumnMap().keySet()) {
             String columnName = field.getQualifiedName();
 
-            ColumnMetadata columnMetadata = new ColumnMetadata(queryData.getProjection().getTableName().getQualifiedName(),
+            ColumnMetadata columnMetadata = new ColumnMetadata(
+                    queryData.getProjection().getTableName().getQualifiedName(),
                     columnName, queryData.getSelect().getTypeMap().get(columnName));
             columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
             retunColumnMetadata.add(columnMetadata);
