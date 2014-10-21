@@ -62,7 +62,7 @@ public class ContentBuilderCreator {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-            createIndexOptions(typeMetadata, xContentBuilder);
+         //   createIndexOptions(typeMetadata, xContentBuilder);
             createFieldOptions(typeMetadata, xContentBuilder);
 
             xContentBuilder.endObject();
@@ -78,11 +78,7 @@ public class ContentBuilderCreator {
             logger.error(msg);
             throw new ExecutionException(msg, e);
         }
-        try {
-            System.out.println(xContentBuilder.string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         return xContentBuilder;
     }
 
@@ -92,9 +88,9 @@ public class ContentBuilderCreator {
         Map<Selector, Selector> options = typeMetadata.getOptions();
         if (options != null && !options.isEmpty()) {
             xContentBuilder.startObject("settings").startObject("index");
-            for (Selector leftSelector : options.keySet()) {
+            for (Map.Entry<Selector, Selector> entry : options.entrySet()) {
                 xContentBuilder
-                        .field(leftSelector.getStringValue(), SelectorHelper.getValue(options.get(leftSelector)));
+                        .field(entry.getKey().getStringValue(), SelectorHelper.getValue(entry.getValue()));
             }
             xContentBuilder.endObject().endObject();
         }
@@ -104,25 +100,25 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
 
-        //    xContentBuilder.startObject("mappings").startObject(typeMetadata.getName().getName());
+
         createId(xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
         if (columns != null && !columns.isEmpty()) {
             xContentBuilder.startObject("properties");
-            for (ColumnName column : columns.keySet()) {
-                String columnType = convertType(columns.get(column).getColumnType());
-                String name = column.getName();
+            for (Map.Entry<ColumnName, ColumnMetadata> column : columns.entrySet()) {
+                String columnType = convertType(column.getValue().getColumnType());
+                String name = column.getKey().getName();
                 xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
             }
             xContentBuilder.endObject();
         }
-        //    xContentBuilder.endObject().endObject();
+
 
     }
 
     private void createId(XContentBuilder xContentBuilder) throws IOException {
 
-        // xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
+         xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
 
     }
 

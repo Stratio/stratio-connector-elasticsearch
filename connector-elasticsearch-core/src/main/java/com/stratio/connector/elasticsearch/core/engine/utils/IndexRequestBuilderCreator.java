@@ -83,11 +83,12 @@ public class IndexRequestBuilderCreator {
             throws UnsupportedException {
         String pk = null;
 
-        for (String rowName : dataInsert.keySet()) {
+        for (Map.Entry<String, Object> rowName : dataInsert.entrySet()) {
             TableName tableName = targetTable.getName();
 
-            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(), rowName))) {
-                String tempPK = dataInsert.get(rowName).toString();
+            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(),
+                    rowName.getKey()))) {
+                String tempPK = rowName.getValue().toString();
                 checkPkTypeSupport(pk);
                 pk = tempPK;
             }

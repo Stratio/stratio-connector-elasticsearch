@@ -68,7 +68,7 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     @Override
     public String getConnectorName() {
-        return "ElasticSearch";
+        return "elasticsearch";
     }
 
     /**
@@ -78,7 +78,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     @Override
     public String[] getDatastoreName() {
-        return new String[] { "ElasticSearch" };
+        return new String[] { "elasticsearch" };
     }
 
     /**

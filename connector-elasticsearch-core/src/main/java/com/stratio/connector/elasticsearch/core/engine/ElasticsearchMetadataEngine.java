@@ -201,10 +201,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         Map<String, String> transformOptions = new HashMap<>();
         Map<Selector, Selector> options = indexMetaData.getOptions();
         if (options != null) {
-            for (Selector key : options.keySet()) {
+            for (Map.Entry<Selector, Selector> key : options.entrySet()) {
                 transformOptions
-                        .put(SelectorHelper.getValue(String.class, key),
-                                SelectorHelper.getValue(String.class, options.get(key)));
+                        .put(SelectorHelper.getValue(String.class, key.getKey()),
+                                SelectorHelper.getValue(String.class, key.getValue()));
             }
         }
         return transformOptions;
