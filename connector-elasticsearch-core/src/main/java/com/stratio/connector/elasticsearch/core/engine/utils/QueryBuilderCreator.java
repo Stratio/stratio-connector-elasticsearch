@@ -30,19 +30,27 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 /**
+ *
+ *  The responsibility of this class is create a QueryBuilder.
  * Created by jmgomez on 17/09/14.
  */
 public class QueryBuilderCreator {
 
-    public QueryBuilder createBuilder(Collection<Filter> matchList) throws ExecutionException {
+    /**
+     * Create a query builder.
+     * @param filters the filters.
+     * @return
+     * @throws ExecutionException
+     */
+    public QueryBuilder createBuilder(Collection<Filter> filters) throws ExecutionException {
 
         QueryBuilder queryBuilder;
 
-        if (matchList.isEmpty()) {
+        if (filters.isEmpty()) {
             queryBuilder = QueryBuilders.matchAllQuery();
         } else {
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-            for (Filter filter : matchList) {
+            for (Filter filter : filters) {
                 Relation relation = filter.getRelation();
                 String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
                 String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());

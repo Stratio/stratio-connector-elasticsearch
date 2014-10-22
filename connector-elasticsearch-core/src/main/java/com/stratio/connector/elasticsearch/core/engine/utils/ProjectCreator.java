@@ -23,10 +23,16 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import com.stratio.crossdata.common.logicalplan.Project;
 
 /**
+ *  The responsibility of this class is create a Project creator.
  * @author darroyo
  */
 public class ProjectCreator {
 
+    /**
+     * This method modify the query to add a project.
+     * @param requestBuilder the request builder.
+     * @param projection the project.
+     */
     public void modify(SearchRequestBuilder requestBuilder, Project projection) {
 
         requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());

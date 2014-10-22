@@ -44,6 +44,9 @@ public class ConnectorQueryBuilder {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * The request builder.
+     */
     private SearchRequestBuilder requestBuilder;
 
     /**
@@ -67,6 +70,10 @@ public class ConnectorQueryBuilder {
         return requestBuilder;
     }
 
+    /**
+     * This method crete the select part of the query.
+     * @param queryData the querydata.
+     */
     private void createSelect(ConnectorQueryData queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
             SelectCreator selectCreator = new SelectCreator();
@@ -75,27 +82,45 @@ public class ConnectorQueryBuilder {
         }
     }
 
+    /**
+     * This method crete the elasticsearch request builder.
+     * @param elasticClient the elasticsearch client..
+     */
     private void createRequestBuilder(Client elasticClient) {
         requestBuilder = elasticClient.prepareSearch();
     }
 
+    /**
+     * Logger the query.
+     */
     private void logQuery() {
         if (logger.isDebugEnabled()) {
             logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
         }
     }
 
+    /**
+     * This method crete the Limit part of the query.
+     * @param queryData the querydata.
+     */
     private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();
-        limitModifier.modify(requestBuilder, queryData);
+        limitModifier.modify(requestBuilder);
 
     }
 
+    /**
+     * This method crete the Limit part of the query.
+     * @param queryData the querydata.
+     */
     private void createProjection(ConnectorQueryData queryData) {
         ProjectCreator projectModifier = new ProjectCreator();
         projectModifier.modify(requestBuilder, queryData.getProjection());
     }
-
+    /**
+     * This method crete the Filter part of the query.
+     * @param queryData the querydata.
+     */
     private void createFilter(ConnectorQueryData queryData) throws UnsupportedException, ExecutionException {
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();

@@ -74,13 +74,13 @@ public class MetadataCreatorTest {
     }
 
     /**
-     * Method: createMetadata(ConnectorQueryData queryData)
+     * Method: createColumnMetadata(ConnectorQueryData queryData)
      */
 
     @Test
     public void testCreateMetadata() throws Exception {
         ConnectorQueryData queryData = createQueryData();
-        List<ColumnMetadata> columnMetadata = metadataCreator.createMetadata(queryData);
+        List<ColumnMetadata> columnMetadata = metadataCreator.createColumnMetadata(queryData);
 
         int i = 0;
         for (ColumnMetadata metadata : columnMetadata) {

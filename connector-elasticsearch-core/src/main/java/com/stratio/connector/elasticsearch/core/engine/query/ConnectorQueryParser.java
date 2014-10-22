@@ -20,7 +20,6 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 
 import org.elasticsearch.action.search.SearchType;
 
-import com.stratio.connector.elasticsearch.core.exceptions.ElasticsearchQueryException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
@@ -30,12 +29,20 @@ import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.statements.structures.relationships.Operator;
 
 /**
+ * The responsibility of this class is parser he LogicalWorkFlow to a QueryData.
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryParser {
 
+    /**
+     * this method transfor a logical workflow to a queryData.
+     * @param logicalWorkFlow the logical workflow.
+     * @return the queryData.
+     *
+     * @throws UnsupportedException if the logicalworkflow contains unsupported operations.
+     */
     public ConnectorQueryData transformLogicalWorkFlow(Project logicalWorkFlow)
-            throws ElasticsearchQueryException, UnsupportedException {
+            throws  UnsupportedException {
 
         ConnectorQueryData queryData = new ConnectorQueryData();
         LogicalStep lStep = logicalWorkFlow;
@@ -76,9 +83,15 @@ public class ConnectorQueryParser {
         return queryData;
     }
 
-    private void checkSupportedQuery(ConnectorQueryData queryData) {
+    /**
+     * Check if the queryData is supported.
+     * @param queryData the qiery data.
+     *
+     * @throws UnsupportedException if exist a not supported operation.
+     */
+    private void checkSupportedQuery(ConnectorQueryData queryData) throws UnsupportedException {
         if (queryData.getSelect() == null) {
-            throw new UnsupportedOperationException("no select found");
+            throw new UnsupportedException("no select found");
         }
 
     }

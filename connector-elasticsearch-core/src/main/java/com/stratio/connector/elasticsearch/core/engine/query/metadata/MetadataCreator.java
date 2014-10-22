@@ -26,11 +26,17 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
 
 /**
+ * The responsibility of this class is crete the metadata.
  * Created by jmgomez on 15/10/14.
  */
 public class MetadataCreator {
 
-    public List<ColumnMetadata> createMetadata(ConnectorQueryData queryData) {
+    /**
+     * This method creates the column metadata.
+     * @param queryData the queryData object.
+     * @return the list with the column metadata.
+     */
+    public List<ColumnMetadata> createColumnMetadata(ConnectorQueryData queryData) {
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
 

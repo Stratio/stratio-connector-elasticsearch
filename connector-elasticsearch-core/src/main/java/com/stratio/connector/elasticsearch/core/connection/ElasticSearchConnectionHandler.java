@@ -26,14 +26,25 @@ import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.security.ICredentials;
 
 /**
+ * This class represents a elasticsearchs connetions handler.
  * Created by jmgomez on 28/08/14.
  */
 public class ElasticSearchConnectionHandler extends ConnectionHandler {
 
+    /**
+     * Constructor.
+     * @param configuration the configuration.
+     */
     public ElasticSearchConnectionHandler(IConfiguration configuration) {
         super(configuration);
     }
 
+    /**
+     * This method creates a elasticsearch connection.
+     * @param iCredentials the credentials to connect with the database.
+     * @param connectorClusterConfig the cluster configuration.
+     * @return a elasticsearch connection.
+     */
     @Override
     protected Connection createNativeConnection(ICredentials iCredentials,
             ConnectorClusterConfig connectorClusterConfig) {
@@ -46,8 +57,13 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
         return connection;
     }
 
+    /**
+     * Return true if the config says that the connection is nodeClient. false in other case.
+     * @param config the configuration.
+     * @return true if is configure to be a node connection. False in other case.
+     */
     private boolean isNodeClient(ConnectorClusterConfig config) {
-        return Boolean.parseBoolean((String) config.getOptions().get(ConfigurationOptions.NODE_TYPE.getOptionName()));
+        return Boolean.parseBoolean(config.getOptions().get(ConfigurationOptions.NODE_TYPE.getOptionName()));
     }
 
 }

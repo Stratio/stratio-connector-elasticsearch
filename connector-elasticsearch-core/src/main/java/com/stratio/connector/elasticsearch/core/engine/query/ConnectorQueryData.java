@@ -56,6 +56,9 @@ public class ConnectorQueryData {
      * The select.
      */
     private Select select;
+    /**
+     * The limit.
+     */
     private Limit limit;
 
     /**
@@ -107,14 +110,6 @@ public class ConnectorQueryData {
         return filterList;
     }
 
-    /**
-     * Get the search type.
-     *
-     * @return the search type.
-     */
-    public SearchType getSearchType() {
-        return searchType;
-    }
 
     /**
      * set the search type.
@@ -134,17 +129,6 @@ public class ConnectorQueryData {
     public void addMatch(Filter filter) {
 
         matchList.add(filter);
-    }
-
-    /**
-     * This method ask query if has match list.
-     *
-     * @return true if the query has match list. False in other case.
-     */
-
-    public boolean hasMatchList() {
-
-        return !matchList.isEmpty();
     }
 
     /**
@@ -184,10 +168,18 @@ public class ConnectorQueryData {
 
     }
 
+    /**
+     * Return the limit.
+     * @return the limit.
+     */
     public Limit getLimit() {
         return limit;
     }
 
+    /**
+     * set the limit.
+     * @param limit the limit.
+     */
     public void setLimit(Limit limit) {
         this.limit = limit;
     }

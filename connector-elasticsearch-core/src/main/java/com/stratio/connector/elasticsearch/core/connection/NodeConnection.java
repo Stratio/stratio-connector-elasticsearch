@@ -47,18 +47,27 @@ public class NodeConnection extends Connection<Client> {
      */
     private Client elasticClient = null;
 
+    /**
+     * The elasticsearch node connection.
+     */
     private Node node = null;
+    /**
+     * Store the connection status.
+     */
     private boolean isConnect = false;
 
+    /**
+     * Store the connection name.
+     */
     private String connectionName;
 
     /**
      * Constructor.
      *
-     * @param credentiasl the credentials.
+     * @param credentials the credentials.
      * @param config      The cluster configuration.
      */
-    public NodeConnection(ICredentials credentiasl, ConnectorClusterConfig config) {
+    public NodeConnection(ICredentials credentials, ConnectorClusterConfig config) {
         NodeBuilder nodeBuilder = nodeBuilder();
 
         node = nodeBuilder.settings(ElasticsearchClientConfiguration.getSettings(config)).node();
@@ -69,6 +78,9 @@ public class NodeConnection extends Connection<Client> {
 
     }
 
+    /**
+     * Close the connection.
+     */
     public void close() {
         if (node != null) {
             node.close();
@@ -80,11 +92,19 @@ public class NodeConnection extends Connection<Client> {
 
     }
 
+    /**
+     * Retun the connection status.
+     * @return true if the connection is open. False in other case.
+     */
     @Override
     public boolean isConnect() {
         return isConnect;
     }
 
+    /**
+     * Return the native connection.
+     * @return the native connection.
+     */
     @Override
     public Client getNativeConnection() {
         return elasticClient;

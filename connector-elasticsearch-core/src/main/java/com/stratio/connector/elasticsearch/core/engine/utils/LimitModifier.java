@@ -22,17 +22,27 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
-
 /**
+ *  The responsibility of this class is create a Limit query Modifier.
  * @author darroyo
  */
 public class LimitModifier {
 
+    /**
+     * The timeout.
+     */
     public static final int SCAN_TIMEOUT_MILLIS = 600000;
+    /**
+     * The size scan.
+     */
     public static final int SIZE_SCAN = 10;
 
-    public void modify(SearchRequestBuilder requestBuilder, ConnectorQueryData type) {
+    /**
+     * Modify the querybuilder to add a limit.
+     * @param requestBuilder the reques builder.
+     *
+     */
+    public void modify(SearchRequestBuilder requestBuilder) {
         requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)
                 .setSearchType(SearchType.SCAN);
 

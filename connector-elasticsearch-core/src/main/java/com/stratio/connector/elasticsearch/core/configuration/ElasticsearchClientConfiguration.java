@@ -40,7 +40,7 @@ import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
- * he configuration for Elasticsearch.
+ * The configuration for Elasticsearch.
  */
 
 public final class ElasticsearchClientConfiguration {
@@ -60,11 +60,11 @@ public final class ElasticsearchClientConfiguration {
     public static Settings getSettings(ConnectorClusterConfig configuration) {
 
         Map<String, String> setting = new HashMap<String, String>();
-        setting.put(NODE_DATA.getOptionName(), addSetting(configuration.getOptions(), NODE_DATA));
-        setting.put(NODE_MASTER.getOptionName(), addSetting(configuration.getOptions(), NODE_MASTER));
-        setting.put(TRANSPORT_SNIFF.getOptionName(), addSetting(configuration.getOptions(), TRANSPORT_SNIFF));
-        setting.put(COERCE.getOptionName(), addSetting(configuration.getOptions(), COERCE));
-        setting.put(DYNAMIC.getOptionName(), addSetting(configuration.getOptions(), DYNAMIC));
+        setting.put(NODE_DATA.getOptionName(), recoverdOptionValue(configuration.getOptions(), NODE_DATA));
+        setting.put(NODE_MASTER.getOptionName(), recoverdOptionValue(configuration.getOptions(), NODE_MASTER));
+        setting.put(TRANSPORT_SNIFF.getOptionName(), recoverdOptionValue(configuration.getOptions(), TRANSPORT_SNIFF));
+        setting.put(COERCE.getOptionName(), recoverdOptionValue(configuration.getOptions(), COERCE));
+        setting.put(DYNAMIC.getOptionName(), recoverdOptionValue(configuration.getOptions(), DYNAMIC));
 
         setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
 
@@ -72,15 +72,22 @@ public final class ElasticsearchClientConfiguration {
 
     }
 
-    private static String addSetting(Map<String, String> configuration, ConfigurationOptions nodeData) {
+    /**
+     * this recovered the option value if it is set. It not return the default value..
+     * @param configuration the configuration.
+     * @param nodeData the configuration options.
+     * @return the actual value of the option.
+     */
+    private static String recoverdOptionValue(Map<String, String> configuration, ConfigurationOptions nodeData) {
         String option;
         if (configuration.containsKey(nodeData.getOptionName())) {
-            option = (String) configuration.get(nodeData.getOptionName());
+            option = configuration.get(nodeData.getOptionName());
         } else {
             option = nodeData.getDefaultValue()[0];
         }
         return option;
     }
+
 
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 

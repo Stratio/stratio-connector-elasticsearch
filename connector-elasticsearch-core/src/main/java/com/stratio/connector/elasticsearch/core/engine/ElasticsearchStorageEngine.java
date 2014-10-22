@@ -115,15 +115,33 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     }
 
-    private IndexRequestBuilder createIndexRequest(TableMetadata targetTable, Row row,
+    /**
+     * This method creates a IndexRequestBuilder.
+     * @param tableMetadata the table metadata.
+     * @param row the row to insert.
+     * @param connection the logical connection.
+     * @return the index request builder.
+     * @throws HandlerConnectionException if a exceptions occurs during connection handling.
+     * @throws UnsupportedException if a operation is not supported.
+     */
+    private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row,
             Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
 
         Client client = connection.getNativeConnection();
 
-        return indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
+        return indexRequestBuilderCreator.createIndexRequestBuilder(tableMetadata, client, row);
     }
 
-    private BulkRequestBuilder createBulkRequest(TableMetadata targetTable,
+    /**
+     * This method create a bulkRequestBuilder.
+     * @param tablesMetadata the table metadata
+     * @param rows the rows to insert.
+     * @param connection the logical connection.
+     * @return the index request builder.
+     * @throws HandlerConnectionException if a exceptions occurs during connection handling.
+     * @throws UnsupportedException if a operation is not supported.
+     */
+    private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata,
             Collection<Row> rows, Connection<Client> connection)
             throws HandlerConnectionException, UnsupportedException {
 
@@ -133,36 +151,56 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
         for (Row row : rows) {
             IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
-                    .createIndexRequestBuilder(targetTable, elasticClient, row);
+                    .createIndexRequestBuilder(tablesMetadata, elasticClient, row);
             bulkRequest.add(indexRequestBuilder);
         }
         return bulkRequest;
     }
 
+    /**
+     * Check if the bulk insert has been correct.
+     * @param bulkResponse the bulk response.
+     * @throws ExecutionException if an error happens during the execution.
+     */
     private void validateBulkResponse(BulkResponse bulkResponse) throws ExecutionException {
         if (bulkResponse.hasFailures()) {
             throw new ExecutionException(bulkResponse.buildFailureMessage());
         }
     }
 
-    private void loggInsert(TableMetadata targetTable) {
+    /**
+     * Log the insert.
+     * @param tableMetadata the table metadata.
+     */
+    private void loggInsert(TableMetadata tableMetadata) {
         if (logger.isDebugEnabled()) {
-            String index = targetTable.getName().getCatalogName().getName();
-            String type = targetTable.getName().getName();
+            String index = tableMetadata.getName().getCatalogName().getName();
+            String type = tableMetadata.getName().getName();
             logger.debug("Insert one row in ElasticSearch Database. Index [" + index + "] Type [" + type + "]");
         }
     }
 
-    private void logBulkInsert(TableMetadata targetTable, Collection<Row> rows) {
+    /**
+     * Log the bulf insert.
+     * @param tableMetadata the table metadata.
+     * @param rows the rows.
+     */
+    private void logBulkInsert(TableMetadata tableMetadata, Collection<Row> rows) {
         if (logger.isDebugEnabled()) {
-            String index = targetTable.getName().getCatalogName().getName();
-            String type = targetTable.getName().getName();
+            String index = tableMetadata.getName().getCatalogName().getName();
+            String type = tableMetadata.getName().getName();
             logger.debug(
                     "Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type [" + type
                             + "]");
         }
     }
 
+    /**
+     * Throw a handlerExcepcion.
+     * @param e original exception.
+     * @param method the method which throw the exception.
+     * @throws ExecutionException
+     */
     private void throwHandlerException(HandlerConnectionException e, String method) throws ExecutionException {
         String exceptionMessage = "Fail Connecting elasticSearch in " + method + " method. " + e.getMessage();
         logger.error(exceptionMessage);

@@ -34,7 +34,7 @@ import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
- * This class is responsible to create ContentBuilders'
+ * This class is responsible to create ContentBuilders.
  * Created by jmgomez on 11/09/14.
  */
 public class ContentBuilderCreator {
@@ -84,11 +84,17 @@ public class ContentBuilderCreator {
         return xContentBuilder;
     }
 
-    private void createFieldOptions(TableMetadata typeMetadata)
+    /**
+     * This method creates the fields options.
+     * @param tableMetadata the table metadata.
+     * @throws IOException if an error happen creating the ContentBuilder.
+     * @throws UnsupportedException if a option is nos supported.
+     */
+    private void createFieldOptions(TableMetadata tableMetadata)
             throws IOException, UnsupportedException {
 
         createId(xContentBuilder);
-        Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
+        Map<ColumnName, ColumnMetadata> columns = tableMetadata.getColumns();
         if (columns != null && !columns.isEmpty()) {
             xContentBuilder.startObject("properties");
             for (Map.Entry<ColumnName, ColumnMetadata> column : columns.entrySet()) {
@@ -101,6 +107,11 @@ public class ContentBuilderCreator {
 
     }
 
+    /**
+     * This method create the id.
+     * @param xContentBuilder the contentBuilder.
+     * @throws IOException if an error happen creating the ContentBuilder.
+     */
     private void createId(XContentBuilder xContentBuilder) throws IOException {
 
         xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();

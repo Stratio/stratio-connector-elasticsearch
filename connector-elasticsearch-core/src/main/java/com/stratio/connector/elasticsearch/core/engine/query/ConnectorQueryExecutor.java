@@ -81,7 +81,7 @@ public class ConnectorQueryExecutor {
             }
 
             MetadataCreator crossdatadataCreator = new MetadataCreator();
-            resultSet.setColumnMetadata(crossdatadataCreator.createMetadata(queryData));
+            resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
             do {
                 scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
@@ -125,6 +125,13 @@ public class ConnectorQueryExecutor {
         return row;
     }
 
+    /**
+     * This method creates a row.
+     * @param queryData the query data.
+     * @param alias the alias.
+     * @param fields the fields.
+     * @return a row.
+     */
     private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields) {
         Row row = new Row();
         Set<String> fieldNames;
@@ -147,6 +154,11 @@ public class ConnectorQueryExecutor {
         return row;
     }
 
+    /**
+     * This method creates the fields names.
+     * @param columnNames the column names.
+     * @return the field names.
+     */
     private Set<String> createFieldNames(Set<ColumnName> columnNames) {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (ColumnName columnName : columnNames) {
@@ -155,6 +167,11 @@ public class ConnectorQueryExecutor {
         return fieldNames;
     }
 
+    /**
+     * This method return the fields for a hit.
+     * @param hit the hit.
+     * @return the fields.
+     */
     private Map<String, Object> getFields(SearchHit hit) {
         Map<String, Object> fields = hit.getSource();
 
@@ -168,6 +185,11 @@ public class ConnectorQueryExecutor {
         return fields;
     }
 
+    /**
+     * This method return the field alias.
+     * @param queryData the query data.
+     * @return the alias.
+     */
     private Map<ColumnName, String> returnAlias(ConnectorQueryData queryData) {
         Map<ColumnName, String> alias = Collections.EMPTY_MAP;
         if (queryData.getSelect() != null) {

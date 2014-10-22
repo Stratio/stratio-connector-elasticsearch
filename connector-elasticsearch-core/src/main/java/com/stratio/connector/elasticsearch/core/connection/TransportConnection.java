@@ -43,6 +43,9 @@ public class TransportConnection extends Connection<Client> {
      * The Elasticsearch client.
      */
     private Client elasticClient = null;
+    /**
+     * Store the connection status.
+     */
     private boolean isConnect = false;
 
     /**
@@ -60,6 +63,9 @@ public class TransportConnection extends Connection<Client> {
         isConnect = true;
     }
 
+    /**
+     * Close the connection.
+     */
     public void close() {
         if (elasticClient != null) {
             elasticClient.close();
@@ -70,11 +76,19 @@ public class TransportConnection extends Connection<Client> {
 
     }
 
+    /**
+     * Return the connection status.
+     * @return true if the connection is open. False in other case.
+     */
     @Override
     public boolean isConnect() {
         return isConnect;
     }
 
+    /**
+     * Return the native connection.
+     * @return the native connection.
+     */
     @Override
     public Client getNativeConnection() {
         return elasticClient;

@@ -56,7 +56,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The client will be a transportClient by default unless stratio nodeClient is specified.
      *
      * @param configuration the connection configuration. It must be not null.
-     *                      onnection.
+     *
      */
 
     @Override
@@ -66,6 +66,10 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
+    /**
+     * Return de connector Name.
+     * @return
+     */
     @Override
     public String getConnectorName() {
         return "elasticsearch";
@@ -93,6 +97,9 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
+    /**
+     * Run the shutdown.
+     */
     public void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override

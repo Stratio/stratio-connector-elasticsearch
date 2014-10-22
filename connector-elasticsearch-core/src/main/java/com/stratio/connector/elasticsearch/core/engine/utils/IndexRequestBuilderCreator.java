@@ -32,12 +32,13 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
+ *  The responsibility of this class is create a IndexRequestBuilder.
  * Created by jmgomez on 12/09/14.
  */
 public class IndexRequestBuilderCreator {
 
     /**
-     * Returns an IndexRequestBuilder. Adds the json created from the row
+     * Returns an IndexRequestBuilder.
      *
      * @param targetTable   the table where the row must be inserted.
      * @param elasticClient the connection to elastic search.
@@ -55,6 +56,14 @@ public class IndexRequestBuilderCreator {
 
     }
 
+    /**
+     *  This method creates a indexrequesbuider with PK.
+     * @param elasticClient  the connection to elastic search.
+     * @param targetTable the table where the row must be inserted.
+     * @param dataInsert the data to insert.
+     * @param pk the pk.
+     * @return the index builder
+     */
     private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, TableMetadata targetTable,
             Map<String, Object> dataInsert, String pk) {
         IndexRequestBuilder indexRequestBuilder;
