@@ -40,7 +40,6 @@ import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.security.ICredentials;
 
-
 /**
  * ElasticsearchConnector Tester.
  *

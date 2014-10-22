@@ -24,7 +24,6 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.crossdata.common.connector.Operations;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
@@ -98,10 +97,19 @@ public class FilterBuilderCreator {
     }
 
     private boolean isPK(Filter filter) {
-        return filter.getOperation().equals(Operations.FILTER_PK_DISTINCT) || filter.getOperation().equals(Operations
-                .FILTER_PK_EQ) || filter.getOperation().equals(Operations.FILTER_PK_GET) || filter.getOperation()
-                .equals(Operations.FILTER_PK_GT) || filter.getOperation().equals(Operations.FILTER_PK_LET) || filter
-                .getOperation().equals(Operations.FILTER_PK_LT);
+        boolean isPk = false;
+        switch (filter.getOperation()) {
+        case FILTER_PK_DISTINCT:
+        case FILTER_PK_EQ:
+        case FILTER_PK_GET:
+        case FILTER_PK_GT:
+        case FILTER_PK_LET:
+        case FILTER_PK_LT:
+            isPk = true;
+            break;
+        }
+        return isPk;
+
     }
 
 }

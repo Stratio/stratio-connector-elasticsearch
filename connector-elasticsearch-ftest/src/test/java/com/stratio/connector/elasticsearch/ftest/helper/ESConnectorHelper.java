@@ -69,7 +69,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         this.clusterName = clusterName;
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
                 .addTransportAddresses(
-                        new ElasticsearchClientConfiguration().getTransportAddress(getConnectorClusterConfig()));
+                        ElasticsearchClientConfiguration.getTransportAddress(getConnectorClusterConfig()));
     }
 
     @Override

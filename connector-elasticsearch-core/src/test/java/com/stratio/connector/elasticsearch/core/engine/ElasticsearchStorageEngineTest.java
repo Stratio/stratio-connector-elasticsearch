@@ -62,7 +62,6 @@ import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.selectors.Selector;
 
-
 /**
  * ElasticsearchStorageEngine Tester.
  *

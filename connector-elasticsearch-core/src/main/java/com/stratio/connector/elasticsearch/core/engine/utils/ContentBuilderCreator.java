@@ -32,6 +32,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+
 /**
  * This class is responsible to create ContentBuilders'
  * Created by jmgomez on 11/09/14.
@@ -47,7 +48,8 @@ public class ContentBuilderCreator {
      * The XContentBuilder.
      */
 
-    private  XContentBuilder xContentBuilder;
+    private XContentBuilder xContentBuilder;
+
     /**
      * This method creates the XContentBuilder for a type.
      *
@@ -59,11 +61,9 @@ public class ContentBuilderCreator {
     public XContentBuilder createTypeSource(TableMetadata typeMetadata)
             throws UnsupportedException, ExecutionException {
 
-
         try {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
-
 
             createFieldOptions(typeMetadata);
 
@@ -83,8 +83,6 @@ public class ContentBuilderCreator {
 
         return xContentBuilder;
     }
-
-
 
     private void createFieldOptions(TableMetadata typeMetadata)
             throws IOException, UnsupportedException {

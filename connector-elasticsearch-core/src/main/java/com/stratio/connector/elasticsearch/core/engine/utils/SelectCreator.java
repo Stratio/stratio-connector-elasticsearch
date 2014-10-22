@@ -31,7 +31,7 @@ public class SelectCreator {
 
     public void modify(SearchRequestBuilder requestBuilder, Select select) {
 
-        Set<ColumnName> columnMetadataList =select.getColumnMap().keySet();
+        Set<ColumnName> columnMetadataList = select.getColumnMap().keySet();
 
         if (columnMetadataList != null && !columnMetadataList.isEmpty()) {
 
@@ -46,11 +46,4 @@ public class SelectCreator {
         }
     }
 
-//    private Set<String> createFieldNames(Set<ColumnName> columnNames) {
-//        Set<String> fieldNames = new HashSet<>();
-//        for (ColumnName columnName : columnNames) {
-//            fieldNames.add(columnName.getName());
-//        }
-//        return fieldNames;
-//    }
 }

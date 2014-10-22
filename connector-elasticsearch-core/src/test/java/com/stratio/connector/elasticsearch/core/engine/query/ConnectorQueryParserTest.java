@@ -56,7 +56,7 @@ import com.stratio.crossdata.common.statements.structures.selectors.StringSelect
  * @version 1.0
  * @since <pre>sep 15, 2014</pre>
  */
-public class    ConnectorQueryParserTest {
+public class ConnectorQueryParserTest {
 
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();

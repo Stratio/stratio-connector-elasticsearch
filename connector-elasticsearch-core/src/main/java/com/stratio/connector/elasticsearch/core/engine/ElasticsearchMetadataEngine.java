@@ -90,7 +90,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method create a type in ES.
      *
-     * @param typeMetadata the type configuration.
+     * @param typeMetadata the type configure
      * @throws UnsupportedException if any operation is not supported.
      * @throws ExecutionException   if an error occur.
      */

@@ -47,7 +47,6 @@ import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.security.ICredentials;
 
-
 /**
  * ConnectionHandle Tester.
  *

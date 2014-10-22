@@ -130,12 +130,10 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 
-        int i = 0;
         for (Row row : rows) {
             IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
                     .createIndexRequestBuilder(targetTable, elasticClient, row);
             bulkRequest.add(indexRequestBuilder);
-            ;
         }
         return bulkRequest;
     }

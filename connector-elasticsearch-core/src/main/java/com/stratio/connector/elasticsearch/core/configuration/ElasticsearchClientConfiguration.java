@@ -42,12 +42,13 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  * he configuration for Elasticsearch.
  */
 
-public class ElasticsearchClientConfiguration {
+public final class ElasticsearchClientConfiguration {
 
     /**
      * Private constructor.
      */
-    private ElasticsearchClientConfiguration(){}
+    private ElasticsearchClientConfiguration() {
+    }
 
     /**
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
