@@ -26,14 +26,12 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
-import com.stratio.crossdata.common.statements.structures.selectors.Selector;
 /**
  * This class is responsible to create ContentBuilders'
  * Created by jmgomez on 11/09/14.
@@ -61,7 +59,7 @@ public class ContentBuilderCreator {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-            //   createIndexOptions(typeMetadata, xContentBuilder);
+
             createFieldOptions(typeMetadata, xContentBuilder);
 
             xContentBuilder.endObject();
@@ -81,20 +79,7 @@ public class ContentBuilderCreator {
         return xContentBuilder;
     }
 
-    private void createIndexOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
-            throws IOException, ExecutionException {
 
-        Map<Selector, Selector> options = typeMetadata.getOptions();
-        if (options != null && !options.isEmpty()) {
-            xContentBuilder.startObject("settings").startObject("index");
-            for (Map.Entry<Selector, Selector> entry : options.entrySet()) {
-                xContentBuilder
-                        .field(entry.getKey().getStringValue(), SelectorHelper.getValue(entry.getValue()));
-            }
-            xContentBuilder.endObject().endObject();
-        }
-
-    }
 
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {

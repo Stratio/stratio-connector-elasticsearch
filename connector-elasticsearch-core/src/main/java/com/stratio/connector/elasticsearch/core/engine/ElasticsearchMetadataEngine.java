@@ -107,7 +107,6 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
                     .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
                     .actionGet();
         } catch (HandlerConnectionException | ElasticsearchException e) {
-            e.printStackTrace();
             throwHandlerConnectionException(e, "createTable");
         }
     }

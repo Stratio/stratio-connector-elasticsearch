@@ -43,7 +43,7 @@ public enum ConfigurationOptions {
     }
 
     public String[] getDefaultValue() {
-        return defaultValue;
+        return defaultValue.clone();
     }
 
     public String getOptionName() {
