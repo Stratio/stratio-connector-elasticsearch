@@ -44,6 +44,11 @@ public class ContentBuilderCreator {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
+     * The XContentBuilder.
+     */
+
+    private  XContentBuilder xContentBuilder;
+    /**
      * This method creates the XContentBuilder for a type.
      *
      * @param typeMetadata the type crossdatadata.
@@ -54,13 +59,13 @@ public class ContentBuilderCreator {
     public XContentBuilder createTypeSource(TableMetadata typeMetadata)
             throws UnsupportedException, ExecutionException {
 
-        XContentBuilder xContentBuilder = null;
+
         try {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
 
-            createFieldOptions(typeMetadata, xContentBuilder);
+            createFieldOptions(typeMetadata);
 
             xContentBuilder.endObject();
 
@@ -81,7 +86,7 @@ public class ContentBuilderCreator {
 
 
 
-    private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
+    private void createFieldOptions(TableMetadata typeMetadata)
             throws IOException, UnsupportedException {
 
         createId(xContentBuilder);
