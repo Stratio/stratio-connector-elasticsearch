@@ -24,11 +24,11 @@ import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.meta.common.connector.Operations;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.connector.Operations;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 public class FilterBuilderCreator {
 

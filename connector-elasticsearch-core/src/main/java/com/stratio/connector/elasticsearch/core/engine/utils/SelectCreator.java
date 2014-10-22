@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
-import com.stratio.meta.common.logicalplan.Select;
-import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.logicalplan.Select;
 
 /**
  * @author darroyo

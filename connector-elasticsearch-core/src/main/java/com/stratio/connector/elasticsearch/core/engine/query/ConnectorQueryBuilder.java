@@ -31,8 +31,8 @@ import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.elasticsearch.core.engine.utils.ProjectCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
  * Created by jmgomez on 15/09/14.

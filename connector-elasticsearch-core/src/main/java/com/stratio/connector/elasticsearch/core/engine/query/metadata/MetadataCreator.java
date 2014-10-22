@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
-import com.stratio.meta.common.metadata.structures.ColumnMetadata;
-import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
 
 /**
  * Created by jmgomez on 15/10/14.

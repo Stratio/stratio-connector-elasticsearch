@@ -21,8 +21,8 @@ package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 import com.stratio.connector.commons.ftest.functionalTestQuery.GenericLimitTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
-import com.stratio.meta.common.exceptions.ConnectionException;
-import com.stratio.meta.common.exceptions.InitializationException;
+import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
  * Created by jmgomez on 5/09/14.

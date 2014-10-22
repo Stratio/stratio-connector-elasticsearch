@@ -37,11 +37,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
-import com.stratio.meta.common.data.Cell;
-import com.stratio.meta.common.data.ResultSet;
-import com.stratio.meta.common.data.Row;
-import com.stratio.meta.common.result.QueryResult;
-import com.stratio.meta2.common.data.ColumnName;
+import com.stratio.crossdata.common.data.Cell;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.ResultSet;
+import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.result.QueryResult;
 
 /**
  * Created by jmgomez on 15/09/14.
@@ -80,8 +80,8 @@ public class ConnectorQueryExecutor {
                 limit = queryData.getLimit().getLimit();
             }
 
-            MetadataCreator metadataCreator = new MetadataCreator();
-            resultSet.setColumnMetadata(metadataCreator.createMetadata(queryData));
+            MetadataCreator crossdatadataCreator = new MetadataCreator();
+            resultSet.setColumnMetadata(crossdatadataCreator.createMetadata(queryData));
 
             do {
                 scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())

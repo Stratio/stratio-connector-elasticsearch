@@ -35,8 +35,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 
 import com.stratio.connector.commons.util.ConnectorParser;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.exceptions.InitializationException;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
  * he configuration for Elasticsearch.

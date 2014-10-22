@@ -25,9 +25,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 /**
  * Created by jmgomez on 17/09/14.

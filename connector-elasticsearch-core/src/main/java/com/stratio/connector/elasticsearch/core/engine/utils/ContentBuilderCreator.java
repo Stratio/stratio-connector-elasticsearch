@@ -27,14 +27,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.metadata.ColumnMetadata;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.metadata.TableMetadata;
-import com.stratio.meta2.common.statements.structures.selectors.Selector;
-
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.selectors.Selector;
 /**
  * This class is responsible to create ContentBuilders'
  * Created by jmgomez on 11/09/14.
@@ -49,9 +48,9 @@ public class ContentBuilderCreator {
     /**
      * This method creates the XContentBuilder for a type.
      *
-     * @param typeMetadata the type metadata.
+     * @param typeMetadata the type crossdatadata.
      * @return the XContentBuilder that represent the type.
-     * @throws UnsupportedException if the type metadata is not supported.
+     * @throws UnsupportedException if the type crossdatadata is not supported.
      * @thros ExecutionException if a error occurs.
      */
     public XContentBuilder createTypeSource(TableMetadata typeMetadata)
@@ -62,7 +61,7 @@ public class ContentBuilderCreator {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
 
-         //   createIndexOptions(typeMetadata, xContentBuilder);
+            //   createIndexOptions(typeMetadata, xContentBuilder);
             createFieldOptions(typeMetadata, xContentBuilder);
 
             xContentBuilder.endObject();
@@ -74,7 +73,7 @@ public class ContentBuilderCreator {
             }
 
         } catch (IOException e) {
-            String msg = "Error create type metadata. " + e.getMessage();
+            String msg = "Error create type crossdatadata. " + e.getMessage();
             logger.error(msg);
             throw new ExecutionException(msg, e);
         }
@@ -100,7 +99,6 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata typeMetadata, XContentBuilder xContentBuilder)
             throws IOException, UnsupportedException {
 
-
         createId(xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = typeMetadata.getColumns();
         if (columns != null && !columns.isEmpty()) {
@@ -113,19 +111,18 @@ public class ContentBuilderCreator {
             xContentBuilder.endObject();
         }
 
-
     }
 
     private void createId(XContentBuilder xContentBuilder) throws IOException {
 
-         xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
+        xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
 
     }
 
     /**
-     * This method translates the meta columnType to ElasticSearch type.
+     * This method translates the crossdata columnType to ElasticSearch type.
      *
-     * @param columnType the meta column type.
+     * @param columnType the crossdata column type.
      * @return the ElasticSearch columnType.
      * @throws UnsupportedException if the type is not supported.
      */

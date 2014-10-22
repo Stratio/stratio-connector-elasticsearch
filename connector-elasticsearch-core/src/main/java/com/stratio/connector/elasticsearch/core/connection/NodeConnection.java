@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.configuration.ElasticsearchClientConfiguration;
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta.common.security.ICredentials;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.security.ICredentials;
 
 /**
  * This class represents a logic connection.

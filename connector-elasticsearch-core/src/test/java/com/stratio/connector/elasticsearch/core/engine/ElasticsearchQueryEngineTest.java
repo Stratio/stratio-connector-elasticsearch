@@ -39,12 +39,12 @@ import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuild
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
-import com.stratio.meta.common.connector.IResultHandler;
-import com.stratio.meta.common.exceptions.ExecutionException;
-import com.stratio.meta.common.exceptions.UnsupportedException;
-import com.stratio.meta.common.logicalplan.LogicalWorkflow;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.result.QueryResult;
+import com.stratio.crossdata.common.connector.IResultHandler;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.result.QueryResult;
 
 /**
  * ElasticsearchQueryEngine Tester.

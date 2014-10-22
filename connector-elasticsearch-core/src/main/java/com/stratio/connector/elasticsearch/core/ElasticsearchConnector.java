@@ -26,12 +26,12 @@ import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnecti
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchStorageEngine;
-import com.stratio.connectors.ConnectorApp;
-import com.stratio.meta.common.connector.IConfiguration;
-import com.stratio.meta.common.connector.IMetadataEngine;
-import com.stratio.meta.common.connector.IQueryEngine;
-import com.stratio.meta.common.connector.IStorageEngine;
-import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.connector.IConfiguration;
+import com.stratio.crossdata.common.connector.IMetadataEngine;
+import com.stratio.crossdata.common.connector.IQueryEngine;
+import com.stratio.crossdata.common.connector.IStorageEngine;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.connectors.ConnectorApp;
 
 /**
  * This class implements the connector for Elasticsearch.

@@ -1,4 +1,7 @@
 /*
+
+
+ * 
  * Licensed to STRATIO (C) under one or more contributor license agreements.
  *  See the NOTICE file distributed with this work for additional information
  *  regarding copyright ownership. The STRATIO (C) licenses this file
@@ -31,20 +34,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.stratio.meta.common.connector.Operations;
-import com.stratio.meta.common.logicalplan.Filter;
-import com.stratio.meta.common.logicalplan.LogicalStep;
-import com.stratio.meta.common.logicalplan.LogicalWorkflow;
-import com.stratio.meta.common.logicalplan.Project;
-import com.stratio.meta.common.logicalplan.Select;
-import com.stratio.meta.common.statements.structures.relationships.Operator;
-import com.stratio.meta.common.statements.structures.relationships.Relation;
-import com.stratio.meta2.common.data.ClusterName;
-import com.stratio.meta2.common.data.ColumnName;
-import com.stratio.meta2.common.data.TableName;
-import com.stratio.meta2.common.metadata.ColumnType;
-import com.stratio.meta2.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
+import com.stratio.crossdata.common.connector.Operations;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.logicalplan.LogicalStep;
+import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.statements.structures.relationships.Operator;
+import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.statements.structures.selectors.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
 
 /**
  * LogicalPlanExecutor Tester.
@@ -53,7 +56,7 @@ import com.stratio.meta2.common.statements.structures.selectors.StringSelector;
  * @version 1.0
  * @since <pre>sep 15, 2014</pre>
  */
-public class ConnectorQueryParserTest {
+public class    ConnectorQueryParserTest {
 
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();

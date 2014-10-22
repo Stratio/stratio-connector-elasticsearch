@@ -38,8 +38,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.stratio.meta.common.connector.ConnectorClusterConfig;
-import com.stratio.meta2.common.data.ClusterName;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.data.ClusterName;
 
 /**
  * ElasticsearchClientConfiguration Tester.

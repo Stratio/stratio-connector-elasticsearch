@@ -18,7 +18,7 @@
 package com.stratio.connector.elasticsearch.server;
 
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
-import com.stratio.connectors.ConnectorApp;
+import com.stratio.crossdata.connectors.ConnectorApp;
 
 /**
  * Created by jmgomez on 17/09/14.

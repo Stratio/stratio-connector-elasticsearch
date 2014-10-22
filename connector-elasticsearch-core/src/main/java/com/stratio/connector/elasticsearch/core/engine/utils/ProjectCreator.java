@@ -19,7 +19,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 
-import com.stratio.meta.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Project;
 
 /**
  * @author darroyo

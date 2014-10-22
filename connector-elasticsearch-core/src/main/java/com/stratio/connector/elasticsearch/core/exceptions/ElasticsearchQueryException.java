@@ -17,7 +17,7 @@
  */
 package com.stratio.connector.elasticsearch.core.exceptions;
 
-import com.stratio.meta.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 
 public class ElasticsearchQueryException extends ExecutionException {
 
