@@ -27,7 +27,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Filter;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * The responsibility of this class is create a QueryBuilder.

@@ -102,10 +102,15 @@ public class MetadataCreatorTest {
         columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[1]), ALIAS[1]);
         columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[2]), ALIAS[2]);
         Map<String, ColumnType> typeMap = new LinkedHashMap<>();
-        typeMap.put(CATALOG_NAME + "." + TABLE_NAME + "." + COLUMN_NAME1, TYPES[0]);
-        typeMap.put(CATALOG_NAME + "." + TABLE_NAME + "." + COLUMN_NAME2, TYPES[1]);
-        typeMap.put(CATALOG_NAME + "." + TABLE_NAME + "." + COLUMN_NAME3, TYPES[2]);
-        Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap);
+        typeMap.put(ALIAS[0], TYPES[0]);
+        typeMap.put(ALIAS[1], TYPES[1]);
+        typeMap.put(ALIAS[2], TYPES[2]);
+
+        Map<ColumnName, ColumnType> typeColumnName = new LinkedHashMap<>();
+        typeColumnName.put(new ColumnName(CATALOG_NAME ,TABLE_NAME , COLUMN_NAME1), TYPES[0]);
+        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME , COLUMN_NAME2), TYPES[1]);
+        typeColumnName.put(new ColumnName(CATALOG_NAME ,TABLE_NAME, COLUMN_NAME3), TYPES[2]);
+        Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap,typeColumnName);
         Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME),
                 new ClusterName("CLUSTER_NAME"));
         queryData.setProjection(project);

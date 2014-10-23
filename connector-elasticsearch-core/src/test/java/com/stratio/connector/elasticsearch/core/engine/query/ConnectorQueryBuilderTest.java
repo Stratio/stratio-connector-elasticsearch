@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +44,17 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
-import com.stratio.crossdata.common.statements.structures.relationships.Operator;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
-import com.stratio.crossdata.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
+import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 /**
  * QueryBuilder Tester.
@@ -138,7 +139,7 @@ public class ConnectorQueryBuilderTest {
         Map<ColumnName, String> alias = new HashMap<>();
         alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1), COLUMN_1);
         alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2), COLUMN_2);
-        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ, alias, null));
+        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP));
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));

@@ -31,7 +31,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
@@ -41,10 +40,11 @@ import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
-import com.stratio.crossdata.common.statements.structures.relationships.Operator;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
-import com.stratio.crossdata.common.statements.structures.selectors.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.selectors.StringSelector;
+import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 /**
  * LogicalPlanExecutor Tester.
@@ -111,7 +111,8 @@ public class ConnectorQueryParserTest {
 
         List<LogicalStep> initalSteps = new ArrayList<>();
 
-        Relation filterRelation = new Relation(new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME)),
+        ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
+        Relation filterRelation = new Relation(new ColumnSelector(columnName),
                 Operator.EQ, new StringSelector(STRING_COLUMN_VALUE));
         Filter filter = new Filter(operations, filterRelation);
 
@@ -120,11 +121,13 @@ public class ConnectorQueryParserTest {
         initalSteps.add(project);
 
         Map<ColumnName, String> column = new HashMap<>();
-        column.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME), COLUMN_NAME);
+        column.put(columnName,  "alias"+COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put(COLUMN_NAME, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type);
+        type.put("alias"+COLUMN_NAME, ColumnType.TEXT);
+        Map<ColumnName, ColumnType> typeColumName = new HashMap<>();
+        typeColumName.put(columnName, ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type,typeColumName);
         filter.setNextStep(select);
 
         LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);

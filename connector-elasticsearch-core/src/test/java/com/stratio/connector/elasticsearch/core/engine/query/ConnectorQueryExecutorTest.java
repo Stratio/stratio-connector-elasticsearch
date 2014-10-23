@@ -147,11 +147,14 @@ public class ConnectorQueryExecutorTest {
         connectorQueryData.setProjection(projection);
 
         Map<ColumnName, String> column = new HashMap<>();
-        column.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME), COLUMN_NAME);
+        ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
+        column.put(columnName, "alias"+COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put(COLUMN_NAME, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type);
+        type.put("alias"+COLUMN_NAME, ColumnType.TEXT);
+        Map<ColumnName, ColumnType> typeColumn = new HashMap<>();
+        typeColumn.put(columnName, ColumnType.TEXT);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type,typeColumn);
         connectorQueryData.setSelect(select);
         return connectorQueryData;
     }

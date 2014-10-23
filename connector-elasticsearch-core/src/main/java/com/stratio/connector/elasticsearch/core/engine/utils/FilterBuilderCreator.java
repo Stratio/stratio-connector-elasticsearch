@@ -28,7 +28,7 @@ import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
-import com.stratio.crossdata.common.statements.structures.relationships.Relation;
+import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * The responsibility of this class is create a FilterBuilder.
@@ -68,8 +68,7 @@ public class FilterBuilderCreator {
         Relation relation = filter.getRelation();
 
         FilterBuilder localFilterBuilder = null;
-        // TermFilter: Filters documents that have fields that contain a
-        // term (not analyzed)
+
 
         String leftTerm = recoveredLeftTerm(filter, relation);
         Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
