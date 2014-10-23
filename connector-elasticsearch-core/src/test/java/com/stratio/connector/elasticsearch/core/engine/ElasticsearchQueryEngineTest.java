@@ -95,7 +95,8 @@ public class ElasticsearchQueryEngineTest {
         when(queryParser.transformLogicalWorkFlow(project)).thenReturn(conectorQueryData);
         SearchRequestBuilder searchRequestBuilder = mock(SearchRequestBuilder.class);
         when(queryBuilder.buildQuery(eSConnection, conectorQueryData)).thenReturn(searchRequestBuilder);
-        QueryResult queryResult = mock(QueryResult.class);
+
+        QueryResult queryResult = QueryResult.createSuccessQueryResult();
         when(queryExecutor.executeQuery(eSConnection, searchRequestBuilder, conectorQueryData)).thenReturn(queryResult);
 
         QueryResult returnQueryResult = elasticsearchQueryEngine.execute(project, connection);
