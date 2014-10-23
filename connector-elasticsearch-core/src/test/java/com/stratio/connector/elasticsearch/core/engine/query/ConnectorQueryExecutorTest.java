@@ -69,6 +69,7 @@ public class ConnectorQueryExecutorTest {
     private static final String TYPE_NAME = "TYPE NAME".toLowerCase();
     private static final String INDEX_NAME = "INDEX NAME".toLowerCase();
     private static final String COLUMN_NAME = "COLUMN NAME".toLowerCase();
+    public static final String ALIAS = "alias" + COLUMN_NAME;
     private static final String COLUMN_STRING_VALUE = "COLUMN VALUE".toLowerCase();
     private static final java.lang.String SCROLL_ID = "1";
     private static final String CLUSTER_NAME = "CLUSTER_NAME".toLowerCase();
@@ -125,7 +126,8 @@ public class ConnectorQueryExecutorTest {
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
         Row row = resultset.getRows().get(0);
         assertEquals("The rows number is correct", 1, row.size());
-        assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(COLUMN_NAME).getValue());
+        assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(ALIAS).getValue());
+
 
     }
 
@@ -141,14 +143,14 @@ public class ConnectorQueryExecutorTest {
     private ConnectorQueryData createQueryData(SearchType searchType) {
         ConnectorQueryData connectorQueryData = new ConnectorQueryData();
 
-        connectorQueryData.setSearchType(searchType);
+
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                 new ClusterName(CLUSTER_NAME));
         connectorQueryData.setProjection(projection);
 
         Map<ColumnName, String> column = new HashMap<>();
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
-        column.put(columnName, "alias"+COLUMN_NAME);
+        column.put(columnName, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put("alias"+COLUMN_NAME, ColumnType.TEXT);

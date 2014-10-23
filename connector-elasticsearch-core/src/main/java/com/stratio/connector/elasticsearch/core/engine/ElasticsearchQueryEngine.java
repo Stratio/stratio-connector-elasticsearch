@@ -36,7 +36,7 @@ import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.result.QueryResult;
 
 /**
- * This class is the responsible of manage the ElasticSearchMetadata
+ * This class is the responsible of manage the ElasticSearchMetadata.
  */
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 

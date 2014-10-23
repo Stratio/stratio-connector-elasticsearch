@@ -18,8 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import org.elasticsearch.action.search.SearchType;
-
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
@@ -76,7 +74,7 @@ public class ConnectorQueryParser {
 
         } while (lStep != null);
 
-        queryData.setSearchType(SearchType.SCAN);
+
 
         checkSupportedQuery(queryData);
 

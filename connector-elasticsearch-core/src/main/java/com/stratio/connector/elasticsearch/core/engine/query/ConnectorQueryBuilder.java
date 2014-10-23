@@ -62,7 +62,7 @@ public class ConnectorQueryBuilder {
         createRequestBuilder(elasticClient);
         createFilter(queryData);
         createProjection(queryData);
-        createLimit(queryData);
+        createLimit();
         createSelect(queryData);
 
         logQuery();
@@ -104,10 +104,10 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Limit part of the query.
      *
-     * @param queryData the querydata.
      */
-    private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
+    private void createLimit() throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();
+        limitModifier.modify(requestBuilder);
         limitModifier.modify(requestBuilder);
 
     }

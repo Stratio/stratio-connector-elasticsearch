@@ -20,9 +20,11 @@ package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
 
 /**
@@ -41,13 +43,18 @@ public class MetadataCreator {
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
 
-        for (ColumnName field : queryData.getSelect().getColumnMap().keySet()) {
-            String columnName = field.getQualifiedName();
+        Select select = queryData.getSelect();
 
+        Map<ColumnName, String> columnAliasMap = select.getColumnMap();
+        for (Map.Entry<ColumnName, String> columnAliasName : columnAliasMap.entrySet()) {
+            String columnQualifiedName = columnAliasName.getKey().getQualifiedName();
+
+            String tableQualifiedName = queryData.getProjection().getTableName().getQualifiedName();
             ColumnMetadata columnMetadata = new ColumnMetadata(
-                    queryData.getProjection().getTableName().getQualifiedName(),
-                    columnName, queryData.getSelect().getTypeMap().get(columnName));
-            columnMetadata.setColumnAlias(queryData.getSelect().getColumnMap().get(field));
+                    tableQualifiedName,
+                    columnQualifiedName, select.getTypeMapFromColumnName().get(columnAliasName.getKey()));
+
+            columnMetadata.setColumnAlias(columnAliasName.getValue());
             retunColumnMetadata.add(columnMetadata);
         }
 

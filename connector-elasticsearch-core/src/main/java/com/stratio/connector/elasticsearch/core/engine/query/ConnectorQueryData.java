@@ -21,8 +21,6 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.elasticsearch.action.search.SearchType;
-
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Limit;
 import com.stratio.crossdata.common.logicalplan.Project;
@@ -34,10 +32,7 @@ import com.stratio.crossdata.common.logicalplan.Select;
  */
 public class ConnectorQueryData {
 
-    /**
-     * The search type.
-     */
-    private SearchType searchType = null;
+
     /**
      * The projection.
      */
@@ -48,7 +43,7 @@ public class ConnectorQueryData {
      */
     private Collection<Filter> filterList = new ArrayList<>();
     /**
-     * The matchList;
+     * The matchList.
      */
     private Collection<Filter> matchList = new ArrayList<>();
 
@@ -110,15 +105,7 @@ public class ConnectorQueryData {
         return filterList;
     }
 
-    /**
-     * set the search type.
-     *
-     * @param searchType the search type.
-     */
-    public void setSearchType(SearchType searchType) {
 
-        this.searchType = searchType;
-    }
 
     /**
      * Add filter to the matchList.
@@ -131,7 +118,7 @@ public class ConnectorQueryData {
     }
 
     /**
-     * Return The matchList
+     * Return The matchList.
      *
      * @return the matchList
      */
