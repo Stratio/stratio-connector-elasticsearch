@@ -121,7 +121,7 @@ public class IndexRequestBuilderCreator {
     }
 
     /**
-     * this method converts a ROW in a MAP
+     * this method converts a ROW in a MAP.
      *
      * @param row the row.
      * @return the map from the row.

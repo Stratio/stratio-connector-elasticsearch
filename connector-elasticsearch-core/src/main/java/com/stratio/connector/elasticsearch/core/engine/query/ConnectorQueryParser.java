@@ -74,8 +74,6 @@ public class ConnectorQueryParser {
 
         } while (lStep != null);
 
-
-
         checkSupportedQuery(queryData);
 
         return queryData;

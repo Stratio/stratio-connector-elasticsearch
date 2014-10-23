@@ -28,10 +28,11 @@ import com.stratio.crossdata.common.logicalplan.Select;
 
 /**
  * This class is a representation of a ElasticSearch query.
+ * <p/>
+ * <p/>
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryData {
-
 
     /**
      * The projection.
@@ -104,8 +105,6 @@ public class ConnectorQueryData {
     public Collection<Filter> getFilter() {
         return filterList;
     }
-
-
 
     /**
      * Add filter to the matchList.

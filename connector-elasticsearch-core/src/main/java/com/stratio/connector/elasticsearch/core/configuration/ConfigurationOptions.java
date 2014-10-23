@@ -18,6 +18,8 @@
 
 package com.stratio.connector.elasticsearch.core.configuration;
 
+import com.stratio.connector.elasticsearch.core.util.Constants;
+
 /**
  * This enum has the options for Elasticsearch.
  * Created by jmgomez on 1/09/14.
@@ -27,19 +29,19 @@ public enum ConfigurationOptions {
     /**
      * The elasticserach node type property.
      */
-    NODE_TYPE("node_type", "false"),
+    NODE_TYPE("node_type", Constants.FALSE),
     /**
      * The elasticserach node data property.
      */
-    NODE_DATA("node.data", "false"),
+    NODE_DATA("node.data", Constants.FALSE),
     /**
      * The elasticserach node master property.
      */
-    NODE_MASTER("node.master", "false"),
+    NODE_MASTER("node.master", Constants.FALSE),
     /**
      * The elasticserach transfer sniff type property.
      */
-    TRANSPORT_SNIFF("client.transport.sniff", "true"),
+    TRANSPORT_SNIFF("client.transport.sniff", Constants.TRUE),
     /**
      * The elastichseach cluser name.
      */
@@ -55,11 +57,11 @@ public enum ConfigurationOptions {
     /**
      * The elasticsearch coerce property.
      */
-    COERCE("index.mapping.coerce", "false"),
+    COERCE("index.mapping.coerce", Constants.FALSE),
     /**
      * The elasticsearch mapper dynamic property.
      */
-    DYNAMIC("index.mapper.dynamic", "false");
+    DYNAMIC("index.mapper.dynamic", Constants.FALSE);
 
     /**
      * The name of the option.

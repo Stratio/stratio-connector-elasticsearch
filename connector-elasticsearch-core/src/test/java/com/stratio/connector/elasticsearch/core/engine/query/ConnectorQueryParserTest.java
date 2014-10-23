@@ -121,13 +121,13 @@ public class ConnectorQueryParserTest {
         initalSteps.add(project);
 
         Map<ColumnName, String> column = new HashMap<>();
-        column.put(columnName,  "alias"+COLUMN_NAME);
+        column.put(columnName, "alias" + COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put("alias"+COLUMN_NAME, ColumnType.TEXT);
+        type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
         Map<ColumnName, ColumnType> typeColumName = new HashMap<>();
         typeColumName.put(columnName, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type,typeColumName);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumName);
         filter.setNextStep(select);
 
         LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);

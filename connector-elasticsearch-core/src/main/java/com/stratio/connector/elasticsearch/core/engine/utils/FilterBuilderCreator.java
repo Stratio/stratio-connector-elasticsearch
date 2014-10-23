@@ -69,7 +69,6 @@ public class FilterBuilderCreator {
 
         FilterBuilder localFilterBuilder = null;
 
-
         String leftTerm = recoveredLeftTerm(filter, relation);
         Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
                 relation.getRightTerm());

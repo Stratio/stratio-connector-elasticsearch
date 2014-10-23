@@ -29,13 +29,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
-import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
 
 /**
@@ -107,10 +107,10 @@ public class MetadataCreatorTest {
         typeMap.put(ALIAS[2], TYPES[2]);
 
         Map<ColumnName, ColumnType> typeColumnName = new LinkedHashMap<>();
-        typeColumnName.put(new ColumnName(CATALOG_NAME ,TABLE_NAME , COLUMN_NAME1), TYPES[0]);
-        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME , COLUMN_NAME2), TYPES[1]);
-        typeColumnName.put(new ColumnName(CATALOG_NAME ,TABLE_NAME, COLUMN_NAME3), TYPES[2]);
-        Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap,typeColumnName);
+        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME1), TYPES[0]);
+        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME2), TYPES[1]);
+        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME3), TYPES[2]);
+        Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap, typeColumnName);
         Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME),
                 new ClusterName("CLUSTER_NAME"));
         queryData.setProjection(project);

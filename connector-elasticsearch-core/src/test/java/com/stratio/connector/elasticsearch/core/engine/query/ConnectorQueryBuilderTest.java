@@ -139,7 +139,8 @@ public class ConnectorQueryBuilderTest {
         Map<ColumnName, String> alias = new HashMap<>();
         alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1), COLUMN_1);
         alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2), COLUMN_2);
-        queryData.setSelect(new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP));
+        queryData.setSelect(
+                new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP));
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));

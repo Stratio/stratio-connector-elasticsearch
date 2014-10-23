@@ -103,7 +103,6 @@ public class ConnectorQueryBuilder {
 
     /**
      * This method crete the Limit part of the query.
-     *
      */
     private void createLimit() throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();

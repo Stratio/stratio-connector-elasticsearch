@@ -47,7 +47,7 @@ import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
- * This class is the responsible of manage the ElasticSearchMetadata
+ * This class is the responsible of manage the ElasticSearchMetadata.
  *
  * @author darroyo
  */
@@ -199,7 +199,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method return the concrete ES Client for a cluster,
+     * This method return the concrete ES Client for a cluster.
      *
      * @param connection the cluster identification.
      * @return the ES Client.

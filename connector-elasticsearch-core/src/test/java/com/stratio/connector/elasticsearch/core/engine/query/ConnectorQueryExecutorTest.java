@@ -43,7 +43,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
@@ -52,6 +51,7 @@ import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.result.QueryResult;
 
 /**
@@ -128,7 +128,6 @@ public class ConnectorQueryExecutorTest {
         assertEquals("The rows number is correct", 1, row.size());
         assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(ALIAS).getValue());
 
-
     }
 
     private SearchHit createHit() {
@@ -143,7 +142,6 @@ public class ConnectorQueryExecutorTest {
     private ConnectorQueryData createQueryData(SearchType searchType) {
         ConnectorQueryData connectorQueryData = new ConnectorQueryData();
 
-
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                 new ClusterName(CLUSTER_NAME));
         connectorQueryData.setProjection(projection);
@@ -153,10 +151,10 @@ public class ConnectorQueryExecutorTest {
         column.put(columnName, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put("alias"+COLUMN_NAME, ColumnType.TEXT);
+        type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
         Map<ColumnName, ColumnType> typeColumn = new HashMap<>();
         typeColumn.put(columnName, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type,typeColumn);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumn);
         connectorQueryData.setSelect(select);
         return connectorQueryData;
     }
