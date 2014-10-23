@@ -72,6 +72,7 @@ public class ConnectorQueryBuilder {
 
     /**
      * This method crete the select part of the query.
+     *
      * @param queryData the querydata.
      */
     private void createSelect(ConnectorQueryData queryData) {
@@ -84,6 +85,7 @@ public class ConnectorQueryBuilder {
 
     /**
      * This method crete the elasticsearch request builder.
+     *
      * @param elasticClient the elasticsearch client..
      */
     private void createRequestBuilder(Client elasticClient) {
@@ -101,6 +103,7 @@ public class ConnectorQueryBuilder {
 
     /**
      * This method crete the Limit part of the query.
+     *
      * @param queryData the querydata.
      */
     private void createLimit(ConnectorQueryData queryData) throws ExecutionException {
@@ -111,14 +114,17 @@ public class ConnectorQueryBuilder {
 
     /**
      * This method crete the Limit part of the query.
+     *
      * @param queryData the querydata.
      */
     private void createProjection(ConnectorQueryData queryData) {
         ProjectCreator projectModifier = new ProjectCreator();
         projectModifier.modify(requestBuilder, queryData.getProjection());
     }
+
     /**
      * This method crete the Filter part of the query.
+     *
      * @param queryData the querydata.
      */
     private void createFilter(ConnectorQueryData queryData) throws UnsupportedException, ExecutionException {

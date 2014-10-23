@@ -23,7 +23,8 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.common.unit.TimeValue;
 
 /**
- *  The responsibility of this class is create a Limit query Modifier.
+ * The responsibility of this class is create a Limit query Modifier.
+ *
  * @author darroyo
  */
 public class LimitModifier {
@@ -39,8 +40,8 @@ public class LimitModifier {
 
     /**
      * Modify the querybuilder to add a limit.
-     * @param requestBuilder the reques builder.
      *
+     * @param requestBuilder the reques builder.
      */
     public void modify(SearchRequestBuilder requestBuilder) {
         requestBuilder.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).setSize(SIZE_SCAN)

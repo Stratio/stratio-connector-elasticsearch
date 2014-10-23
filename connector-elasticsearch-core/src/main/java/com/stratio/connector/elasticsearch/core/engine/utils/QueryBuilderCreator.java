@@ -30,14 +30,14 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.statements.structures.relationships.Relation;
 
 /**
- *
- *  The responsibility of this class is create a QueryBuilder.
+ * The responsibility of this class is create a QueryBuilder.
  * Created by jmgomez on 17/09/14.
  */
 public class QueryBuilderCreator {
 
     /**
      * Create a query builder.
+     *
      * @param filters the filters.
      * @return
      * @throws ExecutionException

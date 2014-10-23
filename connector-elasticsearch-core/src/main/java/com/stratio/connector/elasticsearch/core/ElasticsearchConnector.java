@@ -56,7 +56,6 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The client will be a transportClient by default unless stratio nodeClient is specified.
      *
      * @param configuration the connection configuration. It must be not null.
-     *
      */
 
     @Override
@@ -68,6 +67,7 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     /**
      * Return de connector Name.
+     *
      * @return
      */
     @Override

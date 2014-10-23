@@ -86,8 +86,9 @@ public class ContentBuilderCreator {
 
     /**
      * This method creates the fields options.
+     *
      * @param tableMetadata the table metadata.
-     * @throws IOException if an error happen creating the ContentBuilder.
+     * @throws IOException          if an error happen creating the ContentBuilder.
      * @throws UnsupportedException if a option is nos supported.
      */
     private void createFieldOptions(TableMetadata tableMetadata)
@@ -109,6 +110,7 @@ public class ContentBuilderCreator {
 
     /**
      * This method create the id.
+     *
      * @param xContentBuilder the contentBuilder.
      * @throws IOException if an error happen creating the ContentBuilder.
      */

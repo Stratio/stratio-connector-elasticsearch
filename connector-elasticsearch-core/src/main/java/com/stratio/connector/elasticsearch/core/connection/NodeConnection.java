@@ -94,6 +94,7 @@ public class NodeConnection extends Connection<Client> {
 
     /**
      * Retun the connection status.
+     *
      * @return true if the connection is open. False in other case.
      */
     @Override
@@ -103,6 +104,7 @@ public class NodeConnection extends Connection<Client> {
 
     /**
      * Return the native connection.
+     *
      * @return the native connection.
      */
     @Override

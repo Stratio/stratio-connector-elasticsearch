@@ -158,10 +158,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * This method create a index.
+     *
      * @param indexMetadata the index metadata.
-     * @param connection the connection.
+     * @param connection    the connection.
      * @throws UnsupportedException the method is not supporter.
-     * @throws ExecutionException if a fail happen.
+     * @throws ExecutionException   if a fail happen.
      */
     @Override
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
@@ -171,10 +172,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * This method drop a index.
+     *
      * @param indexMetadata the index metadata.
-     * @param connection the connection.
+     * @param connection    the connection.
      * @throws UnsupportedException the method is not supporter.
-     * @throws ExecutionException if a fail happen.
+     * @throws ExecutionException   if a fail happen.
      */
     @Override
     protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection)
@@ -184,8 +186,9 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * This method throw a excption.
+     *
      * @param originalExcepcion the exception.
-     * @param operation the operation witch throw the excepcion
+     * @param operation         the operation witch throw the excepcion
      * @throws ExecutionException always.
      */
     private void throwHandlerConnectionException(Exception originalExcepcion, String operation)
@@ -207,10 +210,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * This method crate a elasticsearch Index.
+     *
      * @param indexMetaData the metadata.
-     * @param connection the elasticsearch connection.
+     * @param connection    the elasticsearch connection.
      * @throws HandlerConnectionException if a exception happen during connection handling.
-     * @throws ExecutionException if an execution error happen.
+     * @throws ExecutionException         if an execution error happen.
      */
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection)
             throws HandlerConnectionException, ExecutionException {
@@ -225,6 +229,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     /**
      * This method turn the crossdata metadata into elasticsearch properties.
+     *
      * @param indexMetaData the crossdata metadata.
      * @return the elasticsearch options.
      * @throws ExecutionException if a error happens.

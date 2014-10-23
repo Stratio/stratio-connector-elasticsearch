@@ -110,7 +110,6 @@ public class ConnectorQueryData {
         return filterList;
     }
 
-
     /**
      * set the search type.
      *
@@ -170,6 +169,7 @@ public class ConnectorQueryData {
 
     /**
      * Return the limit.
+     *
      * @return the limit.
      */
     public Limit getLimit() {
@@ -178,6 +178,7 @@ public class ConnectorQueryData {
 
     /**
      * set the limit.
+     *
      * @param limit the limit.
      */
     public void setLimit(Limit limit) {

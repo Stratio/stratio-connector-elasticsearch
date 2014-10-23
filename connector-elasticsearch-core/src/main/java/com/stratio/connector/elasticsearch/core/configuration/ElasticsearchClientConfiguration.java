@@ -74,8 +74,9 @@ public final class ElasticsearchClientConfiguration {
 
     /**
      * this recovered the option value if it is set. It not return the default value..
+     *
      * @param configuration the configuration.
-     * @param nodeData the configuration options.
+     * @param nodeData      the configuration options.
      * @return the actual value of the option.
      */
     private static String recoverdOptionValue(Map<String, String> configuration, ConfigurationOptions nodeData) {
@@ -87,7 +88,6 @@ public final class ElasticsearchClientConfiguration {
         }
         return option;
     }
-
 
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 

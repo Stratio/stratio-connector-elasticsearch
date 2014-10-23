@@ -37,8 +37,6 @@ import com.stratio.crossdata.common.result.QueryResult;
 
 /**
  * This class is the responsible of manage the ElasticSearchMetadata
- *
- *
  */
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
@@ -54,11 +52,12 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     /**
      * This method execute a query in elasticsearch.
-     * @param project the query project.
+     *
+     * @param project    the query project.
      * @param connection the logical connection.
      * @return the result.
      * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException if a error happens.
+     * @throws ExecutionException   if a error happens.
      */
     @Override
     protected QueryResult execute(Project project, Connection<Client> connection)
@@ -75,12 +74,13 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
     /**
      * This method execute a  asynchronous  query in elasticsearch.
-     * @param queryId the crossdata query id.
-     * @param workflow the logical workflow.
+     *
+     * @param queryId       the crossdata query id.
+     * @param workflow      the logical workflow.
      * @param resultHandler the result handler.
-     * .
+     *                      .
      * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException if a error happens.
+     * @throws ExecutionException   if a error happens.
      */
     @Override
     public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
@@ -88,12 +88,14 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
         throw new UnsupportedException("Async query not supported in ElasticSearch");
 
     }
+
     /**
      * This method stop a  asynchronous  query in elasticsearch.
+     *
      * @param queryId the crossdata query id.
-     * .
+     *                .
      * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException if a error happens.
+     * @throws ExecutionException   if a error happens.
      */
     @Override
     public void stop(String queryId) throws UnsupportedException, ExecutionException {

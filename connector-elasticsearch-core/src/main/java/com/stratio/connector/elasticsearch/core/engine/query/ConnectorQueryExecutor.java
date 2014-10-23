@@ -127,9 +127,10 @@ public class ConnectorQueryExecutor {
 
     /**
      * This method creates a row.
+     *
      * @param queryData the query data.
-     * @param alias the alias.
-     * @param fields the fields.
+     * @param alias     the alias.
+     * @param fields    the fields.
      * @return a row.
      */
     private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields) {
@@ -156,6 +157,7 @@ public class ConnectorQueryExecutor {
 
     /**
      * This method creates the fields names.
+     *
      * @param columnNames the column names.
      * @return the field names.
      */
@@ -169,6 +171,7 @@ public class ConnectorQueryExecutor {
 
     /**
      * This method return the fields for a hit.
+     *
      * @param hit the hit.
      * @return the fields.
      */
@@ -187,6 +190,7 @@ public class ConnectorQueryExecutor {
 
     /**
      * This method return the field alias.
+     *
      * @param queryData the query data.
      * @return the alias.
      */

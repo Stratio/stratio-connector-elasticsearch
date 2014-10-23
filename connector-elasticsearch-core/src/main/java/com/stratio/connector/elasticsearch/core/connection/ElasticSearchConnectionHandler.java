@@ -33,6 +33,7 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
 
     /**
      * Constructor.
+     *
      * @param configuration the configuration.
      */
     public ElasticSearchConnectionHandler(IConfiguration configuration) {
@@ -41,7 +42,8 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
 
     /**
      * This method creates a elasticsearch connection.
-     * @param iCredentials the credentials to connect with the database.
+     *
+     * @param iCredentials           the credentials to connect with the database.
      * @param connectorClusterConfig the cluster configuration.
      * @return a elasticsearch connection.
      */
@@ -59,6 +61,7 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
 
     /**
      * Return true if the config says that the connection is nodeClient. false in other case.
+     *
      * @param config the configuration.
      * @return true if is configure to be a node connection. False in other case.
      */

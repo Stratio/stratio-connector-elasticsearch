@@ -78,6 +78,7 @@ public class TransportConnection extends Connection<Client> {
 
     /**
      * Return the connection status.
+     *
      * @return true if the connection is open. False in other case.
      */
     @Override
@@ -87,6 +88,7 @@ public class TransportConnection extends Connection<Client> {
 
     /**
      * Return the native connection.
+     *
      * @return the native connection.
      */
     @Override

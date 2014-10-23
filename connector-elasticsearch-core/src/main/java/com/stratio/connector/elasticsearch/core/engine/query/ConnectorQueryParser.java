@@ -36,13 +36,13 @@ public class ConnectorQueryParser {
 
     /**
      * this method transfor a logical workflow to a queryData.
+     *
      * @param logicalWorkFlow the logical workflow.
      * @return the queryData.
-     *
      * @throws UnsupportedException if the logicalworkflow contains unsupported operations.
      */
     public ConnectorQueryData transformLogicalWorkFlow(Project logicalWorkFlow)
-            throws  UnsupportedException {
+            throws UnsupportedException {
 
         ConnectorQueryData queryData = new ConnectorQueryData();
         LogicalStep lStep = logicalWorkFlow;
@@ -85,8 +85,8 @@ public class ConnectorQueryParser {
 
     /**
      * Check if the queryData is supported.
-     * @param queryData the qiery data.
      *
+     * @param queryData the qiery data.
      * @throws UnsupportedException if exist a not supported operation.
      */
     private void checkSupportedQuery(ConnectorQueryData queryData) throws UnsupportedException {

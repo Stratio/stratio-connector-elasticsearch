@@ -72,7 +72,8 @@ public enum ConfigurationOptions {
 
     /**
      * Constructor.
-     * @param optionName the name of the option.
+     *
+     * @param optionName   the name of the option.
      * @param defaultValue the default value of the option.
      */
     ConfigurationOptions(String optionName, String... defaultValue) {
@@ -83,6 +84,7 @@ public enum ConfigurationOptions {
 
     /**
      * return the default value.
+     *
      * @return the default value.
      */
     public String[] getDefaultValue() {
@@ -91,6 +93,7 @@ public enum ConfigurationOptions {
 
     /**
      * Return the option name.
+     *
      * @return the option name.
      */
     public String getOptionName() {

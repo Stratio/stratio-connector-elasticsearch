@@ -37,10 +37,11 @@ public class FilterBuilderCreator {
 
     /**
      * This method creates a filter builder.
+     *
      * @param filters the filters.
      * @return a filter builder.
      * @throws UnsupportedException if a filter type is not supported.
-     * @throws ExecutionException if an error happens.
+     * @throws ExecutionException   if an error happens.
      */
     public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException,
             ExecutionException {
@@ -57,10 +58,11 @@ public class FilterBuilderCreator {
 
     /**
      * this method create compara filter.
+     *
      * @param filter the filter.
      * @return a filter builder.
-     *  @throws UnsupportedException if a filter type is not supported.
-     * @throws ExecutionException if an error happens.
+     * @throws UnsupportedException if a filter type is not supported.
+     * @throws ExecutionException   if an error happens.
      */
     private FilterBuilder handleCompareFilter(Filter filter) throws UnsupportedException, ExecutionException {
         Relation relation = filter.getRelation();
@@ -107,10 +109,11 @@ public class FilterBuilderCreator {
 
     /**
      * This method recovered the left term.
-     * @param filter the filter.
+     *
+     * @param filter   the filter.
      * @param relation the relation.
      * @return the left term.
-     * @throws ExecutionException  if an error happens.
+     * @throws ExecutionException if an error happens.
      */
     private String recoveredLeftTerm(Filter filter, Relation relation)
             throws ExecutionException {
@@ -123,6 +126,7 @@ public class FilterBuilderCreator {
 
     /**
      * This method verify if a filter is PK type.
+     *
      * @param filter the filter.
      * @return true if the filter is PK type. False in other case.
      */
@@ -137,7 +141,9 @@ public class FilterBuilderCreator {
         case FILTER_PK_LT:
             isPk = true;
             break;
-        default: isPk = false;break;
+        default:
+            isPk = false;
+            break;
         }
         return isPk;
 

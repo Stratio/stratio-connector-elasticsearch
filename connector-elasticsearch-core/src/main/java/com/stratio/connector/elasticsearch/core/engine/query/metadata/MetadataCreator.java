@@ -33,6 +33,7 @@ public class MetadataCreator {
 
     /**
      * This method creates the column metadata.
+     *
      * @param queryData the queryData object.
      * @return the list with the column metadata.
      */

@@ -117,12 +117,13 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * This method creates a IndexRequestBuilder.
+     *
      * @param tableMetadata the table metadata.
-     * @param row the row to insert.
-     * @param connection the logical connection.
+     * @param row           the row to insert.
+     * @param connection    the logical connection.
      * @return the index request builder.
      * @throws HandlerConnectionException if a exceptions occurs during connection handling.
-     * @throws UnsupportedException if a operation is not supported.
+     * @throws UnsupportedException       if a operation is not supported.
      */
     private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row,
             Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
@@ -134,12 +135,13 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * This method create a bulkRequestBuilder.
+     *
      * @param tablesMetadata the table metadata
-     * @param rows the rows to insert.
-     * @param connection the logical connection.
+     * @param rows           the rows to insert.
+     * @param connection     the logical connection.
      * @return the index request builder.
      * @throws HandlerConnectionException if a exceptions occurs during connection handling.
-     * @throws UnsupportedException if a operation is not supported.
+     * @throws UnsupportedException       if a operation is not supported.
      */
     private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata,
             Collection<Row> rows, Connection<Client> connection)
@@ -159,6 +161,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * Check if the bulk insert has been correct.
+     *
      * @param bulkResponse the bulk response.
      * @throws ExecutionException if an error happens during the execution.
      */
@@ -170,6 +173,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * Log the insert.
+     *
      * @param tableMetadata the table metadata.
      */
     private void loggInsert(TableMetadata tableMetadata) {
@@ -182,8 +186,9 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * Log the bulf insert.
+     *
      * @param tableMetadata the table metadata.
-     * @param rows the rows.
+     * @param rows          the rows.
      */
     private void logBulkInsert(TableMetadata tableMetadata, Collection<Row> rows) {
         if (logger.isDebugEnabled()) {
@@ -197,7 +202,8 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * Throw a handlerExcepcion.
-     * @param e original exception.
+     *
+     * @param e      original exception.
      * @param method the method which throw the exception.
      * @throws ExecutionException
      */
