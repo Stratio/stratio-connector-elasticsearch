@@ -37,7 +37,7 @@ import org.elasticsearch.common.transport.TransportAddress;
 
 import com.stratio.connector.commons.util.ConnectorParser;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.exceptions.InitializationException;
+
 
 /**
  * The configuration for Elasticsearch.
@@ -55,7 +55,6 @@ public final class ElasticsearchClientConfiguration {
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
      *
      * @param configuration
-     * @throws InitializationException
      */
     public static Settings getSettings(ConnectorClusterConfig configuration) {
 
