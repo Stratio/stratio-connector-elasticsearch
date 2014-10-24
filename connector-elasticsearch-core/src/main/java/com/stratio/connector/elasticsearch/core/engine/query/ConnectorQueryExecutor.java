@@ -36,11 +36,13 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.util.ColumnTypeHelper;
 import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.result.QueryResult;
 
 /**
@@ -137,10 +139,11 @@ public class ConnectorQueryExecutor {
         Row row = new Row();
         Set<String> fieldNames;
 
-        if (queryData.getSelect() == null) {
+        Select select = queryData.getSelect();
+        if (select == null) {
             fieldNames = fields.keySet();
         } else {
-            fieldNames = createFieldNames(queryData.getSelect().getColumnMap().keySet());
+            fieldNames = createFieldNames(select.getColumnMap().keySet());
         }
         for (String field : fieldNames) {
             Object value = fields.get(field);
@@ -150,7 +153,8 @@ public class ConnectorQueryExecutor {
                 field = alias.get(columnName);
             }
 
-            row.addCell(field, new Cell(value));
+
+            row.addCell(field, new Cell(ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName),value)));
         }
         return row;
     }
