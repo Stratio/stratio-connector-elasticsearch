@@ -22,7 +22,7 @@ package com.stratio.connector.elasticsearch.core.util;
  * A class with constants.
  * Created by jmgomez on 23/10/14.
  */
-public class Constants {
+public final class Constants {
 
     /**
      * Constructor.
