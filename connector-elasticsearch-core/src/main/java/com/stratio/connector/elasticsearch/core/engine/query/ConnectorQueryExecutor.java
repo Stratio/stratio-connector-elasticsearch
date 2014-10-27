@@ -42,6 +42,7 @@ import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.result.QueryResult;
 
@@ -65,7 +66,7 @@ public class ConnectorQueryExecutor {
      */
 
     public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
-            ConnectorQueryData queryData) {
+            ConnectorQueryData queryData) throws ExecutionException {
 
         QueryResult queryResult = null;
 
@@ -118,7 +119,7 @@ public class ConnectorQueryExecutor {
      * @param queryData
      * @return the row.
      */
-    private Row createRow(SearchHit hit, ConnectorQueryData queryData) {
+    private Row createRow(SearchHit hit, ConnectorQueryData queryData) throws ExecutionException {
 
         Map<ColumnName, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
@@ -135,7 +136,8 @@ public class ConnectorQueryExecutor {
      * @param fields    the fields.
      * @return a row.
      */
-    private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields) {
+    private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields)
+            throws ExecutionException {
         Row row = new Row();
         Set<String> fieldNames;
 

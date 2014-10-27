@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.CommonsConnector;
+import com.stratio.connector.commons.util.ManifestUtil;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchMetadataEngine;
 import com.stratio.connector.elasticsearch.core.engine.ElasticsearchQueryEngine;
@@ -31,6 +32,7 @@ import com.stratio.crossdata.common.connector.IMetadataEngine;
 import com.stratio.crossdata.common.connector.IQueryEngine;
 import com.stratio.crossdata.common.connector.IStorageEngine;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.InitializationException;
 import com.stratio.crossdata.connectors.ConnectorApp;
 
 /**
@@ -38,12 +40,29 @@ import com.stratio.crossdata.connectors.ConnectorApp;
  */
 public class ElasticsearchConnector extends CommonsConnector {
 
+    public    ElasticsearchConnector() throws InitializationException {
+
+            conectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
+            datastoreName = ManifestUtil.getDatastoreName("ElasticSearchConnector.xml");
+
+
+
+    }
+
     /**
      * The Log.
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * The connector name.
+     */
+    private String conectorName;
+    /**
+     * The datastore name.
+     */
+    private String[] datastoreName;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InitializationException {
 
         ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
         ConnectorApp connectorApp = new ConnectorApp();
@@ -56,23 +75,30 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The client will be a transportClient by default unless stratio nodeClient is specified.
      *
      * @param configuration the connection configuration. It must be not null.
+     *
+     * @throws InitializationException if a error happens.
      */
 
     @Override
-    public void init(IConfiguration configuration) {
+    public void init(IConfiguration configuration) throws InitializationException {
 
-        connectionHandler = new ElasticSearchConnectionHandler(configuration);
 
-    }
+            connectionHandler = new ElasticSearchConnectionHandler(configuration);
 
-    /**
+
+        }
+
+
+
+        /**
      * Return de connector Name.
      *
      * @return
      */
     @Override
     public String getConnectorName() {
-        return "elasticsearch";
+
+        return conectorName;
     }
 
     /**
@@ -82,7 +108,8 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     @Override
     public String[] getDatastoreName() {
-        return new String[] { "elasticsearch" };
+
+        return datastoreName;
     }
 
     /**

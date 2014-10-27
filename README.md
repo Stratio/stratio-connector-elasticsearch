@@ -35,6 +35,7 @@ To generate the executable execute the following command:
 To run Connector Elasticsearch execute:
 
 ```
+   > cd connector-elasticsearch-core/
    > target/connector-elasticsearch-core-0.4.0/bin/connector-elasticsearch-core-0.4.0 start
 ```
 
@@ -47,9 +48,8 @@ To stop the connector execute:
 ## How to use Elasticsearch Connector ##
 
  1. Start [crossdata-server and then crossdata-shell](https://github.com/Stratio/crossdata).  
- 2. https://github.com/Stratio/crossdata
- 3. Start Elasticsearch Connector as it is explained before
- 4. In crossdata-shell:
+ 2. Start Elasticsearch Connector as it is explained before
+ 3. In crossdata-shell:
     
     Add a datastore with this command:
       
