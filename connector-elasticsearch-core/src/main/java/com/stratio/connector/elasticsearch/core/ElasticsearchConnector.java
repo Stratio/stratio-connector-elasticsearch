@@ -40,15 +40,6 @@ import com.stratio.crossdata.connectors.ConnectorApp;
  */
 public class ElasticsearchConnector extends CommonsConnector {
 
-    public    ElasticsearchConnector() throws InitializationException {
-
-            conectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
-            datastoreName = ManifestUtil.getDatastoreName("ElasticSearchConnector.xml");
-
-
-
-    }
-
     /**
      * The Log.
      */
@@ -61,6 +52,17 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The datastore name.
      */
     private String[] datastoreName;
+    /**
+     * Constructor
+     *
+     * @throws InitializationException if an error happens.
+     */
+    public ElasticsearchConnector() throws InitializationException {
+
+        conectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
+        datastoreName = ManifestUtil.getDatastoreName("ElasticSearchConnector.xml");
+
+    }
 
     public static void main(String[] args) throws InitializationException {
 
@@ -75,22 +77,17 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The client will be a transportClient by default unless stratio nodeClient is specified.
      *
      * @param configuration the connection configuration. It must be not null.
-     *
      * @throws InitializationException if a error happens.
      */
 
     @Override
     public void init(IConfiguration configuration) throws InitializationException {
 
+        connectionHandler = new ElasticSearchConnectionHandler(configuration);
 
-            connectionHandler = new ElasticSearchConnectionHandler(configuration);
+    }
 
-
-        }
-
-
-
-        /**
+    /**
      * Return de connector Name.
      *
      * @return

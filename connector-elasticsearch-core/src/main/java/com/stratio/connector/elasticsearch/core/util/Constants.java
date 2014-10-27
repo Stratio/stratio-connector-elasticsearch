@@ -25,11 +25,6 @@ package com.stratio.connector.elasticsearch.core.util;
 public final class Constants {
 
     /**
-     * Constructor.
-     */
-    private Constants(){}
-
-    /**
      * String representation for false.
      */
     public static final String FALSE = "false";
@@ -37,4 +32,9 @@ public final class Constants {
      * String representation for true.
      */
     public static final String TRUE = "true";
+    /**
+     * Constructor.
+     */
+    private Constants() {
+    }
 }

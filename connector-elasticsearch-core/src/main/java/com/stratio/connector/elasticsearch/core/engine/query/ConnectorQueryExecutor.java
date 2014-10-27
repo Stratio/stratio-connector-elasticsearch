@@ -155,8 +155,8 @@ public class ConnectorQueryExecutor {
                 field = alias.get(columnName);
             }
 
-
-            row.addCell(field, new Cell(ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName),value)));
+            row.addCell(field, new Cell(
+                    ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName), value)));
         }
         return row;
     }

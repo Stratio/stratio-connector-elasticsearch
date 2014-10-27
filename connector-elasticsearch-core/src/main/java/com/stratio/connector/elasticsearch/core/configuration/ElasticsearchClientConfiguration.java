@@ -38,7 +38,6 @@ import org.elasticsearch.common.transport.TransportAddress;
 import com.stratio.connector.commons.util.ConnectorParser;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 
-
 /**
  * The configuration for Elasticsearch.
  */
