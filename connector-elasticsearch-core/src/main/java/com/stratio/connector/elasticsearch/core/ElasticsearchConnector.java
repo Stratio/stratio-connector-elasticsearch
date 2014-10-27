@@ -47,7 +47,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     /**
      * The connector name.
      */
-    private String conectorName;
+    private String connectorName;
     /**
      * The datastore name.
      */
@@ -59,7 +59,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     public ElasticsearchConnector() throws InitializationException {
 
-        conectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
+        connectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
         datastoreName = ManifestUtil.getDatastoreName("ElasticSearchConnector.xml");
 
     }
@@ -95,7 +95,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     @Override
     public String getConnectorName() {
 
-        return conectorName;
+        return connectorName;
     }
 
     /**
