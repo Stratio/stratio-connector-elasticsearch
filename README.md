@@ -6,6 +6,7 @@ Stratio Connector Elasticsearch is a crossdata connector interface implementatio
 ## Requirements ##
 
 Install [elasticsearch 1.3.2] (http://www.elasticsearch.org/downloads/1-3-2/) and run it. 
+[Crossdata] (https://github.com/Stratio/crossdata) is needed to interact with this connector.
 
 ## Compiling Stratio Connector Elasticsearch ##
 
