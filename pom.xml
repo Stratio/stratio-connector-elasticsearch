@@ -26,12 +26,21 @@
     <artifactId>stratio-connector-elasticsearch</artifactId>
     <version>0.1.0</version>
     <description>Connector for ElasticSearch</description>
+    <url>http://www.stratio.com</url>
+    <name>ElasticSearch Connector</name>
     <packaging>pom</packaging>
 
     <modules>
         <module>connector-elasticsearch-core</module>
     </modules>
 
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0t</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
     <profiles>
         <profile>
@@ -42,6 +51,39 @@
             </modules>
         </profile>
     </profiles>
+
+    <scm>
+        <connection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</connection>
+        <developerConnection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</developerConnection>
+        <url>https://github.com/Stratio/stratio-connector-elasticsearch</url>
+    </scm>
+
+    <developers>
+  	<developer>
+            <id>jmgomez</id>
+            <name>Jose Manuel Gómez</name>
+            <email>jmgomez@stratio.com</email>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>  
+    </developers>
+
+ <distributionManagement>
+
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+
+    </distributionManagement>
 
 
     <build>
@@ -69,6 +111,20 @@
                     </execution>
                 </executions>
             </plugin>
+
+         <plugin>
+		<groupId>org.apache.maven.plugins</groupId>
+		<artifactId>maven-source-plugin</artifactId>
+		<version>2.2.1</version>
+		<executions>
+			<execution>
+				<id>attach-sources</id>
+				<goals>
+					<goal>jar</goal>
+				</goals>
+			</execution>
+		</executions>
+	</plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
