@@ -31,13 +31,13 @@ To run Connector Elasticsearch execute:
 
 ```
    > cd connector-elasticsearch-core/
-   > target/connector-elasticsearch-core-0.4.0/bin/connector-elasticsearch-core-0.4.0 start
+   > target/connector-elasticsearch-core-0.1.0/bin/connector-elasticsearch-core-0.1.0 start
 ```
 
 To stop the connector execute:
 
 ```
-   > target/connector-elasticsearch-core-0.4.0/bin/connector-elasticsearch-core-0.4.0 stop
+   > target/connector-elasticsearch-core-0.1.0/bin/connector-elasticsearch-core-0.1.0 stop
 ```
 
 ## How to use Elasticsearch Connector ##
@@ -46,7 +46,7 @@ To stop the connector execute:
  2. Start Elasticsearch Connector as it is explained before
  3. In crossdata-shell:
     
-    Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Elasticsearch Connector in target/stratio-connector-elasticsearch-0.5.0/conf/ElasticSearchDataStore.xml
+    Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Elasticsearch Connector in target/stratio-connector-elasticsearch-0.1.0/conf/ElasticSearchDataStore.xml
       
       ```
          xdsh:user>  ADD DATASTORE <Absolute path to Streaming Datastore manifest>;
@@ -58,7 +58,7 @@ To stop the connector execute:
          xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<IPHost_1,IPHost_2,...,IPHost_n>]', 'Port': '[<PortHost_1,PortHost_2,...,PortHost_n>]'};
       ```
 
-    Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in target/stratio-connector-elasticsearch-0.4.0/conf/ElasticSearchConnector.xml
+    Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in target/-connector-elasticsearch-core-0.1.0/conf/ElasticSearchConnector.xml
 
        ```
          xdsh:user>  ADD CONNECTOR <Path to Elasticsearch Connector Manifest>

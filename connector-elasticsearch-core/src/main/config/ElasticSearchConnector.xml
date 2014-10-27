@@ -22,9 +22,7 @@
     <DataStores>
         <DataStoreName>elasticsearch</DataStoreName>
     </DataStores>
-
-    <Version>0.4.0</Version>
-
+    <Version>0.1.0</Version>
     <OptionalProperties>
         <Property>
             <PropertyName>node_type</PropertyName>
