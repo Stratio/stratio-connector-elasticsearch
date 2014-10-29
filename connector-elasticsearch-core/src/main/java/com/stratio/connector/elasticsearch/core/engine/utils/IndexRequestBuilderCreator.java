@@ -32,21 +32,25 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
- * The responsibility of this class is create a IndexRequestBuilder.
- * Created by jmgomez on 12/09/14.
+ * The responsibility of this class is create a IndexRequestBuilder. Created by jmgomez on 12/09/14.
  */
 public class IndexRequestBuilderCreator {
 
     /**
      * Returns an IndexRequestBuilder.
      *
-     * @param targetTable   the table where the row must be inserted.
-     * @param elasticClient the connection to elastic search.
-     * @param row           the row to insert.
-     * @throws UnsupportedException if the opperation is not supported.
+     * @param targetTable
+     *            the table where the row must be inserted.
+     * @param elasticClient
+     *            the connection to elastic search.
+     * @param row
+     *            the row to insert.
+     * @return the index request builder
+     * @throws UnsupportedException
+     *             if the opperation is not supported.
      */
     public IndexRequestBuilder createIndexRequestBuilder(TableMetadata targetTable, Client elasticClient, Row row)
-            throws UnsupportedException {
+                    throws UnsupportedException {
 
         Map<String, Object> dataInsert = createInsertMap(row);
         String pk = createPrimaryKey(targetTable, dataInsert);
@@ -59,14 +63,18 @@ public class IndexRequestBuilderCreator {
     /**
      * This method creates a indexrequesbuider with PK.
      *
-     * @param elasticClient the connection to elastic search.
-     * @param targetTable   the table where the row must be inserted.
-     * @param dataInsert    the data to insert.
-     * @param pk            the pk.
+     * @param elasticClient
+     *            the connection to elastic search.
+     * @param targetTable
+     *            the table where the row must be inserted.
+     * @param dataInsert
+     *            the data to insert.
+     * @param pk
+     *            the pk.
      * @return the index builder
      */
     private IndexRequestBuilder createIndexRequestBuilder(Client elasticClient, TableMetadata targetTable,
-            Map<String, Object> dataInsert, String pk) {
+                    Map<String, Object> dataInsert, String pk) {
         IndexRequestBuilder indexRequestBuilder;
 
         String index = targetTable.getName().getCatalogName().getName();
@@ -84,20 +92,23 @@ public class IndexRequestBuilderCreator {
     /**
      * Return the table PK.
      *
-     * @param targetTable the table.
-     * @param dataInsert  the data to insert.
+     * @param targetTable
+     *            the table.
+     * @param dataInsert
+     *            the data to insert.
      * @return the value of PK. Null if don't exist PK.
-     * @throws UnsupportedException if the pk type is not supported.
+     * @throws UnsupportedException
+     *             if the pk type is not supported.
      */
     private String createPrimaryKey(TableMetadata targetTable, Map<String, Object> dataInsert)
-            throws UnsupportedException {
+                    throws UnsupportedException {
         String pk = null;
 
         for (Map.Entry<String, Object> rowName : dataInsert.entrySet()) {
             TableName tableName = targetTable.getName();
 
-            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(),
-                    rowName.getKey()))) {
+            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(), rowName
+                            .getKey()))) {
                 String tempPK = rowName.getValue().toString();
                 checkPkTypeSupport(pk);
                 pk = tempPK;
@@ -110,8 +121,10 @@ public class IndexRequestBuilderCreator {
     /**
      * Check if the PK type is support.
      *
-     * @param pk the actual PK.
-     * @throws UnsupportedException if the PK is not supported.
+     * @param pk
+     *            the actual PK.
+     * @throws UnsupportedException
+     *             if the PK is not supported.
      */
     private void checkPkTypeSupport(String pk) throws UnsupportedException {
         if (pk != null) {
@@ -123,7 +136,8 @@ public class IndexRequestBuilderCreator {
     /**
      * this method converts a ROW in a MAP.
      *
-     * @param row the row.
+     * @param row
+     *            the row.
      * @return the map from the row.
      */
     private Map<String, Object> createInsertMap(Row row) {

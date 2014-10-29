@@ -52,10 +52,12 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The datastore name.
      */
     private String[] datastoreName;
+
     /**
-     * Constructor
+     * Constructor.
      *
-     * @throws InitializationException if an error happens.
+     * @throws InitializationException
+     *             if an error happens.
      */
     public ElasticsearchConnector() throws InitializationException {
 
@@ -64,6 +66,14 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
+    /**
+     * The main method.
+     *
+     * @param args
+     *            the arguments
+     * @throws InitializationException
+     *             the initialization exception
+     */
     public static void main(String[] args) throws InitializationException {
 
         ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
@@ -73,11 +83,13 @@ public class ElasticsearchConnector extends CommonsConnector {
     }
 
     /**
-     * Create a connection to Elasticsearch.
-     * The client will be a transportClient by default unless stratio nodeClient is specified.
+     * Create a connection to Elasticsearch. The client will be a transportClient by default unless stratio nodeClient
+     * is specified.
      *
-     * @param configuration the connection configuration. It must be not null.
-     * @throws InitializationException if a error happens.
+     * @param configuration
+     *            the connection configuration. It must be not null.
+     * @throws InitializationException
+     *             if a error happens.
      */
 
     @Override
@@ -88,7 +100,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     }
 
     /**
-     * Return de connector Name.
+     * Return the connector Name.
      *
      * @return
      */
@@ -106,7 +118,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     @Override
     public String[] getDatastoreName() {
 
-        return datastoreName;
+        return datastoreName.clone();
     }
 
     /**

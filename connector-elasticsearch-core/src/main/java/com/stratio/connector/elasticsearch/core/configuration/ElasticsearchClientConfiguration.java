@@ -54,6 +54,8 @@ public final class ElasticsearchClientConfiguration {
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
      *
      * @param configuration
+     *            the configuration
+     * @return the settings
      */
     public static Settings getSettings(ConnectorClusterConfig configuration) {
 
@@ -73,8 +75,10 @@ public final class ElasticsearchClientConfiguration {
     /**
      * this recovered the option value if it is set. It not return the default value..
      *
-     * @param configuration the configuration.
-     * @param nodeData      the configuration options.
+     * @param configuration
+     *            the configuration.
+     * @param nodeData
+     *            the configuration options.
      * @return the actual value of the option.
      */
     private static String recoverdOptionValue(Map<String, String> configuration, ConfigurationOptions nodeData) {
@@ -87,15 +91,20 @@ public final class ElasticsearchClientConfiguration {
         return option;
     }
 
+    /**
+     * Gets the transport address.
+     *
+     * @param config
+     *            the configuration options.
+     * @return the transport address
+     */
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 
         String[] hosts = ConnectorParser.hosts(config.getOptions().get(HOST.getOptionName()));
         String[] ports = ConnectorParser.ports(config.getOptions().get(PORT.getOptionName()));
-        TransportAddress[] transportAddresses = new TransportAddress[
-                hosts.length];
+        TransportAddress[] transportAddresses = new TransportAddress[hosts.length];
         for (int i = 0; i < hosts.length; i++) {
-            transportAddresses[i] = new InetSocketTransportAddress(hosts[i], Integer.decode(
-                    ports[i]));
+            transportAddresses[i] = new InetSocketTransportAddress(hosts[i], Integer.decode(ports[i]));
         }
         return transportAddresses;
 

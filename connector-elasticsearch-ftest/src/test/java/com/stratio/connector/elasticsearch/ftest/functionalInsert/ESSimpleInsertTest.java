@@ -34,11 +34,6 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 public class ESSimpleInsertTest extends GenericSimpleInsertTest {
 
     @Override
-    public void testInsertLong() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override
     public void testInsertDate() throws UnsupportedException, ExecutionException {
         fail("Not yet ElasticSearch supported");
     }

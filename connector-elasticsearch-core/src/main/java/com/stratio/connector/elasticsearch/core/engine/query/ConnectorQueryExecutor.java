@@ -59,14 +59,17 @@ public class ConnectorQueryExecutor {
     /**
      * This method execute a query in elasticSearch.
      *
-     * @param elasticClient  the elasticSearch Client.
-     * @param requestBuilder the query to execute.
-     * @param queryData      the queryData.
+     * @param elasticClient
+     *            the elasticSearch Client.
+     * @param requestBuilder
+     *            the query to execute.
+     * @param queryData
+     *            the queryData.
      * @return the query result.
      */
 
     public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
-            ConnectorQueryData queryData) throws ExecutionException {
+                    ConnectorQueryData queryData) throws ExecutionException {
 
         QueryResult queryResult = null;
 
@@ -88,7 +91,7 @@ public class ConnectorQueryExecutor {
 
             do {
                 scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
-                        .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+                                .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
 
                 for (SearchHit hit : scrollResp.getHits()) {
                     if (isLimit && countResult == limit) {
@@ -115,7 +118,8 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates a row.
      *
-     * @param hit       the Elasticsearch SearchHit.
+     * @param hit
+     *            the Elasticsearch SearchHit.
      * @param queryData
      * @return the row.
      */
@@ -131,13 +135,16 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates a row.
      *
-     * @param queryData the query data.
-     * @param alias     the alias.
-     * @param fields    the fields.
+     * @param queryData
+     *            the query data.
+     * @param alias
+     *            the alias.
+     * @param fields
+     *            the fields.
      * @return a row.
      */
     private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields)
-            throws ExecutionException {
+                    throws ExecutionException {
         Row row = new Row();
         Set<String> fieldNames;
 
@@ -149,14 +156,15 @@ public class ConnectorQueryExecutor {
         }
         for (String field : fieldNames) {
             Object value = fields.get(field);
-            ColumnName columnName = new ColumnName(queryData.getProjection().getCatalogName(),
-                    queryData.getProjection().getTableName().getName(), field);
+            ColumnName columnName = new ColumnName(queryData.getProjection().getCatalogName(), queryData
+                            .getProjection().getTableName().getName(), field);
             if (alias.containsKey(columnName)) {
                 field = alias.get(columnName);
             }
 
-            row.addCell(field, new Cell(
-                    ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName), value)));
+            row.addCell(field,
+                            new Cell(ColumnTypeHelper.getCastingValue(
+                                            select.getTypeMapFromColumnName().get(columnName), value)));
         }
         return row;
     }
@@ -164,7 +172,8 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates the fields names.
      *
-     * @param columnNames the column names.
+     * @param columnNames
+     *            the column names.
      * @return the field names.
      */
     private Set<String> createFieldNames(Set<ColumnName> columnNames) {
@@ -178,7 +187,8 @@ public class ConnectorQueryExecutor {
     /**
      * This method return the fields for a hit.
      *
-     * @param hit the hit.
+     * @param hit
+     *            the hit.
      * @return the fields.
      */
     private Map<String, Object> getFields(SearchHit hit) {
@@ -197,7 +207,8 @@ public class ConnectorQueryExecutor {
     /**
      * This method return the field alias.
      *
-     * @param queryData the query data.
+     * @param queryData
+     *            the query data.
      * @return the alias.
      */
     private Map<ColumnName, String> returnAlias(ConnectorQueryData queryData) {

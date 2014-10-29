@@ -39,6 +39,7 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.hppc.cursors.ObjectObjectCursor;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
+import org.junit.Assert;
 
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
@@ -57,7 +58,7 @@ import com.stratio.crossdata.common.security.ICredentials;
  */
 public class ESConnectorHelper implements IConnectorHelper {
 
-    protected String SERVER_IP = "10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.61, 10.200.0.62"; //"192.168.0.3";
+    protected String SERVER_IP = "10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.61, 10.200.0.62"; // "192.168.0.3";
     private String SERVER_PORT = "9300,9300,9300,9300,9300";
 
     private TransportClient auxConection;
@@ -68,13 +69,19 @@ public class ESConnectorHelper implements IConnectorHelper {
         super();
         this.clusterName = clusterName;
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
-                .addTransportAddresses(
-                        ElasticsearchClientConfiguration.getTransportAddress(getConnectorClusterConfig()));
+                        .addTransportAddresses(ElasticsearchClientConfiguration
+                                        .getTransportAddress(getConnectorClusterConfig()));
     }
 
     @Override
     public IConnector getConnector() {
-        return new ElasticsearchConnector();
+        try {
+            return new ElasticsearchConnector();
+        } catch (InitializationException e) {
+            // TODO Auto-generated catch block
+            Assert.fail("Cannot retrieve the connector");
+            return null;
+        }
     }
 
     @Override
@@ -169,7 +176,8 @@ public class ESConnectorHelper implements IConnectorHelper {
         return true;
     }
 
-    @Override public boolean isTableMandatory() {
+    @Override
+    public boolean isTableMandatory() {
         return false;
     }
 
