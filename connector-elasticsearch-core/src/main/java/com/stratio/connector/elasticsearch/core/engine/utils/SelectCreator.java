@@ -26,7 +26,7 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.logicalplan.Select;
 
 /**
- * The responsibility of this class is create a Select cretor..
+ * The responsibility of this class is create a Select creator.
  *
  * @author darroyo
  */
@@ -35,8 +35,10 @@ public class SelectCreator {
     /**
      * This method modify the query to add a select.
      *
-     * @param requestBuilder the request builder.
-     * @param select         the select.
+     * @param requestBuilder
+     *            the request builder.
+     * @param select
+     *            the select.
      */
     public void modify(SearchRequestBuilder requestBuilder, Select select) {
 
