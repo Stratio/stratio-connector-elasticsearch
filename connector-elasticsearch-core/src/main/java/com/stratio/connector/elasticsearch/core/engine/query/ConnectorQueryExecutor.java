@@ -44,6 +44,7 @@ import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
+
 import com.stratio.crossdata.common.result.QueryResult;
 
 /**
@@ -154,6 +155,7 @@ public class ConnectorQueryExecutor {
             if (alias.containsKey(columnName)) {
                 field = alias.get(columnName);
             }
+
 
             row.addCell(field, new Cell(
                     ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName), value)));

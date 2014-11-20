@@ -74,7 +74,13 @@ public class ESConnectorHelper implements IConnectorHelper {
 
     @Override
     public IConnector getConnector() {
-        return new ElasticsearchConnector();
+        IConnector iConnector = null;
+        try {
+            iConnector = new ElasticsearchConnector();
+        } catch (InitializationException e) {
+            e.printStackTrace();
+        }
+        return iConnector;
     }
 
     @Override
@@ -176,6 +182,10 @@ public class ESConnectorHelper implements IConnectorHelper {
     @Override
     public boolean isIndexMandatory() {
         // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override public boolean isPKMandatory() {
         return false;
     }
 

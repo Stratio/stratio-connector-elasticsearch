@@ -25,7 +25,7 @@ import java.util.Map;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.logicalplan.Select;
-import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
 
 /**
  * The responsibility of this class is crete the metadata.
@@ -47,14 +47,10 @@ public class MetadataCreator {
 
         Map<ColumnName, String> columnAliasMap = select.getColumnMap();
         for (Map.Entry<ColumnName, String> columnAliasName : columnAliasMap.entrySet()) {
-            String columnQualifiedName = columnAliasName.getKey().getQualifiedName();
+            ColumnMetadata columnMetadata = new ColumnMetadata(columnAliasName.getKey(),null,
+                     select.getTypeMapFromColumnName().get(columnAliasName.getKey()));
 
-            String tableQualifiedName = queryData.getProjection().getTableName().getQualifiedName();
-            ColumnMetadata columnMetadata = new ColumnMetadata(
-                    tableQualifiedName,
-                    columnQualifiedName, select.getTypeMapFromColumnName().get(columnAliasName.getKey()));
-
-            columnMetadata.setColumnAlias(columnAliasName.getValue());
+            columnMetadata.getName().setAlias(columnAliasName.getValue());
             retunColumnMetadata.add(columnMetadata);
         }
 

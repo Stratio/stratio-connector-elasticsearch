@@ -33,9 +33,12 @@ import com.stratio.connector.commons.connection.exceptions.HandlerConnectionExce
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.crossdata.common.data.Row;
+import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * This class performs operations insert and delete in Elasticsearch.
@@ -60,6 +63,23 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     public ElasticsearchStorageEngine(ConnectionHandler connectionHandler) {
 
         super(connectionHandler);
+    }
+
+    @Override protected void truncate(TableName tableName, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported"); //TODO
+
+    }
+
+    @Override protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported"); //TODO
+    }
+
+    @Override protected void update(TableName tableName, Collection<Relation> assignments,
+            Collection<Filter> whereClauses, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported"); //TODO
     }
 
     /**

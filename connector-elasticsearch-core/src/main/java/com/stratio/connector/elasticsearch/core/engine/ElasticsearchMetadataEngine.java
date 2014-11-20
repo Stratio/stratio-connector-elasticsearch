@@ -37,6 +37,7 @@ import com.stratio.connector.commons.connection.exceptions.HandlerConnectionExce
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
+import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -66,6 +67,12 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
     public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
         super(connectionHandler);
+    }
+
+    @Override protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Not yet supported"); //TODO
+
     }
 
     /**
