@@ -16,55 +16,28 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalInsert;
+package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
-import static org.junit.Assert.fail;
-
-import org.junit.Ignore;
-import org.junit.Test;
-
-import com.stratio.connector.commons.ftest.functionalInsert.GenericSimpleInsertTest;
+import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataIndexTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
-import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
- * Created by jmgomez on 4/09/14.
+ * Created by jmgomez on 5/09/14.
  */
-public class ESSimpleInsertTest extends GenericSimpleInsertTest {
-
-    @Override
-    @Ignore @Test
-    public void testInsertLong() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override
-    @Ignore @Test
-    public void testInsertDate() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override @Ignore @Test public void testInsertCompositePK() throws ConnectorException {
-        super.testInsertCompositePK();
-    }
-
-    @Override @Ignore  @Test public void testInsertDuplicateCompositePK() throws ConnectorException {
-        super.testInsertDuplicateCompositePK();
-    }
+public class ESMetadataIndexFT extends GenericMetadataIndexTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;
         try {
             esConnectorHelper = new ESConnectorHelper(getClusterName());
-        } catch (InitializationException e) {
-            e.printStackTrace();
+            return esConnectorHelper;
         } catch (ConnectionException e) {
+            e.printStackTrace();
+        } catch (InitializationException e) {
             e.printStackTrace();
         }
         return esConnectorHelper;

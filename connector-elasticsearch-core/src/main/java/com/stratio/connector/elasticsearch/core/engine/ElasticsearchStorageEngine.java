@@ -19,6 +19,7 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -32,6 +33,7 @@ import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -67,13 +69,20 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     @Override protected void truncate(TableName tableName, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported"); //TODO
+        delete(tableName, Collections.EMPTY_LIST,connection);
 
     }
 
     @Override protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported"); //TODO
+        String index = tableName.getCatalogName().getName();
+
+        QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
+
+
+        connection.getNativeConnection().prepareDeleteByQuery(index).setQuery(queryBuilderCreator.createBuilder
+                (whereClauses)).execute().actionGet();
+
     }
 
     @Override protected void update(TableName tableName, Collection<Relation> assignments,

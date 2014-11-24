@@ -25,6 +25,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -95,7 +96,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         optionsNode.put(HOST.getOptionName(), SERVER_IP);
         optionsNode.put(PORT.getOptionName(), SERVER_PORT);
 
-        return new ConnectorClusterConfig(clusterName, optionsNode);
+        return new  ConnectorClusterConfig(clusterName, Collections.EMPTY_MAP,optionsNode);
     }
 
     @Override
@@ -158,13 +159,16 @@ public class ESConnectorHelper implements IConnectorHelper {
     @Override
     public void refresh(String schema) {
         try {
+
             if (auxConection != null) {
                 auxConection.admin().indices().refresh(new RefreshRequest(schema).force(true)).actionGet();
                 auxConection.admin().indices().flush(new FlushRequest(schema).force(true)).actionGet();
+
             }
 
-        } catch (IndexMissingException e) {
+        } catch (IndexMissingException  e) {
             System.out.println("Index missing");
+
         }
 
     }
@@ -188,5 +192,7 @@ public class ESConnectorHelper implements IConnectorHelper {
     @Override public boolean isPKMandatory() {
         return false;
     }
+
+
 
 }

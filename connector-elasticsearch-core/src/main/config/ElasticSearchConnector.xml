@@ -36,6 +36,21 @@
         <operation>CREATE_TABLE</operation>
         <operation>DROP_TABLE</operation>
         <operation>INSERT</operation>
+        <operation>DELETE_PK_EQ</operation>
+        <operation>DELETE_PK_GT</operation>
+        <operation>DELETE_PK_LT</operation>
+        <operation>DELETE_PK_GET</operation>
+        <operation>DELETE_PK_LET</operation>
+        <operation>DELETE_NON_INDEXED_EQ</operation>
+        <operation>DELETE_NON_INDEXED_GT</operation>
+        <operation>DELETE_NON_INDEXED_LT</operation>
+        <operation>DELETE_NON_INDEXED_GET</operation>
+        <operation>DELETE_NON_INDEXED_LET</operation>
+        <operation>DELETE_INDEXED_EQ</operation>
+        <operation>DELETE_INDEXED_GT</operation>
+        <operation>DELETE_INDEXED_LT</operation>
+        <operation>DELETE_INDEXED_GET</operation>
+        <operation>DELETE_INDEXED_LET</operation>
         <operation>SELECT_OPERATOR</operation>
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_PK_GT</operation>
@@ -49,6 +64,6 @@
         <operation>FILTER_INDEXED_GET</operation>
         <operation>FILTER_INDEXED_LET</operation>
         <operation>FILTER_INDEXED_DISTINCT</operation>
-        <operation>FILTER_FULLTEXT</operation>
+        <operation>FILTER_INDEXED_MATCH</operation>
     </SupportedOperations>
 </Connector>

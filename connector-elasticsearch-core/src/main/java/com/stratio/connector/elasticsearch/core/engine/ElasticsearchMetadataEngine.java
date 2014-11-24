@@ -36,6 +36,7 @@ import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.connector.elasticsearch.core.engine.metadata.AlterTableFactory;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
@@ -71,7 +72,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     @Override protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported"); //TODO
+
+        AlterTableFactory.createHandeler(alterOptions).execute(name,connection.getNativeConnection());
+
+//        throw new UnsupportedException("Not yet supported");
 
     }
 
@@ -174,7 +178,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported");
+
+         throw new UnsupportedException("Not yet supported");
     }
 
     /**

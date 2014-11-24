@@ -18,7 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.configuration;
 
-import com.stratio.connector.elasticsearch.core.util.Constants;
+import com.stratio.connector.elasticsearch.core.engine.utils.Constants;
 
 /**
  * This enum has the options for Elasticsearch.

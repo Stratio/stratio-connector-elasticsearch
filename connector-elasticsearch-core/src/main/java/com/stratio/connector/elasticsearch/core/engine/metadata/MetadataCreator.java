@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.core.engine.query.metadata;
+package com.stratio.connector.elasticsearch.core.engine.metadata;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.util.ColumnTypeHelper;
-import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
+import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
