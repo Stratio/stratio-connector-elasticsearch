@@ -67,20 +67,5 @@
         <operation>FILTER_INDEXED_LET</operation>
         <operation>FILTER_INDEXED_DISTINCT</operation>
         <operation>FILTER_INDEXED_MATCH</operation>
-        <operation>UPDATE_PK_EQ</operation>
-        <operation>UPDATE_PK_GT</operation>
-        <operation>UPDATE_PK_LT</operation>
-        <operation>UPDATE_PK_GET</operation>
-        <operation>UPDATE_PK_LET</operation>
-        <operation>UPDATE_NON_INDEXED_EQ</operation>
-        <operation>UPDATE_NON_INDEXED_GT</operation>
-        <operation>UPDATE_NON_INDEXED_LT</operation>
-        <operation>UPDATE_NON_INDEXED_GET</operation>
-        <operation>UPDATE_NON_INDEXED_LET</operation>
-        <operation>UPDATE_INDEXED_EQ</operation>
-        <operation>UPDATE_INDEXED_GT</operation>
-        <operation>UPDATE_INDEXED_LT</operation>
-        <operation>UPDATE_INDEXED_GET</operation>
-        <operation>UPDATE_INDEXED_LET</operation>
     </SupportedOperations>
 </Connector>
