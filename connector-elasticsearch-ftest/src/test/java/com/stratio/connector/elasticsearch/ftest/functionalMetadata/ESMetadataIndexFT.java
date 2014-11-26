@@ -16,15 +16,18 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalDelete;
+package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
-import com.stratio.connector.commons.ftest.functionalDelete.GenericDeleteTest;
+import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataIndexTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
-public class DeleteTest extends GenericDeleteTest {
+/**
+ * Created by jmgomez on 5/09/14.
+ */
+public class ESMetadataIndexFT extends GenericMetadataIndexTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -39,5 +42,4 @@ public class DeleteTest extends GenericDeleteTest {
         }
         return esConnectorHelper;
     }
-
 }

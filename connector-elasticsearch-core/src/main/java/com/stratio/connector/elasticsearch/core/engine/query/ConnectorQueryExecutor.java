@@ -37,13 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.util.ColumnTypeHelper;
-import com.stratio.connector.elasticsearch.core.engine.query.metadata.MetadataCreator;
+import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
+
 import com.stratio.crossdata.common.result.QueryResult;
 
 /**
@@ -162,9 +163,9 @@ public class ConnectorQueryExecutor {
                 field = alias.get(columnName);
             }
 
-            row.addCell(field,
-                            new Cell(ColumnTypeHelper.getCastingValue(
-                                            select.getTypeMapFromColumnName().get(columnName), value)));
+
+            row.addCell(field, new Cell(
+                    ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnName), value)));
         }
         return row;
     }

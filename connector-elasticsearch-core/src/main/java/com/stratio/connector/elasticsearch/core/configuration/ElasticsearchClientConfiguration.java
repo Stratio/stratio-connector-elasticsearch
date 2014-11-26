@@ -60,11 +60,11 @@ public final class ElasticsearchClientConfiguration {
     public static Settings getSettings(ConnectorClusterConfig configuration) {
 
         Map<String, String> setting = new HashMap<String, String>();
-        setting.put(NODE_DATA.getOptionName(), recoverdOptionValue(configuration.getOptions(), NODE_DATA));
-        setting.put(NODE_MASTER.getOptionName(), recoverdOptionValue(configuration.getOptions(), NODE_MASTER));
-        setting.put(TRANSPORT_SNIFF.getOptionName(), recoverdOptionValue(configuration.getOptions(), TRANSPORT_SNIFF));
-        setting.put(COERCE.getOptionName(), recoverdOptionValue(configuration.getOptions(), COERCE));
-        setting.put(DYNAMIC.getOptionName(), recoverdOptionValue(configuration.getOptions(), DYNAMIC));
+        setting.put(NODE_DATA.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_DATA));
+        setting.put(NODE_MASTER.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_MASTER));
+        setting.put(TRANSPORT_SNIFF.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), TRANSPORT_SNIFF));
+        setting.put(COERCE.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), COERCE));
+        setting.put(DYNAMIC.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), DYNAMIC));
 
         setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
 
@@ -100,9 +100,10 @@ public final class ElasticsearchClientConfiguration {
      */
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 
-        String[] hosts = ConnectorParser.hosts(config.getOptions().get(HOST.getOptionName()));
-        String[] ports = ConnectorParser.ports(config.getOptions().get(PORT.getOptionName()));
-        TransportAddress[] transportAddresses = new TransportAddress[hosts.length];
+        String[] hosts = ConnectorParser.hosts(config.getClusterOptions().get(HOST.getOptionName()));
+        String[] ports = ConnectorParser.ports(config.getClusterOptions().get(PORT.getOptionName()));
+        TransportAddress[] transportAddresses = new TransportAddress[
+                hosts.length];
         for (int i = 0; i < hosts.length; i++) {
             transportAddresses[i] = new InetSocketTransportAddress(hosts[i], Integer.decode(ports[i]));
         }

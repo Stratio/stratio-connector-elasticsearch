@@ -27,6 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,9 +84,10 @@ public class ConnectionHandleTest {
     public void testCreateNodeConnection() throws Exception, HandlerConnectionException {
 
         ICredentials credentials = mock(ICredentials.class);
-        Map<String, String> options = new HashMap<>();
-        options.put(ConfigurationOptions.NODE_TYPE.getOptionName(), "true");
-        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), options);
+        Map<String, String> connectionOptios = new HashMap<>();
+        connectionOptios.put(ConfigurationOptions.NODE_TYPE.getOptionName(), "true");
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), connectionOptios,
+                Collections.EMPTY_MAP);
 
         NodeConnection connection = mock(NodeConnection.class);
         whenNew(NodeConnection.class).withArguments(credentials, config).thenReturn(connection);

@@ -36,7 +36,9 @@ import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.connector.elasticsearch.core.engine.metadata.AlterTableFactory;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
+import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -57,7 +59,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * The Log.
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private ContentBuilderCreator deepContentBuilder = new ContentBuilderCreator();
+    private ContentBuilderCreator contentBuilder         = new ContentBuilderCreator();
 
     /**
      * Constructor.
@@ -66,6 +68,15 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
     public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
         super(connectionHandler);
+    }
+
+    @Override protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+
+        AlterTableFactory.createHandler(alterOptions).execute(name,connection.getNativeConnection());
+
+
+
     }
 
     /**
@@ -102,7 +113,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         try {
 
             String indexName = typeMetadata.getName().getCatalogName().getName();
-            XContentBuilder xContentBuilder = deepContentBuilder.createTypeSource(typeMetadata);
+            XContentBuilder xContentBuilder = contentBuilder.createTypeSource(typeMetadata);
 
             recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
                     .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
@@ -167,7 +178,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported");
+
+         throw new UnsupportedException("Not yet supported");
     }
 
     /**

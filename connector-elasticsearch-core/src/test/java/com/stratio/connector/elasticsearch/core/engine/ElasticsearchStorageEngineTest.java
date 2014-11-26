@@ -22,6 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,9 +33,12 @@ import java.util.Map;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
+import org.elasticsearch.action.deletebyquery.DeleteByQueryRequestBuilder;
+import org.elasticsearch.action.deletebyquery.DeleteByQueryResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,12 +47,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -57,10 +63,16 @@ import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Operator;
+import com.stratio.crossdata.common.statements.structures.Relation;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 /**
  * ElasticsearchStorageEngine Tester.
@@ -70,17 +82,18 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  * @since <pre>sep 10, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest( {ElasticsearchStorageEngine.class,QueryBuilderCreator.class})
 public class ElasticsearchStorageEngineTest {
 
     private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
     private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
-    private static final String ROW_NAME = "row_name";
+    private static final String COLUMN_NAME = "column_name";
     private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME.".toLowerCase();
     private static final String CELL_VALUE = "cell_value";
     private static final Object OTHER_CELL_VALUE = "other cell value";
-    private static final Integer INTEGER_CELL_VALUE = new Integer(5);
+
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -127,7 +140,7 @@ public class ElasticsearchStorageEngineTest {
 
         TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
                 clusterKey);
-        Row row = createRow(ROW_NAME, CELL_VALUE);
+        Row row = createRow(COLUMN_NAME, CELL_VALUE);
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
         when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
@@ -152,7 +165,7 @@ public class ElasticsearchStorageEngineTest {
         TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
                 clusterKey);
         Collection<Row> row = new ArrayList<>();
-        Row row1 = createRow(ROW_NAME, CELL_VALUE);
+        Row row1 = createRow(COLUMN_NAME, CELL_VALUE);
         row.add(row1);
         Row row2 = createRow(OTHER_ROW_NAME, OTHER_CELL_VALUE);
         row.add(row2);
@@ -189,11 +202,11 @@ public class ElasticsearchStorageEngineTest {
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
         partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
+        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
 
         TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
                 clusterKey);
-        Row row = createRow(ROW_NAME, CELL_VALUE);
+        Row row = createRow(COLUMN_NAME, CELL_VALUE);
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
         when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
@@ -206,6 +219,58 @@ public class ElasticsearchStorageEngineTest {
 
         verify(listenableActionFuture, times(1)).actionGet();
 
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        Collection<Filter> whereFilter = new ArrayList<>();
+        whereFilter.add(new Filter(Operations.DELETE_PK_EQ, new Relation(new ColumnSelector(new ColumnName
+                (INDEX_NAME,TYPE_NAME,COLUMN_NAME)),
+                Operator.EQ,
+                new StringSelector("1"))));
+
+        QueryBuilderCreator queryBuilderCreator = mock(QueryBuilderCreator.class);
+        QueryBuilder queryBuilder = mock(QueryBuilder.class);
+        when(queryBuilderCreator.createBuilder(whereFilter)).thenReturn(queryBuilder);
+        whenNew(QueryBuilderCreator.class).withNoArguments().thenReturn(queryBuilderCreator);
+
+        ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
+
+
+        DeleteByQueryRequestBuilder deleteByquery = mock(DeleteByQueryRequestBuilder.class);
+        when(client.prepareDeleteByQuery(INDEX_NAME)).thenReturn(deleteByquery);
+        when(deleteByquery.setQuery(queryBuilder)).thenReturn(deleteByquery);
+
+        when(deleteByquery.execute()).thenReturn(listeneableActionFure);
+        elasticsearchStorageEngine.delete(new TableName(INDEX_NAME, TYPE_NAME), whereFilter, connection);
+
+        verify(listeneableActionFure).actionGet();
+
+
+
+    }
+
+    @Test
+    public void testTruncate() throws Exception {
+        Collection<Filter> whereFilter = Collections.EMPTY_LIST;
+
+
+        QueryBuilderCreator queryBuilderCreator = mock(QueryBuilderCreator.class);
+        QueryBuilder queryBuilder = mock(QueryBuilder.class);
+        when(queryBuilderCreator.createBuilder(whereFilter)).thenReturn(queryBuilder);
+        whenNew(QueryBuilderCreator.class).withNoArguments().thenReturn(queryBuilderCreator);
+
+        ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
+
+
+        DeleteByQueryRequestBuilder deleteByquery = mock(DeleteByQueryRequestBuilder.class);
+        when(client.prepareDeleteByQuery(INDEX_NAME)).thenReturn(deleteByquery);
+        when(deleteByquery.setQuery(queryBuilder)).thenReturn(deleteByquery);
+
+        when(deleteByquery.execute()).thenReturn(listeneableActionFure);
+        elasticsearchStorageEngine.delete(new TableName(INDEX_NAME, TYPE_NAME), whereFilter, connection);
+
+        verify(listeneableActionFure).actionGet();
     }
 
     private Row createRow(String rowKey, Object cellValue) {

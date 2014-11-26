@@ -29,6 +29,7 @@ import static com.stratio.connector.elasticsearch.core.configuration.Configurati
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,10 +97,11 @@ public class ElasticsearchClientConfigurationTest {
      */
     @Test
     public void testGetTransporAddress() throws Exception {
-        Map<String, String> options = new HashMap<>();
-        options.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
-        options.put(PORT.getOptionName(), "2800,2802,2809");
-        ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME, options);
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
+        clusterOptions.put(PORT.getOptionName(), "2800,2802,2809");
+        ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME,
+                Collections.EMPTY_MAP,clusterOptions);
 
         TransportAddress[] result = ElasticsearchClientConfiguration.getTransportAddress(configuration);
         assertNotNull("The result is not null", result);

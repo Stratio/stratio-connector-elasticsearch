@@ -27,7 +27,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 17/09/14.
  */
-public class ESWorkflowTest extends ExampleWorkflowsTest {
+public class ESWorkflowFT extends ExampleWorkflowsTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

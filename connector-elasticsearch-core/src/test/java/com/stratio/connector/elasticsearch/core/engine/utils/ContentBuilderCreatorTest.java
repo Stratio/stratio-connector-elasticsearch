@@ -52,7 +52,8 @@ public class ContentBuilderCreatorTest {
     public static final String INDEX_NAME = "index";
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
-    private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"},\"properties\":{\"column_3\":{\"type\":\"double\"},\"column_5\":{\"type\":\"integer\"},\"column_7\":{\"type\":\"string\"},\"column_2\":{\"type\":\"boolean\"},\"column_6\":{\"type\":\"string\"},\"column_4\":{\"type\":\"float\"},\"column_1\":{\"type\":\"long\"}}}";
+    private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"}," +
+            "\"properties\":{\"column_3\":{\"type\":\"double\",\"index\":\"analyzed\"},\"column_5\":{\"type\":\"integer\",\"index\":\"analyzed\"},\"column_7\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_2\":{\"type\":\"boolean\",\"index\":\"analyzed\"},\"column_6\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_4\":{\"type\":\"float\",\"index\":\"analyzed\"},\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"}}}";
     ContentBuilderCreator deepContentBuilder;
 
     @Before

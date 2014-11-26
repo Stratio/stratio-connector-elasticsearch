@@ -26,11 +26,11 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.elasticsearch.core.engine.metadata.ESIndexType;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 
 /**
@@ -38,6 +38,27 @@ import com.stratio.crossdata.common.metadata.TableMetadata;
  * Created by jmgomez on 11/09/14.
  */
 public class ContentBuilderCreator {
+
+    /**
+     * The properties identification.
+     */
+    private static final String PROPERTIES = "properties";
+    /**
+     * The type identification.
+     */
+    private static final String TYPE = "type";
+    /**
+     * The index identification.
+     */
+    private static final String INDEX = "index";
+    /**
+     * The id elasticsearch name.
+     */
+    private static final String ID = "_id";
+    /**
+     * The elasticsearch long name.
+     */
+
 
     /**
      * The Log.
@@ -53,10 +74,10 @@ public class ContentBuilderCreator {
     /**
      * This method creates the XContentBuilder for a type.
      *
-     * @param typeMetadata the type crossdatadata.
+     * @param typeMetadata the type crossdata.
      * @return the XContentBuilder that represent the type.
-     * @throws UnsupportedException if the type crossdatadata is not supported.
-     * @thros ExecutionException if a error occurs.
+     * @throws UnsupportedException if the type crossdata is not supported.
+     * @throws  ExecutionException if a error occurs.
      */
     public XContentBuilder createTypeSource(TableMetadata typeMetadata)
             throws UnsupportedException, ExecutionException {
@@ -84,6 +105,22 @@ public class ContentBuilderCreator {
         return xContentBuilder;
     }
 
+    public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, UnsupportedException {
+        XContentBuilder mapping = XContentFactory.jsonBuilder()
+                 .startObject()
+                    .startObject(columnMetadata.getName().getTableName().getName())
+                .startObject(PROPERTIES)
+                .startObject(columnMetadata.getName().getName())
+                .field(TYPE, TypeConverter.convert(columnMetadata.getColumnType()))
+                .field(INDEX, ESIndexType.getDefault().getCode())
+                .endObject()
+                .endObject()
+                .endObject()
+                .endObject();
+
+        return mapping;
+    }
+
     /**
      * This method creates the fields options.
      *
@@ -94,65 +131,37 @@ public class ContentBuilderCreator {
     private void createFieldOptions(TableMetadata tableMetadata)
             throws IOException, UnsupportedException {
 
-        createId(xContentBuilder);
+        configureIndex(ID, ESIndexType.NOT_ANALYZED);
         Map<ColumnName, ColumnMetadata> columns = tableMetadata.getColumns();
         if (columns != null && !columns.isEmpty()) {
-            xContentBuilder.startObject("properties");
+            xContentBuilder.startObject(PROPERTIES);
             for (Map.Entry<ColumnName, ColumnMetadata> column : columns.entrySet()) {
-                String columnType = convertType(column.getValue().getColumnType());
+                String columnType = TypeConverter.convert(column.getValue().getColumnType());
                 String name = column.getKey().getName();
-                xContentBuilder = xContentBuilder.startObject(name).field("type", columnType).endObject();
+                xContentBuilder = xContentBuilder.startObject(name).field(TYPE, columnType).field(INDEX,
+                        ESIndexType.getDefault().getCode()).endObject();
             }
             xContentBuilder.endObject();
         }
 
     }
 
+
+
+
+
     /**
-     * This method create the id.
+     * This method create the index.
      *
-     * @param xContentBuilder the contentBuilder.
+     * @param field the field to index.
+     * @param indexType the index type.
      * @throws IOException if an error happen creating the ContentBuilder.
      */
-    private void createId(XContentBuilder xContentBuilder) throws IOException {
+    private void configureIndex(String field, ESIndexType indexType) throws IOException {
 
-        xContentBuilder.startObject("_id").field("index", "not_analyzed").endObject();
+        xContentBuilder.startObject(field).field(INDEX, indexType.getCode()).endObject();
 
     }
 
-    /**
-     * This method translates the crossdata columnType to ElasticSearch type.
-     *
-     * @param columnType the crossdata column type.
-     * @return the ElasticSearch columnType.
-     * @throws UnsupportedException if the type is not supported.
-     */
-    private String convertType(ColumnType columnType) throws UnsupportedException {
 
-        String type = "";
-        switch (columnType) {
-        case BIGINT:
-            type = "long";
-            break;
-        case BOOLEAN:
-            type = "boolean";
-            break;
-        case DOUBLE:
-            type = "double";
-            break;
-        case FLOAT:
-            type = "float";
-            break;
-        case INT:
-            type = "integer";
-            break;
-        case TEXT:
-        case VARCHAR:
-            type = "string";
-            break;
-        default:
-            throw new UnsupportedException("The type [" + columnType + "] is not supported in ElasticSearch");
-        }
-        return type;
-    }
 }

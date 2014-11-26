@@ -78,7 +78,7 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
         SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
 
-        return queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
+            return queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
 
     }
 

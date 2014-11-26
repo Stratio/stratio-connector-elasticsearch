@@ -66,7 +66,7 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
      * @return true if is configure to be a node connection. False in other case.
      */
     private boolean isNodeClient(ConnectorClusterConfig config) {
-        return Boolean.parseBoolean(config.getOptions().get(ConfigurationOptions.NODE_TYPE.getOptionName()));
+        return Boolean.parseBoolean(config.getConnectorOptions().get(ConfigurationOptions.NODE_TYPE.getOptionName()));
     }
 
 }

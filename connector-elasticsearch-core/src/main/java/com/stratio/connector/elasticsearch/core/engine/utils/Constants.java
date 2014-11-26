@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.core.util;
+package com.stratio.connector.elasticsearch.core.engine.utils;
 
 /**
  * A class with constants.

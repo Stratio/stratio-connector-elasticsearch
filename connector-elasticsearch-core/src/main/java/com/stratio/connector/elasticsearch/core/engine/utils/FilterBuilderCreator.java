@@ -24,6 +24,7 @@ import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 
+import com.stratio.connector.commons.util.FilterHelper;
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -116,35 +117,12 @@ public class FilterBuilderCreator {
     private String recoveredLeftTerm(Filter filter, Relation relation)
             throws ExecutionException {
         String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
-        if (isPK(filter)) {
+        if (FilterHelper.isPK(filter)) {
             leftTerm = "_id";
         }
         return leftTerm;
     }
 
-    /**
-     * This method verify if a filter is PK type.
-     *
-     * @param filter the filter.
-     * @return true if the filter is PK type. False in other case.
-     */
-    private boolean isPK(Filter filter) {
-        boolean isPk = false;
-        switch (filter.getOperation()) {
-        case FILTER_PK_DISTINCT:
-        case FILTER_PK_EQ:
-        case FILTER_PK_GET:
-        case FILTER_PK_GT:
-        case FILTER_PK_LET:
-        case FILTER_PK_LT:
-            isPk = true;
-            break;
-        default:
-            isPk = false;
-            break;
-        }
-        return isPk;
 
-    }
 
 }

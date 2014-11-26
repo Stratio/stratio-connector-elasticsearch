@@ -16,18 +16,15 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
+package com.stratio.connector.elasticsearch.ftest.functionalDelete;
 
-import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataCreateTest;
+import com.stratio.connector.commons.ftest.functionalDelete.GenericDeleteTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
-/**
- * Created by jmgomez on 5/09/14.
- */
-public class ESCreateMetadataFunctionalTest extends GenericMetadataCreateTest {
+public class DeleteFT extends GenericDeleteTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -42,4 +39,5 @@ public class ESCreateMetadataFunctionalTest extends GenericMetadataCreateTest {
         }
         return esConnectorHelper;
     }
+
 }

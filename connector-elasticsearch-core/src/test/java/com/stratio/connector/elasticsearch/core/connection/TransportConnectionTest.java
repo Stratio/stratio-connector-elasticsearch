@@ -28,6 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,10 +61,11 @@ public class TransportConnectionTest {
     public void before() throws Exception {
         ICredentials credentials = mock(ICredentials.class);
 
-        Map<String, String> options = new HashMap<>();
-        options.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
-        options.put(PORT.getOptionName(), "2800,2802,2809");
-        ConnectorClusterConfig configuration = new ConnectorClusterConfig(new ClusterName("CLUSTER_NAME"), options);
+        Map<String, String> clusterOptiosn = new HashMap<>();
+        clusterOptiosn.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
+        clusterOptiosn.put(PORT.getOptionName(), "2800,2802,2809");
+        ConnectorClusterConfig configuration = new ConnectorClusterConfig(new ClusterName("CLUSTER_NAME"),
+                Collections.EMPTY_MAP,clusterOptiosn);
         transportConnection = new TransportConnection(credentials, configuration);
 
         assertNotNull("The connection is not null", Whitebox.getInternalState(transportConnection, "elasticClient"));

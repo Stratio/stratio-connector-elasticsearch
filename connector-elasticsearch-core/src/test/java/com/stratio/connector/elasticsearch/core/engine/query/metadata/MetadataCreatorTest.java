@@ -18,7 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,15 +28,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.Operations;
-import com.stratio.crossdata.common.metadata.structures.ColumnMetadata;
+
 
 /**
  * MetadataCreator Tester.
@@ -85,11 +87,12 @@ public class MetadataCreatorTest {
         int i = 0;
         for (ColumnMetadata metadata : columnMetadata) {
 
-            assertEquals("Alias is correct", ALIAS[i], metadata.getColumnAlias());
+            assertEquals("Alias is correct", ALIAS[i], metadata.getName().getAlias() );
             assertEquals("Column name is correct", CATALOG_NAME + "." + TABLE_NAME + "." + NAMES[i],
-                    metadata.getColumnName());
-            assertEquals("Table name is correct", CATALOG_NAME + "." + TABLE_NAME, metadata.getTableName());
-            assertEquals("Type name is correct", TYPES[i], metadata.getType());
+                    metadata.getName().getQualifiedName());
+            assertEquals("Table name is correct", CATALOG_NAME + "." + TABLE_NAME,
+                    metadata.getName().getTableName().getQualifiedName());
+            assertEquals("Type name is correct", TYPES[i], metadata.getColumnType());
             i++;
 
         }

@@ -76,10 +76,10 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
     public static void main(String[] args) throws InitializationException {
 
-        ElasticsearchConnector cassandraConnector = new ElasticsearchConnector();
+        ElasticsearchConnector elasticsearchConnector = new ElasticsearchConnector();
         ConnectorApp connectorApp = new ConnectorApp();
-        connectorApp.startup(cassandraConnector);
-        cassandraConnector.attachShutDownHook();
+        connectorApp.startup(elasticsearchConnector);
+        elasticsearchConnector.attachShutDownHook();
     }
 
     /**

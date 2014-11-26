@@ -16,32 +16,18 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
+package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
-import static org.junit.Assert.fail;
-
-import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryStringFilterTest;
+import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataCreateTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESQueryNoPKFilterStringTest extends GenericNotIndexedQueryStringFilterTest {
-
-    @Override
-    public void selectNotIndexedFilterUpperCaseEqual() throws ExecutionException, UnsupportedException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override
-    public void selectNotIndexedFilterUpperCaseDistinct() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
+public class ESCreateMetadataFunctionalFT extends GenericMetadataCreateTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

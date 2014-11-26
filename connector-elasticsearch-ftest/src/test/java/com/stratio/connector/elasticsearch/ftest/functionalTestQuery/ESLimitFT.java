@@ -18,20 +18,16 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
-import static org.junit.Assert.fail;
-
-import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryIntegerFilterTest;
+import com.stratio.connector.commons.ftest.functionalTestQuery.GenericLimitTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESQueryNoPKFilterIntegerTest extends GenericNotIndexedQueryIntegerFilterTest {
+public class ESLimitFT extends GenericLimitTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -45,10 +41,5 @@ public class ESQueryNoPKFilterIntegerTest extends GenericNotIndexedQueryIntegerF
             e.printStackTrace();
         }
         return esConnectorHelper;
-    }
-
-    @Override
-    public void selectNotIndexedFilterBetween() throws ExecutionException, UnsupportedException {
-        fail("Not yet ElasticSearch  supported");
     }
 }
