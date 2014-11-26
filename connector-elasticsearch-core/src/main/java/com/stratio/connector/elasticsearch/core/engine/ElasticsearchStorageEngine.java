@@ -21,10 +21,14 @@ package com.stratio.connector.elasticsearch.core.engine;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.lucene.queryparser.xml.FilterBuilder;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.lucene.search.function.CombineFunction;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +45,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.RelationSelector;
 
 /**
  * This class performs operations insert and delete in Elasticsearch.
@@ -89,9 +94,40 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
             Collection<Filter> whereClauses, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        throw new UnsupportedException("Not yet supported"); //TODO
+        String index = tableName.getCatalogName().getName();
+        String type = tableName.getName();
+        QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
+        for(Relation relation: assignments) {
+            FunctionScoreQueryBuilder functionScoreQueryBuilder = new FunctionScoreQueryBuilder(queryBuilderCreator.createBuilder(whereClauses));
+            CombineFunction combineFunction = chooseCombineFunction(relation);
+            functionScoreQueryBuilder.boostMode(combineFunction);
+            FilterBuilder scorefuntion;
+
+            functionScoreQueryBuilder.add(ScoreFunctionBuilders.scriptFunction("name = 'hola'"));
+            connection.getNativeConnection().prepareSearch(index).setTypes(type).setQuery(functionScoreQueryBuilder);
+        }
+        //throw new UnsupportedException("Not yet supported"); //TODO
     }
 
+
+    private CombineFunction chooseCombineFunction(Relation relation) throws UnsupportedException {
+        CombineFunction combineFunction = null;
+        if (!(relation.getRightTerm() instanceof RelationSelector)) {
+            //TODO
+        }
+        RelationSelector rightSelect = (RelationSelector)relation.getRightTerm();
+        switch (rightSelect.getRelation().getOperator()){
+        case ADD:
+        case SUBTRACT:
+            combineFunction= CombineFunction.SUM;
+            break;
+        case DIVISION:
+        case MULTIPLICATION: combineFunction = CombineFunction.MULT;break;
+        default: throw new UnsupportedException("The operator "+relation.getOperator()+" is not supported for " +
+                "update");
+        }
+        return combineFunction;
+    }
 
 
     /**
