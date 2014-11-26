@@ -35,7 +35,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 /**
  * Created by jmgomez on 4/09/14.
  */
-public class ESSimpleInsertTest extends GenericSimpleInsertTest {
+public class ESSimpleInsertFT extends GenericSimpleInsertTest {
 
     @Override
     @Ignore @Test

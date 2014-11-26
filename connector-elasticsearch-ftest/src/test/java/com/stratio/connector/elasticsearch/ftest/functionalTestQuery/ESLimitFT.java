@@ -16,34 +16,30 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalInsert;
+package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
-import com.stratio.connector.commons.ftest.functionalInsert.GenericBulkInsertTest;
+import com.stratio.connector.commons.ftest.functionalTestQuery.GenericLimitTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
- * Created by jmgomez on 4/09/14.
+ * Created by jmgomez on 5/09/14.
  */
-public class ESBulkInsertTest extends GenericBulkInsertTest {
-
-    protected int getRowToInsert() {
-        return 1000;
-    }
+public class ESLimitFT extends GenericLimitTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         ESConnectorHelper esConnectorHelper = null;
         try {
             esConnectorHelper = new ESConnectorHelper(getClusterName());
-        } catch (InitializationException e) {
-            e.printStackTrace();
+            return esConnectorHelper;
         } catch (ConnectionException e) {
+            e.printStackTrace();
+        } catch (InitializationException e) {
             e.printStackTrace();
         }
         return esConnectorHelper;
     }
-
 }

@@ -27,7 +27,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESOrderByTest extends GenericOrderByTest {
+public class ESOrderByFT extends GenericOrderByTest {
     protected int getRowToInsert() {
         return 1000;
     }

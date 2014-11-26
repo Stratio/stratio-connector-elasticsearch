@@ -98,7 +98,7 @@ public class ElasticsearchMetadataEngineTest {
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
         when(connection.getNativeConnection()).thenReturn(client);
         elasticsearchMetadataEngine = new ElasticsearchMetadataEngine(connectionHandler);
-        Whitebox.setInternalState(elasticsearchMetadataEngine, "deepContentBuilder", deepContentBuilder);
+        Whitebox.setInternalState(elasticsearchMetadataEngine, "contentBuilder", deepContentBuilder);
     }
 
     /**

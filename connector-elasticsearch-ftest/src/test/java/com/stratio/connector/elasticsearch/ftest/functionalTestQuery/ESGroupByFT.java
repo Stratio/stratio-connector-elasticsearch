@@ -16,9 +16,9 @@
  * under the License.
  */
 
-package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
+package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
-import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataDropTest;
+import com.stratio.connector.commons.ftest.functionalTestQuery.GenericGroupByFT;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
@@ -27,7 +27,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESDropMetadataTest extends GenericMetadataDropTest {
+public class ESGroupByFT extends GenericGroupByFT {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

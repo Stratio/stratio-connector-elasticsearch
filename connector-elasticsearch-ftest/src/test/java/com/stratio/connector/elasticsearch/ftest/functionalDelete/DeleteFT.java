@@ -24,7 +24,7 @@ import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
-public class DeleteTest extends GenericDeleteTest {
+public class DeleteFT extends GenericDeleteTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

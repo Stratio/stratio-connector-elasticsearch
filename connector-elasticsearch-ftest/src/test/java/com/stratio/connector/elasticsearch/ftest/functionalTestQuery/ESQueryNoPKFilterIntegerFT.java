@@ -20,7 +20,7 @@ package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
 import static org.junit.Assert.fail;
 
-import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryStringFilterTest;
+import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryIntegerFilterTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
@@ -31,17 +31,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESQueryNoPKFilterStringTest extends GenericNotIndexedQueryStringFilterTest {
-
-    @Override
-    public void selectNotIndexedFilterUpperCaseEqual() throws ExecutionException, UnsupportedException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override
-    public void selectNotIndexedFilterUpperCaseDistinct() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
+public class ESQueryNoPKFilterIntegerFT extends GenericNotIndexedQueryIntegerFilterTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
@@ -55,5 +45,10 @@ public class ESQueryNoPKFilterStringTest extends GenericNotIndexedQueryStringFil
             e.printStackTrace();
         }
         return esConnectorHelper;
+    }
+
+    @Override
+    public void selectNotIndexedFilterBetween() throws ExecutionException, UnsupportedException {
+        fail("Not yet ElasticSearch  supported");
     }
 }

@@ -7,7 +7,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
  * Created by jmgomez on 24/11/14.
  */
 public class AlterTableFactory {
-    public static AlterTableHandler createHandeler(AlterOptions alterOptions) throws UnsupportedException {
+    public static AlterTableHandler createHandler(AlterOptions alterOptions) throws UnsupportedException {
         AlterTableHandler handler;
         switch (alterOptions.getOption()){
             case ADD_COLUMN: handler = new AddColumnHandler(alterOptions);break;

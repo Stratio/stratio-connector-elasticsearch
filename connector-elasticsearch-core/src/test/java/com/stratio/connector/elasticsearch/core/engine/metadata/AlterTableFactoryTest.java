@@ -30,14 +30,14 @@ public void before() throws Exception {
 
 /** 
 * 
-* Method: createHandeler(AlterOptions alterOptions) 
+* Method: createHandler(AlterOptions alterOptions)
 * 
 */ 
 @Test
 public void testCreateAddColumnHandeler() throws Exception {
     AlterOptions alterOptions = new AlterOptions(AlterOperation.ADD_COLUMN, Collections.EMPTY_MAP,null);
     assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-            AlterTableFactory.createHandeler(alterOptions).getClass().getCanonicalName());
+            AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
 }
 
 
@@ -46,7 +46,7 @@ public void testCreateAddColumnHandeler() throws Exception {
     public void testAlterColumnHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.ALTER_COLUMN, Collections.EMPTY_MAP,null);
         assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandeler(alterOptions).getClass().getCanonicalName());
+                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
     }
 
 
@@ -55,16 +55,16 @@ public void testCreateAddColumnHandeler() throws Exception {
     public void testAlterOptionsHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.ALTER_OPTIONS, Collections.EMPTY_MAP,null);
         assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandeler(alterOptions).getClass().getCanonicalName());
+                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
     }
 
 
-    @Test(expected = UnsupportedException.class)
 
+    @Test(expected = UnsupportedException.class)
     public void testDropColumnHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.DROP_COLUMN, Collections.EMPTY_MAP,null);
         assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandeler(alterOptions).getClass().getCanonicalName());
+                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
     }
 
 } 

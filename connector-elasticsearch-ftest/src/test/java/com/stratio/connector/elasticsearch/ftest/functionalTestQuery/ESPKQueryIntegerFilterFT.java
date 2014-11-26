@@ -27,7 +27,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESPKQueryIntegerFilterTest extends GenericPKQueryIntegerFilterTest {
+public class ESPKQueryIntegerFilterFT extends GenericPKQueryIntegerFilterTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

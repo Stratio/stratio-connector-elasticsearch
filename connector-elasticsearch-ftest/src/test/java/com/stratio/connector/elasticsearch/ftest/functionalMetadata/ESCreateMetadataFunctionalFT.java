@@ -27,7 +27,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESCreateMetadataFunctionalTest extends GenericMetadataCreateTest {
+public class ESCreateMetadataFunctionalFT extends GenericMetadataCreateTest {
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
