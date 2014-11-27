@@ -26,20 +26,36 @@ import org.elasticsearch.common.xcontent.XContentBuilder;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
+ * This class must implements the add column to a mapping feature.
  * Created by jmgomez on 24/11/14.
  */
 public class AddColumnHandler implements AlterTableHandler {
 
+    /**
+     * The alter options.
+     */
     private final AlterOptions alterOptions;
 
+    /**
+     * Constructor.
+     * @param alterOptions the alter option-
+     */
     public AddColumnHandler(AlterOptions alterOptions) {
         this.alterOptions = alterOptions;
     }
 
-    @Override public void execute(TableName tableName, Client connection) throws UnsupportedException {
+    /**
+     * Execute the add column in a mapping.
+     * @param tableName the table name.
+     * @param connection  the connection.
+     * @throws UnsupportedException if is not supported.
+     * @throws  ExecutionException ig an error happens.
+     */
+    @Override public void execute(TableName tableName, Client connection) throws UnsupportedException,ExecutionException {
 
         try {
             ContentBuilderCreator contentBuilderCreator = new ContentBuilderCreator();
@@ -49,7 +65,7 @@ public class AddColumnHandler implements AlterTableHandler {
                     .getName()).setSource(source).execute().actionGet();
 
         } catch (IOException e) {
-            //TODO
+            throw new ExecutionException("Error when aerospaike is adding a column in a mapping",e);
         }
 
     }

@@ -25,7 +25,7 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
  * This class must created a object to alter a table.
  * Created by jmgomez on 24/11/14.
  */
-public class AlterTableFactory {
+public final class AlterTableFactory {
 
     /**
      * The constructor.

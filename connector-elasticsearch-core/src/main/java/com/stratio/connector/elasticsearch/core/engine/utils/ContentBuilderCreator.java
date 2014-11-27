@@ -104,6 +104,13 @@ public class ContentBuilderCreator {
         return xContentBuilder;
     }
 
+    /**
+     * This method create the xcontenBuilder for add a field in a mapping.
+     * @param columnMetadata the colimn meta data.
+     * @return the XContentBuilder.
+     * @throws IOException if a IO excetion happens.
+     * @throws UnsupportedException if the operation is not supported.
+     */
     public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, UnsupportedException {
         XContentBuilder mapping = XContentFactory.jsonBuilder()
                 .startObject()
