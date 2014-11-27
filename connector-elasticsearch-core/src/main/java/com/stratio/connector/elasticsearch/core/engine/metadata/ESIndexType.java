@@ -19,16 +19,40 @@
 package com.stratio.connector.elasticsearch.core.engine.metadata;
 
 /**
+ * This class provide support to ES index.
  * Created by jmgomez on 21/11/14.
  */
 public enum ESIndexType {
-    NO("no"), ANALYZED("analyzed"), NOT_ANALYZED("not_analyzed");
+    /**
+     * No Index.
+     */
+    NO("no"),
+    /**
+     * Analyzed Index.
+     */
+    ANALYZED("analyzed"),
+    /**
+     *  Not analized index.
+     */
+    NOT_ANALYZED("not_analyzed");
+
+    /**
+     * The code.
+     */
     private final String code;
 
+    /**
+     * Cosntructor.
+     * @param code the code.
+     */
     ESIndexType(String code) {
         this.code = code;
     }
 
+    /**
+     * Return the default index value.
+     * @return the default index value.
+     */
     public static ESIndexType getDefault() {
         return ANALYZED;
     }
