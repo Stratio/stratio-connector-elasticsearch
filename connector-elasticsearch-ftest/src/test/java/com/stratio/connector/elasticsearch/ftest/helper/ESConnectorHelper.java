@@ -40,7 +40,6 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.hppc.cursors.ObjectObjectCursor;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.indices.IndexMissingException;
-import org.junit.Assert;
 
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.core.ElasticsearchConnector;
@@ -70,8 +69,8 @@ public class ESConnectorHelper implements IConnectorHelper {
         super();
         this.clusterName = clusterName;
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
-                        .addTransportAddresses(ElasticsearchClientConfiguration
-                                        .getTransportAddress(getConnectorClusterConfig()));
+                .addTransportAddresses(ElasticsearchClientConfiguration
+                        .getTransportAddress(getConnectorClusterConfig()));
     }
 
     @Override
@@ -97,7 +96,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         optionsNode.put(HOST.getOptionName(), SERVER_IP);
         optionsNode.put(PORT.getOptionName(), SERVER_PORT);
 
-        return new  ConnectorClusterConfig(clusterName, Collections.EMPTY_MAP,optionsNode);
+        return new ConnectorClusterConfig(clusterName, Collections.EMPTY_MAP, optionsNode);
     }
 
     @Override
@@ -167,7 +166,7 @@ public class ESConnectorHelper implements IConnectorHelper {
 
             }
 
-        } catch (IndexMissingException  e) {
+        } catch (IndexMissingException e) {
             System.out.println("Index missing");
 
         }
@@ -194,7 +193,5 @@ public class ESConnectorHelper implements IConnectorHelper {
     @Override public boolean isPKMandatory() {
         return false;
     }
-
-
 
 }

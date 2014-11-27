@@ -123,6 +123,4 @@ public class FilterBuilderCreator {
         return leftTerm;
     }
 
-
-
 }

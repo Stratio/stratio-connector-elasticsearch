@@ -26,12 +26,6 @@ import com.stratio.crossdata.common.metadata.ColumnType;
  */
 public class TypeConverter {
 
-    /**
-     * Constructor.
-     */
-    private TypeConverter(){}
-
-
     private static final String ES_LONG = "long";
     /**
      * The elasticsearch boolean name.
@@ -53,7 +47,11 @@ public class TypeConverter {
      * The elasticsearch string name.
      */
     private static final String ES_STRING = "string";
-
+    /**
+     * Constructor.
+     */
+    private TypeConverter() {
+    }
 
     /**
      * This method translates the crossdata columnType to ElasticSearch type.

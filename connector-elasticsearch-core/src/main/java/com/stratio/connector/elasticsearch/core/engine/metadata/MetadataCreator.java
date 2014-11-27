@@ -47,8 +47,8 @@ public class MetadataCreator {
 
         Map<ColumnName, String> columnAliasMap = select.getColumnMap();
         for (Map.Entry<ColumnName, String> columnAliasName : columnAliasMap.entrySet()) {
-            ColumnMetadata columnMetadata = new ColumnMetadata(columnAliasName.getKey(),null,
-                     select.getTypeMapFromColumnName().get(columnAliasName.getKey()));
+            ColumnMetadata columnMetadata = new ColumnMetadata(columnAliasName.getKey(), null,
+                    select.getTypeMapFromColumnName().get(columnAliasName.getKey()));
 
             columnMetadata.getName().setAlias(columnAliasName.getValue());
             retunColumnMetadata.add(columnMetadata);

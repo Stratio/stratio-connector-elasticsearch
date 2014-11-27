@@ -32,6 +32,7 @@ public final class Constants {
      * String representation for true.
      */
     public static final String TRUE = "true";
+
     /**
      * Constructor.
      */

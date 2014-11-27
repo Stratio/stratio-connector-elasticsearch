@@ -59,7 +59,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * The Log.
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    private ContentBuilderCreator contentBuilder         = new ContentBuilderCreator();
+    private ContentBuilderCreator contentBuilder = new ContentBuilderCreator();
 
     /**
      * Constructor.
@@ -73,9 +73,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        AlterTableFactory.createHandler(alterOptions).execute(name,connection.getNativeConnection());
-
-
+        AlterTableFactory.createHandler(alterOptions).execute(name, connection.getNativeConnection());
 
     }
 
@@ -179,7 +177,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-         throw new UnsupportedException("Not yet supported");
+        throw new UnsupportedException("Not yet supported");
     }
 
     /**

@@ -36,13 +36,13 @@ import com.stratio.crossdata.common.statements.structures.IntegerSelector;
 import com.stratio.crossdata.common.statements.structures.Operator;
 import com.stratio.crossdata.common.statements.structures.Relation;
 
-/** 
-* QueryBuilderCreator Tester. 
-* 
-* @author <Authors name> 
-* @since <pre>nov 21, 2014</pre> 
-* @version 1.0 
-*/ 
+/**
+ * QueryBuilderCreator Tester.
+ *
+ * @author <Authors name>
+ * @version 1.0
+ * @since <pre>nov 21, 2014</pre>
+ */
 public class QueryBuilderCreatorTest {
 
     private static final String CATALOG_NAME = "catalog_name";
@@ -52,41 +52,34 @@ public class QueryBuilderCreatorTest {
     private static final String LET_QUERY = "{\"bool\":{\"must\":{\"range\":{\"column_name\":{\"from\":null,\"to\":\"5\",\"include_lower\":true,\"include_upper\":true}}}}}";
     private static final String GT_QUERY = "{\"bool\":{\"must\":{\"range\":{\"column_name\":{\"from\":\"5\",\"to\":null,\"include_lower\":false,\"include_upper\":true}}}}}";
     private static final String GET_QUERY = "{\"bool\":{\"must\":{\"range\":{\"column_name\":{\"from\":\"5\",\"to\":null,\"include_lower\":true,\"include_upper\":true}}}}}";
-    private QueryBuilderCreator queryBuilderCreator;
     private static String EQ_QUERY = "{\"bool\":{\"must\":{\"match\":{\"column_name\":{\"query\":\"5\"," +
             "\"type\":\"boolean\"}}}}}";
+    private QueryBuilderCreator queryBuilderCreator;
 
+    @Before
+    public void before() throws Exception {
 
-@Before
-public void before() throws Exception {
-
-    queryBuilderCreator = new QueryBuilderCreator();
-} 
-
-
-/** 
-* 
-* Method: createBuilder(Collection<Filter> filters) 
-* 
-*/ 
-@Test
-public void testCreateBuilderEQ() throws Exception {
-    Collection<Filter> filter = new ArrayList<>();
-
-    createFilter(filter, Operations.DELETE_PK_EQ, Operator.EQ);
-
-    QueryBuilder queryBuilder= queryBuilderCreator.createBuilder(filter);
-
-    assertNotNull("the Query builder is not null",queryBuilder);
-    assertEquals("The queryIsCorrect",EQ_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
-
-}
-
+        queryBuilderCreator = new QueryBuilderCreator();
+    }
 
     /**
-     *
      * Method: createBuilder(Collection<Filter> filters)
-     *
+     */
+    @Test
+    public void testCreateBuilderEQ() throws Exception {
+        Collection<Filter> filter = new ArrayList<>();
+
+        createFilter(filter, Operations.DELETE_PK_EQ, Operator.EQ);
+
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+
+        assertNotNull("the Query builder is not null", queryBuilder);
+        assertEquals("The queryIsCorrect", EQ_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
+
+    }
+
+    /**
+     * Method: createBuilder(Collection<Filter> filters)
      */
     @Test
     public void testCreateBuilderLT() throws Exception {
@@ -94,18 +87,15 @@ public void testCreateBuilderEQ() throws Exception {
 
         createFilter(filter, Operations.DELETE_PK_LT, Operator.LT);
 
-        QueryBuilder queryBuilder= queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
-        assertNotNull("the Query builder is not null",queryBuilder);
-        assertEquals("The queryIsCorrect",LT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
+        assertNotNull("the Query builder is not null", queryBuilder);
+        assertEquals("The queryIsCorrect", LT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
 
     }
 
-
     /**
-     *
      * Method: createBuilder(Collection<Filter> filters)
-     *
      */
     @Test
     public void testCreateBuilderLET() throws Exception {
@@ -113,14 +103,12 @@ public void testCreateBuilderEQ() throws Exception {
 
         createFilter(filter, Operations.DELETE_PK_LET, Operator.LET);
 
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
-        QueryBuilder queryBuilder= queryBuilderCreator.createBuilder(filter);
-
-        assertNotNull("the Query builder is not null",queryBuilder);
-        assertEquals("The queryIsCorrect",LET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
+        assertNotNull("the Query builder is not null", queryBuilder);
+        assertEquals("The queryIsCorrect", LET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
 
     }
-
 
     @Test
     public void testCreateBuilderGT() throws Exception {
@@ -128,37 +116,31 @@ public void testCreateBuilderEQ() throws Exception {
 
         createFilter(filter, Operations.DELETE_PK_GT, Operator.GT);
 
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
-        QueryBuilder queryBuilder= queryBuilderCreator.createBuilder(filter);
-
-        assertNotNull("the Query builder is not null",queryBuilder);
-        assertEquals("The queryIsCorrect",GT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
+        assertNotNull("the Query builder is not null", queryBuilder);
+        assertEquals("The queryIsCorrect", GT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
 
     }
 
     @Test
     public void testCreateBuilderGET() throws Exception {
-        
+
         Collection<Filter> filter = new ArrayList<>();
 
         createFilter(filter, Operations.DELETE_PK_GET, Operator.GET);
 
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
-        QueryBuilder queryBuilder= queryBuilderCreator.createBuilder(filter);
-
-        assertNotNull("the Query builder is not null",queryBuilder);
-        assertEquals("The queryIsCorrect",GET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
+        assertNotNull("the Query builder is not null", queryBuilder);
+        assertEquals("The queryIsCorrect", GET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
 
     }
-    
-    
-
-
 
     private void createFilter(Collection<Filter> filter, Operations operations, Operator operator) {
-        filter.add(new Filter(operations,new Relation(new ColumnSelector(new ColumnName(CATALOG_NAME,
+        filter.add(new Filter(operations, new Relation(new ColumnSelector(new ColumnName(CATALOG_NAME,
                 TABLE_NAME,
-                COLUMN_NAME)), operator,new IntegerSelector(5))));
+                COLUMN_NAME)), operator, new IntegerSelector(5))));
     }
 
 } 

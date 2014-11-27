@@ -39,9 +39,7 @@ public class AddColumnHandler implements AlterTableHandler {
         this.alterOptions = alterOptions;
     }
 
-    @Override public void execute(TableName tableName,Client connection) throws UnsupportedException {
-
-
+    @Override public void execute(TableName tableName, Client connection) throws UnsupportedException {
 
         try {
             ContentBuilderCreator contentBuilderCreator = new ContentBuilderCreator();
@@ -51,7 +49,7 @@ public class AddColumnHandler implements AlterTableHandler {
                     .getName()).setSource(source).execute().actionGet();
 
         } catch (IOException e) {
-           //TODO
+            //TODO
         }
 
     }

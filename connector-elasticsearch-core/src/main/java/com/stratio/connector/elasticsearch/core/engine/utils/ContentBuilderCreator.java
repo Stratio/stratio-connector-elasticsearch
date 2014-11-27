@@ -59,7 +59,6 @@ public class ContentBuilderCreator {
      * The elasticsearch long name.
      */
 
-
     /**
      * The Log.
      */
@@ -77,7 +76,7 @@ public class ContentBuilderCreator {
      * @param typeMetadata the type crossdata.
      * @return the XContentBuilder that represent the type.
      * @throws UnsupportedException if the type crossdata is not supported.
-     * @throws  ExecutionException if a error occurs.
+     * @throws ExecutionException   if a error occurs.
      */
     public XContentBuilder createTypeSource(TableMetadata typeMetadata)
             throws UnsupportedException, ExecutionException {
@@ -107,8 +106,8 @@ public class ContentBuilderCreator {
 
     public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, UnsupportedException {
         XContentBuilder mapping = XContentFactory.jsonBuilder()
-                 .startObject()
-                    .startObject(columnMetadata.getName().getTableName().getName())
+                .startObject()
+                .startObject(columnMetadata.getName().getTableName().getName())
                 .startObject(PROPERTIES)
                 .startObject(columnMetadata.getName().getName())
                 .field(TYPE, TypeConverter.convert(columnMetadata.getColumnType()))
@@ -146,14 +145,10 @@ public class ContentBuilderCreator {
 
     }
 
-
-
-
-
     /**
      * This method create the index.
      *
-     * @param field the field to index.
+     * @param field     the field to index.
      * @param indexType the index type.
      * @throws IOException if an error happen creating the ContentBuilder.
      */
@@ -162,6 +157,5 @@ public class ContentBuilderCreator {
         xContentBuilder.startObject(field).field(INDEX, indexType.getCode()).endObject();
 
     }
-
 
 }

@@ -27,9 +27,12 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
 public class AlterTableFactory {
     public static AlterTableHandler createHandler(AlterOptions alterOptions) throws UnsupportedException {
         AlterTableHandler handler;
-        switch (alterOptions.getOption()){
-            case ADD_COLUMN: handler = new AddColumnHandler(alterOptions);break;
-            default: throw new UnsupportedException("The altar table operation "+alterOptions.getOption().name() +" " +
+        switch (alterOptions.getOption()) {
+        case ADD_COLUMN:
+            handler = new AddColumnHandler(alterOptions);
+            break;
+        default:
+            throw new UnsupportedException("The altar table operation " + alterOptions.getOption().name() + " " +
                     "is not supporting");
         }
         return handler;

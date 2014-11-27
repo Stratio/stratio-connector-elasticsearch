@@ -101,7 +101,7 @@ public class ElasticsearchClientConfigurationTest {
         clusterOptions.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
         clusterOptions.put(PORT.getOptionName(), "2800,2802,2809");
         ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME,
-                Collections.EMPTY_MAP,clusterOptions);
+                Collections.EMPTY_MAP, clusterOptions);
 
         TransportAddress[] result = ElasticsearchClientConfiguration.getTransportAddress(configuration);
         assertNotNull("The result is not null", result);

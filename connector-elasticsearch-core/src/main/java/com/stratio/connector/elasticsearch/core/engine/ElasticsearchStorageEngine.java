@@ -69,10 +69,11 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * This method must truncate a table.
-     * @param tableName the table name.
+     *
+     * @param tableName  the table name.
      * @param connection the connection.
      * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException if an error happens.
+     * @throws ExecutionException   if an error happens.
      */
     @Override protected void truncate(TableName tableName, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
@@ -80,14 +81,14 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     }
 
-
     /**
      * This method must delete a set of rows in a table.
-     * @param tableName the table name.
-     * @param  whereClauses the condition to select rows to delete.
-     * @param connection the connection.
+     *
+     * @param tableName    the table name.
+     * @param whereClauses the condition to select rows to delete.
+     * @param connection   the connection.
      * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException if an error happens.
+     * @throws ExecutionException   if an error happens.
      */
     @Override protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
@@ -102,12 +103,13 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
     /**
      * This method must update a set of rows in a table.
-     * @param tableName the table name.
-     * @param assignments the update
-     * @param  whereClauses the condition to select rows to delete.
-     * @param connection the connection.
+     *
+     * @param tableName    the table name.
+     * @param assignments  the update
+     * @param whereClauses the condition to select rows to delete.
+     * @param connection   the connection.
      * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException if an error happens.
+     * @throws ExecutionException   if an error happens.
      */
 
     @Override protected void update(TableName tableName, Collection<Relation> assignments,
@@ -116,8 +118,6 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
         throw new UnsupportedException("Not yet supported");
     }
-
-
 
     /**
      * Insert a document in Elasticsearch.

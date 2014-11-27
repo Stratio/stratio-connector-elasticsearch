@@ -39,7 +39,6 @@ import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.Operations;
 
-
 /**
  * MetadataCreator Tester.
  *
@@ -87,7 +86,7 @@ public class MetadataCreatorTest {
         int i = 0;
         for (ColumnMetadata metadata : columnMetadata) {
 
-            assertEquals("Alias is correct", ALIAS[i], metadata.getName().getAlias() );
+            assertEquals("Alias is correct", ALIAS[i], metadata.getName().getAlias());
             assertEquals("Column name is correct", CATALOG_NAME + "." + TABLE_NAME + "." + NAMES[i],
                     metadata.getName().getQualifiedName());
             assertEquals("Table name is correct", CATALOG_NAME + "." + TABLE_NAME,

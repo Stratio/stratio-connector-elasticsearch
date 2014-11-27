@@ -34,13 +34,13 @@
         <module>connector-elasticsearch-core</module>
     </modules>
 
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0t</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <profiles>
         <profile>
@@ -59,7 +59,7 @@
     </scm>
 
     <developers>
-  	<developer>
+        <developer>
             <id>jmgomez</id>
             <name>Jose Manuel Gómez</name>
             <email>jmgomez@stratio.com</email>
@@ -68,10 +68,10 @@
                 <role>developer</role>
                 <role>maintainer</role>
             </roles>
-        </developer>  
+        </developer>
     </developers>
 
- <distributionManagement>
+    <distributionManagement>
 
         <repository>
             <id>sonatype-nexus-staging</id>
@@ -112,19 +112,19 @@
                 </executions>
             </plugin>
 
-         <plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-source-plugin</artifactId>
-		<version>2.2.1</version>
-		<executions>
-			<execution>
-				<id>attach-sources</id>
-				<goals>
-					<goal>jar</goal>
-				</goals>
-			</execution>
-		</executions>
-	</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -136,7 +136,6 @@
             </plugin>
 
         </plugins>
-
 
 
     </build>

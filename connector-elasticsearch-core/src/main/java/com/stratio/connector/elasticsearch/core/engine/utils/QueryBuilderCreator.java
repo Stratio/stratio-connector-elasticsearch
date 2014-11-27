@@ -41,7 +41,7 @@ public class QueryBuilderCreator {
      *
      * @param filters the filters.
      * @return a queryBuilder. the queryBuidler.
-     * @throws ExecutionException if any error happens.
+     * @throws ExecutionException   if any error happens.
      * @throws UnsupportedException if the operation is not supported.
      */
     public QueryBuilder createBuilder(Collection<Filter> filters) throws ExecutionException, UnsupportedException {
@@ -64,9 +64,10 @@ public class QueryBuilderCreator {
 
     /**
      * Turn a relation into a queryBuilder.
+     *
      * @param relation the relation.
      * @return the queryBuilder.
-     * @throws ExecutionException if any error happens.
+     * @throws ExecutionException   if any error happens.
      * @throws UnsupportedException if the operation is not supported.
      */
     private QueryBuilder createQueryBuilder(Relation relation)
@@ -77,14 +78,25 @@ public class QueryBuilderCreator {
         String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
         String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
 
-        switch (relation.getOperator()){
-            case EQ: queryBuilderfilter= QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase());break;
-            case LT:  queryBuilderfilter= QueryBuilders.rangeQuery(leftTerm).lt( rightTerm.toLowerCase()); break;
-            case LET:  queryBuilderfilter= QueryBuilders.rangeQuery(leftTerm).lte( rightTerm.toLowerCase()); break;
-            case GT:  queryBuilderfilter= QueryBuilders.rangeQuery(leftTerm).gt( rightTerm.toLowerCase()); break;
-            case GET:  queryBuilderfilter= QueryBuilders.rangeQuery(leftTerm).gte( rightTerm.toLowerCase()); break;
+        switch (relation.getOperator()) {
+        case EQ:
+            queryBuilderfilter = QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase());
+            break;
+        case LT:
+            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lt(rightTerm.toLowerCase());
+            break;
+        case LET:
+            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lte(rightTerm.toLowerCase());
+            break;
+        case GT:
+            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gt(rightTerm.toLowerCase());
+            break;
+        case GET:
+            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gte(rightTerm.toLowerCase());
+            break;
 
-        default : throw new UnsupportedException("The operation ["+relation.getOperator()+"] is not supported");
+        default:
+            throw new UnsupportedException("The operation [" + relation.getOperator() + "] is not supported");
         }
         return queryBuilderfilter;
     }

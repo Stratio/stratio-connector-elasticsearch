@@ -53,7 +53,7 @@ public class ESSimpleInsertFT extends GenericSimpleInsertTest {
         super.testInsertCompositePK();
     }
 
-    @Override @Ignore  @Test public void testInsertDuplicateCompositePK() throws ConnectorException {
+    @Override @Ignore @Test public void testInsertDuplicateCompositePK() throws ConnectorException {
         super.testInsertDuplicateCompositePK();
     }
 

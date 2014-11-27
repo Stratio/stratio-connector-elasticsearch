@@ -53,8 +53,7 @@ public final class ElasticsearchClientConfiguration {
     /**
      * Retrieves the Settings using either the Elasticsearch client configuration or the configuration file.
      *
-     * @param configuration
-     *            the configuration
+     * @param configuration the configuration
      * @return the settings
      */
     public static Settings getSettings(ConnectorClusterConfig configuration) {
@@ -62,7 +61,8 @@ public final class ElasticsearchClientConfiguration {
         Map<String, String> setting = new HashMap<String, String>();
         setting.put(NODE_DATA.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_DATA));
         setting.put(NODE_MASTER.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_MASTER));
-        setting.put(TRANSPORT_SNIFF.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), TRANSPORT_SNIFF));
+        setting.put(TRANSPORT_SNIFF.getOptionName(),
+                recoverdOptionValue(configuration.getConnectorOptions(), TRANSPORT_SNIFF));
         setting.put(COERCE.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), COERCE));
         setting.put(DYNAMIC.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), DYNAMIC));
 
@@ -75,10 +75,8 @@ public final class ElasticsearchClientConfiguration {
     /**
      * this recovered the option value if it is set. It not return the default value..
      *
-     * @param configuration
-     *            the configuration.
-     * @param nodeData
-     *            the configuration options.
+     * @param configuration the configuration.
+     * @param nodeData      the configuration options.
      * @return the actual value of the option.
      */
     private static String recoverdOptionValue(Map<String, String> configuration, ConfigurationOptions nodeData) {
@@ -94,8 +92,7 @@ public final class ElasticsearchClientConfiguration {
     /**
      * Gets the transport address.
      *
-     * @param config
-     *            the configuration options.
+     * @param config the configuration options.
      * @return the transport address
      */
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {

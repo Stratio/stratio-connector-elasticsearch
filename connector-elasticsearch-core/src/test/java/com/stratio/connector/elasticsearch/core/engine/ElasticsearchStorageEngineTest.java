@@ -82,7 +82,7 @@ import com.stratio.crossdata.common.statements.structures.StringSelector;
  * @since <pre>sep 10, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {ElasticsearchStorageEngine.class,QueryBuilderCreator.class})
+@PrepareForTest({ ElasticsearchStorageEngine.class, QueryBuilderCreator.class })
 public class ElasticsearchStorageEngineTest {
 
     private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
@@ -93,7 +93,6 @@ public class ElasticsearchStorageEngineTest {
     private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME.".toLowerCase();
     private static final String CELL_VALUE = "cell_value";
     private static final Object OTHER_CELL_VALUE = "other cell value";
-
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -225,7 +224,7 @@ public class ElasticsearchStorageEngineTest {
     public void testDelete() throws Exception {
         Collection<Filter> whereFilter = new ArrayList<>();
         whereFilter.add(new Filter(Operations.DELETE_PK_EQ, new Relation(new ColumnSelector(new ColumnName
-                (INDEX_NAME,TYPE_NAME,COLUMN_NAME)),
+                (INDEX_NAME, TYPE_NAME, COLUMN_NAME)),
                 Operator.EQ,
                 new StringSelector("1"))));
 
@@ -236,7 +235,6 @@ public class ElasticsearchStorageEngineTest {
 
         ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
 
-
         DeleteByQueryRequestBuilder deleteByquery = mock(DeleteByQueryRequestBuilder.class);
         when(client.prepareDeleteByQuery(INDEX_NAME)).thenReturn(deleteByquery);
         when(deleteByquery.setQuery(queryBuilder)).thenReturn(deleteByquery);
@@ -246,14 +244,11 @@ public class ElasticsearchStorageEngineTest {
 
         verify(listeneableActionFure).actionGet();
 
-
-
     }
 
     @Test
     public void testTruncate() throws Exception {
         Collection<Filter> whereFilter = Collections.EMPTY_LIST;
-
 
         QueryBuilderCreator queryBuilderCreator = mock(QueryBuilderCreator.class);
         QueryBuilder queryBuilder = mock(QueryBuilder.class);
@@ -261,7 +256,6 @@ public class ElasticsearchStorageEngineTest {
         whenNew(QueryBuilderCreator.class).withNoArguments().thenReturn(queryBuilderCreator);
 
         ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
-
 
         DeleteByQueryRequestBuilder deleteByquery = mock(DeleteByQueryRequestBuilder.class);
         when(client.prepareDeleteByQuery(INDEX_NAME)).thenReturn(deleteByquery);
