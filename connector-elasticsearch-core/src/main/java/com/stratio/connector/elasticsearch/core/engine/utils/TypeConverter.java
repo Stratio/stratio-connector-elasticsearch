@@ -24,7 +24,7 @@ import com.stratio.crossdata.common.metadata.ColumnType;
 /**
  * Created by jmgomez on 24/11/14.
  */
-public class TypeConverter {
+public final class TypeConverter {
 
     private static final String ES_LONG = "long";
     /**

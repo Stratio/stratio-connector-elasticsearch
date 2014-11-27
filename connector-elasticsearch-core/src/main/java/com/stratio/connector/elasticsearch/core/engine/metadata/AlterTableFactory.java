@@ -22,9 +22,23 @@ import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
+ * This class must created a object to alter a table.
  * Created by jmgomez on 24/11/14.
  */
 public class AlterTableFactory {
+
+    /**
+     * The constructor.
+     */
+    private AlterTableFactory(){
+
+    }
+    /**
+     * Create the correct alter table handler.
+     * @param alterOptions the alter options.
+     * @return the correct alter table handler.
+     * @throws UnsupportedException if the operation is not supported.
+     */
     public static AlterTableHandler createHandler(AlterOptions alterOptions) throws UnsupportedException {
         AlterTableHandler handler;
         switch (alterOptions.getOption()) {

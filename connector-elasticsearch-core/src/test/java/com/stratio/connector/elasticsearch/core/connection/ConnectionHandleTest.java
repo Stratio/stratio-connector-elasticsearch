@@ -137,7 +137,7 @@ public class ConnectionHandleTest {
 
         connectionHandle.closeConnection(CLUSTER_NAME);
 
-        assertFalse(mapConnection.containsKey(CLUSTER_NAME));
+        assertFalse("The connections is not in the connectionMap",mapConnection.containsKey(CLUSTER_NAME));
         verify(connection, times(1)).close();
 
     }
