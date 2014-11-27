@@ -103,7 +103,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * This method must update a set of rows in a table.
      * @param tableName the table name.
-     * @param assignments the update 
+     * @param assignments the update
      * @param  whereClauses the condition to select rows to delete.
      * @param connection the connection.
      * @throws UnsupportedException if the operation is not supported.
