@@ -67,29 +67,54 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
         super(connectionHandler);
     }
 
+    /**
+     * This method must truncate a table.
+     * @param tableName the table name.
+     * @param connection the connection.
+     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException if an error happens.
+     */
     @Override protected void truncate(TableName tableName, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         delete(tableName, Collections.EMPTY_LIST, connection);
 
     }
 
+
+    /**
+     * This method must delete a set of rows in a table.
+     * @param tableName the table name.
+     * @param  whereClauses the condition to select rows to delete.
+     * @param connection the connection.
+     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException if an error happens.
+     */
     @Override protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         String index = tableName.getCatalogName().getName();
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
 
-
         connection.getNativeConnection().prepareDeleteByQuery(index).setQuery(queryBuilderCreator.createBuilder
                 (whereClauses)).execute().actionGet();
 
     }
 
+    /**
+     * This method must update a set of rows in a table.
+     * @param tableName the table name.
+     * @param assignments the update 
+     * @param  whereClauses the condition to select rows to delete.
+     * @param connection the connection.
+     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException if an error happens.
+     */
+
     @Override protected void update(TableName tableName, Collection<Relation> assignments,
             Collection<Filter> whereClauses, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        throw new UnsupportedException("Not yet supported"); //TODO
+        throw new UnsupportedException("Not yet supported");
     }
 
 
