@@ -22,10 +22,11 @@
     <parent>
         <groupId>com.stratio.connector</groupId>
         <artifactId>stratio-connector-elasticsearch</artifactId>
-        <version>${version.elasticsearch.connector}</version>
+        <version>0.2.0-RC2</version>
     </parent>
     <artifactId>connector-elasticsearch-core</artifactId>
     <packaging>jar</packaging>
+    <name>The Elasticsearch crossdata connector</name>
     <description>The ElasticSearch's connector core</description>
     <dependencies>
         <dependency>
