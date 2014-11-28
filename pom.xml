@@ -21,10 +21,19 @@
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <properties>
+        <version.crossdata>0.1.1-RC2</version.crossdata>
+        <version.connector.commons>0.2.0-RC2</version.connector.commons>
+        <version.elasticsearch.connector>0.2.0-RC2</version.elasticsearch.connector>
+        <version.elasticsearch>1.3.2</version.elasticsearch>
+    </properties>
+
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-elasticsearch</artifactId>
-    <version>${elasticsearch.connector.version}</version>
+    <version>${version.elasticsearch.connector}</version>
     <description>Connector for ElasticSearch</description>
     <url>http://www.stratio.com</url>
     <name>ElasticSearch Connector</name>
@@ -33,12 +42,6 @@
     <modules>
         <module>connector-elasticsearch-core</module>
     </modules>
-    <properties>
-        <crossdata.version>0.1.1-RC2</crossdata.version>
-        <commonsConnector.version>0.2.0-RC1</commonsConnector.version>
-        <elasticsearch.connector.version>0.2.0-RC1</elasticsearch.connector.version>
-        <elasticsearch.version>1.3.2</elasticsearch.version>
-     </properties>
 
     <licenses>
         <license>

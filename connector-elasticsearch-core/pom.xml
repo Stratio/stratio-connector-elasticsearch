@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.stratio.connector</groupId>
         <artifactId>stratio-connector-elasticsearch</artifactId>
-        <version>${elasticsearch.connector.version}</version>
+        <version>${version.elasticsearch.connector}</version>
     </parent>
     <artifactId>connector-elasticsearch-core</artifactId>
     <packaging>jar</packaging>
@@ -31,25 +31,25 @@
         <dependency>
             <groupId>com.stratio.connector</groupId>
             <artifactId>connector-commons-core</artifactId>
-            <version>${commonsConnector.version}</version>
+            <version>${version.connector.commons}</version>
         </dependency>
 
         <dependency>
             <artifactId>crossdata-common</artifactId>
             <groupId>com.stratio.crossdata</groupId>
-            <version>${crossdata.version}</version>
+            <version>${version.crossdata}</version>
         </dependency>
 
         <dependency>
             <artifactId>crossdata-connector</artifactId>
             <groupId>com.stratio.crossdata</groupId>
-            <version>${crossdata.version}</version>
+            <version>${version.crossdata}</version>
         </dependency>
 
         <dependency>
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
+            <version>${version.elasticsearch}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -84,7 +84,7 @@
             <plugin>
                 <artifactId>crossdata-connector-maven-plugin</artifactId>
                 <groupId>com.stratio.crossdata</groupId>
-                <version>${crossdata.version}</version>
+                <version>${version.crossdata}</version>
                 <configuration>
                     <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
                     <jmxPort>7190</jmxPort>
