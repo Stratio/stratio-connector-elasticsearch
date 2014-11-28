@@ -186,7 +186,6 @@ public class ESConnectorHelper implements IConnectorHelper {
 
     @Override
     public boolean isIndexMandatory() {
-        // TODO Auto-generated method stub
         return false;
     }
 

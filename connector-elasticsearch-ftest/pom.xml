@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.stratio.connector</groupId>
         <artifactId>stratio-connector-elasticsearch</artifactId>
-        <version>0.2.0</version>
+        <version>${elasticsearch.connector.version}</version>
     </parent>
     <artifactId>connector-elasticsearch-ftest</artifactId>
     <packaging>jar</packaging>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.stratio.connector</groupId>
             <artifactId>connector-elasticsearch-core</artifactId>
-            <version>0.2.0</version>
+            <version>${elasticsearch.connector.version}</version>
         </dependency>
         <dependency>
             <groupId>com.stratio.connector</groupId>
@@ -40,6 +40,11 @@
             <classifier>tests</classifier>
             <version>${commonsConnector.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>${elasticsearch.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
