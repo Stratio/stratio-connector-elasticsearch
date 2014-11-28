@@ -28,7 +28,23 @@
     <packaging>jar</packaging>
     <description>The ElasticSearch's connector core</description>
     <dependencies>
+        <dependency>
+            <groupId>com.stratio.connector</groupId>
+            <artifactId>connector-commons-core</artifactId>
+            <version>${commonsConnector.version}</version>
+        </dependency>
 
+        <dependency>
+            <artifactId>crossdata-common</artifactId>
+            <groupId>com.stratio.crossdata</groupId>
+            <version>${crossdata.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>crossdata-connector</artifactId>
+            <groupId>com.stratio.crossdata</groupId>
+            <version>${crossdata.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.elasticsearch</groupId>
@@ -36,27 +52,11 @@
             <version>1.3.2</version>
         </dependency>
         <dependency>
-            <groupId>com.stratio.connector</groupId>
-            <artifactId>connector-commons-core</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.7</version>
         </dependency>
 
-        <dependency>
-            <artifactId>crossdata-common</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>0.1.1-RC1</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>crossdata-connector</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>0.1.1-RC2</version>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -84,7 +84,7 @@
             <plugin>
                 <artifactId>crossdata-connector-maven-plugin</artifactId>
                 <groupId>com.stratio.crossdata</groupId>
-                <version>0.1.1-RC2</version>
+                <version>${crossdata.version}</version>
                 <configuration>
                     <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
                     <jmxPort>7190</jmxPort>

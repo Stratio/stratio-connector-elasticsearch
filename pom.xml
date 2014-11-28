@@ -33,6 +33,10 @@
     <modules>
         <module>connector-elasticsearch-core</module>
     </modules>
+    <properties>
+        <crossdata.version>0.1.1-RC2</crossdata.version>
+        <commonsConnector.version>0.2.0-RC1</commonsConnector.version>
+     </properties>
 
     <licenses>
         <license>
