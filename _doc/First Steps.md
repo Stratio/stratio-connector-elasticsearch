@@ -134,6 +134,7 @@ Now we execute a set of queries and we will show the expected results.
 
 ```
  > SELECT * FROM highschool.students;
+ 
  Partial result: true
  ----------------------------------
  | age | id | enrolled | name     | 
@@ -152,6 +153,7 @@ Now we execute a set of queries and we will show the expected results.
 ### Select by id and project ###
 ```
   > SELECT name, enrolled FROM highschool.students where id = 1;
+  
   Partial result: true
   -------------------
   | name | enrolled | 
@@ -164,6 +166,7 @@ Now we execute a set of queries and we will show the expected results.
 
 ```
    >  SELECT name as the_name, enrolled  as is_enrolled FROM highschool.students;
+   
    Partial result: true
    --------------------------
    | the_name | is_enrolled | 
@@ -183,6 +186,7 @@ Now we execute a set of queries and we will show the expected results.
 
 ```
   >  SELECT * FROM highschool.students LIMIT 3;
+  
   Partial result: true
   -------------------------------
   | age | id | enrolled | name  | 
@@ -209,7 +213,9 @@ For these examples we will execute many delete instructions and we will show the
  | 16  | 1  | true     | Jhon     | 
  | 21  | 6  | false    | Violet   | 
  ----------------------------------
+ 
   >  DELETE FROM highschool.students  WHERE id = 1;
+  
   ----------------------------------
   | age | id | enrolled | name     | 
   ----------------------------------
@@ -221,7 +227,9 @@ For these examples we will execute many delete instructions and we will show the
   | 18  | 7  | true     | Beatrice | 
   | 21  | 6  | false    | Violet   | 
   ----------------------------------
+  
   > DELETE FROM highschool.students  WHERE id < 3;
+  
   ----------------------------------
   | age | id | enrolled | name     | 
   ----------------------------------
@@ -232,7 +240,9 @@ For these examples we will execute many delete instructions and we will show the
   | 18  | 7  | true     | Beatrice | 
   | 21  | 6  | false    | Violet   | 
   ----------------------------------
+  
   > DELETE FROM highschool.students  WHERE age <= 17;
+  
   ----------------------------------
   | age | id | enrolled | name     | 
   ----------------------------------
@@ -240,13 +250,16 @@ For these examples we will execute many delete instructions and we will show the
   | 18  | 7  | true     | Beatrice | 
   | 21  | 6  | false    | Violet   | 
   ----------------------------------
+  
   >  DELETE FROM highschool.students  WHERE id > 6;
+  
   --------------------------------
   | age | id | enrolled | name   | 
   --------------------------------
   | 18  | 3  | true     | Lucie  | 
   | 21  | 6  | false    | Violet | 
   --------------------------------
+  
   > DELETE FROM highschool.students  WHERE id >= 3;
 ```
 At this point the table must be empty. The sentence select * from highschool.students must be returned.
@@ -268,6 +281,7 @@ After the alter operation we can insert the surname field in the table.
 And table must contain the row correctly. 
 ```
   > SELECT * FROM highschool.students;
+  
 -----------------------------------------
 | surname | age | id | enrolled | name  | 
 -----------------------------------------
