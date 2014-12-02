@@ -1,6 +1,6 @@
 # Fist Steps #
 
-Here is a group of examples to illustrate the the Elasticsearch Crossdata connector use.
+Here is a group of examples to illustrate the the use of Elasticsearch Crossdata connector .
 
 ## Connector Configuration ##
 First of all [Stratio Crossdata 0.1.1] https://github.com/Stratio/crossdata.git is needed and must be installed. The 
@@ -75,7 +75,7 @@ The output must be
 CONNECTOR attached successfully
 ```
 
-## Create Catalog and Table  ##
+## Create catalog ##
 
 Now we'll create the catalog and table which use later in the next steps.
 
@@ -90,69 +90,210 @@ The output must be.
 CREATE CATALOG highschool;
 ```
 
+## Create table ##
+
 To create the table we must execute the next command.
 
-
-# Getting started #
-Here is an example of Crossdata with a Cassandra Connector as an access to a Cassandra data store.
-
-First of all [Stratio Cassandra](https://github.com/Stratio/stratio-cassandra) is needed and must be installed and running.
-
-At this point Crossdata server must be running and it is need to start Crossdata shell. In this shell we will create
-a new catalog, with a new table, and after we will make a Select query.
-
-Now, we need the [Cassandra Connector](https://github.com/Stratio/stratio-connector-cassandra), install it:
-
 ```
-    > mvn crossdata-connector:install
-```
-And then, run it:
-
-```
-    > target/stratio-connector-cassandra-0.1.0/bin/stratio-connector-cassandra-0.1.0 start
+  > CREATE TABLE highschool.students ON CLUSTER elasticsearchCluster (id int PRIMARY KEY, name text, age int, 
+enrolled boolean);
 ```
 
-**NOTE:** All the connectors have to be started once CrossdataServer is already running!
-
-Now, from the Crossdata Shell we can write the following commands:
-
-Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found
-in the path of the Cassandra Connector in target/stratio-connector-cassandra-0.1.0/conf/CassandraDataStore.xml
+And the output must show.
 
 ```
-    xdsh:user>  ADD DATASTORE <Absolute path to Cassandra Datastore manifest>;
+TABLE created successfully
 ```
 
-Attach cluster on that data store. The data store name must be the same as the defined in the data store manifest.
 
-```
-    xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<ipHost_1,
-  ipHost_2,...ipHost_n>]', 'Port': <cassandra_port>};
-```
+## Insert ##
 
-Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in
-target/stratio-connector-cassandra-0.1.0/conf/CassandraConnector.xml
-
+At first we must to insert some rows in the table created before.
 ```
-    xdsh:user>  ADD CONNECTOR <Path to Cassandra Connector Manifest>;
-```
-
-Attach the connector to the previously defined cluster. The connector name must match the one defined in the
-Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command.
-
-```
-    xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {'DefaultLimit': '1000'};
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (1, 'Jhon', 16,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (2, 'Eva',20,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (3, 'Lucie',18,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (4, 'Cole',16,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (5, 'Finn',17.false);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (6, 'Violet',21,false);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (7, 'Beatrice',18,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (8, 'Henry',16,false);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (9, 'Tom',17,true);
+  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (10, 'Betty',19,true);
 ```
 
-At this point, we can start to send queries, that Crossdata execute with the connector specified.
+For each row the output must be.
+
+```
+STORED successfully
+```
+## Select ###
+Now we go to execute a series of queries and we show the expected result.
+
+### Select All ###
+
+```
+ > SELECT * FROM highschool.students;
+ Partial result: true
+ ----------------------------------
+ | age | id | enrolled | name     | 
+ ----------------------------------
+ | 16  | 4  | true     | Cole     | 
+ | 17  | 9  | true     | Tom      | 
+ | 16  | 8  | false    | Henry    | 
+ | 18  | 3  | true     | Lucie    | 
+ | 20  | 2  | true     | Eva      | 
+ | 18  | 7  | true     | Beatrice | 
+ | 16  | 1  | true     | Jhon     | 
+ | 21  | 6  | false    | Violet   | 
+ ----------------------------------
+```
+
+### Select by id and project ###
+```
+  > SELECT name, enrolled FROM highschool.students where id = 1;
+  Partial result: true
+  -------------------
+  | name | enrolled | 
+  -------------------
+  | Jhon | true     | 
+  -------------------
+```
+
+### Select with alias ###
+
+```
+   >  SELECT name as the_name, enrolled  as is_enrolled FROM highschool.students;
+   Partial result: true
+   --------------------------
+   | the_name | is_enrolled | 
+   --------------------------
+   | Cole     | true        | 
+   | Tom      | true        | 
+   | Lucie    | true        | 
+   | Henry    | false       | 
+   | Eva      | true        | 
+   | Beatrice | true        | 
+   | Jhon     | true        | 
+   | Violet   | false       | 
+   --------------------------
+```
+
+### Limit the rows returned ### 
+```
+  >  SELECT * FROM highschool.students LIMIT 3;
+  Partial result: true
+  -------------------------------
+  | age | id | enrolled | name  | 
+  -------------------------------
+  | 16  | 4  | true     | Cole  | 
+  | 17  | 9  | true     | Tom   | 
+  | 18  | 3  | true     | Lucie | 
+  -------------------------------
+```
+## Delete ##
+For this examples we'll execute many delete instruction and we'll show the table evolution. 
 
 
-    xdsh:user> CREATE CATALOG catalogTest;
+```
+ ----------------------------------
+ | age | id | enrolled | name     | 
+ ----------------------------------
+ | 16  | 4  | true     | Cole     | 
+ | 17  | 9  | true     | Tom      | 
+ | 16  | 8  | false    | Henry    | 
+ | 18  | 3  | true     | Lucie    | 
+ | 20  | 2  | true     | Eva      | 
+ | 18  | 7  | true     | Beatrice | 
+ | 16  | 1  | true     | Jhon     | 
+ | 21  | 6  | false    | Violet   | 
+ ----------------------------------
+  >  DELETE FROM highschool.students  WHERE id = 1;
+  ----------------------------------
+  | age | id | enrolled | name     | 
+  ----------------------------------
+  | 16  | 4  | true     | Cole     | 
+  | 17  | 9  | true     | Tom      | 
+  | 16  | 8  | false    | Henry    | 
+  | 18  | 3  | true     | Lucie    | 
+  | 20  | 2  | true     | Eva      | 
+  | 18  | 7  | true     | Beatrice | 
+  | 21  | 6  | false    | Violet   | 
+  ----------------------------------
+  > DELETE FROM highschool.students  WHERE id < 3;
+  ----------------------------------
+  | age | id | enrolled | name     | 
+  ----------------------------------
+  | 16  | 4  | true     | Cole     | 
+  | 17  | 9  | true     | Tom      | 
+  | 16  | 8  | false    | Henry    | 
+  | 18  | 3  | true     | Lucie    | 
+  | 18  | 7  | true     | Beatrice | 
+  | 21  | 6  | false    | Violet   | 
+  ----------------------------------
+  > DELETE FROM highschool.students  WHERE age <= 17;
+  ----------------------------------
+  | age | id | enrolled | name     | 
+  ----------------------------------
+  | 18  | 3  | true     | Lucie    | 
+  | 18  | 7  | true     | Beatrice | 
+  | 21  | 6  | false    | Violet   | 
+  ----------------------------------
+  >  DELETE FROM highschool.students  WHERE id > 6;
+  --------------------------------
+  | age | id | enrolled | name   | 
+  --------------------------------
+  | 18  | 3  | true     | Lucie  | 
+  | 21  | 6  | false    | Violet | 
+  --------------------------------
+  > DELETE FROM highschool.students  WHERE id >= 3;
+```
+At this point the table must be empty. The sentence select * from highschool.students must be return.
 
-    xdsh:user> USE catalogTest;
+```
+OK
+Result page: 0
+```
+## Alter table ##
+Now we'll alter the table structure.
+```
+  > ALTER TABLE highschool.students ADD surname TEXT;
+```
 
-    xdsh:user> CREATE TABLE tableTest ON CLUSTER <cluster name> (id int PRIMARY KEY, name text);
+After the alter operation we can insert the surname in the table.
+```
+	> INSERT INTO highschool.students(id, name,age,enrolled,surname) VALUES (10, 'Betty',19,true, 'Smith');
+```
+And table must contains the correct row.
+```
+  > SELECT * FROM highschool.students;
+-----------------------------------------
+| surname | age | id | enrolled | name  | 
+-----------------------------------------
+| Smith   | 19  | 10 | true     | Betty | 
+-----------------------------------------
+```
 
-    xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
+## Truncate table ## 
+Now we go to truncate the table. To do these we must execute the sentence
 
-    xdsh:user> SELECT * FROM tableTest;
+```
+  > TRUNCATE highschool.students;
+```
+
+The output must be.
+```
+STORED successfully
+ > SELECT * FROM highschool.students;
+OK
+Result page: 0
+```
+## Drop table ## 
+To drop the table we must execute
+```
+  >  DROP TABLE if exists highschool.students;
+TABLE dropped successfully
+
+```
+
+
