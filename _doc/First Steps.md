@@ -275,7 +275,7 @@ And table must contains the correct row.
 ```
 
 ## Truncate table ## 
-Now we go to truncate the table. To do these we must execute the sentence
+Now we go to truncate the table. To do these we must execute the sentence.
 
 ```
   > TRUNCATE highschool.students;
