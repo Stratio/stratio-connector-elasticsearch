@@ -26,27 +26,27 @@ import com.stratio.crossdata.common.metadata.ColumnType;
  */
 public final class TypeConverter {
 
-    private static final String ES_LONG = "long";
+    public static final String ES_LONG = "long";
     /**
      * The elasticsearch boolean name.
      */
-    private static final String ES_BOOLEAN = "boolean";
+    public static final String ES_BOOLEAN = "boolean";
     /**
      * The elasticsearch double name.
      */
-    private static final String ES_DOUBLE = "double";
+    public static final String ES_DOUBLE = "double";
     /**
      * The elasticsearch float name.
      */
-    private static final String ES_FLOAT = "float";
+    public static final String ES_FLOAT = "float";
     /**
      * The elasticsearch integer name.
      */
-    private static final String ES_INTEGER = "integer";
+    public static final String ES_INTEGER = "integer";
     /**
      * The elasticsearch string name.
      */
-    private static final String ES_STRING = "string";
+    public static final String ES_STRING = "string";
     /**
      * Constructor.
      */

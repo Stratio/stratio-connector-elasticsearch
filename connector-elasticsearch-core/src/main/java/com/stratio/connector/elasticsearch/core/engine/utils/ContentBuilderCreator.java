@@ -144,12 +144,29 @@ public class ContentBuilderCreator {
             for (Map.Entry<ColumnName, ColumnMetadata> column : columns.entrySet()) {
                 String columnType = TypeConverter.convert(column.getValue().getColumnType());
                 String name = column.getKey().getName();
-                xContentBuilder = xContentBuilder.startObject(name).field(TYPE, columnType).field(INDEX,
-                        ESIndexType.getDefault().getCode()).endObject();
+                xContentBuilder = xContentBuilder.startObject(name).field(TYPE, columnType);
+                xContentBuilder.field(INDEX,
+                        getTypeIndex(columnType)).endObject();
             }
             xContentBuilder.endObject();
         }
 
+    }
+
+    /**
+     * Resolve the typeIndex.
+     * @param columnType the columnType.
+     * @return the index type.
+     */
+    private String getTypeIndex(String columnType) {
+        String stringType;
+        if (TypeConverter.ES_BOOLEAN.equals(columnType)) {
+            stringType = ESIndexType.NOT_ANALYZED.getCode();
+        } else {
+            stringType  = ESIndexType.getDefault().getCode();
+
+        }
+        return stringType;
     }
 
     /**

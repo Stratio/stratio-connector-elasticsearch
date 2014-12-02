@@ -1,4 +1,5 @@
 data
+target
 *.swp
 .clover
 *.out
