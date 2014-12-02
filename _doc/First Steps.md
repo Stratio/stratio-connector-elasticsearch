@@ -1,12 +1,12 @@
 # Fist Steps #
 
-Here is a group of examples to illustrate the the use of Elasticsearch Crossdata connector .
+Here is a group of examples to illustrate the use of Elasticsearch Crossdata connector.
 
 ## Connector Configuration ##
 First of all [Stratio Crossdata 0.1.1] https://github.com/Stratio/crossdata.git is needed and must be installed. The 
-server and shell must be running.
+server and the Shell must be running.
 
-In Crossdata Shell we need to add the Datastore Manifest.
+In the Crossdata Shell we need to add the Datastore Manifest.
 
 ```
    > add datastore "<path_to_manifest_folder>/ElasticSearchDataStore.xml";
@@ -32,7 +32,7 @@ The output must be:
    [INFO|Shell] OK
 ```
 
-At this point we have informed to crossdata the connector options and operations. Now we go to configure the 
+At this point we have reported to Crossdata the connector options and operations. Now we configure the 
 datastore cluster.
 
 ```
@@ -46,7 +46,7 @@ The output must be:
   Cluster attached successfully
 ```
 
-Now we must run the connector
+Now we must run the connector.
 
 ```
   > <path_to_connector_executable>/connector-elasticsearch-core-<version> start
@@ -58,7 +58,7 @@ To ensure that the connector is online we can execute the crossdata shell comman
   > describe connectors;
 ```
 
-And the output mus be
+And the output must be:
 
 ```
 Connector: connector.elasticsearchconnector	ONLINE	[]	[datastore.elasticsearch]	akka.tcp://CrossdataServerCluster@127.0.0.1:46646/user/ConnectorActor/
@@ -77,14 +77,14 @@ CONNECTOR attached successfully
 
 ## Create catalog ##
 
-Now we'll create the catalog and table which use later in the next steps.
+Now we will create the catalog and the table which we will use later in the next steps.
 
-To create catalog we must execute.
+To create the catalog we must execute.
 
 ```
     > CREATE CATALOG highschool;
 ```
-The output must be.
+The output must be:
 
 ```
 CREATE CATALOG highschool;
@@ -108,7 +108,7 @@ TABLE created successfully
 
 ## Insert ##
 
-At first we must to insert some rows in the table created before.
+At first we must insert some rows in the table created before.
 ```
   >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (1, 'Jhon', 16,true);
   >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (2, 'Eva',20,true);
@@ -122,13 +122,13 @@ At first we must to insert some rows in the table created before.
   >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (10, 'Betty',19,true);
 ```
 
-For each row the output must be.
+For each row the output must be:
 
 ```
 STORED successfully
 ```
 ## Select ###
-Now we go to execute a series of queries and we show the expected result.
+Now we execute a set of queries and we will show the expected results.
 
 ### Select All ###
 
@@ -179,7 +179,8 @@ Now we go to execute a series of queries and we show the expected result.
    --------------------------
 ```
 
-### Limit the rows returned ### 
+### Limit the numbers of rows returned ### 
+
 ```
   >  SELECT * FROM highschool.students LIMIT 3;
   Partial result: true
@@ -192,7 +193,7 @@ Now we go to execute a series of queries and we show the expected result.
   -------------------------------
 ```
 ## Delete ##
-For this examples we'll execute many delete instruction and we'll show the table evolution. 
+For these examples we will execute many delete instructions and we will show the table evolution. 
 
 
 ```
@@ -248,23 +249,23 @@ For this examples we'll execute many delete instruction and we'll show the table
   --------------------------------
   > DELETE FROM highschool.students  WHERE id >= 3;
 ```
-At this point the table must be empty. The sentence select * from highschool.students must be return.
+At this point the table must be empty. The sentence select * from highschool.students must be returned.
 
 ```
 OK
 Result page: 0
 ```
 ## Alter table ##
-Now we'll alter the table structure.
+Now we will alter the table structure.
 ```
   > ALTER TABLE highschool.students ADD surname TEXT;
 ```
 
-After the alter operation we can insert the surname in the table.
+After the alter operation we can insert the surname field in the table.
 ```
 	> INSERT INTO highschool.students(id, name,age,enrolled,surname) VALUES (10, 'Betty',19,true, 'Smith');
 ```
-And table must contains the correct row.
+And table must contain the row correctly. 
 ```
   > SELECT * FROM highschool.students;
 -----------------------------------------
@@ -275,13 +276,13 @@ And table must contains the correct row.
 ```
 
 ## Truncate table ## 
-Now we go to truncate the table. To do these we must execute the sentence.
+Now we truncate the table. To do this we must execute the sentence.
 
 ```
   > TRUNCATE highschool.students;
 ```
 
-The output must be.
+The output must be:
 ```
 STORED successfully
  > SELECT * FROM highschool.students;
