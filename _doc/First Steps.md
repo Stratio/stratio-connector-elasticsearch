@@ -179,7 +179,7 @@ Now we execute a set of queries and we will show the expected results.
    --------------------------
 ```
 
-### Limit the numbers of rows returned ### 
+### Limit the numbers of rows returned ###
 
 ```
   >  SELECT * FROM highschool.students LIMIT 3;
@@ -275,7 +275,7 @@ And table must contain the row correctly.
 -----------------------------------------
 ```
 
-## Truncate table ## 
+## Truncate table ##
 Now we truncate the table. To do this we must execute the sentence.
 
 ```
@@ -289,7 +289,7 @@ STORED successfully
 OK
 Result page: 0
 ```
-## Drop table ## 
+## Drop table ##
 To drop the table we must execute
 ```
   >  DROP TABLE if exists highschool.students;
