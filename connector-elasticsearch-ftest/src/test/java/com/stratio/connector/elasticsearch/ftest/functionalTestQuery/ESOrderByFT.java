@@ -18,10 +18,14 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.stratio.connector.commons.ftest.functionalTestQuery.GenericOrderByTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
@@ -44,5 +48,13 @@ public class ESOrderByFT extends GenericOrderByTest {
             e.printStackTrace();
         }
         return esConnectorHelper;
+    }
+
+    @Override @Test @Ignore  public void sortDescTest() throws ConnectorException {
+        super.sortDescTest();
+    }
+
+    @Override @Test @Ignore  public void sortTestMultifield() throws ConnectorException {
+        super.sortTestMultifield();
     }
 }

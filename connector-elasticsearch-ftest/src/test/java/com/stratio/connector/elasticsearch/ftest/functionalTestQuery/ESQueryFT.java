@@ -34,11 +34,15 @@ public class ESQueryFT extends GenericQueryTest {
         return 1000;
     }
 
+    ESConnectorHelper esConnectorHelper = null;
+
     @Override
     protected IConnectorHelper getConnectorHelper() {
-        ESConnectorHelper esConnectorHelper = null;
         try {
-            esConnectorHelper = new ESConnectorHelper(getClusterName());
+            if (esConnectorHelper==null) {
+                esConnectorHelper = new ESConnectorHelper(getClusterName());
+            }
+
             return esConnectorHelper;
         } catch (ConnectionException e) {
             e.printStackTrace();

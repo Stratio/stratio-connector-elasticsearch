@@ -18,10 +18,14 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalMetadata;
 
+import org.junit.Ignore;
+import org.junit.Test;
+
 import com.stratio.connector.commons.ftest.functionalMetadata.GenericMetadataAlterTableFT;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
 /**
@@ -29,11 +33,19 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  */
 public class ESMetadataAlterTableFT extends GenericMetadataAlterTableFT {
 
+    @Override @Test @Ignore  public void dropColumnFT() throws ConnectorException {
+        super.dropColumnFT();
+    }
+
+    ESConnectorHelper esConnectorHelper = null;
+
     @Override
     protected IConnectorHelper getConnectorHelper() {
-        ESConnectorHelper esConnectorHelper = null;
         try {
-            esConnectorHelper = new ESConnectorHelper(getClusterName());
+            if (esConnectorHelper==null) {
+                esConnectorHelper = new ESConnectorHelper(getClusterName());
+            }
+
             return esConnectorHelper;
         } catch (ConnectionException e) {
             e.printStackTrace();

@@ -68,6 +68,15 @@ public class ESConnectorHelper implements IConnectorHelper {
     public ESConnectorHelper(ClusterName clusterName) throws ConnectionException, InitializationException {
         super();
         this.clusterName = clusterName;
+        String serverIP = System.getProperty("SERVER_IP");
+        if (serverIP!=null){
+            SERVER_IP = serverIP;
+        }
+        String serverPort = System.getProperty("SERVER_PORT");
+        if (serverPort!=null){
+            SERVER_PORT = serverPort;
+        }
+
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
                 .addTransportAddresses(ElasticsearchClientConfiguration
                         .getTransportAddress(getConnectorClusterConfig()));
