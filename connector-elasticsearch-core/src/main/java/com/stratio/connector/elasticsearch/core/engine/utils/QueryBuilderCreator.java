@@ -79,6 +79,7 @@ public class QueryBuilderCreator {
         String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
 
         switch (relation.getOperator()) {
+        case MATCH:
         case EQ:
             queryBuilderfilter = QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase());
             break;
