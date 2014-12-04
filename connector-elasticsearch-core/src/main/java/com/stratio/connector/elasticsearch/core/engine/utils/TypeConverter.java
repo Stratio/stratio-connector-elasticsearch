@@ -47,6 +47,7 @@ public final class TypeConverter {
      * The elasticsearch string name.
      */
     public static final String ES_STRING = "string";
+
     /**
      * Constructor.
      */

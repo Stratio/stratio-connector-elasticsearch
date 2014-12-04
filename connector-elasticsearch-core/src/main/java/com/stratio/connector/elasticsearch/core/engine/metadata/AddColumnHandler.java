@@ -42,6 +42,7 @@ public class AddColumnHandler implements AlterTableHandler {
 
     /**
      * Constructor.
+     *
      * @param alterOptions the alter option-
      */
     public AddColumnHandler(AlterOptions alterOptions) {
@@ -50,12 +51,14 @@ public class AddColumnHandler implements AlterTableHandler {
 
     /**
      * Execute the add column in a mapping.
-     * @param tableName the table name.
-     * @param connection  the connection.
+     *
+     * @param tableName  the table name.
+     * @param connection the connection.
      * @throws UnsupportedException if is not supported.
-     * @throws  ExecutionException ig an error happens.
+     * @throws ExecutionException   ig an error happens.
      */
-    @Override public void execute(TableName tableName, Client connection) throws UnsupportedException,ExecutionException {
+    @Override public void execute(TableName tableName, Client connection)
+            throws UnsupportedException, ExecutionException {
 
         try {
             ContentBuilderCreator contentBuilderCreator = new ContentBuilderCreator();
@@ -65,7 +68,7 @@ public class AddColumnHandler implements AlterTableHandler {
                     .getName()).setSource(source).execute().actionGet();
 
         } catch (IOException e) {
-            throw new ExecutionException("Error when aerospaike is adding a column in a mapping",e);
+            throw new ExecutionException("Error when aerospaike is adding a column in a mapping", e);
         }
 
     }

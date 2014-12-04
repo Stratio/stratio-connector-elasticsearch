@@ -33,6 +33,8 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  */
 public class ESMetadataIndexFT extends GenericMetadataIndexTest {
 
+    ESConnectorHelper esConnectorHelper = null;
+
     public ESMetadataIndexFT() {
         super();
     }
@@ -45,28 +47,26 @@ public class ESMetadataIndexFT extends GenericMetadataIndexTest {
         super.createTextIndexTest();
     }
 
-    @Override @Test @Ignore  public void createMultiIndexTest() throws ConnectorException {
+    @Override @Test @Ignore public void createMultiIndexTest() throws ConnectorException {
         super.createMultiIndexTest();
     }
 
-    @Override @Test @Ignore  public void createCustomIndexTest() throws ConnectorException {
+    @Override @Test @Ignore public void createCustomIndexTest() throws ConnectorException {
         super.createCustomIndexTest();
     }
 
-    @Override @Test @Ignore  public void createDuplicatedIndexTest() throws ConnectorException {
+    @Override @Test @Ignore public void createDuplicatedIndexTest() throws ConnectorException {
         super.createDuplicatedIndexTest();
     }
 
-    @Override @Test @Ignore  public void dropIndexTest() throws ConnectorException {
+    @Override @Test @Ignore public void dropIndexTest() throws ConnectorException {
         super.dropIndexTest();
     }
-
-    ESConnectorHelper esConnectorHelper = null;
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 

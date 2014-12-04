@@ -32,7 +32,7 @@ public enum ESIndexType {
      */
     ANALYZED("analyzed"),
     /**
-     *  Not analized index.
+     * Not analized index.
      */
     NOT_ANALYZED("not_analyzed");
 
@@ -43,6 +43,7 @@ public enum ESIndexType {
 
     /**
      * Cosntructor.
+     *
      * @param code the code.
      */
     ESIndexType(String code) {
@@ -51,6 +52,7 @@ public enum ESIndexType {
 
     /**
      * Return the default index value.
+     *
      * @return the default index value.
      */
     public static ESIndexType getDefault() {

@@ -30,7 +30,6 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
  */
 public interface AlterTableHandler {
     /**
-     *
      * @param tableName
      * @param connection
      * @throws UnsupportedException

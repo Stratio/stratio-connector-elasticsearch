@@ -62,7 +62,20 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>1.5.5</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+	<scope>test</scope>
+</dependency>
+</dependencies>
+<build>
+<plugins>
+ <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-surefire-plugin</artifactId>
+      <configuration>
+	<includes> 
+ <include>**/*FT.java</include>
+     </includes>
+      </configuration>
+    </plugin>  
+</plugins></build>
+
 </project>

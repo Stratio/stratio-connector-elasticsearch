@@ -50,11 +50,11 @@ public class ESOrderByFT extends GenericOrderByTest {
         return esConnectorHelper;
     }
 
-    @Override @Test @Ignore  public void sortDescTest() throws ConnectorException {
+    @Override @Test @Ignore public void sortDescTest() throws ConnectorException {
         super.sortDescTest();
     }
 
-    @Override @Test @Ignore  public void sortTestMultifield() throws ConnectorException {
+    @Override @Test @Ignore public void sortTestMultifield() throws ConnectorException {
         super.sortTestMultifield();
     }
 }

@@ -32,18 +32,16 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  */
 public class ESGroupByFT extends GenericGroupByFT {
 
+    ESConnectorHelper esConnectorHelper = null;
 
-
-    @Override @Test @Ignore  public void basicGroupByFT() throws Exception {
+    @Override @Test @Ignore public void basicGroupByFT() throws Exception {
         super.basicGroupByFT();
     }
-
-    ESConnectorHelper esConnectorHelper = null;
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 

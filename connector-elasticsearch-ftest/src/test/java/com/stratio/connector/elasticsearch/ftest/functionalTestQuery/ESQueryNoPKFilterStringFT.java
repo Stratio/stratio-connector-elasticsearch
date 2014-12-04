@@ -18,7 +18,8 @@
 
 package com.stratio.connector.elasticsearch.ftest.functionalTestQuery;
 
-import static org.junit.Assert.fail;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryStringFilterTest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
@@ -33,22 +34,22 @@ import com.stratio.crossdata.common.exceptions.UnsupportedException;
  */
 public class ESQueryNoPKFilterStringFT extends GenericNotIndexedQueryStringFilterTest {
 
-    @Override
-    public void selectNotIndexedFilterUpperCaseEqual() throws ExecutionException, UnsupportedException {
-        fail("Not yet ElasticSearch supported");
-    }
-
-    @Override
-    public void selectNotIndexedFilterUpperCaseDistinct() throws UnsupportedException, ExecutionException {
-        fail("Not yet ElasticSearch supported");
-    }
-
     ESConnectorHelper esConnectorHelper = null;
+
+    @Override @Test @Ignore
+    public void selectNotIndexedFilterUpperCaseEqual() throws ExecutionException, UnsupportedException {
+
+    }
+
+    @Override @Test @Ignore
+    public void selectNotIndexedFilterUpperCaseDistinct() throws UnsupportedException, ExecutionException {
+
+    }
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 

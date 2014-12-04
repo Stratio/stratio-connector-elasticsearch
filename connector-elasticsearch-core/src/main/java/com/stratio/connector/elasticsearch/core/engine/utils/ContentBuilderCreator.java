@@ -106,9 +106,10 @@ public class ContentBuilderCreator {
 
     /**
      * This method create the xcontenBuilder for add a field in a mapping.
+     *
      * @param columnMetadata the colimn meta data.
      * @return the XContentBuilder.
-     * @throws IOException if a IO excetion happens.
+     * @throws IOException          if a IO excetion happens.
      * @throws UnsupportedException if the operation is not supported.
      */
     public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, UnsupportedException {
@@ -155,6 +156,7 @@ public class ContentBuilderCreator {
 
     /**
      * Resolve the typeIndex.
+     *
      * @param columnType the columnType.
      * @return the index type.
      */
@@ -163,7 +165,7 @@ public class ContentBuilderCreator {
         if (TypeConverter.ES_BOOLEAN.equals(columnType)) {
             stringType = ESIndexType.NOT_ANALYZED.getCode();
         } else {
-            stringType  = ESIndexType.getDefault().getCode();
+            stringType = ESIndexType.getDefault().getCode();
 
         }
         return stringType;

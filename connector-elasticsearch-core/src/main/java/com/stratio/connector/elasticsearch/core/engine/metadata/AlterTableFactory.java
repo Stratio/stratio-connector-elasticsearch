@@ -30,11 +30,13 @@ public final class AlterTableFactory {
     /**
      * The constructor.
      */
-    private AlterTableFactory(){
+    private AlterTableFactory() {
 
     }
+
     /**
      * Create the correct alter table handler.
+     *
      * @param alterOptions the alter options.
      * @return the correct alter table handler.
      * @throws UnsupportedException if the operation is not supported.

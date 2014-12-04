@@ -69,11 +69,11 @@ public class ESConnectorHelper implements IConnectorHelper {
         super();
         this.clusterName = clusterName;
         String serverIP = System.getProperty("SERVER_IP");
-        if (serverIP!=null){
+        if (serverIP != null) {
             SERVER_IP = serverIP;
         }
         String serverPort = System.getProperty("SERVER_PORT");
-        if (serverPort!=null){
+        if (serverPort != null) {
             SERVER_PORT = serverPort;
         }
 

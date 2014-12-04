@@ -34,7 +34,7 @@ public class ESQueryNoPKFilterIntegerFT extends GenericNotIndexedQueryIntegerFil
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 

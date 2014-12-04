@@ -33,16 +33,16 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  */
 public class ESMetadataAlterTableFT extends GenericMetadataAlterTableFT {
 
-    @Override @Test @Ignore  public void dropColumnFT() throws ConnectorException {
+    ESConnectorHelper esConnectorHelper = null;
+
+    @Override @Test @Ignore public void dropColumnFT() throws ConnectorException {
         super.dropColumnFT();
     }
-
-    ESConnectorHelper esConnectorHelper = null;
 
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 

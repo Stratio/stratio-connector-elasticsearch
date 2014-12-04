@@ -29,17 +29,17 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
  */
 public class ESQueryProjectFT extends GenericQueryProjectTest {
 
+    ESConnectorHelper esConnectorHelper = null;
+
     @Override
     protected Integer getRowsToSearch() {
         return 2000;
     }
 
-    ESConnectorHelper esConnectorHelper = null;
-
     @Override
     protected IConnectorHelper getConnectorHelper() {
         try {
-            if (esConnectorHelper==null) {
+            if (esConnectorHelper == null) {
                 esConnectorHelper = new ESConnectorHelper(getClusterName());
             }
 
