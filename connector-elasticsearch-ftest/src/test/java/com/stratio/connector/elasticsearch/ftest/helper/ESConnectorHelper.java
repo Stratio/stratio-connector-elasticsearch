@@ -61,7 +61,7 @@ public class ESConnectorHelper implements IConnectorHelper {
     protected String SERVER_IP = "10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.61, 10.200.0.62"; // "192.168.0.3";
     private String SERVER_PORT = "9300,9300,9300,9300,9300";
 
-    private TransportClient auxConection = null;
+   // private TransportClient auxConection = null;
 
     private ClusterName clusterName;
 
@@ -76,11 +76,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         if (serverPort != null) {
             SERVER_PORT = serverPort;
         }
-    if (auxConection==null) {
-        auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
-                .addTransportAddresses(ElasticsearchClientConfiguration
-                        .getTransportAddress(getConnectorClusterConfig()));
-    }
+
     }
 
     @Override
@@ -122,7 +118,13 @@ public class ESConnectorHelper implements IConnectorHelper {
         GetSettingsRequest getSettings = new GetSettingsRequest();
         getSettings.indices(indexName);
         getSettings.indicesOptions(IndicesOptions.strictExpandOpen());
+        TransportClient auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings
+                (getConnectorClusterConfig()))
+                .addTransportAddresses(ElasticsearchClientConfiguration
+                        .getTransportAddress(getConnectorClusterConfig()));
+
         GetSettingsResponse settingsResponse = auxConection.admin().indices().getSettings(getSettings).actionGet();
+        auxConection.close();
         for (ObjectObjectCursor<String, Settings> setting : settingsResponse.getIndexToSettings()) {
             result = convertMap(new HashMap(setting.value.getAsMap()));
         }
@@ -168,6 +170,9 @@ public class ESConnectorHelper implements IConnectorHelper {
 
     @Override
     public void refresh(String schema) {
+        TransportClient   auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
+                .addTransportAddresses(ElasticsearchClientConfiguration
+                        .getTransportAddress(getConnectorClusterConfig()));
         try {
 
             if (auxConection != null) {
@@ -176,10 +181,8 @@ public class ESConnectorHelper implements IConnectorHelper {
 
             }
 
-        } catch (IndexMissingException e) {
-            System.out.println("Index missing");
-
-        }
+        } catch (IndexMissingException e) {        }
+        auxConection.close();
 
     }
 
