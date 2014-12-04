@@ -64,7 +64,9 @@
             <version>1.5.5</version>
 	<scope>test</scope>
 </dependency>
-        <dependency><groupId>org.testng</groupId><artifactId>testng</artifactId><version>6.8.8</version></dependency>
+        <dependency><groupId>org.testng</groupId><artifactId>testng</artifactId>
+            <version>6.8.8</version>
+            <scope>test</scope></dependency>
 </dependencies>
 <build>
 <!--<plugins>
@@ -85,13 +87,41 @@
           </systemProperties>
       </configuration>
     </plugin> -->
-    <plugins><plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.7.1.201405082137</version><executions><execution><id>test-driver</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-driver.exec</destFile><propertyName>jacoco-driver-argline</propertyName></configuration></execution><execution><id>test-shell</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-shell.exec</destFile><propertyName>jacoco-shell-argline</propertyName></configuration></execution><execution><id>merge-results</id><phase>post-integration-test</phase><goals><goal>merge</goal></goals><configuration><destFile>${project.build.directory}/jacocoAT.exec</destFile><fileSets><fileSet implementation="org.apache.maven.shared.model.fileset.FileSet"><directory>${project.build.directory}/executions</directory><includes><include>*.exec</include></includes></fileSet></fileSets></configuration></execution></executions></plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-antrun-plugin</artifactId><version>1.7</version><dependencies><dependency><groupId>org.jacoco</groupId><artifactId>org.jacoco.ant</artifactId><version>0.7.1.201405082137</version></dependency><dependency><groupId>ant-contrib</groupId><artifactId>ant-contrib</artifactId><version>20020829</version></dependency><dependency><groupId>com.stratio.connector</groupId><artifactId>connector-commons-core</artifactId><version>0.2.0-RC2</version></dependency></dependencies><executions></executions></plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.1</version><configuration><source>1.7</source><target>1.7</target></configuration></plugin>
+    <plugins>
+        <plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.7.1.201405082137</version><executions><execution><id>test-driver</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-driver.exec</destFile><propertyName>jacoco-driver-argline</propertyName></configuration></execution><execution><id>test-shell</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-shell.exec</destFile><propertyName>jacoco-shell-argline</propertyName></configuration></execution><execution><id>merge-results</id><phase>post-integration-test</phase><goals><goal>merge</goal></goals><configuration><destFile>${project.build.directory}/jacocoAT.exec</destFile><fileSets><fileSet implementation="org.apache.maven.shared.model.fileset.FileSet"><directory>${project.build.directory}/executions</directory><includes><include>*.exec</include></includes></fileSet></fileSets></configuration></execution></executions></plugin>
+        <plugin><groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId><version>1.7</version><dependencies><dependency><groupId>org.jacoco</groupId><artifactId>org.jacoco.ant</artifactId><version>0.7.1.201405082137</version></dependency><dependency><groupId>ant-contrib</groupId><artifactId>ant-contrib</artifactId><version>20020829</version></dependency><dependency><groupId>com.stratio.connector</groupId><artifactId>connector-commons-core</artifactId><version>0.2.0-RC2</version></dependency></dependencies><executions></executions></plugin>
+
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>2.17</version><configuration><skipTests>true</skipTests></configuration></plugin>
-        <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-failsafe-plugin</artifactId><version>2.17</version><executions><execution><id>acceptance-test</id><phase>integration-test</phase><goals><goal>integration-test</goal></goals></execution></executions><configuration><suiteXmlFiles><suiteXmlFile>suite.xml</suiteXmlFile></suiteXmlFiles><systemPropertyVariables><SHELL_OPTS>${jacoco-shell-argline}</SHELL_OPTS></systemPropertyVariables><properties><property><name>usedefaultlisteners</name><value>false</value></property></properties><argLine>-Xmx3072m -XX:+HeapDumpOnOutOfMemoryError
-        ${jacoco-driver-argline}
-        -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.8.2/aspectjweaver-1.8.2.jar</argLine><additionalClasspathElements><additionalClasspathElement>stratio-connector-elasticsearch/connector-elasticsearch-core/src/main/config </additionalClasspathElement></additionalClasspathElements><useSystemClassloader>true</useSystemClassloader></configuration></plugin></plugins></build>
+
+        <plugin><groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <version>2.18</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>integration-test</goal>
+                        <goal>verify</goal>
+                    </goals>
+                </execution>
+            </executions>
+
+            <configuration>
+                <includes>
+                    <include>**/*FT.java</include>
+                </includes>
+                <systemPropertyVariables><SHELL_OPTS>${jacoco-shell-argline}</SHELL_OPTS></systemPropertyVariables>
+                <properties>   <property><name>usedefaultlisteners</name><value>false</value></property></properties>
+                <argLine>-Xmx3072m -XX:+HeapDumpOnOutOfMemoryError
+                    ${jacoco-driver-argline}
+                    -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.8.2/aspectjweaver-1.8.2.jar</argLine><additionalClasspathElements><additionalClasspathElement>stratio-connector-elasticsearch/connector-elasticsearch-core/src/main/config </additionalClasspathElement></additionalClasspathElements><useSystemClassloader>true</useSystemClassloader>
+<!--
+                <suiteXmlFiles><suiteXmlFile>${project.basedir}/suite.xml</suiteXmlFile></suiteXmlFiles>
+
+
+
+-->
+            </configuration></plugin></plugins></build>
 
 
 
