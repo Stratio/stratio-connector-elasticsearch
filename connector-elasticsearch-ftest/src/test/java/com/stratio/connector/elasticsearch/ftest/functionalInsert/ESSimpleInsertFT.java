@@ -57,14 +57,19 @@ public class ESSimpleInsertFT extends GenericSimpleInsertTest {
         super.testInsertDuplicateCompositePK();
     }
 
+    ESConnectorHelper esConnectorHelper = null;
+
     @Override
     protected IConnectorHelper getConnectorHelper() {
-        ESConnectorHelper esConnectorHelper = null;
         try {
-            esConnectorHelper = new ESConnectorHelper(getClusterName());
-        } catch (InitializationException e) {
-            e.printStackTrace();
+            if (esConnectorHelper == null) {
+                esConnectorHelper = new ESConnectorHelper(getClusterName());
+            }
+
+            return esConnectorHelper;
         } catch (ConnectionException e) {
+            e.printStackTrace();
+        } catch (InitializationException e) {
             e.printStackTrace();
         }
         return esConnectorHelper;
