@@ -26,7 +26,7 @@ import com.stratio.crossdata.common.exceptions.InitializationException;
 
 public class DeleteFT extends GenericDeleteTest {
 
-    ESConnectorHelper esConnectorHelper = null;
+    private ESConnectorHelper esConnectorHelper = null;
 
     @Override
     protected IConnectorHelper getConnectorHelper() {

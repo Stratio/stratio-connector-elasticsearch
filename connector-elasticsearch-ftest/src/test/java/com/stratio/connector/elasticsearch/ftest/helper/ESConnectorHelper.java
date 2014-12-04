@@ -76,7 +76,7 @@ public class ESConnectorHelper implements IConnectorHelper {
         if (serverPort != null) {
             SERVER_PORT = serverPort;
         }
-    if (auxConection!=null) {
+    if (auxConection==null) {
         auxConection = new TransportClient(ElasticsearchClientConfiguration.getSettings(getConnectorClusterConfig()))
                 .addTransportAddresses(ElasticsearchClientConfiguration
                         .getTransportAddress(getConnectorClusterConfig()));
