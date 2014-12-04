@@ -93,6 +93,6 @@
         -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.8.2/aspectjweaver-1.8.2.jar</argLine><additionalClasspathElements><additionalClasspathElement>stratio-connector-elasticsearch/connector-elasticsearch-core/src/main/config </additionalClasspathElement></additionalClasspathElements><useSystemClassloader>true</useSystemClassloader></configuration></plugin></plugins></build>
 
 
-</build>
+
 
 </project>
