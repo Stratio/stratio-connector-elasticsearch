@@ -22,23 +22,28 @@ import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.util.Collections;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
+import org.elasticsearch.common.settings.Settings;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.security.ICredentials;
@@ -51,6 +56,7 @@ import com.stratio.crossdata.common.security.ICredentials;
  * @since <pre>oct 14, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
+@PrepareForTest(NodeBuilder.class)
 public class NodeConnectionTest {
 
     @Mock Client client;
@@ -63,7 +69,15 @@ public class NodeConnectionTest {
 
         Map<String, String> options = Collections.EMPTY_MAP;
 
-        ConnectorClusterConfig configuration = new ConnectorClusterConfig(new ClusterName("CLUSTER_NAME"), options);
+        ConnectorClusterConfig configuration = new ConnectorClusterConfig(new ClusterName("CLUSTER_NAME"), options,
+                options);
+        mockStatic(NodeBuilder.class);
+        NodeBuilder nodeBuilder = mock(NodeBuilder.class);
+        when(nodeBuilder.settings(any(Settings.class))).thenReturn(nodeBuilder);
+        when(nodeBuilder.node()).thenReturn(node);
+        when(node.client()).thenReturn(client);
+        when(NodeBuilder.nodeBuilder()).thenReturn(nodeBuilder);
+
         nodeConnection = new NodeConnection(credentials, configuration);
 
         assertNotNull("The connection is not null", Whitebox.getInternalState(nodeConnection, "elasticClient"));
