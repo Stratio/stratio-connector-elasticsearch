@@ -22,7 +22,7 @@
     <parent>
         <groupId>com.stratio.connector</groupId>
         <artifactId>stratio-connector-elasticsearch</artifactId>
-        <version>0.2.0-RC2</version>
+        <version>0.2.0</version>
     </parent>
     <artifactId>connector-elasticsearch-ftest</artifactId>
     <packaging>jar</packaging>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.stratio.connector</groupId>
             <artifactId>connector-elasticsearch-core</artifactId>
-            <version>0.2.0-RC2</version>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.stratio.connector</groupId>
@@ -40,11 +40,6 @@
             <classifier>tests</classifier>
             <version>${version.connector.commons}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${version.elasticsearch}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -69,24 +64,6 @@
             <scope>test</scope></dependency>
 </dependencies>
 <build>
-<!--<plugins>
- <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-surefire-plugin</artifactId>
-      <configuration>
-          <skipTests>true</skipTests>
-	<includes> 
- <include>**/*FT.java</include>
-
-     </includes>
-          <systemProperties>
-              <property>
-                  <name>java.util.logging.config.file</name>
-                  <value>src/test/resources/log4j.xml</value>
-              </property>
-          </systemProperties>
-      </configuration>
-    </plugin> -->
     <plugins>
         <plugin><groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.7.1.201405082137</version><executions><execution><id>test-driver</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-driver.exec</destFile><propertyName>jacoco-driver-argline</propertyName></configuration></execution><execution><id>test-shell</id><goals><goal>prepare-agent</goal></goals><configuration><destFile>${project.build.directory}/executions/jacoco-shell.exec</destFile><propertyName>jacoco-shell-argline</propertyName></configuration></execution><execution><id>merge-results</id><phase>post-integration-test</phase><goals><goal>merge</goal></goals><configuration><destFile>${project.build.directory}/jacocoAT.exec</destFile><fileSets><fileSet implementation="org.apache.maven.shared.model.fileset.FileSet"><directory>${project.build.directory}/executions</directory><includes><include>*.exec</include></includes></fileSet></fileSets></configuration></execution></executions></plugin>
         <plugin><groupId>org.apache.maven.plugins</groupId>
@@ -94,7 +71,7 @@
 
         <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-surefire-plugin</artifactId><version>2.17</version><configuration><skipTests>true</skipTests></configuration></plugin>
 
-        <plugin><groupId>org.apache.maven.plugins</groupId>
+   <!--     <plugin><groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <version>2.18</version>
             <executions>
@@ -115,13 +92,9 @@
                 <argLine>-Xmx3072m -XX:+HeapDumpOnOutOfMemoryError
                     ${jacoco-driver-argline}
                     -javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/1.8.2/aspectjweaver-1.8.2.jar</argLine><additionalClasspathElements><additionalClasspathElement>stratio-connector-elasticsearch/connector-elasticsearch-core/src/main/config </additionalClasspathElement></additionalClasspathElements><useSystemClassloader>true</useSystemClassloader>
-<!--
-                <suiteXmlFiles><suiteXmlFile>${project.basedir}/suite.xml</suiteXmlFile></suiteXmlFiles>
+            </configuration></plugin> -->
 
-
-
--->
-            </configuration></plugin></plugins></build>
+            </plugins></build>
 
 
 
