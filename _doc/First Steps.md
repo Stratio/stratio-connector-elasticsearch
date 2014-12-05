@@ -110,16 +110,18 @@ TABLE created successfully
 
 At first we must insert some rows in the table created before.
 ```
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (1, 'Jhon', 16,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (2, 'Eva',20,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (3, 'Lucie',18,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (4, 'Cole',16,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (5, 'Finn',17.false);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (6, 'Violet',21,false);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (7, 'Beatrice',18,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (8, 'Henry',16,false);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (9, 'Tom',17,true);
-  >  INSERT INTO highschool.students(id, name,age,enrolled) VALUES (10, 'Betty',19,true);
+  >  
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (1, 'Jhon', 16,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (2, 'Eva',20,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (3, 'Lucie',18,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (4, 'Cole',16,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (5, 'Finn',17.false);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (6, 'Violet',21,false);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (7, 'Beatrice',18,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (8, 'Henry',16,false);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (9, 'Tom',17,true);
+    INSERT INTO highschool.students(id, name,age,enrolled) VALUES (10, 'Betty',19,true);
+ >
 ```
 
 For each row the output must be:
