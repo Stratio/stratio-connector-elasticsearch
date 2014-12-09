@@ -115,7 +115,7 @@
                         </goals>
                         <configuration>
                             <includes>
-                                <include>**/DeleteFT.*</include>
+                                <include>**/*FT.*</include>
                             </includes>
                         </configuration>
                     </execution>
