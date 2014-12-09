@@ -135,7 +135,7 @@
                 <version>2.18</version>
                 <configuration>
                     <includes>
-                        <include>**/*FT.java</include>
+                        <include>**/ESSimpleInsert.java</include>
                     </includes>
                 </configuration>
                 <executions>
