@@ -31,10 +31,10 @@
             <PropertyName>Native Ports</PropertyName>
             <Description>The list of hosts native ports</Description>
         </Property>
-        <Property>
-            <PropertyName>Restful Ports</PropertyName>
-            <Description>The list of hosts restful ports</Description>
-        </Property>
+            <Property>
+                <PropertyName>Restful Ports</PropertyName>
+                <Description>The list of hosts restful ports</Description>
+            </Property>
     </RequiredProperties>
     <Behaviors>
         <Behavior>ALL_INDEXED</Behavior>
