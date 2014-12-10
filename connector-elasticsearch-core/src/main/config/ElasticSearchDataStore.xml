@@ -28,8 +28,12 @@
             <Description>The list of hosts ips</Description>
         </Property>
         <Property>
-            <PropertyName>Port</PropertyName>
-            <Description>The list of hosts ports</Description>
+            <PropertyName>Native Ports</PropertyName>
+            <Description>The list of hosts native ports</Description>
+        </Property>
+        <Property>
+            <PropertyName>Restful Ports</PropertyName>
+            <Description>The list of hosts restful ports</Description>
         </Property>
     </RequiredProperties>
     <Behaviors>
