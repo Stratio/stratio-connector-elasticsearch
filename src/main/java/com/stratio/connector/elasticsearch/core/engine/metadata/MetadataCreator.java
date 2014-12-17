@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.logicalplan.Select;
@@ -39,7 +40,7 @@ public class MetadataCreator {
      * @param queryData the queryData object.
      * @return the list with the column metadata.
      */
-    public List<ColumnMetadata> createColumnMetadata(ConnectorQueryData queryData) {
+    public List<ColumnMetadata> createColumnMetadata(ProjectParsed queryData) {
 
         List<ColumnMetadata> retunColumnMetadata = new ArrayList<>();
 

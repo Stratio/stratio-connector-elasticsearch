@@ -28,11 +28,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
@@ -80,7 +81,7 @@ public class MetadataCreatorTest {
 
     @Test
     public void testCreateMetadata() throws Exception {
-        ConnectorQueryData queryData = createQueryData();
+        ProjectParsed queryData = createQueryData();
         List<ColumnMetadata> columnMetadata = metadataCreator.createColumnMetadata(queryData);
 
         int i = 0;
@@ -97,8 +98,8 @@ public class MetadataCreatorTest {
         }
     }
 
-    private ConnectorQueryData createQueryData() {
-        ConnectorQueryData queryData = new ConnectorQueryData();
+    private ProjectParsed createQueryData() throws UnsupportedException {
+
         Map<ColumnName, String> columnMap = new LinkedHashMap();
         columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0]), ALIAS[0]);
         columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[1]), ALIAS[1]);
@@ -115,8 +116,10 @@ public class MetadataCreatorTest {
         Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap, typeColumnName);
         Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME),
                 new ClusterName("CLUSTER_NAME"));
-        queryData.setProjection(project);
-        queryData.setSelect(select);
+        project.setNextStep(select);
+
+
+        ProjectParsed queryData = new ProjectParsed(project);
         return queryData;
     }
 

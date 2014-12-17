@@ -43,11 +43,13 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
@@ -118,9 +120,9 @@ public class ConnectorQueryExecutorTest {
         SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
         when(requestBuilder.execute()).thenReturn(listenableActionFuture);
 
-        ConnectorQueryData queryData = createQueryData(SearchType.SCAN);
+        ProjectParsed projectParsed = createQueryData(SearchType.SCAN);
 
-        QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, queryData);
+        QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, projectParsed);
 
         ResultSet resultset = queryResult.getResultSet();
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
@@ -139,12 +141,12 @@ public class ConnectorQueryExecutorTest {
         return searchHit;
     }
 
-    private ConnectorQueryData createQueryData(SearchType searchType) {
-        ConnectorQueryData connectorQueryData = new ConnectorQueryData();
+    private ProjectParsed createQueryData(SearchType searchType) throws UnsupportedException {
+
 
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                 new ClusterName(CLUSTER_NAME));
-        connectorQueryData.setProjection(projection);
+
 
         Map<ColumnName, String> column = new HashMap<>();
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
@@ -155,8 +157,11 @@ public class ConnectorQueryExecutorTest {
         Map<ColumnName, ColumnType> typeColumn = new HashMap<>();
         typeColumn.put(columnName, ColumnType.TEXT);
         Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumn);
-        connectorQueryData.setSelect(select);
-        return connectorQueryData;
+
+        projection.setNextStep(select);
+
+        ProjectParsed projectParsed = new ProjectParsed(projection);
+        return projectParsed;
     }
 
 }

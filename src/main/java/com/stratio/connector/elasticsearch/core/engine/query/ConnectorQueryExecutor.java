@@ -36,6 +36,7 @@ import org.elasticsearch.search.SearchHitField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.util.ColumnTypeHelper;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.Cell;
@@ -66,7 +67,7 @@ public class ConnectorQueryExecutor {
      */
 
     public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
-            ConnectorQueryData queryData) throws ExecutionException {
+            ProjectParsed queryData) throws ExecutionException {
 
         QueryResult queryResult = null;
 
@@ -119,7 +120,7 @@ public class ConnectorQueryExecutor {
      * @param queryData
      * @return the row.
      */
-    private Row createRow(SearchHit hit, ConnectorQueryData queryData) throws ExecutionException {
+    private Row createRow(SearchHit hit, ProjectParsed queryData) throws ExecutionException {
 
         Map<ColumnName, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
@@ -136,7 +137,7 @@ public class ConnectorQueryExecutor {
      * @param fields    the fields.
      * @return a row.
      */
-    private Row setRowValues(ConnectorQueryData queryData, Map<ColumnName, String> alias, Map<String, Object> fields)
+    private Row setRowValues(ProjectParsed queryData, Map<ColumnName, String> alias, Map<String, Object> fields)
             throws ExecutionException {
         Row row = new Row();
         Set<String> fieldNames;
@@ -149,8 +150,8 @@ public class ConnectorQueryExecutor {
         }
         for (String field : fieldNames) {
             Object value = fields.get(field);
-            ColumnName columnName = new ColumnName(queryData.getProjection().getCatalogName(), queryData
-                    .getProjection().getTableName().getName(), field);
+            ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData
+                    .getProject().getTableName().getName(), field);
             if (alias.containsKey(columnName)) {
                 field = alias.get(columnName);
             }
@@ -200,7 +201,7 @@ public class ConnectorQueryExecutor {
      * @param queryData the query data.
      * @return the alias.
      */
-    private Map<ColumnName, String> returnAlias(ConnectorQueryData queryData) {
+    private Map<ColumnName, String> returnAlias(ProjectParsed queryData) {
         Map<ColumnName, String> alias = Collections.EMPTY_MAP;
         if (queryData.getSelect() != null) {
             alias = queryData.getSelect().getColumnMap();

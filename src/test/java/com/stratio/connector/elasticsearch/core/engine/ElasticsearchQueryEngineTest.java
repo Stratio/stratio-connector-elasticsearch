@@ -35,8 +35,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
 import com.stratio.crossdata.common.connector.IResultHandler;
@@ -90,14 +90,16 @@ public class ElasticsearchQueryEngineTest {
         Client eSConnection = mock(Client.class);
         when(connection.getNativeConnection()).thenReturn(eSConnection);
 
-        ConnectorQueryData conectorQueryData = mock(ConnectorQueryData.class);
+        ProjectParsed projectParsed = mock(ProjectParsed.class);
+        whenNew(ProjectParsed.class).withArguments(project).thenReturn(projectParsed);
 
-        when(queryParser.transformLogicalWorkFlow(project)).thenReturn(conectorQueryData);
+
+
         SearchRequestBuilder searchRequestBuilder = mock(SearchRequestBuilder.class);
-        when(queryBuilder.buildQuery(eSConnection, conectorQueryData)).thenReturn(searchRequestBuilder);
+        when(queryBuilder.buildQuery(eSConnection, projectParsed)).thenReturn(searchRequestBuilder);
 
         QueryResult queryResult = QueryResult.createSuccessQueryResult();
-        when(queryExecutor.executeQuery(eSConnection, searchRequestBuilder, conectorQueryData)).thenReturn(queryResult);
+        when(queryExecutor.executeQuery(eSConnection, searchRequestBuilder, projectParsed)).thenReturn(queryResult);
 
         QueryResult returnQueryResult = elasticsearchQueryEngine.execute(project, connection);
         assertEquals("The query result is correct", queryResult, returnQueryResult);

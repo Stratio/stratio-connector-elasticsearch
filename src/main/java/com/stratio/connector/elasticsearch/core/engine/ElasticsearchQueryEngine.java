@@ -24,10 +24,9 @@ import org.elasticsearch.client.Client;
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryData;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -40,14 +39,14 @@ import com.stratio.crossdata.common.result.QueryResult;
  */
 public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
 
-    private ConnectorQueryParser queryParser = new ConnectorQueryParser();
+
     private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
     private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
 
     /**
      * Instantiates a new elasticsearch query engine.
      *
-     * @param connectionHandler the connection handler
+     * @param connectionHandle the connection handler
      */
     public ElasticsearchQueryEngine(ConnectionHandler connectionHandle) {
 
@@ -69,12 +68,21 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
             ExecutionException {
 
         Client elasticClient = connection.getNativeConnection();
-        ConnectorQueryData queryData = queryParser.transformLogicalWorkFlow(project);
+        ProjectParsed projectParsed = new ProjectParsed(project);
 
-        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, queryData);
+        validate(projectParsed);
 
-        return queryExecutor.executeQuery(elasticClient, requestBuilder, queryData);
+        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
 
+        
+        return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
+
+    }
+
+    private void validate(ProjectParsed projectParse) throws UnsupportedException {
+        if (projectParse.getWindow()!=null){
+            throw new UnsupportedException("ElasticSearch don't support Window Operation");
+        }
     }
 
     /**

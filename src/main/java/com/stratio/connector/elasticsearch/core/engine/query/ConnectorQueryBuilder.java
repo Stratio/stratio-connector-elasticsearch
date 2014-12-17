@@ -26,6 +26,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
 import com.stratio.connector.elasticsearch.core.engine.utils.ProjectCreator;
@@ -56,7 +57,7 @@ public class ConnectorQueryBuilder {
      * @throws UnsupportedException if the operation is not supported.
      * @throws ExecutionException   if the method fails during execution.
      */
-    public SearchRequestBuilder buildQuery(Client elasticClient, ConnectorQueryData queryData)
+    public SearchRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData)
             throws UnsupportedException, ExecutionException {
 
         createRequestBuilder(elasticClient);
@@ -75,7 +76,7 @@ public class ConnectorQueryBuilder {
      *
      * @param queryData the querydata.
      */
-    private void createSelect(ConnectorQueryData queryData) {
+    private void createSelect(ProjectParsed queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
             SelectCreator selectCreator = new SelectCreator();
 
@@ -116,9 +117,9 @@ public class ConnectorQueryBuilder {
      *
      * @param queryData the querydata.
      */
-    private void createProjection(ConnectorQueryData queryData) {
+    private void createProjection(ProjectParsed queryData) {
         ProjectCreator projectModifier = new ProjectCreator();
-        projectModifier.modify(requestBuilder, queryData.getProjection());
+        projectModifier.modify(requestBuilder, queryData.getProject());
     }
 
     /**
@@ -126,12 +127,12 @@ public class ConnectorQueryBuilder {
      *
      * @param queryData the querydata.
      */
-    private void createFilter(ConnectorQueryData queryData) throws UnsupportedException, ExecutionException {
+    private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList());
 
-        if (queryData.hasFilterList()) {
+        if (!queryData.getFilter().isEmpty()) {
             FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
             FilterBuilder filterBuilder = filterBuilderCreator.createFilterBuilder(queryData.getFilter());
             requestBuilder.setQuery(QueryBuilders.filteredQuery(queryBuilder, filterBuilder));
