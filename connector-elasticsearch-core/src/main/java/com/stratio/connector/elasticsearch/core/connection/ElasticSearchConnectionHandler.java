@@ -20,6 +20,7 @@ package com.stratio.connector.elasticsearch.core.connection;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
+import com.stratio.connector.commons.connection.exceptions.CreateNativeConnectionException;
 import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
@@ -45,17 +46,19 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
      *
      * @param iCredentials           the credentials to connect with the database.
      * @param connectorClusterConfig the cluster configuration.
-     * @return a elasticsearch connection.
+     * @return a ElasticSearch connection.
      */
     @Override
     protected Connection createNativeConnection(ICredentials iCredentials,
-            ConnectorClusterConfig connectorClusterConfig) {
+            ConnectorClusterConfig connectorClusterConfig) throws CreateNativeConnectionException {
         Connection connection;
         if (isNodeClient(connectorClusterConfig)) {
             connection = new NodeConnection(iCredentials, connectorClusterConfig);
         } else {
             connection = new TransportConnection(iCredentials, connectorClusterConfig);
         }
+        if (!connection.isConnect()){ throw new CreateNativeConnectionException("The connection could not be "
+                + "established");}
         return connection;
     }
 

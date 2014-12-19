@@ -25,12 +25,14 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.elasticsearch.client.transport.TransportClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +49,6 @@ import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.security.ICredentials;
-
 /**
  * ConnectionHandle Tester.
  *
@@ -58,7 +59,7 @@ import com.stratio.crossdata.common.security.ICredentials;
 
 @RunWith(PowerMockRunner.class)
 
-@PrepareForTest(value = { ElasticSearchConnectionHandler.class })
+@PrepareForTest(value = { ElasticSearchConnectionHandler.class,TransportClient.class })
 
 public class ConnectionHandleTest {
 
@@ -72,6 +73,8 @@ public class ConnectionHandleTest {
         connectionHandle = new ElasticSearchConnectionHandler(iConfiguration);
 
     }
+
+
 
     @After
     public void after() throws Exception {
@@ -91,6 +94,7 @@ public class ConnectionHandleTest {
 
         NodeConnection connection = mock(NodeConnection.class);
         whenNew(NodeConnection.class).withArguments(credentials, config).thenReturn(connection);
+        when(connection.isConnect()).thenReturn(true);
 
         connectionHandle.createConnection(credentials, config);
 
@@ -105,7 +109,7 @@ public class ConnectionHandleTest {
     }
 
     @Test
-    public void testCreateTransportConnection() throws Exception, HandlerConnectionException {
+    public void testCreateTransportConnection() throws Exception {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> options = new HashMap<>();
@@ -114,6 +118,7 @@ public class ConnectionHandleTest {
 
         TransportConnection connection = mock(TransportConnection.class);
         whenNew(TransportConnection.class).withArguments(credentials, config).thenReturn(connection);
+        when(connection.isConnect()).thenReturn(true);
 
         connectionHandle.createConnection(credentials, config);
 
