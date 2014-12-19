@@ -53,7 +53,7 @@ public enum ConfigurationOptions {
     /**
      * The hosts ports.
      */
-    PORT("Port", new String[] { "9300" }),
+    PORT("Native Ports", new String[] { "9300" }),
     /**
      * The elasticsearch coerce property.
      */
