@@ -27,6 +27,7 @@ import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
+import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -68,21 +69,15 @@ public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
             ExecutionException {
 
         Client elasticClient = connection.getNativeConnection();
-        ProjectParsed projectParsed = new ProjectParsed(project);
+        ProjectParsed projectParsed = new ProjectParsed(project,new ESProjectParsedValidator());
 
-        validate(projectParsed);
+
 
         SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
 
         
         return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
 
-    }
-
-    private void validate(ProjectParsed projectParse) throws UnsupportedException {
-        if (projectParse.getWindow()!=null){
-            throw new UnsupportedException("ElasticSearch don't support Window Operation");
-        }
     }
 
     /**

@@ -22,6 +22,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,10 +46,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
@@ -131,7 +133,7 @@ public class ConnectorQueryBuilderTest {
 
     }
 
-    private ProjectParsed createProjectParsed() throws UnsupportedException {
+    private ProjectParsed createProjectParsed() throws  ExecutionException {
 
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
 
@@ -160,10 +162,8 @@ public class ConnectorQueryBuilderTest {
         project.setNextStep(filter);
         filter.setNextStep(select);
 
-
-
-
-        ProjectParsed projectParsed = new ProjectParsed(project);
+        ProjectValidator projectValidator = mock(ProjectValidator.class);
+        ProjectParsed projectParsed = new ProjectParsed(project,projectValidator);
         return projectParsed;
     }
 

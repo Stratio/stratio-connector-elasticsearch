@@ -46,6 +46,7 @@ import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptio
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.security.ICredentials;
 
 /**
@@ -143,7 +144,7 @@ public class ConnectionHandleTest {
     }
 
     @Test
-    public void testGetConnection() throws HandlerConnectionException {
+    public void testGetConnection() throws ExecutionException {
         Map<String, NodeConnection> mapConnection = (Map<String, NodeConnection>) Whitebox
                 .getInternalState(connectionHandle, "connections");
         NodeConnection connection = mock(NodeConnection.class);

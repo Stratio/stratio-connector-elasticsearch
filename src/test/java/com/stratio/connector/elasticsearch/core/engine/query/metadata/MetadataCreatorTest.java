@@ -19,6 +19,7 @@
 package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,11 +30,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
@@ -98,7 +100,7 @@ public class MetadataCreatorTest {
         }
     }
 
-    private ProjectParsed createQueryData() throws UnsupportedException {
+    private ProjectParsed createQueryData() throws ExecutionException {
 
         Map<ColumnName, String> columnMap = new LinkedHashMap();
         columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0]), ALIAS[0]);
@@ -119,7 +121,7 @@ public class MetadataCreatorTest {
         project.setNextStep(select);
 
 
-        ProjectParsed queryData = new ProjectParsed(project);
+        ProjectParsed queryData = new ProjectParsed(project, mock(ProjectValidator.class));
         return queryData;
     }
 

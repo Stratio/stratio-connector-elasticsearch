@@ -44,12 +44,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
@@ -141,7 +142,7 @@ public class ConnectorQueryExecutorTest {
         return searchHit;
     }
 
-    private ProjectParsed createQueryData(SearchType searchType) throws UnsupportedException {
+    private ProjectParsed createQueryData(SearchType searchType) throws ExecutionException {
 
 
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
@@ -160,7 +161,7 @@ public class ConnectorQueryExecutorTest {
 
         projection.setNextStep(select);
 
-        ProjectParsed projectParsed = new ProjectParsed(projection);
+        ProjectParsed projectParsed = new ProjectParsed(projection,mock(ProjectValidator.class));
         return projectParsed;
     }
 

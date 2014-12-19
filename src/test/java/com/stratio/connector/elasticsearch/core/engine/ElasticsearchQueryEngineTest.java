@@ -39,6 +39,7 @@ import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
+import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
 import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -91,7 +92,9 @@ public class ElasticsearchQueryEngineTest {
         when(connection.getNativeConnection()).thenReturn(eSConnection);
 
         ProjectParsed projectParsed = mock(ProjectParsed.class);
-        whenNew(ProjectParsed.class).withArguments(project).thenReturn(projectParsed);
+        ESProjectParsedValidator projectValidator = mock(ESProjectParsedValidator.class);
+        whenNew(ESProjectParsedValidator.class).withNoArguments().thenReturn(projectValidator);
+        whenNew(ProjectParsed.class).withArguments(project, projectValidator).thenReturn(projectParsed);
 
 
 

@@ -51,7 +51,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
@@ -115,7 +114,7 @@ public class ElasticsearchStorageEngineTest {
     private List<ColumnName> clusterKey = Collections.emptyList();
 
     @Before
-    public void before() throws HandlerConnectionException {
+    public void before() throws ExecutionException {
 
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
         when(connection.getNativeConnection()).thenReturn(client);

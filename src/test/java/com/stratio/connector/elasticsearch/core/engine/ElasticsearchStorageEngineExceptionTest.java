@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -97,18 +96,16 @@ public class ElasticsearchStorageEngineExceptionTest {
 
     }
 
-    @After
-    public void after() throws Exception {
-    }
+
 
     @Test
     public void testInsertExecutionException()
             throws ExecutionException, HandlerConnectionException, UnsupportedException {
 
         exception.expect(ExecutionException.class);
-        exception.expectMessage("Error find Connection in " + CLUSTER_NAME + ". Msg");
+        exception.expectMessage("Msg");
 
-        when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new HandlerConnectionException("Msg"));
+        when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new ExecutionException("Msg"));
 
         TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
                 clusterKey);
