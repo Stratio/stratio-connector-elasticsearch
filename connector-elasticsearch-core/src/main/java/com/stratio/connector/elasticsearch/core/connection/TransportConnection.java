@@ -53,8 +53,9 @@ public class TransportConnection extends Connection<Client> {
      */
     public TransportConnection(ICredentials credentiasl, ConnectorClusterConfig config) {
 
-        elasticClient = new TransportClient(ElasticsearchClientConfiguration.getSettings(config))
-                .addTransportAddresses(ElasticsearchClientConfiguration.getTransportAddress(config));
+         elasticClient = new TransportClient(ElasticsearchClientConfiguration.getSettings(config))
+                    .addTransportAddresses(ElasticsearchClientConfiguration.getTransportAddress(config));
+
         logger.info("ElasticSearch Transport connection established ");
 
 

@@ -51,14 +51,17 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
     @Override
     protected Connection createNativeConnection(ICredentials iCredentials,
             ConnectorClusterConfig connectorClusterConfig) throws CreateNativeConnectionException {
-        Connection connection;
-        if (isNodeClient(connectorClusterConfig)) {
-            connection = new NodeConnection(iCredentials, connectorClusterConfig);
-        } else {
-            connection = new TransportConnection(iCredentials, connectorClusterConfig);
-        }
-        if (!connection.isConnect()){ throw new CreateNativeConnectionException("The connection could not be "
-                + "established");}
+            Connection connection;
+            if (isNodeClient(connectorClusterConfig)) {
+                connection = new NodeConnection(iCredentials, connectorClusterConfig);
+            } else {
+                connection = new TransportConnection(iCredentials, connectorClusterConfig);
+            }
+            if (!connection.isConnect()) {
+                throw new CreateNativeConnectionException("The connection could not be "
+                        + "established");
+            }
+
         return connection;
     }
 

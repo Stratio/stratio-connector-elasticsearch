@@ -31,11 +31,13 @@ public enum ConfigurationOptions {
      */
     NODE_TYPE("node_type", Constants.FALSE),
     /**
-     * The elasticserach node data property.
+     * The elasticserach node data property. The node allow data or not.
      */
     NODE_DATA("node.data", Constants.FALSE),
     /**
      * The elasticserach node master property.
+     * Allows to configure a node to either be allowed to store data locally
+     * or not.
      */
     NODE_MASTER("node.master", Constants.FALSE),
     /**
