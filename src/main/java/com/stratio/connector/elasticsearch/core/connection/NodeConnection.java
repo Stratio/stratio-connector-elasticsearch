@@ -51,10 +51,7 @@ public class NodeConnection extends Connection<Client> {
      * The elasticsearch node connection.
      */
     private Node node = null;
-    /**
-     * Store the connection status.
-     */
-    private boolean isConnect = false;
+
 
     /**
      * Store the connection name.
@@ -72,7 +69,7 @@ public class NodeConnection extends Connection<Client> {
 
         node = nodeBuilder.settings(ElasticsearchClientConfiguration.getSettings(config)).node();
         elasticClient = node.client();
-        isConnect = true;
+
         connectionName = config.getName().getName();
         logger.info("Elasticsearch Node connection established ");
 
@@ -84,7 +81,6 @@ public class NodeConnection extends Connection<Client> {
     public void close() {
         if (node != null) {
             node.close();
-            isConnect = false;
             node = null;
             elasticClient = null;
             logger.info("ElasticSearch  connection [" + connectionName + "] close");
@@ -98,8 +94,8 @@ public class NodeConnection extends Connection<Client> {
      * @return true if the connection is open. False in other case.
      */
     @Override
-    public boolean isConnect() {
-        return isConnect;
+    public boolean isConnected() {
+        return (node!=null && !node.isClosed());
     }
 
     /**

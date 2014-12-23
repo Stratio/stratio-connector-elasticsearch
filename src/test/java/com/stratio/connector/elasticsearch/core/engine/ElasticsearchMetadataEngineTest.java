@@ -55,7 +55,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
@@ -93,7 +92,7 @@ public class ElasticsearchMetadataEngineTest {
     ContentBuilderCreator deepContentBuilder;
 
     @Before
-    public void before() throws HandlerConnectionException, Exception {
+    public void before() throws  Exception {
 
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenReturn(connection);
         when(connection.getNativeConnection()).thenReturn(client);

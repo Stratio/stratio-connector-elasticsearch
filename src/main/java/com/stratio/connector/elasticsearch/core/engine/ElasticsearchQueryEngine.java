@@ -23,7 +23,7 @@ import org.elasticsearch.client.Client;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.engine.UniqueProjectQueryEngine;
+import com.stratio.connector.commons.engine.SingleProjectQueryEngine;
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
@@ -38,7 +38,7 @@ import com.stratio.crossdata.common.result.QueryResult;
 /**
  * This class is the responsible of manage the ElasticSearchMetadata.
  */
-public class ElasticsearchQueryEngine extends UniqueProjectQueryEngine<Client> {
+public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
 
     private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();

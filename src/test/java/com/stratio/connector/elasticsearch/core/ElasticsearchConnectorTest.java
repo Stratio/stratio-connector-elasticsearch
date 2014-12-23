@@ -33,7 +33,6 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
@@ -73,7 +72,7 @@ public class ElasticsearchConnectorTest {
      * Method: close()
      */
     @Test
-    public void testConnect() throws Exception, HandlerConnectionException {
+    public void testConnect() throws Exception {
 
         ICredentials iCredentials = mock(ICredentials.class);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);

@@ -33,7 +33,6 @@ import org.junit.rules.ExpectedException;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.crossdata.common.data.Cell;
@@ -83,7 +82,7 @@ public class ElasticsearchStorageEngineExceptionTest {
     private List<ColumnName> clusterKey = Collections.emptyList();
 
     @Before
-    public void before() throws HandlerConnectionException {
+    public void before()  {
 
         indexRequestBuilderCreator = mock(IndexRequestBuilderCreator.class);
         connectionHandler = mock(ElasticSearchConnectionHandler.class);
@@ -100,7 +99,7 @@ public class ElasticsearchStorageEngineExceptionTest {
 
     @Test
     public void testInsertExecutionException()
-            throws ExecutionException, HandlerConnectionException, UnsupportedException {
+            throws ExecutionException,  UnsupportedException {
 
         exception.expect(ExecutionException.class);
         exception.expectMessage("Msg");

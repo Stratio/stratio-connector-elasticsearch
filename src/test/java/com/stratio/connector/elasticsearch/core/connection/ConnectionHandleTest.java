@@ -41,7 +41,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
@@ -82,7 +81,7 @@ public class ConnectionHandleTest {
      * Method: createConnection(String clusterName, Connection connection)
      */
     @Test
-    public void testCreateNodeConnection() throws Exception, HandlerConnectionException {
+    public void testCreateNodeConnection() throws Exception {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> connectionOptios = new HashMap<>();
@@ -106,7 +105,7 @@ public class ConnectionHandleTest {
     }
 
     @Test
-    public void testCreateTransportConnection() throws Exception, HandlerConnectionException {
+    public void testCreateTransportConnection() throws Exception {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> options = new HashMap<>();

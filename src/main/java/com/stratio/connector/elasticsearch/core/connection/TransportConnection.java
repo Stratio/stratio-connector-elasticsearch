@@ -43,10 +43,7 @@ public class TransportConnection extends Connection<Client> {
      * The Elasticsearch client.
      */
     private Client elasticClient = null;
-    /**
-     * Store the connection status.
-     */
-    private boolean isConnect = false;
+
 
     /**
      * Constructor.
@@ -60,7 +57,7 @@ public class TransportConnection extends Connection<Client> {
                 .addTransportAddresses(ElasticsearchClientConfiguration.getTransportAddress(config));
         logger.info("Elasticsearch Transport connection established ");
 
-        isConnect = true;
+
     }
 
     /**
@@ -69,7 +66,7 @@ public class TransportConnection extends Connection<Client> {
     public void close() {
         if (elasticClient != null) {
             elasticClient.close();
-            isConnect = false;
+
             elasticClient = null;
 
         }
@@ -82,8 +79,9 @@ public class TransportConnection extends Connection<Client> {
      * @return true if the connection is open. False in other case.
      */
     @Override
-    public boolean isConnect() {
-        return isConnect;
+    public boolean isConnected() {
+
+        return (elasticClient!=null && !((TransportClient)elasticClient).connectedNodes().isEmpty());
     }
 
     /**

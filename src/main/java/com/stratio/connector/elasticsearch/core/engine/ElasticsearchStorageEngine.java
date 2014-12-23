@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
+
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
@@ -132,18 +132,13 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     protected void insert(TableMetadata targetTable, Row row, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        try {
 
             IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetTable, row, connection);
             indexRequestBuilder.execute().actionGet();
 
             loggInsert(targetTable);
 
-        } catch (HandlerConnectionException e) {
 
-            throwHandlerException(e, "insert");
-
-        }
 
     }
 
@@ -157,7 +152,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     protected void insert(TableMetadata targetTable, Collection<Row> rows,
             Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
-        try {
+
             BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -166,9 +161,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
 
             logBulkInsert(targetTable, rows);
 
-        } catch (HandlerConnectionException e) {
-            throwHandlerException(e, "insert bulk");
-        }
+
 
     }
 
@@ -179,11 +172,10 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @param row           the row to insert.
      * @param connection    the logical connection.
      * @return the index request builder.
-     * @throws HandlerConnectionException if a exceptions occurs during connection handling.
      * @throws UnsupportedException       if a operation is not supported.
      */
     private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row,
-            Connection<Client> connection) throws HandlerConnectionException, UnsupportedException {
+            Connection<Client> connection) throws  UnsupportedException {
 
         Client client = connection.getNativeConnection();
 
@@ -197,12 +189,11 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @param rows           the rows to insert.
      * @param connection     the logical connection.
      * @return the index request builder.
-     * @throws HandlerConnectionException if a exceptions occurs during connection handling.
      * @throws UnsupportedException       if a operation is not supported.
      */
     private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata,
             Collection<Row> rows, Connection<Client> connection)
-            throws HandlerConnectionException, UnsupportedException {
+            throws  UnsupportedException {
 
         Client elasticClient = connection.getNativeConnection();
 
@@ -257,18 +248,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
         }
     }
 
-    /**
-     * Throw a handlerExcepcion.
-     *
-     * @param e      original exception.
-     * @param method the method which throw the exception.
-     * @throws ExecutionException
-     */
-    private void throwHandlerException(HandlerConnectionException e, String method) throws ExecutionException {
-        String exceptionMessage = "Fail Connecting elasticSearch in " + method + " method. " + e.getMessage();
-        logger.error(exceptionMessage);
-        throw new ExecutionException(exceptionMessage, e);
-    }
+
 
 }
 

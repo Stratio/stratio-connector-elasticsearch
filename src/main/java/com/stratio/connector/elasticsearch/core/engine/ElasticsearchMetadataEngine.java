@@ -21,7 +21,6 @@ package com.stratio.connector.elasticsearch.core.engine;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.connection.exceptions.HandlerConnectionException;
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.metadata.AlterTableFactory;
@@ -88,13 +86,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override
     protected void createCatalog(CatalogMetadata indexMetaData, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        try {
 
             createESIndex(indexMetaData, connection);
 
-        } catch (HandlerConnectionException e) {
-            throwHandlerConnectionException(e, "createCatalog");
-        }
+
     }
 
     /**
@@ -106,9 +101,8 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
     @Override
     protected void createTable(TableMetadata typeMetadata, Connection<Client> connection)
-            throws UnsupportedException,
-            ExecutionException {
-        try {
+            throws UnsupportedException, ExecutionException {
+
 
             String indexName = typeMetadata.getName().getCatalogName().getName();
             XContentBuilder xContentBuilder = contentBuilder.createTypeSource(typeMetadata);
@@ -116,9 +110,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
                     .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute()
                     .actionGet();
-        } catch (HandlerConnectionException | ElasticsearchException e) {
-            throwHandlerConnectionException(e, "createTable");
-        }
+
     }
 
     /**
@@ -131,15 +123,13 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     protected void dropCatalog(CatalogName indexName, Connection<Client> connection)
             throws ExecutionException {
         DeleteIndexResponse delete = null;
-        try {
+
             delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(indexName.getName()))
                     .actionGet();
             if (!delete.isAcknowledged()) {
                 throw new ExecutionException("dropCatalog request has not been acknowledged");
             }
-        } catch (HandlerConnectionException e) {
-            throwHandlerConnectionException(e, "dropCatalog");
-        }
+
 
     }
 
@@ -151,18 +141,14 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override
     protected void dropTable(TableName typeName, Connection<Client> connection)
             throws ExecutionException {
-        DeleteMappingResponse delete = null;
-        try {
+            DeleteMappingResponse delete = null;
             delete = recoveredClient(connection).admin().indices()
                     .prepareDeleteMapping(typeName.getCatalogName().getName()).setType(typeName.getName()).execute()
                     .actionGet();
             if (!delete.isAcknowledged()) {
                 throw new ExecutionException("dropTable request has not been acknowledged");
             }
-        } catch (HandlerConnectionException e) {
-            throwHandlerConnectionException(e, "dropTable");
 
-        }
     }
 
     /**
@@ -214,7 +200,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @param connection the cluster identification.
      * @return the ES Client.
      */
-    private Client recoveredClient(Connection connection) throws HandlerConnectionException {
+    private Client recoveredClient(Connection connection)  {
         return (Client) connection.getNativeConnection();
     }
 
@@ -223,11 +209,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      *
      * @param indexMetaData the metadata.
      * @param connection    the elasticsearch connection.
-     * @throws HandlerConnectionException if a exception happen during connection handling.
      * @throws ExecutionException         if an execution error happen.
      */
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection)
-            throws HandlerConnectionException, ExecutionException {
+            throws ExecutionException {
 
         CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
                 .prepareCreate(indexMetaData.getName().getName());
