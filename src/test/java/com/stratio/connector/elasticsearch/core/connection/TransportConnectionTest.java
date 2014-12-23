@@ -20,10 +20,7 @@ package com.stratio.connector.elasticsearch.core.connection;
 
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -69,8 +66,7 @@ public class TransportConnectionTest {
         transportConnection = new TransportConnection(credentials, configuration);
 
         assertNotNull("The connection is not null", Whitebox.getInternalState(transportConnection, "elasticClient"));
-        assertTrue("The connection is  connected", (Boolean) Whitebox.getInternalState(transportConnection,
-                "isConnect"));
+
     }
 
     /**
@@ -83,9 +79,7 @@ public class TransportConnectionTest {
         transportConnection.close();
 
         verify(client, times(1)).close();
-        assertNull("The connection is null", Whitebox.getInternalState(transportConnection, "elasticClient"));
-        assertFalse("The connection is not connected", (Boolean) Whitebox.getInternalState(transportConnection,
-                "isConnect"));
+        
     }
 
 } 
