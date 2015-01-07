@@ -46,6 +46,7 @@ import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * Created by jmgomez on 15/09/14.
@@ -122,7 +123,7 @@ public class ConnectorQueryExecutor {
      */
     private Row createRow(SearchHit hit, ProjectParsed queryData) throws ExecutionException {
 
-        Map<ColumnName, String> alias = returnAlias(queryData);
+        Map<Selector, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
         Row row = setRowValues(queryData, alias, fields);
 
@@ -137,7 +138,7 @@ public class ConnectorQueryExecutor {
      * @param fields    the fields.
      * @return a row.
      */
-    private Row setRowValues(ProjectParsed queryData, Map<ColumnName, String> alias, Map<String, Object> fields)
+    private Row setRowValues(ProjectParsed queryData, Map<Selector, String> alias, Map<String, Object> fields)
             throws ExecutionException {
         Row row = new Row();
         Set<String> fieldNames;
@@ -163,15 +164,15 @@ public class ConnectorQueryExecutor {
     }
 
     /**
-     * This method creates the fields names.
+     * This method creates the field names.
      *
-     * @param columnNames the column names.
+     * @param selectors the column names.
      * @return the field names.
      */
-    private Set<String> createFieldNames(Set<ColumnName> columnNames) {
+    private Set<String> createFieldNames(Set<Selector> selectors) {
         Set<String> fieldNames = new LinkedHashSet<>();
-        for (ColumnName columnName : columnNames) {
-            fieldNames.add(columnName.getName());
+        for (Selector selector : selectors) {
+            fieldNames.add(selector.getColumnName().getName());
         }
         return fieldNames;
     }
@@ -195,14 +196,16 @@ public class ConnectorQueryExecutor {
         return fields;
     }
 
+    
+
     /**
      * This method return the field alias.
      *
      * @param queryData the query data.
      * @return the alias.
      */
-    private Map<ColumnName, String> returnAlias(ProjectParsed queryData) {
-        Map<ColumnName, String> alias = Collections.EMPTY_MAP;
+    private Map<Selector, String> returnAlias(ProjectParsed queryData) {
+        Map<Selector, String> alias = Collections.EMPTY_MAP;
         if (queryData.getSelect() != null) {
             alias = queryData.getSelect().getColumnMap();
         }

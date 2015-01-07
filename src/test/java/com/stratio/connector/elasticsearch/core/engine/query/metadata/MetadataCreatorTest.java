@@ -80,7 +80,7 @@ public class MetadataCreatorTest {
     /**
      * Method: createColumnMetadata(ConnectorQueryData queryData)
      */
-
+/*
     @Test
     public void testCreateMetadata() throws Exception {
         ProjectParsed queryData = createQueryData();
@@ -124,5 +124,5 @@ public class MetadataCreatorTest {
         ProjectParsed queryData = new ProjectParsed(project, mock(ProjectValidator.class));
         return queryData;
     }
-
+*/
 } 

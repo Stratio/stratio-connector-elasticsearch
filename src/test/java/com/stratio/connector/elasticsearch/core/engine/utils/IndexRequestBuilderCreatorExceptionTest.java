@@ -95,7 +95,7 @@ public class IndexRequestBuilderCreatorExceptionTest {
     @After
     public void after() throws Exception {
     }
-
+/*
     @Test
     public void testCreateIndesRequestTwoPK() throws UnsupportedException, ExecutionException {
 
@@ -124,5 +124,5 @@ public class IndexRequestBuilderCreatorExceptionTest {
         Row row = new Row(rowKey, cell);
         return row;
     }
-
+*/
 }

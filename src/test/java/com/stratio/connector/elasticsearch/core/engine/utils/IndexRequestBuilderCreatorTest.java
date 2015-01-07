@@ -99,7 +99,7 @@ public class IndexRequestBuilderCreatorTest {
     @After
     public void after() throws Exception {
     }
-
+/*
     @Test
     public void createIndexRequestBuilderTest() throws UnsupportedException {
 
@@ -157,7 +157,7 @@ public class IndexRequestBuilderCreatorTest {
         assertNotNull("The index request builder is not null", indexRequestBuilder);
 
     }
-
+*/
     private Row createRow(String rowKey, Object cellValue) {
         Cell cell = new Cell(cellValue);
         Row row = new Row(rowKey, cell);

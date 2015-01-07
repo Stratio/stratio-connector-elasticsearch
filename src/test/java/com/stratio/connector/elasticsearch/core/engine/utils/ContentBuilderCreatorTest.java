@@ -69,6 +69,7 @@ public class ContentBuilderCreatorTest {
     /**
      * Method: createTypeSource(TableMetadata typeMetadata)
      */
+    /*
     @Test
     public void testCreateTable() throws Exception {
 
@@ -97,7 +98,7 @@ public class ContentBuilderCreatorTest {
                 (deepContentBuilder.createTypeSource(tableMetadata).string()));
 
     }
-
+*/
     private Map<ColumnName, ColumnMetadata> creteColumns(String columnName, ColumnType columnType) {
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         ColumnName column = new ColumnName(INDEX_NAME, TYPE_NAME, columnName);

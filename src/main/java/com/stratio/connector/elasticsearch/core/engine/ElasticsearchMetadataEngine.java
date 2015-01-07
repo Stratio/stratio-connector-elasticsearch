@@ -19,6 +19,7 @@
 package com.stratio.connector.elasticsearch.core.engine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
@@ -38,6 +39,7 @@ import com.stratio.connector.elasticsearch.core.engine.metadata.AlterTableFactor
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
+import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -47,7 +49,7 @@ import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
- * This class is the responsible of manage the ElasticSearchMetadata.
+ * This class is responsible of managing the ElasticSearch Metadata.
  *
  * @author darroyo
  */
@@ -62,7 +64,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * Constructor.
      *
-     * @param connectionHandler the connector handle.
+     * @param connectionHandler the connector handler.
      */
     public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -76,7 +78,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method create a index in ES.
+     * This method creates an index in ES.
      *
      * @param indexMetaData the index configuration.
      * @throws UnsupportedException if any operation is not supported.
@@ -93,7 +95,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method create a type in ES.
+     * This method creates a type in ES.
      *
      * @param typeMetadata the type configure
      * @throws UnsupportedException if any operation is not supported.
@@ -114,7 +116,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method drop a index in ES.
+     * This method drops an index in ES.
      *
      * @param indexName the index name.
      */
@@ -134,7 +136,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method drop a type in ES.
+     * This method drops a type in ES.
      *
      * @param typeName the type name.
      */
@@ -152,7 +154,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method create a index.
+     * This method creates an index.
      *
      * @param indexMetadata the index metadata.
      * @param connection    the connection.
@@ -163,11 +165,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
-        throw new UnsupportedException("Not yet supported");
+        throw new UnsupportedException("Operation createIndex: Not supported yet by ElasticSearch");
     }
 
     /**
-     * This method drop a index.
+     * This method drops an index.
      *
      * @param indexMetadata the index metadata.
      * @param connection    the connection.
@@ -177,25 +179,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     @Override
     protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Not yet supported");
+        throw new UnsupportedException("Operation dropIndex: Not supported yet by ElasticSearch");
     }
 
     /**
-     * This method throw a excption.
-     *
-     * @param originalExcepcion the exception.
-     * @param operation         the operation witch throw the excepcion
-     * @throws ExecutionException always.
-     */
-    private void throwHandlerConnectionException(Exception originalExcepcion, String operation)
-            throws ExecutionException {
-        String msg = "Error find ElasticSearch client in " + operation + ". " + originalExcepcion.getMessage();
-        logger.error(msg);
-        throw new ExecutionException(msg, originalExcepcion);
-    }
-
-    /**
-     * This method return the concrete ES Client for a cluster.
+     * This method returns the concrete ES Client of a cluster.
      *
      * @param connection the cluster identification.
      * @return the ES Client.
@@ -205,7 +193,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method crate a elasticsearch Index.
+     * This method creates an Elasticsearch Index.
      *
      * @param indexMetaData the metadata.
      * @param connection    the elasticsearch connection.
@@ -223,11 +211,11 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     /**
-     * This method turn the crossdata metadata into elasticsearch properties.
+     * This method turns the Crossdata metadata into Elasticsearch properties.
      *
-     * @param indexMetaData the crossdata metadata.
-     * @return the elasticsearch options.
-     * @throws ExecutionException if a error happens.
+     * @param indexMetaData the Crossdata metadata.
+     * @return the Elasticsearch options.
+     * @throws ExecutionException if an error occurs.
      */
     private Map<String, String> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
 
@@ -242,6 +230,34 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         }
         return transformOptions;
     }
+
+	@Override
+	public void alterCatalog(ClusterName targetCluster,
+			CatalogName catalogName, Map<Selector, Selector> options)
+			throws UnsupportedException {
+        throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
+		
+	}
+
+	@Override
+	public List<CatalogMetadata> provideMetadata(ClusterName clusterName)
+			throws UnsupportedException {
+        throw new UnsupportedException("Operation provideMetadata: Not supported yet by ElasticSearch");
+	}
+
+	@Override
+	public CatalogMetadata provideCatalogMetadata(ClusterName clusterName,
+			CatalogName catalogName) throws UnsupportedException {
+        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
+
+	}
+
+	@Override
+	public TableMetadata provideTableMetadata(ClusterName clusterName,
+			TableName tableName) throws UnsupportedException {
+        throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
+
+	}
 
 }
 

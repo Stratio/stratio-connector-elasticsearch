@@ -58,6 +58,7 @@ import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Operator;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 /**
@@ -137,11 +138,12 @@ public class ConnectorQueryBuilderTest {
 
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
 
+        Map<Selector, String> alias = new HashMap<>();
+        Selector key1 = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
+        Selector key2 = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
 
-
-        Map<ColumnName, String> alias = new HashMap<>();
-        alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1), COLUMN_1);
-        alias.put(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2), COLUMN_2);
+		alias.put(key1 , COLUMN_1);
+        alias.put(key2, COLUMN_2);
 
         Select select = new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections
                 .EMPTY_MAP);
@@ -152,7 +154,7 @@ public class ConnectorQueryBuilderTest {
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_3));
 
-        Project project =         new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
+        Project project = new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                         new ClusterName(CLUSTER_NAME), columnList);
 
         Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ,

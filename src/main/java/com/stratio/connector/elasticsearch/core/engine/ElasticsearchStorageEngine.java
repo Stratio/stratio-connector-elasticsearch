@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
-
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
+import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -248,7 +248,20 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
         }
     }
 
+	@Override
+	public void insert(ClusterName targetCluster, TableMetadata targetTable,
+			Row row, boolean isNotExists) throws UnsupportedException {
+        throw new UnsupportedException("Operation insert: Not supported yet by ElasticSearch");
+		
+	}
 
+	@Override
+	public void insert(ClusterName targetCluster, TableMetadata targetTable,
+			Collection<Row> rows, boolean isNotExists)
+			throws UnsupportedException {
+        throw new UnsupportedException("Operation insert: Not supported yet by ElasticSearch");
+		
+	}
 
 }
 

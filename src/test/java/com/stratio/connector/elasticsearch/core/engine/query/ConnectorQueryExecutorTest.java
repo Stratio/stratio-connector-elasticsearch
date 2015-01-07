@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +57,8 @@ import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * ConnectorQueryExecutor Tester.
@@ -149,14 +152,16 @@ public class ConnectorQueryExecutorTest {
                 new ClusterName(CLUSTER_NAME));
 
 
-        Map<ColumnName, String> column = new HashMap<>();
-        ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
-        column.put(columnName, ALIAS);
+        Map<Selector, String> column = new HashMap<>();
+
+        Selector key = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
+
+		column.put(key, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
-        Map<ColumnName, ColumnType> typeColumn = new HashMap<>();
-        typeColumn.put(columnName, ColumnType.TEXT);
+        Map<Selector, ColumnType> typeColumn = new HashMap<>();
+        typeColumn.put(key, ColumnType.TEXT);
         Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumn);
 
         projection.setNextStep(select);

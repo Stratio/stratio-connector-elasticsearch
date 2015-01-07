@@ -27,6 +27,8 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,7 +89,7 @@ public class ElasticsearchStorageEngineTest {
     private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
-    private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
+    private TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
     private static final String COLUMN_NAME = "column_name";
     private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME.".toLowerCase();
     private static final String CELL_VALUE = "cell_value";
@@ -106,12 +108,12 @@ public class ElasticsearchStorageEngineTest {
     private Client client;
 
     private ElasticsearchStorageEngine elasticsearchStorageEngine;
-    private Map<ColumnName, ColumnMetadata> columns = null;
+    private LinkedHashMap<ColumnName, ColumnMetadata> columns = null;
     private Map<Selector, Selector> options = null;
     private Map<IndexName, IndexMetadata> indexes = null;
     private ClusterName clusterRef = null;
-    private List<ColumnName> partirionKey = Collections.emptyList();
-    private List<ColumnName> clusterKey = Collections.emptyList();
+    LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+    LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
 
     @Before
     public void before() throws ExecutionException {
@@ -136,7 +138,7 @@ public class ElasticsearchStorageEngineTest {
 
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+        TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
                 clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
 
@@ -160,7 +162,7 @@ public class ElasticsearchStorageEngineTest {
 
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+        TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
                 clusterKey);
         Collection<Row> row = new ArrayList<>();
         Row row1 = createRow(COLUMN_NAME, CELL_VALUE);
@@ -199,10 +201,10 @@ public class ElasticsearchStorageEngineTest {
 
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-        partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+        partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
+
+        TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
                 clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
 

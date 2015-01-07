@@ -19,14 +19,12 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.util.Set;
-
 import org.elasticsearch.action.search.SearchRequestBuilder;
-
-import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
- * The responsibility of this class is create a Select cretor..
+ * The responsibility of this class is to create a Select creator.
  *
  * @author darroyo
  */
@@ -40,14 +38,14 @@ public class SelectCreator {
      */
     public void modify(SearchRequestBuilder requestBuilder, Select select) {
 
-        Set<ColumnName> columnMetadataList = select.getColumnMap().keySet();
+        Set<Selector> columnMetadataList = select.getColumnMap().keySet();
 
         if (columnMetadataList != null && !columnMetadataList.isEmpty()) {
 
             String[] fields = new String[columnMetadataList.size()];
             int i = 0;
-            for (ColumnName columnName : columnMetadataList) {
-                fields[i] = columnName.getName();
+            for (Selector selector : columnMetadataList) {
+                fields[i] = selector.getColumnName().getName();
                 i++;
             }
 

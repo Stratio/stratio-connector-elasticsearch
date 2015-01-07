@@ -28,6 +28,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.elasticsearch.action.ActionFuture;
@@ -53,14 +54,20 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import scala.collection.mutable.LinkedHashMap;
+
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreator;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.IndexName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
@@ -162,10 +169,15 @@ public class ElasticsearchMetadataEngineTest {
     public void testCreateTable() throws Exception {
 
         TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
-        TableMetadata tableMetadata = new TableMetadata(tableName, Collections.EMPTY_MAP, Collections.EMPTY_MAP,
-                Collections.EMPTY_MAP, new ClusterName(CLUSTER_NAME),
-                Collections.EMPTY_LIST,
-                Collections.EMPTY_LIST);
+        Map<Selector, Selector> options = new HashMap<>();
+        java.util.LinkedHashMap<ColumnName, ColumnMetadata> columns = new java.util.LinkedHashMap<>();
+        Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
+        LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
+        
+        TableMetadata tableMetadata = new TableMetadata(tableName, options, columns, indexes, 
+        		new ClusterName(CLUSTER_NAME), partitionKey, clusterKey);
+     		
 
         XContentBuilder xContentBuilder = mock(XContentBuilder.class);
         when(deepContentBuilder.createTypeSource(tableMetadata)).thenReturn(xContentBuilder);
@@ -184,8 +196,6 @@ public class ElasticsearchMetadataEngineTest {
         when(adminClient.indices()).thenReturn(indicesAdminClient);
 
         when(client.admin()).thenReturn(adminClient);
-
-        Map<String, Object> options = Collections.EMPTY_MAP;
 
         elasticsearchMetadataEngine.createTable(new ClusterName(CLUSTER_NAME), tableMetadata);
 

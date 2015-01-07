@@ -22,6 +22,8 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +63,7 @@ public class ElasticsearchStorageEngineExceptionTest {
     private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
-    private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
+    private TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
     private static final String ROW_NAME = "row_name";
     private static final Integer INTEGER_CELL_VALUE = new Integer(5);
 
@@ -74,12 +76,12 @@ public class ElasticsearchStorageEngineExceptionTest {
     private Client client;
 
     private ElasticsearchStorageEngine elasticsearchStorageEngine;
-    private Map<ColumnName, ColumnMetadata> columns = null;
+    private LinkedHashMap<ColumnName, ColumnMetadata> columns = null;
     private Map<Selector, Selector> options = null;
     private Map<IndexName, IndexMetadata> indexes = null;
     private ClusterName clusterRef = null;
-    private List<ColumnName> partirionKey = Collections.emptyList();
-    private List<ColumnName> clusterKey = Collections.emptyList();
+    LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+    LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
 
     @Before
     public void before()  {
@@ -106,7 +108,7 @@ public class ElasticsearchStorageEngineExceptionTest {
 
         when(connectionHandler.getConnection(CLUSTER_NAME)).thenThrow(new ExecutionException("Msg"));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+        TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
                 clusterKey);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
