@@ -76,8 +76,11 @@ public class ElasticsearchConnectorTest {
 
         ICredentials iCredentials = mock(ICredentials.class);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
-        Map<String, String> options = new HashMap<>();
-        ConnectorClusterConfig config = new ConnectorClusterConfig(clusterName, options);
+        Map<String, String> connectorOptions = new HashMap<>();
+        Map<String, String> clusterOptions = new HashMap<>();
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(clusterName, connectorOptions, clusterOptions);
+
         ElasticSearchConnectionHandler connectionHandle = mock(ElasticSearchConnectionHandler.class);
         Whitebox.setInternalState(elasticsearchConnector, "connectionHandler", connectionHandle);
 

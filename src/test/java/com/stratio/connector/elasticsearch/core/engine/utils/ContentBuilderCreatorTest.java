@@ -20,10 +20,9 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.junit.After;
@@ -32,9 +31,11 @@ import org.junit.Test;
 
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.IndexName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.IntegerSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -53,7 +54,7 @@ public class ContentBuilderCreatorTest {
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
     private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"}," +
-            "\"properties\":{\"column_3\":{\"type\":\"double\",\"index\":\"analyzed\"},\"column_5\":{\"type\":\"integer\",\"index\":\"analyzed\"},\"column_7\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_2\":{\"type\":\"boolean\",\"index\":\"not_analyzed\"},\"column_6\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_4\":{\"type\":\"float\",\"index\":\"analyzed\"},\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"}}}";
+            "\"properties\":{\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"},\"column_2\":{\"type\":\"boolean\",\"index\":\"not_analyzed\"},\"column_3\":{\"type\":\"double\",\"index\":\"analyzed\"},\"column_4\":{\"type\":\"float\",\"index\":\"analyzed\"},\"column_5\":{\"type\":\"integer\",\"index\":\"analyzed\"},\"column_6\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_7\":{\"type\":\"string\",\"index\":\"analyzed\"}}}";
     ContentBuilderCreator deepContentBuilder;
 
     @Before
@@ -69,19 +70,17 @@ public class ContentBuilderCreatorTest {
     /**
      * Method: createTypeSource(TableMetadata typeMetadata)
      */
-    /*
+
     @Test
     public void testCreateTable() throws Exception {
-
-        Map indexex = Collections.EMPTY_MAP;
+        TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
         Map<Selector, Selector> options = new LinkedHashMap<>();
         options.put(new StringSelector("number_of_shards"), new IntegerSelector(5));
         options.put(new StringSelector("number_of_replicas"), new IntegerSelector(2));
         options.put(new StringSelector("other"), new StringSelector("String value"));
-        List<ColumnName> partitionKey = Collections.EMPTY_LIST;
-        List<ColumnName> clusterKey = Collections.EMPTY_LIST;
+        
 
-        Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
         columns.putAll(creteColumns("column_1", ColumnType.BIGINT));
         columns.putAll(creteColumns("column_2", ColumnType.BOOLEAN));
         columns.putAll(creteColumns("column_3", ColumnType.DOUBLE));
@@ -89,16 +88,24 @@ public class ContentBuilderCreatorTest {
         columns.putAll(creteColumns("column_5", ColumnType.INT));
         columns.putAll(creteColumns("column_6", ColumnType.TEXT));
         columns.putAll(creteColumns("column_7", ColumnType.VARCHAR));
+        Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
 
-        ClusterName cluteref = new ClusterName(CLUSTER_NAME);
+        ClusterName clusterRef = new ClusterName(CLUSTER_NAME);
 
-        TableMetadata tableMetadata = new TableMetadata(new TableName(INDEX_NAME, TYPE_NAME), options, columns, indexex,
-                cluteref, partitionKey, clusterKey);
-        assertEquals("The JSON is correct", RESULT_CREATE_TABLE,
+        
+        LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
+        
+        TableMetadata tableMetadata = new TableMetadata(tableName, options, columns, indexes, 
+        		clusterRef, partitionKey, clusterKey);
+        
+        
+
+        assertEquals("The JSON is not correct", RESULT_CREATE_TABLE,
                 (deepContentBuilder.createTypeSource(tableMetadata).string()));
 
     }
-*/
+
     private Map<ColumnName, ColumnMetadata> creteColumns(String columnName, ColumnType columnType) {
         Map<ColumnName, ColumnMetadata> columns = new HashMap<>();
         ColumnName column = new ColumnName(INDEX_NAME, TYPE_NAME, columnName);

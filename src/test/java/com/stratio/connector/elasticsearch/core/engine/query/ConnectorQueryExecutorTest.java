@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -132,7 +131,7 @@ public class ConnectorQueryExecutorTest {
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
         Row row = resultset.getRows().get(0);
         assertEquals("The rows number is correct", 1, row.size());
-        assertEquals("The value is correct", COLUMN_STRING_VALUE, row.getCells().get(ALIAS).getValue());
+        assertEquals("The value is not correct", COLUMN_STRING_VALUE, row.getCells().get(ALIAS).getValue());
 
     }
 
@@ -147,10 +146,8 @@ public class ConnectorQueryExecutorTest {
 
     private ProjectParsed createQueryData(SearchType searchType) throws ExecutionException {
 
-
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                 new ClusterName(CLUSTER_NAME));
-
 
         Map<Selector, String> column = new HashMap<>();
 

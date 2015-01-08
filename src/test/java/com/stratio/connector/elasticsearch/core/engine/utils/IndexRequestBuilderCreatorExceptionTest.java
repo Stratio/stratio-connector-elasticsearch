@@ -21,9 +21,9 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -63,21 +63,21 @@ public class IndexRequestBuilderCreatorExceptionTest {
     private static final String CLUSTER_NAME = "CLUSTER NAME";
     private static final String INDEX_NAME = "INDEX_NAME";
     private static final String TYPE_NAME = "TYPE_NAME";
-    private TableName tableMame = new TableName(INDEX_NAME, TYPE_NAME);
+    private TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
     private static final String ROW_NAME = "row_name";
     private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME";
     private static final String CELL_VALUE = "cell_value";
 
-    private static final Integer INTEGER_CELL_VALUE = new Integer(5);
     @Rule
     public ExpectedException exception = ExpectedException.none();
     IndexRequestBuilderCreator indexRequestBuilderCreator;
-    private Map<ColumnName, ColumnMetadata> columns = null;
-    private Map<Selector, Selector> options = null;
-    private Map<IndexName, IndexMetadata> indexes = null;
-    private ClusterName clusterRef = null;
-    private List<ColumnName> partirionKey = Collections.emptyList();
-    private List<ColumnName> clusterKey = Collections.emptyList();
+    private LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
+    private Map<Selector, Selector> options = new LinkedHashMap<>();
+    private Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
+    private ClusterName clusterRef = new ClusterName(CLUSTER_NAME);
+    private LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+    private LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
+    
     @Mock
     private ElasticSearchConnectionHandler connectionHandler;
     @Mock
@@ -95,18 +95,18 @@ public class IndexRequestBuilderCreatorExceptionTest {
     @After
     public void after() throws Exception {
     }
-/*
+
     @Test
     public void testCreateIndesRequestTwoPK() throws UnsupportedException, ExecutionException {
 
         exception.expect(UnsupportedException.class);
         exception.expectMessage("Only one PK is allowed");
 
-        partirionKey = new ArrayList<>();
-        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
-        partirionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, OTHER_ROW_NAME));
+       
+        partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
+        partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, OTHER_ROW_NAME));
 
-        TableMetadata targetTable = new TableMetadata(tableMame, options, columns, indexes, clusterRef, partirionKey,
+        TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
                 clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
         row.addCell(OTHER_ROW_NAME, new Cell(CELL_VALUE));
@@ -124,5 +124,5 @@ public class IndexRequestBuilderCreatorExceptionTest {
         Row row = new Row(rowKey, cell);
         return row;
     }
-*/
+
 }

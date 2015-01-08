@@ -41,6 +41,8 @@ import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
 
 /**
  * MetadataCreator Tester.
@@ -80,7 +82,7 @@ public class MetadataCreatorTest {
     /**
      * Method: createColumnMetadata(ConnectorQueryData queryData)
      */
-/*
+
     @Test
     public void testCreateMetadata() throws Exception {
         ProjectParsed queryData = createQueryData();
@@ -102,19 +104,20 @@ public class MetadataCreatorTest {
 
     private ProjectParsed createQueryData() throws ExecutionException {
 
-        Map<ColumnName, String> columnMap = new LinkedHashMap();
-        columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0]), ALIAS[0]);
-        columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[1]), ALIAS[1]);
-        columnMap.put(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[2]), ALIAS[2]);
+        Map<Selector, String> columnMap = new LinkedHashMap<>();
+        columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0])),  ALIAS[0]);
+        columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[1])), ALIAS[1]);
+        columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[2])), ALIAS[2]);
+
         Map<String, ColumnType> typeMap = new LinkedHashMap<>();
         typeMap.put(ALIAS[0], TYPES[0]);
         typeMap.put(ALIAS[1], TYPES[1]);
         typeMap.put(ALIAS[2], TYPES[2]);
 
-        Map<ColumnName, ColumnType> typeColumnName = new LinkedHashMap<>();
-        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME1), TYPES[0]);
-        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME2), TYPES[1]);
-        typeColumnName.put(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME3), TYPES[2]);
+        Map<Selector, ColumnType> typeColumnName = new LinkedHashMap<>();
+        typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME1)), TYPES[0]);
+        typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME2)), TYPES[1]);
+        typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME3)), TYPES[2]);
         Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap, typeColumnName);
         Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME),
                 new ClusterName("CLUSTER_NAME"));
@@ -124,5 +127,5 @@ public class MetadataCreatorTest {
         ProjectParsed queryData = new ProjectParsed(project, mock(ProjectValidator.class));
         return queryData;
     }
-*/
+
 } 

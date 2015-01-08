@@ -21,10 +21,8 @@ package com.stratio.connector.elasticsearch.core.engine;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.client.Client;
@@ -96,8 +94,6 @@ public class ElasticsearchStorageEngineExceptionTest {
         Whitebox.setInternalState(elasticsearchStorageEngine, "indexRequestBuilderCreator", indexRequestBuilderCreator);
 
     }
-
-
 
     @Test
     public void testInsertExecutionException()

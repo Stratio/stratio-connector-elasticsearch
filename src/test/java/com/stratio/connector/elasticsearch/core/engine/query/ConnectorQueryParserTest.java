@@ -36,7 +36,6 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.LogicalStep;
-import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
@@ -44,6 +43,7 @@ import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Operator;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 
 /**
@@ -75,7 +75,7 @@ public class ConnectorQueryParserTest {
     /**
      * Method: transformLogicalWorkFlow(LogicalWorkflow logicalPlan)
      */
-    /*
+
     @Test
     public void testTransformSimpleWorkFlow() throws Exception {
 
@@ -121,19 +121,20 @@ public class ConnectorQueryParserTest {
         project.setNextStep(filter);
         initalSteps.add(project);
 
-        Map<ColumnName, String> column = new HashMap<>();
-        column.put(columnName, "alias" + COLUMN_NAME);
+        Map<Selector, String> column = new HashMap<>();
+        Selector selector = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
+		column.put(selector,  "alias" + COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
-        Map<ColumnName, ColumnType> typeColumName = new HashMap<>();
-        typeColumName.put(columnName, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumName);
-        filter.setNextStep(select);
+        Map<Selector, ColumnType> typeColumName = new HashMap<>();
+        typeColumName.put(selector, ColumnType.TEXT);
 
-        LogicalWorkflow logicalWorkflow = new LogicalWorkflow(initalSteps);
+        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumName);
+        		
+        filter.setNextStep(select);
 
         return project;
     }
-*/
+
 }

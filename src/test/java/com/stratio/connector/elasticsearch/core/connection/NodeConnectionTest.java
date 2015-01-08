@@ -18,10 +18,8 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
-import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -81,8 +79,7 @@ public class NodeConnectionTest {
         nodeConnection = new NodeConnection(credentials, configuration);
 
         assertNotNull("The connection is not null", Whitebox.getInternalState(nodeConnection, "elasticClient"));
-        assertTrue("The connection is  connected", (Boolean) Whitebox.getInternalState(nodeConnection,
-                "isConnect"));
+
     }
 
     @After
@@ -103,8 +100,7 @@ public class NodeConnectionTest {
         verify(node, times(1)).close();
         assertNull("The connection is null", Whitebox.getInternalState(nodeConnection, "elasticClient"));
         assertNull("The node is null", Whitebox.getInternalState(nodeConnection, "node"));
-        assertFalse("The connection is not connected", (Boolean) Whitebox.getInternalState(nodeConnection,
-                "isConnect"));
+
     }
 
 } 
