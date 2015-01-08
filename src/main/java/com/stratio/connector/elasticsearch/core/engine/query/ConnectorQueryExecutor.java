@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.util.ColumnTypeHelper;
+import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
@@ -48,6 +49,7 @@ import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.SelectorType;
 
 /**
  * Created by jmgomez on 15/09/14.
@@ -158,8 +160,8 @@ public class ConnectorQueryExecutor {
 					.getProject().getTableName().getName(), field);
 			
 			ColumnSelector columnSelector = new ColumnSelector(columnName);
-			if (alias.containsKey(columnName)) {
-				field = alias.get(columnName);
+			if (alias.containsKey(columnSelector)) {
+				field = alias.get(columnSelector);
 			}
 	
 			row.addCell(field, new Cell(
@@ -173,11 +175,12 @@ public class ConnectorQueryExecutor {
 	 *
 	 * @param selectors the column names.
 	 * @return the field names.
+	 * @throws ExecutionException 
 	 */
-	private Set<String> createFieldNames(Set<Selector> selectors) {
+	private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
 		Set<String> fieldNames = new LinkedHashSet<>();
 		for (Selector selector : selectors) {
-			fieldNames.add(selector.getColumnName().getName());
+			fieldNames.add((String)SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
 		}
 		return fieldNames;
 	}
