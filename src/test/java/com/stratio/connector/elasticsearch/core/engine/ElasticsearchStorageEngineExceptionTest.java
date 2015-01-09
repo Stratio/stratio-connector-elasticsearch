@@ -108,7 +108,8 @@ public class ElasticsearchStorageEngineExceptionTest {
                 clusterKey);
         ClusterName clusterName = new ClusterName(CLUSTER_NAME);
 
-        elasticsearchStorageEngine.insert(clusterName, targetTable, createRow(ROW_NAME, INTEGER_CELL_VALUE));
+        boolean isNotExists = false;
+		elasticsearchStorageEngine.insert(clusterName, targetTable, createRow(ROW_NAME, INTEGER_CELL_VALUE),isNotExists);
 
     }
 

@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -76,7 +77,7 @@ public class IndexRequestBuilderCreatorTest {
     public ExpectedException exception = ExpectedException.none();
     IndexRequestBuilderCreator indexRequestBuilderCreator;
     private LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<ColumnName, ColumnMetadata>();
-    private Map<Selector, Selector> options = new LinkedHashMap<Selector, Selector>();
+    private LinkedHashMap<Selector, Selector> options = new LinkedHashMap<Selector, Selector>();
     private Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
     private ClusterName clusterRef = new ClusterName(CLUSTER_NAME);
     private LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
@@ -107,12 +108,11 @@ public class IndexRequestBuilderCreatorTest {
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
         row.addCell(COLUMN_NAME, new Cell(CELL_VALUE));
 
-        partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
 
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
 
-        Map other = new HashMap<>();
+        Map<String, Object> other = new HashMap<>();
         other.put(COLUMN_NAME, CELL_VALUE);
 
         IndexRequestBuilder indexRequiestBuilder = mock(IndexRequestBuilder.class);
@@ -139,17 +139,19 @@ public class IndexRequestBuilderCreatorTest {
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
 
-        Map other = new HashMap<>();
+        Map <String, Object> other = new HashMap<>();
         other.put(COLUMN_NAME, CELL_VALUE);
 
-        IndexRequestBuilder indexRequiestBuilder = mock(IndexRequestBuilder.class);
-        when(indexRequiestBuilder.setSource(eq(other))).thenReturn(indexRequiestBuilder);
-        when(client.prepareIndex(INDEX_NAME, TYPE_NAME)).thenReturn(indexRequiestBuilder);
+        IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
+        when(indexRequestBuilder.setSource(eq(other))).thenReturn(indexRequestBuilder);
+        when(client.prepareIndex(INDEX_NAME, TYPE_NAME,CELL_VALUE)).thenReturn(indexRequestBuilder);
 
-        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
-                .createIndexRequestBuilder(targetTable, client, row);
+        assertEquals(indexRequestBuilder, indexRequestBuilderCreator
+                .createIndexRequestBuilder(targetTable, client, row));
+        
+  
 
-        assertNotNull("The index request builder is not null", indexRequestBuilder);
+       // assertNotNull("The index request builder is not null", indexRequestBuilder);
 
     }
 

@@ -61,4 +61,8 @@ public class ESOrderByFT extends GenericOrderByFT {
     @Override @Test @Ignore public void sortTestMultifield() throws ConnectorException {
         super.sortTestMultifield();
     }
+    
+    @Override @Test @Ignore public void sortAscTest() throws ConnectorException {
+        super.sortTestMultifield();
+    }
 }

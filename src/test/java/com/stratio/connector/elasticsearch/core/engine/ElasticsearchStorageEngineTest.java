@@ -148,7 +148,8 @@ public class ElasticsearchStorageEngineTest {
         ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
-        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
+        boolean isNotExists = false;
+		elasticsearchStorageEngine.insert(clusterName, targetTable, row, isNotExists);
 
         verify(listenableActionFuture, times(1)).actionGet();
 
@@ -187,7 +188,8 @@ public class ElasticsearchStorageEngineTest {
 
         when(client.prepareBulk()).thenReturn(bulkRequesBuilder);
 
-        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
+        boolean isNotExists = false;
+		elasticsearchStorageEngine.insert(clusterName, targetTable, row, isNotExists);
 
         verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder1);
         verify(bulkRequesBuilder, times(1)).add(indexRequestBuilder2);
@@ -214,7 +216,8 @@ public class ElasticsearchStorageEngineTest {
         ListenableActionFuture<IndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
         when(indexRequestBuilder.execute()).thenReturn(listenableActionFuture);
 
-        elasticsearchStorageEngine.insert(clusterName, targetTable, row);
+        boolean isNotExists = false;
+		elasticsearchStorageEngine.insert(clusterName, targetTable, row, isNotExists);
 
         verify(listenableActionFuture, times(1)).actionGet();
 

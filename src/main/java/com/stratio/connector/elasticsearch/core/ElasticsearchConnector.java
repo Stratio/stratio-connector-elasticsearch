@@ -168,9 +168,5 @@ public class ElasticsearchConnector extends CommonsConnector {
         return new ElasticsearchMetadataEngine(connectionHandler);
     }
 
-	@Override
-	public boolean updateMetadata(IMetadata metadata) {
-		return false;
-	}
 
 }

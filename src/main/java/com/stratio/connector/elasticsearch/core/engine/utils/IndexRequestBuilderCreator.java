@@ -57,7 +57,7 @@ public class IndexRequestBuilderCreator {
     }
 
     /**
-     * This method creates a indexrequesbuider with PK.
+     * This method creates a indexrequestbuilder with PK.
      *
      * @param elasticClient the connection to elastic search.
      * @param targetTable   the table where the row must be inserted.

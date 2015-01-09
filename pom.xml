@@ -23,7 +23,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <properties>
         <version.crossdata>0.2.0-SNAPSHOT</version.crossdata>
-        <version.connector.commons>0.3.0-SNAPSHOT</version.connector.commons>
+        <version.connector.commons>0.4.0-SNAPSHOT</version.connector.commons>
         <version.elasticsearch>1.3.2</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

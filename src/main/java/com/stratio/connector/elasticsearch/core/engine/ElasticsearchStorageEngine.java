@@ -129,10 +129,13 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      */
 
     @Override
-    protected void insert(TableMetadata targetTable, Row row, Connection<Client> connection)
+    protected void insert(TableMetadata targetTable, Row row, boolean isNotExists, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
 
+    		if (isNotExists){
+    	        throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
 
+    		}
             IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetTable, row, connection);
             indexRequestBuilder.execute().actionGet();
 
@@ -145,14 +148,19 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Insert a set of documents in Elasticsearch.
      *
+     * @param targetTable 
      * @param rows the set of rows.
+     * @param isNotExists
      * @throws ExecutionException   in case of failure during the execution.
      * @throws UnsupportedException if the operation is not supported.
      */
-    protected void insert(TableMetadata targetTable, Collection<Row> rows,
+    @Override
+    protected void insert(TableMetadata targetTable, Collection<Row> rows,boolean isNotExists,
             Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
-
+			if (isNotExists){
+    	        throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
+			}
             BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
 
             BulkResponse bulkResponse = bulkRequest.execute().actionGet();
@@ -248,20 +256,10 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
         }
     }
 
-	@Override
-	public void insert(ClusterName targetCluster, TableMetadata targetTable,
-			Row row, boolean isNotExists) throws UnsupportedException {
-        throw new UnsupportedException("Operation insert: Not supported yet by ElasticSearch");
-		
-	}
 
-	@Override
-	public void insert(ClusterName targetCluster, TableMetadata targetTable,
-			Collection<Row> rows, boolean isNotExists)
-			throws UnsupportedException {
-        throw new UnsupportedException("Operation insert: Not supported yet by ElasticSearch");
-		
-	}
+
+	
+
 
 }
 

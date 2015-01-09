@@ -41,6 +41,7 @@ import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.CatalogName;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.CatalogMetadata;
@@ -257,6 +258,38 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 			TableName tableName) throws UnsupportedException {
         throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
 
+	}
+
+	@Override
+	protected List<CatalogMetadata> provideMetadata(ClusterName targetCluster,
+			Connection<Client> connection) throws ConnectorException {
+        throw new UnsupportedException("Operation provideMetadata: Not supported yet by ElasticSearch");
+
+	}
+
+	@Override
+	protected CatalogMetadata provideCatalogMetadata(CatalogName catalogName,
+			ClusterName targetCluster, Connection<Client> connection)
+			throws ConnectorException {
+        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
+
+	}
+
+	@Override
+	protected TableMetadata provideTableMetadata(TableName tableName,
+			ClusterName targetCluster, Connection<Client> connection)
+			throws ConnectorException {
+        throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
+
+	}
+
+	@Override
+	protected void alterCatalog(CatalogName catalogName,
+			Map<Selector, Selector> options, Connection<Client> connection)
+			throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
+
+		
 	}
 
 }
