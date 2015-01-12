@@ -29,6 +29,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.ColumnType;
 
@@ -37,7 +38,9 @@ import com.stratio.crossdata.common.metadata.ColumnType;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>nov 24, 2014</pre>
+ * @since <pre>
+ * nov 24, 2014
+ * </pre>
  */
 public class TypeConverterTest {
 
@@ -79,10 +82,10 @@ public class TypeConverterTest {
         assertEquals("All features are tested", ColumnType.values().length, convet.size() + exceptions.size());
     }
 
-    private void conversionTest() throws UnsupportedException {
+    private void conversionTest() throws UnsupportedException, ExecutionException {
         for (Map.Entry<ColumnType, String> convertedTypes : convet.entrySet()) {
-            assertEquals("The conversion is correct", convertedTypes.getValue(), TypeConverter.convert(convertedTypes
-                    .getKey()));
+            assertEquals("The conversion is correct", convertedTypes.getValue(),
+                            TypeConverter.convert(convertedTypes.getKey()));
         }
     }
 
@@ -90,7 +93,7 @@ public class TypeConverterTest {
         for (ColumnType columnType : exceptions) {
             try {
                 TypeConverter.convert(columnType);
-            } catch (UnsupportedException e) {
+            } catch (ExecutionException e) {
                 continue;
             }
             fail("The execution musn't  are here with this column type " + columnType);

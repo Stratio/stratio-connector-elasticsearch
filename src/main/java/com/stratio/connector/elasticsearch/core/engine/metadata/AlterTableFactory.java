@@ -19,11 +19,10 @@
 package com.stratio.connector.elasticsearch.core.engine.metadata;
 
 import com.stratio.crossdata.common.data.AlterOptions;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 
 /**
- * This class must created a object to alter a table.
- * Created by jmgomez on 24/11/14.
+ * This class must created a object to alter a table. Created by jmgomez on 24/11/14.
  */
 public final class AlterTableFactory {
 
@@ -37,19 +36,21 @@ public final class AlterTableFactory {
     /**
      * Create the correct alter table handler.
      *
-     * @param alterOptions the alter options.
+     * @param alterOptions
+     *            the alter options.
      * @return the correct alter table handler.
-     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException
+     *             if the operation is not supported.
      */
-    public static AlterTableHandler createHandler(AlterOptions alterOptions) throws UnsupportedException {
+    public static AlterTableHandler createHandler(AlterOptions alterOptions) throws ExecutionException {
         AlterTableHandler handler;
         switch (alterOptions.getOption()) {
         case ADD_COLUMN:
             handler = new AddColumnHandler(alterOptions);
             break;
         default:
-            throw new UnsupportedException("The altar table operation " + alterOptions.getOption().name() + " " +
-                    "is not supporting");
+            throw new ExecutionException("The altar table operation " + alterOptions.getOption().name() + " "
+                            + "is not supporting");
         }
         return handler;
     }

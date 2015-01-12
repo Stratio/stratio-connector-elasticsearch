@@ -50,7 +50,7 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
@@ -64,11 +64,13 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 16, 2014</pre>
+ * @since <pre>
+ * sep 16, 2014
+ * </pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(
-        value = { Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class, SearchHit[].class })
+@PrepareForTest(value = { Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class,
+                SearchHit[].class })
 public class ConnectorQueryExecutorTest {
 
     private static final String TYPE_NAME = "TYPE NAME".toLowerCase();
@@ -144,16 +146,16 @@ public class ConnectorQueryExecutorTest {
         return searchHit;
     }
 
-    private ProjectParsed createQueryData(SearchType searchType) throws ExecutionException {
+    private ProjectParsed createQueryData(SearchType searchType) throws ConnectorException {
 
         Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
-                new ClusterName(CLUSTER_NAME));
+                        new ClusterName(CLUSTER_NAME));
 
         Map<Selector, String> column = new HashMap<>();
 
         Selector key = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
 
-		column.put(key, ALIAS);
+        column.put(key, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
         type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
@@ -163,7 +165,7 @@ public class ConnectorQueryExecutorTest {
 
         projection.setNextStep(select);
 
-        ProjectParsed projectParsed = new ProjectParsed(projection,mock(ProjectValidator.class));
+        ProjectParsed projectParsed = new ProjectParsed(projection, mock(ProjectValidator.class));
         return projectParsed;
     }
 

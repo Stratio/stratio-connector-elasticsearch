@@ -27,11 +27,9 @@ import com.stratio.connector.elasticsearch.core.engine.utils.ContentBuilderCreat
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
- * This class must implements the add column to a mapping feature.
- * Created by jmgomez on 24/11/14.
+ * This class must implements the add column to a mapping feature. Created by jmgomez on 24/11/14.
  */
 public class AddColumnHandler implements AlterTableHandler {
 
@@ -43,7 +41,8 @@ public class AddColumnHandler implements AlterTableHandler {
     /**
      * Constructor.
      *
-     * @param alterOptions the alter option-
+     * @param alterOptions
+     *            the alter option-
      */
     public AddColumnHandler(AlterOptions alterOptions) {
         this.alterOptions = alterOptions;
@@ -52,20 +51,22 @@ public class AddColumnHandler implements AlterTableHandler {
     /**
      * Execute the add column in a mapping.
      *
-     * @param tableName  the table name.
-     * @param connection the connection.
-     * @throws UnsupportedException if is not supported.
-     * @throws ExecutionException   ig an error happens.
+     * @param tableName
+     *            the table name.
+     * @param connection
+     *            the connection.
+     * @throws ExecutionException
+     *             if an error happens.
      */
-    @Override public void execute(TableName tableName, Client connection)
-            throws UnsupportedException, ExecutionException {
+    @Override
+    public void execute(TableName tableName, Client connection) throws ExecutionException {
 
         try {
             ContentBuilderCreator contentBuilderCreator = new ContentBuilderCreator();
             XContentBuilder source = null;
             source = contentBuilderCreator.addColumn(alterOptions.getColumnMetadata());
-            connection.admin().indices().preparePutMapping(tableName.getCatalogName().getName()).setType(tableName
-                    .getName()).setSource(source).execute().actionGet();
+            connection.admin().indices().preparePutMapping(tableName.getCatalogName().getName())
+                            .setType(tableName.getName()).setSource(source).execute().actionGet();
 
         } catch (IOException e) {
             throw new ExecutionException("Error when aerospaike is adding a column in a mapping", e);

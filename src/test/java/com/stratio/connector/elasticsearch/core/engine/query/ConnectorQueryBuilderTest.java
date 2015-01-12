@@ -50,7 +50,7 @@ import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
@@ -66,7 +66,9 @@ import com.stratio.crossdata.common.statements.structures.StringSelector;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 15, 2014</pre>
+ * @since <pre>
+ * sep 15, 2014
+ * </pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Client.class })
@@ -125,8 +127,8 @@ public class ConnectorQueryBuilderTest {
         assertEquals("the types length is correct", 1, types.length);
         assertEquals("The types is correct", TYPE_NAME, types[0]);
 
-        SearchSourceBuilder searchSourceBuilder = (SearchSourceBuilder) Whitebox
-                .getInternalState(searchRequestBuilder, "sourceBuilder");
+        SearchSourceBuilder searchSourceBuilder = (SearchSourceBuilder) Whitebox.getInternalState(searchRequestBuilder,
+                        "sourceBuilder");
         ArrayList fieldNames = (ArrayList) Whitebox.getInternalState(searchSourceBuilder, "fieldNames");
         assertEquals("the fieldNames length is correct", 2, fieldNames.size());
         assertTrue("The fieldNames is correct", fieldNames.contains(COLUMN_1));
@@ -134,7 +136,7 @@ public class ConnectorQueryBuilderTest {
 
     }
 
-    private ProjectParsed createProjectParsed() throws  ExecutionException {
+    private ProjectParsed createProjectParsed() throws ConnectorException {
 
         ColumnName columnName = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
 
@@ -142,12 +144,10 @@ public class ConnectorQueryBuilderTest {
         Selector key1 = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         Selector key2 = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
 
-		alias.put(key1 , COLUMN_1);
+        alias.put(key1, COLUMN_1);
         alias.put(key2, COLUMN_2);
 
-        Select select = new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections
-                .EMPTY_MAP);
-
+        Select select = new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP);
 
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
@@ -157,15 +157,15 @@ public class ConnectorQueryBuilderTest {
         Project project = new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
                         new ClusterName(CLUSTER_NAME), columnList);
 
-        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ,
-                new StringSelector(STRING_SELECTOR_VALUE));
+        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector(
+                        STRING_SELECTOR_VALUE));
         Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
 
         project.setNextStep(filter);
         filter.setNextStep(select);
 
         ProjectValidator projectValidator = mock(ProjectValidator.class);
-        ProjectParsed projectParsed = new ProjectParsed(project,projectValidator);
+        ProjectParsed projectParsed = new ProjectParsed(project, projectValidator);
         return projectParsed;
     }
 

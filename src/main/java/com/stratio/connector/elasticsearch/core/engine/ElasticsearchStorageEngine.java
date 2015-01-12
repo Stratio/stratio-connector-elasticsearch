@@ -33,7 +33,6 @@ import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
-import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -60,7 +59,8 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Constructor.
      *
-     * @param connectionHandler the connection handler.
+     * @param connectionHandler
+     *            the connection handler.
      */
     public ElasticsearchStorageEngine(ConnectionHandler connectionHandler) {
 
@@ -70,13 +70,18 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * This method must truncate a table.
      *
-     * @param tableName  the table name.
-     * @param connection the connection.
-     * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException   if an error happens.
+     * @param tableName
+     *            the table name.
+     * @param connection
+     *            the connection.
+     * @throws UnsupportedException
+     *             if the operation is not supported.
+     * @throws ExecutionException
+     *             if an error happens.
      */
-    @Override protected void truncate(TableName tableName, Connection<Client> connection)
-            throws UnsupportedException, ExecutionException {
+    @Override
+    protected void truncate(TableName tableName, Connection<Client> connection) throws UnsupportedException,
+                    ExecutionException {
         delete(tableName, Collections.EMPTY_LIST, connection);
 
     }
@@ -84,37 +89,49 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * This method must delete a set of rows in a table.
      *
-     * @param tableName    the table name.
-     * @param whereClauses the condition to select rows to delete.
-     * @param connection   the connection.
-     * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException   if an error happens.
+     * @param tableName
+     *            the table name.
+     * @param whereClauses
+     *            the condition to select rows to delete.
+     * @param connection
+     *            the connection.
+     * @throws UnsupportedException
+     *             if the operation is not supported.
+     * @throws ExecutionException
+     *             if an error happens.
      */
-    @Override protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
-            throws UnsupportedException, ExecutionException {
+    @Override
+    protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
+                    throws UnsupportedException, ExecutionException {
         String index = tableName.getCatalogName().getName();
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
 
-        connection.getNativeConnection().prepareDeleteByQuery(index).setQuery(queryBuilderCreator.createBuilder
-                (whereClauses)).execute().actionGet();
+        connection.getNativeConnection().prepareDeleteByQuery(index)
+                        .setQuery(queryBuilderCreator.createBuilder(whereClauses)).execute().actionGet();
 
     }
 
     /**
      * This method must update a set of rows in a table.
      *
-     * @param tableName    the table name.
-     * @param assignments  the update
-     * @param whereClauses the condition to select rows to delete.
-     * @param connection   the connection.
-     * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException   if an error happens.
+     * @param tableName
+     *            the table name.
+     * @param assignments
+     *            the update
+     * @param whereClauses
+     *            the condition to select rows to delete.
+     * @param connection
+     *            the connection.
+     * @throws UnsupportedException
+     *             if the operation is not supported.
+     * @throws ExecutionException
+     *             if an error happens.
      */
 
-    @Override protected void update(TableName tableName, Collection<Relation> assignments,
-            Collection<Filter> whereClauses, Connection<Client> connection)
-            throws UnsupportedException, ExecutionException {
+    @Override
+    protected void update(TableName tableName, Collection<Relation> assignments, Collection<Filter> whereClauses,
+                    Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         throw new UnsupportedException("Not yet supported");
     }
@@ -122,68 +139,77 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Insert a document in Elasticsearch.
      *
-     * @param targetTable the targetName.
-     * @param row         the row.
-     * @throws ExecutionException   in case of failure during the execution.
-     * @throws UnsupportedException it the operation is not supported.
+     * @param targetTable
+     *            the targetName.
+     * @param row
+     *            the row.
+     * @throws ExecutionException
+     *             in case of failure during the execution.
+     * @throws UnsupportedException
+     *             it the operation is not supported.
      */
 
     @Override
     protected void insert(TableMetadata targetTable, Row row, boolean isNotExists, Connection<Client> connection)
-            throws UnsupportedException, ExecutionException {
+                    throws UnsupportedException, ExecutionException {
 
-    		if (isNotExists){
-    	        throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
+        if (isNotExists) {
+            throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
 
-    		}
-            IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetTable, row, connection);
-            indexRequestBuilder.execute().actionGet();
+        }
+        IndexRequestBuilder indexRequestBuilder = createIndexRequest(targetTable, row, connection);
+        indexRequestBuilder.execute().actionGet();
 
-            loggInsert(targetTable);
-
-
+        loggInsert(targetTable);
 
     }
 
     /**
      * Insert a set of documents in Elasticsearch.
      *
-     * @param targetTable 
-     * @param rows the set of rows.
+     * @param targetTable
+     * @param rows
+     *            the set of rows.
      * @param isNotExists
-     * @throws ExecutionException   in case of failure during the execution.
-     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException
+     *             in case of failure during the execution.
+     * @throws UnsupportedException
+     *             if the operation is not supported.
      */
     @Override
-    protected void insert(TableMetadata targetTable, Collection<Row> rows,boolean isNotExists,
-            Connection<Client> connection) throws UnsupportedException, ExecutionException {
+    protected void insert(TableMetadata targetTable, Collection<Row> rows, boolean isNotExists,
+                    Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
-			if (isNotExists){
-    	        throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
-			}
-            BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
+        if (isNotExists) {
+            throw new UnsupportedException("Operation insert isNotExists: Not supported yet by ElasticSearch");
+        }
+        BulkRequestBuilder bulkRequest = createBulkRequest(targetTable, rows, connection);
 
-            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
-            validateBulkResponse(bulkResponse);
+        validateBulkResponse(bulkResponse);
 
-            logBulkInsert(targetTable, rows);
-
-
+        logBulkInsert(targetTable, rows);
 
     }
 
     /**
      * This method creates a IndexRequestBuilder.
      *
-     * @param tableMetadata the table metadata.
-     * @param row           the row to insert.
-     * @param connection    the logical connection.
+     * @param tableMetadata
+     *            the table metadata.
+     * @param row
+     *            the row to insert.
+     * @param connection
+     *            the logical connection.
      * @return the index request builder.
-     * @throws UnsupportedException       if a operation is not supported.
+     * @throws UnsupportedException
+     *             if a operation is not supported.
+     * @throws ExecutionException
+     *             if the execution fails.
      */
-    private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row,
-            Connection<Client> connection) throws  UnsupportedException {
+    private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row, Connection<Client> connection)
+                    throws UnsupportedException, ExecutionException {
 
         Client client = connection.getNativeConnection();
 
@@ -193,23 +219,28 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * This method create a bulkRequestBuilder.
      *
-     * @param tablesMetadata the table metadata
-     * @param rows           the rows to insert.
-     * @param connection     the logical connection.
+     * @param tablesMetadata
+     *            the table metadata
+     * @param rows
+     *            the rows to insert.
+     * @param connection
+     *            the logical connection.
      * @return the index request builder.
-     * @throws UnsupportedException       if a operation is not supported.
+     * @throws UnsupportedException
+     *             if a operation is not supported.
+     * @throws ExecutionException
+     *             if the execution fails.
      */
-    private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata,
-            Collection<Row> rows, Connection<Client> connection)
-            throws  UnsupportedException {
+    private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata, Collection<Row> rows,
+                    Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         Client elasticClient = connection.getNativeConnection();
 
         BulkRequestBuilder bulkRequest = elasticClient.prepareBulk();
 
         for (Row row : rows) {
-            IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
-                    .createIndexRequestBuilder(tablesMetadata, elasticClient, row);
+            IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(
+                            tablesMetadata, elasticClient, row);
             bulkRequest.add(indexRequestBuilder);
         }
         return bulkRequest;
@@ -218,8 +249,10 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Check if the bulk insert has been correct.
      *
-     * @param bulkResponse the bulk response.
-     * @throws ExecutionException if an error happens during the execution.
+     * @param bulkResponse
+     *            the bulk response.
+     * @throws ExecutionException
+     *             if an error happens during the execution.
      */
     private void validateBulkResponse(BulkResponse bulkResponse) throws ExecutionException {
         if (bulkResponse.hasFailures()) {
@@ -230,7 +263,8 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Log the insert.
      *
-     * @param tableMetadata the table metadata.
+     * @param tableMetadata
+     *            the table metadata.
      */
     private void loggInsert(TableMetadata tableMetadata) {
         if (logger.isDebugEnabled()) {
@@ -243,25 +277,18 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     /**
      * Log the bulf insert.
      *
-     * @param tableMetadata the table metadata.
-     * @param rows          the rows.
+     * @param tableMetadata
+     *            the table metadata.
+     * @param rows
+     *            the rows.
      */
     private void logBulkInsert(TableMetadata tableMetadata, Collection<Row> rows) {
         if (logger.isDebugEnabled()) {
             String index = tableMetadata.getName().getCatalogName().getName();
             String type = tableMetadata.getName().getName();
-            logger.debug(
-                    "Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type [" + type
-                            + "]");
+            logger.debug("Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type ["
+                            + type + "]");
         }
     }
 
-
-
-	
-
-
 }
-
-
-

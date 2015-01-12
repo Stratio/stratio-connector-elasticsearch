@@ -35,7 +35,7 @@ import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
@@ -49,7 +49,9 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>oct 15, 2014</pre>
+ * @since <pre>
+ * oct 15, 2014
+ * </pre>
  */
 
 public class MetadataCreatorTest {
@@ -92,20 +94,20 @@ public class MetadataCreatorTest {
         for (ColumnMetadata metadata : columnMetadata) {
 
             assertEquals("Alias is correct", ALIAS[i], metadata.getName().getAlias());
-            assertEquals("Column name is correct", CATALOG_NAME + "." + TABLE_NAME + "." + NAMES[i],
-                    metadata.getName().getQualifiedName());
-            assertEquals("Table name is correct", CATALOG_NAME + "." + TABLE_NAME,
-                    metadata.getName().getTableName().getQualifiedName());
+            assertEquals("Column name is correct", CATALOG_NAME + "." + TABLE_NAME + "." + NAMES[i], metadata.getName()
+                            .getQualifiedName());
+            assertEquals("Table name is correct", CATALOG_NAME + "." + TABLE_NAME, metadata.getName().getTableName()
+                            .getQualifiedName());
             assertEquals("Type name is correct", TYPES[i], metadata.getColumnType());
             i++;
 
         }
     }
 
-    private ProjectParsed createQueryData() throws ExecutionException {
+    private ProjectParsed createQueryData() throws ConnectorException {
 
         Map<Selector, String> columnMap = new LinkedHashMap<>();
-        columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0])),  ALIAS[0]);
+        columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[0])), ALIAS[0]);
         columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[1])), ALIAS[1]);
         columnMap.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, NAMES[2])), ALIAS[2]);
 
@@ -119,13 +121,12 @@ public class MetadataCreatorTest {
         typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME2)), TYPES[1]);
         typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME3)), TYPES[2]);
         Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap, typeColumnName);
-        Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME),
-                new ClusterName("CLUSTER_NAME"));
+        Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME), new ClusterName(
+                        "CLUSTER_NAME"));
         project.setNextStep(select);
-
 
         ProjectParsed queryData = new ProjectParsed(project, mock(ProjectValidator.class));
         return queryData;
     }
 
-} 
+}

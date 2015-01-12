@@ -55,7 +55,9 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 12, 2014</pre>
+ * @since <pre>
+ * sep 12, 2014
+ * </pre>
  */
 
 public class IndexRequestBuilderCreatorExceptionTest {
@@ -77,7 +79,7 @@ public class IndexRequestBuilderCreatorExceptionTest {
     private ClusterName clusterRef = new ClusterName(CLUSTER_NAME);
     private LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
     private LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
-    
+
     @Mock
     private ElasticSearchConnectionHandler connectionHandler;
     @Mock
@@ -99,21 +101,20 @@ public class IndexRequestBuilderCreatorExceptionTest {
     @Test
     public void testCreateIndesRequestTwoPK() throws UnsupportedException, ExecutionException {
 
-        exception.expect(UnsupportedException.class);
+        exception.expect(ExecutionException.class);
         exception.expectMessage("Only one PK is allowed");
 
-       
         partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, ROW_NAME));
         partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, OTHER_ROW_NAME));
 
         TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                        clusterKey);
         Row row = createRow(ROW_NAME, CELL_VALUE);
         row.addCell(OTHER_ROW_NAME, new Cell(CELL_VALUE));
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
-        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row))
-                .thenReturn(indexRequestBuilder);
+        when(indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row)).thenReturn(
+                        indexRequestBuilder);
 
         indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row);
 

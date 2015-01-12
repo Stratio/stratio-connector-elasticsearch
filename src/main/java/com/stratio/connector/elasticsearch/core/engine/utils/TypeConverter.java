@@ -18,7 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnType;
 
 /**
@@ -57,11 +57,13 @@ public final class TypeConverter {
     /**
      * This method translates the crossdata columnType to ElasticSearch type.
      *
-     * @param columnType the crossdata column type.
+     * @param columnType
+     *            the crossdata column type.
      * @return the ElasticSearch columnType.
-     * @throws com.stratio.crossdata.common.exceptions.UnsupportedException if the type is not supported.
+     * @throws ExecutionException
+     *             if the type is not supported.
      */
-    public static String convert(ColumnType columnType) throws UnsupportedException {
+    public static String convert(ColumnType columnType) throws ExecutionException {
 
         String type = "";
         switch (columnType) {
@@ -85,7 +87,7 @@ public final class TypeConverter {
             type = ES_STRING;
             break;
         default:
-            throw new UnsupportedException("The type [" + columnType + "] is not supported in ElasticSearch");
+            throw new ExecutionException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;
     }

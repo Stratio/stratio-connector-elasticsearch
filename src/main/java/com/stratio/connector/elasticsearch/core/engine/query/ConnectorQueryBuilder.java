@@ -51,14 +51,18 @@ public class ConnectorQueryBuilder {
     private SearchRequestBuilder requestBuilder;
 
     /**
-     * @param elasticClient the elasticSearch Client.
-     * @param queryData     the query representation,
+     * @param elasticClient
+     *            the elasticSearch Client.
+     * @param queryData
+     *            the query representation,
      * @return The searchBuilder.
-     * @throws UnsupportedException if the operation is not supported.
-     * @throws ExecutionException   if the method fails during execution.
+     * @throws UnsupportedException
+     *             if the operation is not supported.
+     * @throws ExecutionException
+     *             if the method fails during execution.
      */
-    public SearchRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData)
-            throws UnsupportedException, ExecutionException {
+    public SearchRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
+                    ExecutionException {
 
         createRequestBuilder(elasticClient);
         createFilter(queryData);
@@ -72,9 +76,10 @@ public class ConnectorQueryBuilder {
     }
 
     /**
-     * This method crete the select part of the query.
+     * This method create the select part of the query.
      *
-     * @param queryData the querydata.
+     * @param queryData
+     *            the querydata.
      */
     private void createSelect(ProjectParsed queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
@@ -87,7 +92,8 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the elasticsearch request builder.
      *
-     * @param elasticClient the elasticsearch client..
+     * @param elasticClient
+     *            the elasticsearch client..
      */
     private void createRequestBuilder(Client elasticClient) {
         requestBuilder = elasticClient.prepareSearch();
@@ -115,7 +121,8 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Limit part of the query.
      *
-     * @param queryData the querydata.
+     * @param queryData
+     *            the querydata.
      */
     private void createProjection(ProjectParsed queryData) {
         ProjectCreator projectModifier = new ProjectCreator();
@@ -125,7 +132,8 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Filter part of the query.
      *
-     * @param queryData the querydata.
+     * @param queryData
+     *            the querydata.
      */
     private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 

@@ -49,6 +49,7 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.IndexName;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
@@ -60,7 +61,9 @@ import com.stratio.crossdata.common.statements.structures.Selector;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 12, 2014</pre>
+ * @since <pre>
+ * sep 12, 2014
+ * </pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Client.class })
@@ -99,15 +102,13 @@ public class IndexRequestBuilderCreatorTest {
     }
 
     @Test
-    public void createIndexRequestBuilderTest() throws UnsupportedException {
-
+    public void createIndexRequestBuilderTest() throws UnsupportedException, ExecutionException {
 
         partitionKey.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
         TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                        clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
         row.addCell(COLUMN_NAME, new Cell(CELL_VALUE));
-
 
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
@@ -119,18 +120,18 @@ public class IndexRequestBuilderCreatorTest {
         when(indexRequiestBuilder.setSource(eq(other))).thenReturn(indexRequiestBuilder);
         when(client.prepareIndex(INDEX_NAME, TYPE_NAME, CELL_VALUE)).thenReturn(indexRequiestBuilder);
 
-        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator
-                .createIndexRequestBuilder(targetTable, client, row);
+        IndexRequestBuilder indexRequestBuilder = indexRequestBuilderCreator.createIndexRequestBuilder(targetTable,
+                        client, row);
 
         assertNotNull("The index request builder is not null", indexRequestBuilder);
 
     }
 
     @Test
-    public void createIndexRequestBuilderWithPkTest() throws UnsupportedException {
+    public void createIndexRequestBuilderWithPkTest() throws UnsupportedException, ExecutionException {
 
         TableMetadata targetTable = new TableMetadata(tableName, options, columns, indexes, clusterRef, partitionKey,
-                clusterKey);
+                        clusterKey);
         Row row = createRow(COLUMN_NAME, CELL_VALUE);
         row.addCell(COLUMN_NAME, new Cell(CELL_VALUE));
 
@@ -139,19 +140,17 @@ public class IndexRequestBuilderCreatorTest {
         Map<String, Object> dataInsert = new HashMap<>();
         dataInsert.put(COLUMN_NAME, CELL_VALUE);
 
-        Map <String, Object> other = new HashMap<>();
+        Map<String, Object> other = new HashMap<>();
         other.put(COLUMN_NAME, CELL_VALUE);
 
         IndexRequestBuilder indexRequestBuilder = mock(IndexRequestBuilder.class);
         when(indexRequestBuilder.setSource(eq(other))).thenReturn(indexRequestBuilder);
-        when(client.prepareIndex(INDEX_NAME, TYPE_NAME,CELL_VALUE)).thenReturn(indexRequestBuilder);
+        when(client.prepareIndex(INDEX_NAME, TYPE_NAME, CELL_VALUE)).thenReturn(indexRequestBuilder);
 
-        assertEquals(indexRequestBuilder, indexRequestBuilderCreator
-                .createIndexRequestBuilder(targetTable, client, row));
-        
-  
+        assertEquals(indexRequestBuilder,
+                        indexRequestBuilderCreator.createIndexRequestBuilder(targetTable, client, row));
 
-       // assertNotNull("The index request builder is not null", indexRequestBuilder);
+        // assertNotNull("The index request builder is not null", indexRequestBuilder);
 
     }
 

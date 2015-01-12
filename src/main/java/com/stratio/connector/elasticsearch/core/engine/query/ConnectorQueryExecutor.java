@@ -56,167 +56,177 @@ import com.stratio.crossdata.common.statements.structures.SelectorType;
  */
 public class ConnectorQueryExecutor {
 
-	/**
-	 * The log.
-	 */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * The log.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/**
-	 * This method execute a query in elasticSearch.
-	 *
-	 * @param elasticClient  the elasticSearch Client.
-	 * @param requestBuilder the query to execute.
-	 * @param queryData      the queryData.
-	 * @return the query result.
-	 */
+    /**
+     * This method execute a query in elasticSearch.
+     *
+     * @param elasticClient
+     *            the elasticSearch Client.
+     * @param requestBuilder
+     *            the query to execute.
+     * @param queryData
+     *            the queryData.
+     * @return the query result.
+     */
 
-	public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder,
-			ProjectParsed queryData) throws ExecutionException {
+    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder, ProjectParsed queryData)
+                    throws ExecutionException {
 
-		QueryResult queryResult = null;
+        QueryResult queryResult = null;
 
-		try {
+        try {
 
-			ResultSet resultSet = new ResultSet();
-			SearchResponse scrollResp = requestBuilder.execute().actionGet();
-			long countResult = 0;
-			boolean isLimit = false;
-			long limit = 0;
-			boolean endQuery = false;
-			Select select = queryData.getSelect();
-			if (queryData.getLimit() != null) {
-				isLimit = true;
-				limit = queryData.getLimit().getLimit();
-			}
+            ResultSet resultSet = new ResultSet();
+            SearchResponse scrollResp = requestBuilder.execute().actionGet();
+            long countResult = 0;
+            boolean isLimit = false;
+            long limit = 0;
+            boolean endQuery = false;
+            if (queryData.getLimit() != null) {
+                isLimit = true;
+                limit = queryData.getLimit().getLimit();
+            }
 
-			MetadataCreator crossdatadataCreator = new MetadataCreator();
-			resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
+            MetadataCreator crossdatadataCreator = new MetadataCreator();
+            resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-			do {
-				scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
-						.setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
+            do {
+                scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
+                                .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
 
-				for (SearchHit hit : scrollResp.getHits()) {
-					if (isLimit && countResult == limit) {
-						endQuery = true;
-						break;
-					}
-					countResult++;
-					resultSet.add(createRow(hit, queryData));
+                for (SearchHit hit : scrollResp.getHits()) {
+                    if (isLimit && countResult == limit) {
+                        endQuery = true;
+                        break;
+                    }
+                    countResult++;
+                    resultSet.add(createRow(hit, queryData));
 
-				}
+                }
 
-			} while (scrollResp.getHits().getHits().length != 0 && !endQuery);
+            } while (scrollResp.getHits().getHits().length != 0 && !endQuery);
 
-			queryResult = QueryResult.createQueryResult(resultSet);
-		} catch (IndexMissingException e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("The index does not exist. The ES connector returns an empty QueryResult. " + e.getMessage());
-			}
-			queryResult = QueryResult.createQueryResult(new ResultSet());
-		}
-		return queryResult;
-	}
+            queryResult = QueryResult.createQueryResult(resultSet);
+        } catch (IndexMissingException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("The index does not exist. The ES connector returns an empty QueryResult. "
+                                + e.getMessage());
+            }
+            queryResult = QueryResult.createQueryResult(new ResultSet());
+        }
+        return queryResult;
+    }
 
-	/**
-	 * This method creates a row.
-	 *
-	 * @param hit       the Elasticsearch SearchHit.
-	 * @param queryData
-	 * @return the row.
-	 */
-	private Row createRow(SearchHit hit, ProjectParsed queryData) throws ExecutionException {
+    /**
+     * This method creates a row.
+     *
+     * @param hit
+     *            the Elasticsearch SearchHit.
+     * @param queryData
+     * @return the row.
+     */
+    private Row createRow(SearchHit hit, ProjectParsed queryData) throws ExecutionException {
 
-		Map<Selector, String> alias = returnAlias(queryData);
-		Map<String, Object> fields = getFields(hit);
-		Row row = setRowValues(queryData, alias, fields);
+        Map<Selector, String> alias = returnAlias(queryData);
+        Map<String, Object> fields = getFields(hit);
+        Row row = setRowValues(queryData, alias, fields);
 
-		return row;
-	}
+        return row;
+    }
 
-	/**
-	 * This method creates a row.
-	 *
-	 * @param queryData the query data.
-	 * @param alias     the alias.
-	 * @param fields    the fields.
-	 * @return a row.
-	 */
-	private Row setRowValues(ProjectParsed queryData, Map<Selector, String> alias, Map<String, Object> fields)
-			throws ExecutionException {
-		Row row = new Row();
-		Set<String> fieldNames;
+    /**
+     * This method creates a row.
+     *
+     * @param queryData
+     *            the query data.
+     * @param alias
+     *            the alias.
+     * @param fields
+     *            the fields.
+     * @return a row.
+     */
+    private Row setRowValues(ProjectParsed queryData, Map<Selector, String> alias, Map<String, Object> fields)
+                    throws ExecutionException {
+        Row row = new Row();
+        Set<String> fieldNames;
 
-		Select select = queryData.getSelect();
-		if (select == null) {
-			fieldNames = fields.keySet();
-		} else {
-			fieldNames = createFieldNames(select.getColumnMap().keySet());
-		}
-		for (String field : fieldNames) {
-			Object value = fields.get(field);
-			
-			ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData
-					.getProject().getTableName().getName(), field);
-			
-			ColumnSelector columnSelector = new ColumnSelector(columnName);
-			if (alias.containsKey(columnSelector)) {
-				field = alias.get(columnSelector);
-			}
-	
-			row.addCell(field, new Cell(
-					ColumnTypeHelper.getCastingValue(select.getTypeMapFromColumnName().get(columnSelector), value)));
-		}
-		return row;
-	}
+        Select select = queryData.getSelect();
+        if (select == null) {
+            fieldNames = fields.keySet();
+        } else {
+            fieldNames = createFieldNames(select.getColumnMap().keySet());
+        }
+        for (String field : fieldNames) {
+            Object value = fields.get(field);
 
-	/**
-	 * This method creates the field names.
-	 *
-	 * @param selectors the column names.
-	 * @return the field names.
-	 * @throws ExecutionException 
-	 */
-	private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
-		Set<String> fieldNames = new LinkedHashSet<>();
-		for (Selector selector : selectors) {
-			fieldNames.add((String)SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
-		}
-		return fieldNames;
-	}
+            ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData.getProject()
+                            .getTableName().getName(), field);
 
-	/**
-	 * This method return the fields for a hit.
-	 *
-	 * @param hit the hit.
-	 * @return the fields.
-	 */
-	private Map<String, Object> getFields(SearchHit hit) {
-		Map<String, Object> fields = hit.getSource();
+            ColumnSelector columnSelector = new ColumnSelector(columnName);
+            if (alias.containsKey(columnSelector)) {
+                field = alias.get(columnSelector);
+            }
 
-		if (fields == null) {
-			fields = new HashMap<>();
-			for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
+            row.addCell(field,
+                            new Cell(ColumnTypeHelper.getCastingValue(
+                                            select.getTypeMapFromColumnName().get(columnSelector), value)));
+        }
+        return row;
+    }
 
-				fields.put(entry.getKey(), entry.getValue().getValue());
-			}
-		}
-		return fields;
-	}
+    /**
+     * This method creates the field names.
+     *
+     * @param selectors
+     *            the column names.
+     * @return the field names.
+     * @throws ExecutionException
+     */
+    private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
+        Set<String> fieldNames = new LinkedHashSet<>();
+        for (Selector selector : selectors) {
+            fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
+        }
+        return fieldNames;
+    }
 
+    /**
+     * This method return the fields for a hit.
+     *
+     * @param hit
+     *            the hit.
+     * @return the fields.
+     */
+    private Map<String, Object> getFields(SearchHit hit) {
+        Map<String, Object> fields = hit.getSource();
 
-	/**
-	 * This method return the field alias.
-	 *
-	 * @param queryData the query data.
-	 * @return the alias.
-	 */
-	private Map<Selector, String> returnAlias(ProjectParsed queryData) {
-		Map<Selector, String> alias = Collections.EMPTY_MAP;
-		if (queryData.getSelect() != null) {
-			alias = queryData.getSelect().getColumnMap();
-		}
-		return alias;
-	}
+        if (fields == null) {
+            fields = new HashMap<>();
+            for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
+
+                fields.put(entry.getKey(), entry.getValue().getValue());
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * This method return the field alias.
+     *
+     * @param queryData
+     *            the query data.
+     * @return the alias.
+     */
+    private Map<Selector, String> returnAlias(ProjectParsed queryData) {
+        Map<Selector, String> alias = Collections.emptyMap();
+        if (queryData.getSelect() != null) {
+            alias = queryData.getSelect().getColumnMap();
+        }
+        return alias;
+    }
 
 }

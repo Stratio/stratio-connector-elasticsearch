@@ -27,14 +27,16 @@ import org.junit.Test;
 
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.AlterOptions;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 
 /**
  * AlterTableFactory Tester.
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>nov 24, 2014</pre>
+ * @since <pre>
+ * nov 24, 2014
+ * </pre>
  */
 public class AlterTableFactoryTest {
 
@@ -49,31 +51,29 @@ public class AlterTableFactoryTest {
     @Test
     public void testCreateAddColumnHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.ADD_COLUMN, Collections.EMPTY_MAP, null);
-        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
+        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(), AlterTableFactory
+                        .createHandler(alterOptions).getClass().getCanonicalName());
     }
 
-    @Test(expected = UnsupportedException.class)
-
-    public void testAlterColumnHandeler() throws Exception {
+    @Test(expected = ExecutionException.class)
+    public void testAlterColumnHandler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.ALTER_COLUMN, Collections.EMPTY_MAP, null);
-        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
+        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(), AlterTableFactory
+                        .createHandler(alterOptions).getClass().getCanonicalName());
     }
 
-    @Test(expected = UnsupportedException.class)
-
+    @Test(expected = ExecutionException.class)
     public void testAlterOptionsHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.ALTER_OPTIONS, Collections.EMPTY_MAP, null);
-        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
+        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(), AlterTableFactory
+                        .createHandler(alterOptions).getClass().getCanonicalName());
     }
 
-    @Test(expected = UnsupportedException.class)
+    @Test(expected = ExecutionException.class)
     public void testDropColumnHandeler() throws Exception {
         AlterOptions alterOptions = new AlterOptions(AlterOperation.DROP_COLUMN, Collections.EMPTY_MAP, null);
-        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(),
-                AlterTableFactory.createHandler(alterOptions).getClass().getCanonicalName());
+        assertEquals("The instance is correct", AddColumnHandler.class.getCanonicalName(), AlterTableFactory
+                        .createHandler(alterOptions).getClass().getCanonicalName());
     }
 
-} 
+}

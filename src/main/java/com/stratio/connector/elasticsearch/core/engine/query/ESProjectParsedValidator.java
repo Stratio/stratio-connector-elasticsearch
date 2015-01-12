@@ -20,7 +20,7 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.engine.query.ProjectValidator;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
  * Created by jmgomez on 17/12/14.
@@ -29,15 +29,18 @@ public class ESProjectParsedValidator implements ProjectValidator {
 
     /**
      * This method validate the project parsed to ElasticSearch.
-     * @param projectParsed the project parsed.
-     * @throws ExecutionException if a logicalStep is not supported.e
+     * 
+     * @param projectParsed
+     *            the project parsed.
+     * @throws UnsupportedException
+     *             if a logicalStep is not supported
      *
      */
-    @Override public void validate(ProjectParsed projectParsed) throws ExecutionException {
-            if (projectParsed.getWindow()!=null){
-                throw new ExecutionException("ElasticSearch don't support Window Operation");
-            }
-
+    @Override
+    public void validate(ProjectParsed projectParsed) throws UnsupportedException {
+        if (projectParsed.getWindow() != null) {
+            throw new UnsupportedException("ElasticSearch don't support Window Operation");
+        }
 
     }
 }

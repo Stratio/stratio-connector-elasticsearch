@@ -29,6 +29,7 @@ import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuild
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
 import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
 import com.stratio.crossdata.common.connector.IResultHandler;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
@@ -40,42 +41,40 @@ import com.stratio.crossdata.common.result.QueryResult;
  */
 public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
-
     private ConnectorQueryBuilder queryBuilder = new ConnectorQueryBuilder();
     private ConnectorQueryExecutor queryExecutor = new ConnectorQueryExecutor();
 
     /**
      * Instantiates a new elasticsearch query engine.
      *
-     * @param connectionHandle the connection handler
+     * @param connectionHandle
+     *            the connection handler
      */
-    public ElasticsearchQueryEngine(ConnectionHandler connectionHandle) {
+    public ElasticsearchQueryEngine(ConnectionHandler connectionHandler) {
 
-        super(connectionHandle);
+        super(connectionHandler);
 
     }
 
     /**
      * This method execute a query in elasticsearch.
      *
-     * @param project    the query project.
-     * @param connection the logical connection.
+     * @param project
+     *            the query project.
+     * @param connection
+     *            the logical connection.
      * @return the result.
-     * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException   if a error happens.
+     * @throws ConnectorException
+     *             if an error happens.
      */
     @Override
-    protected QueryResult execute(Project project, Connection<Client> connection) throws UnsupportedException,
-            ExecutionException {
+    protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
 
         Client elasticClient = connection.getNativeConnection();
-        ProjectParsed projectParsed = new ProjectParsed(project,new ESProjectParsedValidator());
-
-
+        ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
 
         SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
 
-        
         return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
 
     }
@@ -83,15 +82,20 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     /**
      * This method execute a asynchronous query in elasticsearch.
      *
-     * @param queryId       the crossdata query id.
-     * @param workflow      the logical workflow.
-     * @param resultHandler the result handler. .
-     * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException   if a error happens.
+     * @param queryId
+     *            the crossdata query id.
+     * @param workflow
+     *            the logical workflow.
+     * @param resultHandler
+     *            the result handler. .
+     * @throws UnsupportedException
+     *             if any query operation is not supported.
+     * @throws ExecutionException
+     *             if a error happens.
      */
     @Override
     public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
-            throws UnsupportedException, ExecutionException {
+                    throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Async query not supported in ElasticSearch");
 
     }
@@ -99,9 +103,12 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     /**
      * This method stop a asynchronous query in elasticsearch.
      *
-     * @param queryId the crossdata query id. .
-     * @throws UnsupportedException if any query operation is not supported.
-     * @throws ExecutionException   if a error happens.
+     * @param queryId
+     *            the crossdata query id. .
+     * @throws UnsupportedException
+     *             if any query operation is not supported.
+     * @throws ExecutionException
+     *             if a error happens.
      */
     @Override
     public void stop(String queryId) throws UnsupportedException, ExecutionException {
