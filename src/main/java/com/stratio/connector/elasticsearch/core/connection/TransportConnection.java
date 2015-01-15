@@ -82,6 +82,8 @@ public class TransportConnection extends Connection<Client> {
     public boolean isConnected() {
 
         return (elasticClient!=null && !((TransportClient)elasticClient).connectedNodes().isEmpty());
+
+
     }
 
     /**

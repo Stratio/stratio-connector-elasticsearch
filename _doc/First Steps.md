@@ -3,7 +3,7 @@
 Here is a group of examples to illustrate the use of Elasticsearch Crossdata connector.
 
 ## Connector Configuration ##
-First of all [Stratio Crossdata 0.1.1] https://github.com/Stratio/crossdata.git is needed and must be installed. The 
+First of all [Stratio Crossdata 0.2.0] https://github.com/Stratio/crossdata.git is needed and must be installed. The
 server and the Shell must be running.
 
 In the Crossdata Shell we need to add the Datastore Manifest.
@@ -37,7 +37,7 @@ datastore cluster.
 
 ```
 > ATTACH CLUSTER elasticsearchCluster ON DATASTORE elasticsearch WITH OPTIONS {'Hosts': '[Ip1, Ip2,..,Ipn]', 
-'Port': '[Port1,Port2,...,Portn]'};
+''Native Ports': '[TCPpot1,TCPport2,..,TCPportn]', 'Restful Ports':'[RestfulPort1,RestfulPort2,..,Restfuln]'};
 ```
 
 The output must be:
@@ -72,7 +72,7 @@ The last step is to attach the connector to the cluster created before.
 
 The output must be
 ```
-CONNECTOR attached successfully
+Connected with SessionId=Connected successfully
 ```
 
 ## Create catalog ##
@@ -87,7 +87,7 @@ To create the catalog we must execute.
 The output must be:
 
 ```
-CREATE CATALOG highschool;
+CATALOG created successfully
 ```
 
 ## Create table ##
@@ -139,16 +139,17 @@ Now we execute a set of queries and we will show the expected results.
  
  Partial result: true
  ----------------------------------
- | age | id | enrolled | name     | 
+ | id | name     | age | enrolled |
  ----------------------------------
- | 16  | 4  | true     | Cole     | 
- | 17  | 9  | true     | Tom      | 
- | 16  | 8  | false    | Henry    | 
- | 18  | 3  | true     | Lucie    | 
- | 20  | 2  | true     | Eva      | 
- | 18  | 7  | true     | Beatrice | 
- | 16  | 1  | true     | Jhon     | 
- | 21  | 6  | false    | Violet   | 
+ | 4  | Cole     | 16  | true     |
+ | 9  | Tom      | 17  | true     |
+ | 3  | Lucie    | 18  | true     |
+ | 8  | Henry    | 16  | false    |
+ | 10 | Betty    | 19  | true     |
+ | 2  | Eva      | 20  | true     |
+ | 7  | Beatrice | 18  | true     |
+ | 6  | Violet   | 21  | false    |
+ | 1  | Jhon     | 16  | true     |
  ----------------------------------
 ```
 
@@ -190,13 +191,13 @@ Now we execute a set of queries and we will show the expected results.
   >  SELECT * FROM highschool.students LIMIT 3;
   
   Partial result: true
-  -------------------------------
-  | age | id | enrolled | name  | 
-  -------------------------------
-  | 16  | 4  | true     | Cole  | 
-  | 17  | 9  | true     | Tom   | 
-  | 18  | 3  | true     | Lucie | 
-  -------------------------------
+-------------------------------
+| id | name  | age | enrolled |
+-------------------------------
+| 4  | Cole  | 16  | true     |
+| 9  | Tom   | 17  | true     |
+| 3  | Lucie | 18  | true     |
+-------------------------------
 ```
 ## Delete ##
 For these examples we will execute many delete instructions and we will show the table evolution. 
@@ -204,63 +205,70 @@ For these examples we will execute many delete instructions and we will show the
 
 ```
  ----------------------------------
- | age | id | enrolled | name     | 
+ | id | name     | age | enrolled |
  ----------------------------------
- | 16  | 4  | true     | Cole     | 
- | 17  | 9  | true     | Tom      | 
- | 16  | 8  | false    | Henry    | 
- | 18  | 3  | true     | Lucie    | 
- | 20  | 2  | true     | Eva      | 
- | 18  | 7  | true     | Beatrice | 
- | 16  | 1  | true     | Jhon     | 
- | 21  | 6  | false    | Violet   | 
+ | 4  | Cole     | 16  | true     |
+ | 9  | Tom      | 17  | true     |
+ | 3  | Lucie    | 18  | true     |
+ | 8  | Henry    | 16  | false    |
+ | 10 | Betty    | 19  | true     |
+ | 2  | Eva      | 20  | true     |
+ | 7  | Beatrice | 18  | true     |
+ | 6  | Violet   | 21  | false    |
+ | 1  | Jhon     | 16  | true     |
  ----------------------------------
  
   >  DELETE FROM highschool.students  WHERE id = 1;
   
-  ----------------------------------
-  | age | id | enrolled | name     | 
-  ----------------------------------
-  | 16  | 4  | true     | Cole     | 
-  | 17  | 9  | true     | Tom      | 
-  | 16  | 8  | false    | Henry    | 
-  | 18  | 3  | true     | Lucie    | 
-  | 20  | 2  | true     | Eva      | 
-  | 18  | 7  | true     | Beatrice | 
-  | 21  | 6  | false    | Violet   | 
-  ----------------------------------
+----------------------------------
+| id | name     | age | enrolled |
+----------------------------------
+| 4  | Cole     | 16  | true     |
+| 9  | Tom      | 17  | true     |
+| 3  | Lucie    | 18  | true     |
+| 8  | Henry    | 16  | false    |
+| 10 | Betty    | 19  | true     |
+| 2  | Eva      | 20  | true     |
+| 7  | Beatrice | 18  | true     |
+| 6  | Violet   | 21  | false    |
+----------------------------------
+
   
   > DELETE FROM highschool.students  WHERE id < 3;
   
-  ----------------------------------
-  | age | id | enrolled | name     | 
-  ----------------------------------
-  | 16  | 4  | true     | Cole     | 
-  | 17  | 9  | true     | Tom      | 
-  | 16  | 8  | false    | Henry    | 
-  | 18  | 3  | true     | Lucie    | 
-  | 18  | 7  | true     | Beatrice | 
-  | 21  | 6  | false    | Violet   | 
-  ----------------------------------
+----------------------------------
+| id | name     | age | enrolled |
+----------------------------------
+| 4  | Cole     | 16  | true     |
+| 9  | Tom      | 17  | true     |
+| 3  | Lucie    | 18  | true     |
+| 8  | Henry    | 16  | false    |
+| 10 | Betty    | 19  | true     |
+| 7  | Beatrice | 18  | true     |
+| 6  | Violet   | 21  | false    |
+----------------------------------
   
   > DELETE FROM highschool.students  WHERE age <= 17;
   
-  ----------------------------------
-  | age | id | enrolled | name     | 
-  ----------------------------------
-  | 18  | 3  | true     | Lucie    | 
-  | 18  | 7  | true     | Beatrice | 
-  | 21  | 6  | false    | Violet   | 
-  ----------------------------------
-  
+----------------------------------
+| id | name     | age | enrolled |
+----------------------------------
+| 3  | Lucie    | 18  | true     |
+| 10 | Betty    | 19  | true     |
+| 7  | Beatrice | 18  | true     |
+| 6  | Violet   | 21  | false    |
+----------------------------------
+
+
   >  DELETE FROM highschool.students  WHERE id > 6;
-  
-  --------------------------------
-  | age | id | enrolled | name   | 
-  --------------------------------
-  | 18  | 3  | true     | Lucie  | 
-  | 21  | 6  | false    | Violet | 
-  --------------------------------
+
+--------------------------------
+| id | name   | age | enrolled |
+--------------------------------
+| 3  | Lucie  | 18  | true     |
+| 6  | Violet | 21  | false    |
+--------------------------------
+
   
   > DELETE FROM highschool.students  WHERE id >= 3;
 ```
@@ -285,10 +293,11 @@ And table must contain the row correctly.
   > SELECT * FROM highschool.students;
   
 -----------------------------------------
-| surname | age | id | enrolled | name  | 
+| id | name  | age | enrolled | surname |
 -----------------------------------------
-| Smith   | 19  | 10 | true     | Betty | 
+| 10 | Betty | 19  | true     | Smith   |
 -----------------------------------------
+
 ```
 
 ## Truncate table ##

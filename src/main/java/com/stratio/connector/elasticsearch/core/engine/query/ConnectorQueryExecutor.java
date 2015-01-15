@@ -46,6 +46,7 @@ import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -167,15 +168,34 @@ public class ConnectorQueryExecutor {
                             .getTableName().getName(), field);
 
             ColumnSelector columnSelector = new ColumnSelector(columnName);
-            if (alias.containsKey(columnSelector)) {
-                field = alias.get(columnSelector);
+            for (Map.Entry<Selector, String> allAlias: alias.entrySet()){ //TODO improve this pice of code. The map
+            // for column selector dont work fine.
+                if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())){
+                    String aliasValue = allAlias.getValue();
+                    if (aliasValue!=field){
+                        columnSelector.setAlias(aliasValue);
+                        field=aliasValue;
+                    }
+                    break;
+                }
             }
-
             row.addCell(field,
                             new Cell(ColumnTypeHelper.getCastingValue(
-                                            select.getTypeMapFromColumnName().get(columnSelector), value)));
+                                    recoveredColumnType(select, columnSelector), value))); //TODO like before
         }
         return row;
+    }
+
+    private ColumnType recoveredColumnType(Select select, ColumnSelector columnSelector) {
+        ColumnType columntype = null;
+        Map<Selector, ColumnType> typeMapFromColumnName = select.getTypeMapFromColumnName();
+        for (Map.Entry<Selector, ColumnType> columnMap :typeMapFromColumnName.entrySet()){
+            if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())){
+                columntype = columnMap.getValue();
+                break;
+            }
+        }
+        return columntype;
     }
 
     /**

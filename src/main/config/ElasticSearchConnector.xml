@@ -18,7 +18,7 @@
   -->
 
 <Connector>
-    <ConnectorName>ElasticSearchConnector</ConnectorName>
+    <ConnectorName>elasticsearchconnector</ConnectorName>
     <DataStores>
         <DataStoreName>elasticsearch</DataStoreName>
     </DataStores>

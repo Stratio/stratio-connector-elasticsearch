@@ -153,8 +153,10 @@ public class ConnectorQueryExecutorTest {
 
         Map<Selector, String> column = new HashMap<>();
 
-        Selector key = new ColumnSelector(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME));
+        ColumnName name = new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_NAME);
 
+        Selector key = new ColumnSelector(name);
+        key.setAlias(ALIAS);
         column.put(key, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
