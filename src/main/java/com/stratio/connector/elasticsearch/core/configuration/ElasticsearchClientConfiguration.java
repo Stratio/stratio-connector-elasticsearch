@@ -59,15 +59,15 @@ public final class ElasticsearchClientConfiguration {
     public static Settings getSettings(ConnectorClusterConfig configuration) {
 
         Map<String, String> setting = new HashMap<String, String>();
-        setting.put(NODE_DATA.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_DATA));
-        setting.put(NODE_MASTER.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_MASTER));
-        setting.put(TRANSPORT_SNIFF.getOptionName(),
+        setting.put(NODE_DATA.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_DATA));
+        setting.put(NODE_MASTER.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), NODE_MASTER));
+        setting.put(TRANSPORT_SNIFF.getElasticSearchOption(),
                 recoverdOptionValue(configuration.getConnectorOptions(), TRANSPORT_SNIFF));
-        setting.put(COERCE.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), COERCE));
-        setting.put(DYNAMIC.getOptionName(), recoverdOptionValue(configuration.getConnectorOptions(), DYNAMIC));
+        setting.put(COERCE.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), COERCE));
+        setting.put(DYNAMIC.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), DYNAMIC));
 
-        setting.put(CLUSTER_NAME.getOptionName(), configuration.getName().getName());
-
+        //setting.put(CLUSTER_NAME.getManifestOption(), configuration.getName().getName());
+        setting.put(CLUSTER_NAME.getElasticSearchOption(),recoverdOptionValue(configuration.getClusterOptions(), CLUSTER_NAME));
         return ImmutableSettings.settingsBuilder().put(setting).build();
 
     }
@@ -81,8 +81,8 @@ public final class ElasticsearchClientConfiguration {
      */
     private static String recoverdOptionValue(Map<String, String> configuration, ConfigurationOptions nodeData) {
         String option;
-        if (configuration.containsKey(nodeData.getOptionName())) {
-            option = configuration.get(nodeData.getOptionName());
+        if (configuration.containsKey(nodeData.getManifestOption())) {
+            option = configuration.get(nodeData.getManifestOption());
         } else {
             option = nodeData.getDefaultValue()[0];
         }
@@ -97,8 +97,8 @@ public final class ElasticsearchClientConfiguration {
      */
     public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
 
-        String[] hosts = ConnectorParser.hosts(config.getClusterOptions().get(HOST.getOptionName()));
-        String[] ports = ConnectorParser.ports(config.getClusterOptions().get(PORT.getOptionName()));
+        String[] hosts = ConnectorParser.hosts(config.getClusterOptions().get(HOST.getManifestOption()));
+        String[] ports = ConnectorParser.ports(config.getClusterOptions().get(PORT.getManifestOption()));
         TransportAddress[] transportAddresses = new TransportAddress[
                 hosts.length];
         for (int i = 0; i < hosts.length; i++) {

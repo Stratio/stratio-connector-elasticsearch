@@ -35,6 +35,10 @@
                 <PropertyName>Restful Ports</PropertyName>
                 <Description>The list of hosts restful ports</Description>
             </Property>
+        <Property>
+            <PropertyName>Cluster Name</PropertyName>
+            <Description>The name of the ElasticSearch Cluster</Description>
+        </Property>
     </RequiredProperties>
     <Behaviors>
         <Behavior>ALL_INDEXED</Behavior>

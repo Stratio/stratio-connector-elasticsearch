@@ -1,12 +1,12 @@
-package com.stratio.connector.elasticsearch.core.etest;
+package com.stratio.connector.elasticsearch.core.ptest;
 
-import com.stratio.connector.commons.etest.InsertETest;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
+import com.stratio.connector.commons.ptest.storage.insert.InsertOneGenericPT;
 import com.stratio.connector.elasticsearch.core.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
 
-public class InsertESET extends InsertETest{
+public class InsertESPT extends InsertOneGenericPT {
 
     private ESConnectorHelper esConnectorHelper = null;
     
@@ -18,9 +18,7 @@ public class InsertESET extends InsertETest{
 	            }
 
 	            return esConnectorHelper;
-	        } catch (ConnectionException e) {
-	            e.printStackTrace();
-	        } catch (InitializationException e) {
+	        } catch (ConnectionException | InitializationException  e) {
 	            e.printStackTrace();
 	        }
 	        return esConnectorHelper;

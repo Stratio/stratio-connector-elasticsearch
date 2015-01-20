@@ -69,27 +69,27 @@ public class ElasticsearchClientConfigurationTest {
 
 
         Map<String, String> options = new HashMap<>();
-        options.put(NODE_DATA.getOptionName(), "true");
-        options.put(NODE_MASTER.getOptionName(), "true");
+        options.put(NODE_DATA.getManifestOption(), "true");
+        options.put(NODE_MASTER.getManifestOption(), "true");
         ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME, options);
 
         Settings result = ElasticsearchClientConfiguration.getSettings(configuration);
 
         assertNotNull("Result is not null", result);
-        assertEquals("The node data is correct", "true", result.get(NODE_DATA.getOptionName()));
-        assertEquals("The node master is correct", "true", result.get(NODE_MASTER.getOptionName()));
+        assertEquals("The node data is correct", "true", result.get(NODE_DATA.getManifestOption()));
+        assertEquals("The node master is correct", "true", result.get(NODE_MASTER.getManifestOption()));
 
         assertEquals("The transport sniff is correct", TRANSPORT_SNIFF.getDefaultValue()[0],
-                result.get(TRANSPORT_SNIFF.getOptionName()));
+                result.get(TRANSPORT_SNIFF.getManifestOption()));
 
         assertEquals("The cluster name sniff is correct", "cluster_name",
-                result.get(CLUSTER_NAME.getOptionName()));
+                result.get(CLUSTER_NAME.getManifestOption()));
 
         assertEquals("The cluster name sniff is correct", COERCE.getDefaultValue()[0],
-                result.get(COERCE.getOptionName()));
+                result.get(COERCE.getManifestOption()));
 
         assertEquals("The cluster name sniff is correct", DYNAMIC.getDefaultValue()[0],
-                result.get(DYNAMIC.getOptionName()));
+                result.get(DYNAMIC.getManifestOption()));
 
     }
 
@@ -99,8 +99,8 @@ public class ElasticsearchClientConfigurationTest {
     @Test
     public void testGetTransporAddress() throws Exception {
         Map<String, String> clusterOptions = new HashMap<>();
-        clusterOptions.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
-        clusterOptions.put(PORT.getOptionName(), "2800,2802,2809");
+        clusterOptions.put(HOST.getManifestOption(), "10.200.0.58,10.200.0.59,10.200.0.60");
+        clusterOptions.put(PORT.getManifestOption(), "2800,2802,2809");
         ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME,
                 Collections.EMPTY_MAP, clusterOptions);
 

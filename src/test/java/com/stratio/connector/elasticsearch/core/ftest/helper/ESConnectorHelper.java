@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.ftest.helper;
 
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.CLUSTER_NAME;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_TYPE;
 import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
@@ -79,12 +80,14 @@ public class ESConnectorHelper implements IConnectorHelper {
         }
 
     }
-
+    IConnector iConnector = null;
     @Override
     public IConnector getConnector() {
-        IConnector iConnector = null;
+
         try {
-            iConnector = new ElasticsearchConnector();
+            if (iConnector ==null) {
+                iConnector = new ElasticsearchConnector();
+            }
         } catch (InitializationException e) {
             e.printStackTrace();
         }
@@ -99,9 +102,10 @@ public class ESConnectorHelper implements IConnectorHelper {
     @Override
     public ConnectorClusterConfig getConnectorClusterConfig() {
         Map<String, String> optionsNode = new HashMap<>();
-        optionsNode.put(NODE_TYPE.getOptionName(), "false");
-        optionsNode.put(HOST.getOptionName(), SERVER_IP);
-        optionsNode.put(PORT.getOptionName(), SERVER_PORT);
+        optionsNode.put(NODE_TYPE.getManifestOption(), "false");
+        optionsNode.put(HOST.getManifestOption(), SERVER_IP);
+        optionsNode.put(PORT.getManifestOption(), SERVER_PORT);
+        optionsNode.put(CLUSTER_NAME.getManifestOption(),"statioESCluster");
 
         return new ConnectorClusterConfig(clusterName, Collections.EMPTY_MAP, optionsNode);
     }

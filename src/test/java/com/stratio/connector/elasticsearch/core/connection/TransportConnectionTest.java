@@ -59,8 +59,8 @@ public class TransportConnectionTest {
         ICredentials credentials = mock(ICredentials.class);
 
         Map<String, String> clusterOptiosn = new HashMap<>();
-        clusterOptiosn.put(HOST.getOptionName(), "10.200.0.58,10.200.0.59,10.200.0.60");
-        clusterOptiosn.put(PORT.getOptionName(), "2800,2802,2809");
+        clusterOptiosn.put(HOST.getManifestOption(), "10.200.0.58,10.200.0.59,10.200.0.60");
+        clusterOptiosn.put(PORT.getManifestOption(), "2800,2802,2809");
         ConnectorClusterConfig configuration = new ConnectorClusterConfig(new ClusterName("CLUSTER_NAME"),
                 Collections.EMPTY_MAP, clusterOptiosn);
         transportConnection = new TransportConnection(credentials, configuration);

@@ -87,7 +87,7 @@ public class ConnectionHandleTest {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> connectionOptios = new HashMap<>();
-        connectionOptios.put(ConfigurationOptions.NODE_TYPE.getOptionName(), "true");
+        connectionOptios.put(ConfigurationOptions.NODE_TYPE.getManifestOption(), "true");
         ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), connectionOptios,
                 Collections.EMPTY_MAP);
 
@@ -112,7 +112,7 @@ public class ConnectionHandleTest {
 
         ICredentials credentials = mock(ICredentials.class);
         Map<String, String> options = new HashMap<>();
-        options.put(ConfigurationOptions.NODE_TYPE.getOptionName(), "false");
+        options.put(ConfigurationOptions.NODE_TYPE.getManifestOption(), "false");
         ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), options);
 
         TransportConnection connection = mock(TransportConnection.class);

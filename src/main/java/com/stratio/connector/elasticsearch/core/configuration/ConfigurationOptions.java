@@ -29,58 +29,63 @@ public enum ConfigurationOptions {
     /**
      * The elasticserach node type property.
      */
-    NODE_TYPE("node_type", Constants.FALSE),
+    NODE_TYPE("node_type", "node_type", Constants.FALSE),
     /**
      * The elasticserach node data property.
      */
-    NODE_DATA("node.data", Constants.FALSE),
+    NODE_DATA("node.data", "node.data",Constants.FALSE),
     /**
      * The elasticserach node master property.
      */
-    NODE_MASTER("node.master", Constants.FALSE),
+    NODE_MASTER("node.master", "node.master",Constants.FALSE),
     /**
      * The elasticserach transfer sniff type property.
      */
-    TRANSPORT_SNIFF("client.transport.sniff", Constants.TRUE),
+    TRANSPORT_SNIFF("client.transport.sniff", "client.transport.sniff",Constants.TRUE),
     /**
      * The elastichseach cluser name.
      */
-    CLUSTER_NAME("cluster.name", "cluster_name"),
+    CLUSTER_NAME("Cluster Name","cluster.name",""),
     /**
      * The hosts ip.
      */
-    HOST("Hosts", new String[] { "localhost" }),
+    HOST("Hosts","Hosts", new String[] { "localhost" }),
     /**
      * The hosts ports.
      */
-    PORT("Native Ports", new String[] { "9300" }),
+    PORT("Native Ports", "Native Ports",new String[] { "9300" }),
     /**
      * The elasticsearch coerce property.
      */
-    COERCE("index.mapping.coerce", Constants.FALSE),
+    COERCE("index.mapping.coerce","index.mapping.coerce", Constants.FALSE),
     /**
      * The elasticsearch mapper dynamic property.
      */
-    DYNAMIC("index.mapper.dynamic", Constants.FALSE);
+    DYNAMIC("index.mapper.dynamic", "index.mapper.dynamic",Constants.FALSE);
 
     /**
-     * The name of the option.
+     * The name of the option in crossdata manifest.
      */
-    private final String optionName;
+    private final String manifestOption;
     /**
      * The default value of the options.
      */
     private final String[] defaultValue;
+    /**
+     * The option name in elasticsearch.
+     */
+    private final String elasticSearchOption;
 
     /**
      * Constructor.
      *
-     * @param optionName   the name of the option.
+     * @param manifestOption   the name of the option.
      * @param defaultValue the default value of the option.
      */
-    ConfigurationOptions(String optionName, String... defaultValue) {
-        this.optionName = optionName;
+    ConfigurationOptions(String manifestOption, String elasticSearchOption, String... defaultValue) {
+        this.manifestOption = manifestOption;
         this.defaultValue = defaultValue;
+        this.elasticSearchOption = elasticSearchOption;
 
     }
 
@@ -94,12 +99,23 @@ public enum ConfigurationOptions {
     }
 
     /**
-     * Return the option name.
+     * Return the option name defined in the manifest.
      *
      * @return the option name.
      */
-    public String getOptionName() {
-        return optionName;
+    public String getManifestOption() {
+        return manifestOption;
+    }
+
+
+
+    /**
+     * Return the option name to ElasticSearch.
+     *
+     * @return the option name.
+     */
+    public String getElasticSearchOption() {
+        return elasticSearchOption;
     }
 
 }
