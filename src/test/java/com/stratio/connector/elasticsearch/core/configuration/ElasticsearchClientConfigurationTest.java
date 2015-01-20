@@ -68,28 +68,35 @@ public class ElasticsearchClientConfigurationTest {
     public void testGetSettings() throws Exception {
 
 
-        Map<String, String> options = new HashMap<>();
-        options.put(NODE_DATA.getManifestOption(), "true");
-        options.put(NODE_MASTER.getManifestOption(), "true");
-        ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME, options);
+        Map<String, String> connectorOptions = new HashMap<>();
+        connectorOptions.put(NODE_DATA.getManifestOption(), "true");
+        connectorOptions.put(NODE_MASTER.getManifestOption(), "true");
+
+        Map<String, String> clusterOptions = new HashMap<>();
+        clusterOptions.put(HOST.getManifestOption(), "localhost");
+        clusterOptions.put(PORT.getManifestOption(), "9301");
+
+
+        ConnectorClusterConfig configuration = new ConnectorClusterConfig(THE_CLUSTER_NAME, connectorOptions,clusterOptions);
 
         Settings result = ElasticsearchClientConfiguration.getSettings(configuration);
 
         assertNotNull("Result is not null", result);
-        assertEquals("The node data is correct", "true", result.get(NODE_DATA.getManifestOption()));
-        assertEquals("The node master is correct", "true", result.get(NODE_MASTER.getManifestOption()));
+        assertEquals("The node must be true", "true", result.get(NODE_DATA.getElasticSearchOption()));
+        assertEquals("The node master must be true", "true", result.get(NODE_MASTER.getElasticSearchOption()));
 
-        assertEquals("The transport sniff is correct", TRANSPORT_SNIFF.getDefaultValue()[0],
-                result.get(TRANSPORT_SNIFF.getManifestOption()));
+        assertEquals("The transport sniff must be "+TRANSPORT_SNIFF.getDefaultValue()[0], TRANSPORT_SNIFF
+                        .getDefaultValue()[0],
+                result.get(TRANSPORT_SNIFF.getElasticSearchOption()));
 
-        assertEquals("The cluster name sniff is correct", "cluster_name",
-                result.get(CLUSTER_NAME.getManifestOption()));
+        assertEquals("The cluster name sniff must be Cluster Name", CLUSTER_NAME.getDefaultValue()[0],
+                result.get(CLUSTER_NAME.getElasticSearchOption()));
 
-        assertEquals("The cluster name sniff is correct", COERCE.getDefaultValue()[0],
-                result.get(COERCE.getManifestOption()));
+        assertEquals("The cluster name sniff must be "+COERCE.getDefaultValue()[0], COERCE.getDefaultValue()[0],
+                result.get(COERCE.getElasticSearchOption()));
 
-        assertEquals("The cluster name sniff is correct", DYNAMIC.getDefaultValue()[0],
-                result.get(DYNAMIC.getManifestOption()));
+        assertEquals("The cluster name sniff must be "+DYNAMIC.getDefaultValue()[0], DYNAMIC.getDefaultValue()[0],
+                result.get(DYNAMIC.getElasticSearchOption()));
 
     }
 

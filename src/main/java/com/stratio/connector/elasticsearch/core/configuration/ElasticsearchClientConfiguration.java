@@ -66,7 +66,6 @@ public final class ElasticsearchClientConfiguration {
         setting.put(COERCE.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), COERCE));
         setting.put(DYNAMIC.getElasticSearchOption(), recoverdOptionValue(configuration.getConnectorOptions(), DYNAMIC));
 
-        //setting.put(CLUSTER_NAME.getManifestOption(), configuration.getName().getName());
         setting.put(CLUSTER_NAME.getElasticSearchOption(),recoverdOptionValue(configuration.getClusterOptions(), CLUSTER_NAME));
         return ImmutableSettings.settingsBuilder().put(setting).build();
 
