@@ -37,7 +37,8 @@ datastore cluster.
 
 ```
 > ATTACH CLUSTER elasticsearchCluster ON DATASTORE elasticsearch WITH OPTIONS {'Hosts': '[Ip1, Ip2,..,Ipn]', 
-''Native Ports': '[TCPpot1,TCPport2,..,TCPportn]', 'Restful Ports':'[RestfulPort1,RestfulPort2,..,Restfuln]'};
+''Native Ports': '[TCPpot1,TCPport2,..,TCPportn]', 'Restful Ports':'[RestfulPort1,RestfulPort2,..,Restfuln]',
+'Cluster Name':'ES Cluster name to connect'};
 ```
 
 The output must be:
