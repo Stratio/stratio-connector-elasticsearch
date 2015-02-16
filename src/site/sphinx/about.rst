@@ -38,13 +38,50 @@ To run Connector Elasticsearch execute:
 ::
 
        > cd connector-elasticsearch-core/
-       > target/connector-elasticsearch-core-0.1.0/bin/connector-elasticsearch-core-0.1.0 start
+       > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT start
 
 To stop the connector execute:
 
 ::
 
-       > target/connector-elasticsearch-core-0.1.0/bin/connector-elasticsearch-core-0.1.0 stop
+       > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT stop
+
+Build a redistributable package
+-------------------------------
+It is possible too, to create a RPM or DEB redistributable package.
+
+RPM Package:
+
+::
+
+       > mvn unix:package-rpm -N
+    
+DEB Package:
+
+::
+   
+       > mvn unix:package-deb -N
+
+Once the package it's created, execute this commands to install:
+
+RPM Package:
+ 
+::   
+    
+       > rpm -i target/stratio-connector-elasticseach-0.4.0-SNAPSHOT.rpm
+     
+DEB Package:
+
+::   
+    
+       > dpkg -i target/stratio-connector-elasticseach-0.4.0-SNAPSHOT.deb
+
+Now to start/stop the connector:
+ 
+::   
+    
+       > service stratio-connector-elasticseach start
+       > service stratio-connector-elasticseach stop
 
 How to use Elasticsearch Connector
 ----------------------------------
@@ -57,7 +94,7 @@ How to use Elasticsearch Connector
    Add a data store. We need to specified the XML manifest that defines
    the data store. The XML manifest can be found in the path of the
    Elasticsearch Connector in
-   target/stratio-connector-elasticsearch-0.1.0/conf/ElasticSearchDataStore.xml
+   target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT/conf/ElasticSearchDataStore.xml
 
    ``xdsh:user>  ADD DATASTORE <Absolute path to Streaming Datastore manifest>;``
 
@@ -68,7 +105,7 @@ How to use Elasticsearch Connector
 
    Add the connector manifest. The XML with the manifest can be found in
    the path of the Cassandra Connector in
-   target/-connector-elasticsearch-core-0.1.0/conf/ElasticSearchConnector.xml
+   target/-connector-elasticsearch-core-0.4.0-SNAPSHOT/conf/ElasticSearchConnector.xml
 
    ``xdsh:user>  ADD CONNECTOR <Path to Elasticsearch Connector Manifest>``
 
