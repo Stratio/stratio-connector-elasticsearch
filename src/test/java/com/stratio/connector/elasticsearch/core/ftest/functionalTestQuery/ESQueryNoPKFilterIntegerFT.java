@@ -18,16 +18,15 @@
 
 package com.stratio.connector.elasticsearch.core.ftest.functionalTestQuery;
 
-import com.stratio.connector.commons.ftest.functionalTestQuery.GenericNotIndexedQueryIntegerFilterFT;
 import com.stratio.connector.commons.ftest.helper.IConnectorHelper;
 import com.stratio.connector.elasticsearch.core.ftest.helper.ESConnectorHelper;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
 import com.stratio.crossdata.common.exceptions.InitializationException;
-
+import com.stratio.connector.commons.ftest.functionalTestQuery.*;
 /**
  * Created by jmgomez on 5/09/14.
  */
-public class ESQueryNoPKFilterIntegerFT extends GenericNotIndexedQueryIntegerFilterFT {
+public class ESQueryNoPKFilterIntegerFT extends GenericNotIndexedQueryIntegerFilterFT{
 
     ESConnectorHelper esConnectorHelper = null;
 

@@ -111,13 +111,13 @@ public class ConnectorQueryExecutor {
 
             } while (scrollResp.getHits().getHits().length != 0 && !endQuery);
 
-            queryResult = QueryResult.createQueryResult(resultSet);
+            queryResult = QueryResult.createQueryResult(resultSet, 0, true);
         } catch (IndexMissingException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("The index does not exist. The ES connector returns an empty QueryResult. "
                                 + e.getMessage());
             }
-            queryResult = QueryResult.createQueryResult(new ResultSet());
+            queryResult = QueryResult.createQueryResult(new ResultSet(), 0, true);
         }
         return queryResult;
     }

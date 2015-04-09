@@ -73,36 +73,41 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     @Override
-    protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection)
-                    throws UnsupportedException, ExecutionException {
+    protected List<CatalogMetadata> provideMetadata(ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
+        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
+    }
 
-        AlterTableFactory.createHandler(alterOptions).execute(name, connection.getNativeConnection());
+    @Override
+    protected CatalogMetadata provideCatalogMetadata(CatalogName catalogName, ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
+        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
+    }
+
+    @Override
+    protected TableMetadata provideTableMetadata(TableName tableName, ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
+        throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
 
     }
 
-    /**
-     * This method creates an index in ES.
-     *
-     * @param indexMetaData
-     *            the index configuration.
-     * @throws UnsupportedException
-     *             if any operation is not supported.
-     * @throws ExecutionException
-     *             if an error occur.
-     */
+    @Override
+    protected void alterCatalog(CatalogName catalogName, Map<Selector, Selector> options, Connection<Client> connection)
+            throws UnsupportedException, ExecutionException {
+        throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
+    }
 
     @Override
-    protected void createCatalog(CatalogMetadata indexMetaData, Connection<Client> connection)
-                    throws ExecutionException {
+    protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+        AlterTableFactory.createHandler(alterOptions).execute(name, connection.getNativeConnection());
+    }
 
-        createESIndex(indexMetaData, connection);
-
+    @Override
+    protected void createCatalog(CatalogMetadata catalogMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+        createESIndex(catalogMetadata, connection);
     }
 
     /**
      * This method creates a type in ES.
      *
-     * @param typeMetadata
+     * @param tableMetadata
      *            the type configure
      * @throws UnsupportedException
      *             if any operation is not supported.
@@ -110,28 +115,26 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      *             if an error occur.
      */
     @Override
-    protected void createTable(TableMetadata typeMetadata, Connection<Client> connection) throws ExecutionException {
-
-        String indexName = typeMetadata.getName().getCatalogName().getName();
-        XContentBuilder xContentBuilder = contentBuilder.createTypeSource(typeMetadata);
+    protected void createTable(TableMetadata tableMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+        String indexName = tableMetadata.getName().getCatalogName().getName();
+        XContentBuilder xContentBuilder = contentBuilder.createTypeSource(tableMetadata);
 
         recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
-                        .setType(typeMetadata.getName().getName()).setSource(xContentBuilder).execute().actionGet();
-
+            .setType(tableMetadata.getName().getName()).setSource(xContentBuilder).execute().actionGet();
     }
-
-    /**
+  /**
      * This method drops an index in ES.
      *
-     * @param indexName
+     * @param name
      *            the index name.
      */
 
     @Override
-    protected void dropCatalog(CatalogName indexName, Connection<Client> connection) throws ExecutionException {
-        DeleteIndexResponse delete = null;
+    protected void dropCatalog(CatalogName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
-        delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(indexName.getName()))
+         DeleteIndexResponse delete = null;
+
+        delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(name.getName()))
                         .actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropCatalog request has not been acknowledged");
@@ -142,22 +145,23 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method drops a type in ES.
      *
-     * @param typeName
+     * @param name
      *            the type name.
      */
+
     @Override
-    protected void dropTable(TableName typeName, Connection<Client> connection) throws ExecutionException {
+    protected void dropTable(TableName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+
         DeleteMappingResponse delete = null;
         delete = recoveredClient(connection).admin().indices()
-                        .prepareDeleteMapping(typeName.getCatalogName().getName()).setType(typeName.getName())
+                        .prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName())
                         .execute().actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropTable request has not been acknowledged");
         }
-
     }
 
-    /**
+        /**
      * This method creates an index.
      *
      * @param indexMetadata
@@ -167,13 +171,15 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws UnsupportedException
      *             the method is not supporter.
      */
+
     @Override
-    protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException {
+    protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         throw new UnsupportedException("Operation createIndex: Not supported yet by ElasticSearch");
+
     }
 
-    /**
+     /**
      * This method drops an index.
      *
      * @param indexMetadata
@@ -183,9 +189,12 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws UnsupportedException
      *             the method is not supported.
      */
+
     @Override
-    protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException {
+    protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+
         throw new UnsupportedException("Operation dropIndex: Not supported yet by ElasticSearch");
+
     }
 
     /**
@@ -195,6 +204,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      *            the cluster identification.
      * @return the ES Client.
      */
+
     private Client recoveredClient(Connection connection) {
         return (Client) connection.getNativeConnection();
     }
@@ -228,6 +238,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws ExecutionException
      *             if an error occurs.
      */
+
     private Map<String, String> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
 
         Map<String, String> transformOptions = new HashMap<>();
@@ -239,59 +250,6 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             }
         }
         return transformOptions;
-    }
-
-    @Override
-    public void alterCatalog(ClusterName targetCluster, CatalogName catalogName, Map<Selector, Selector> options)
-                    throws UnsupportedException {
-        throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    public List<CatalogMetadata> provideMetadata(ClusterName clusterName) throws UnsupportedException {
-        throw new UnsupportedException("Operation provideMetadata: Not supported yet by ElasticSearch");
-    }
-
-    @Override
-    public CatalogMetadata provideCatalogMetadata(ClusterName clusterName, CatalogName catalogName)
-                    throws UnsupportedException {
-        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    public TableMetadata provideTableMetadata(ClusterName clusterName, TableName tableName) throws UnsupportedException {
-        throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    protected List<CatalogMetadata> provideMetadata(ClusterName targetCluster, Connection<Client> connection)
-                    throws ConnectorException {
-        throw new UnsupportedException("Operation provideMetadata: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    protected CatalogMetadata provideCatalogMetadata(CatalogName catalogName, ClusterName targetCluster,
-                    Connection<Client> connection) throws ConnectorException {
-        throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    protected TableMetadata provideTableMetadata(TableName tableName, ClusterName targetCluster,
-                    Connection<Client> connection) throws ConnectorException {
-        throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
-
-    }
-
-    @Override
-    protected void alterCatalog(CatalogName catalogName, Map<Selector, Selector> options, Connection<Client> connection)
-                    throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
-
     }
 
 }

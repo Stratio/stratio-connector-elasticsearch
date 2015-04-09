@@ -47,7 +47,7 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     /**
      * Instantiates a new elasticsearch query engine.
      *
-     * @param connectionHandle
+     * @param connectionHandler
      *            the connection handler
      */
     public ElasticsearchQueryEngine(ConnectionHandler connectionHandler) {
@@ -56,62 +56,27 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
     }
 
-    /**
-     * This method execute a query in elasticsearch.
-     *
-     * @param project
-     *            the query project.
-     * @param connection
-     *            the logical connection.
-     * @return the result.
-     * @throws ConnectorException
-     *             if an error happens.
-     */
+    @Override
+    protected void pagedExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
+
+    }
+
+    @Override
+    protected void asyncExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
+
+    }
+
     @Override
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
-
-        Client elasticClient = connection.getNativeConnection();
-        ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
-
-        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
-
-        return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
-
+        return null;
     }
 
-    /**
-     * This method execute a asynchronous query in elasticsearch.
-     *
-     * @param queryId
-     *            the crossdata query id.
-     * @param workflow
-     *            the logical workflow.
-     * @param resultHandler
-     *            the result handler. .
-     * @throws UnsupportedException
-     *             if any query operation is not supported.
-     * @throws ExecutionException
-     *             if a error happens.
-     */
     @Override
-    public void asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
-                    throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Async query not supported in ElasticSearch");
+    public void stop(String queryId) throws UnsupportedException {
+        throw new UnsupportedException("Not supported");
 
     }
 
-    /**
-     * This method stop a asynchronous query in elasticsearch.
-     *
-     * @param queryId
-     *            the crossdata query id. .
-     * @throws UnsupportedException
-     *             if any query operation is not supported.
-     * @throws ExecutionException
-     *             if a error happens.
-     */
-    @Override
-    public void stop(String queryId) throws UnsupportedException, ExecutionException {
-        throw new UnsupportedException("Stop query query not supported in ElasticSearch");
-    }
+
+
 }

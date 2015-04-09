@@ -66,7 +66,8 @@ public final class TypeConverter {
     public static String convert(ColumnType columnType) throws ExecutionException {
 
         String type = "";
-        switch (columnType) {
+        return type;
+        /*switch (columnType) {
         case BIGINT:
             type = ES_LONG;
             break;
@@ -89,6 +90,6 @@ public final class TypeConverter {
         default:
             throw new ExecutionException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
-        return type;
+        return type;*/
     }
 }
