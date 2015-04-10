@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.stratio.crossdata.common.metadata.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,10 +34,6 @@ import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.IndexName;
 import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.ColumnType;
-import com.stratio.crossdata.common.metadata.IndexMetadata;
-import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.IntegerSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
@@ -81,13 +78,13 @@ public class ContentBuilderCreatorTest {
         
 
         LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
-        columns.putAll(creteColumns("column_1", ColumnType.BIGINT));
-        columns.putAll(creteColumns("column_2", ColumnType.BOOLEAN));
-        columns.putAll(creteColumns("column_3", ColumnType.DOUBLE));
-        columns.putAll(creteColumns("column_4", ColumnType.FLOAT));
-        columns.putAll(creteColumns("column_5", ColumnType.INT));
-        columns.putAll(creteColumns("column_6", ColumnType.TEXT));
-        columns.putAll(creteColumns("column_7", ColumnType.VARCHAR));
+        columns.putAll(creteColumns("column_1", new ColumnType(DataType.BIGINT)));
+        columns.putAll(creteColumns("column_2", new ColumnType(DataType.BOOLEAN)));
+        columns.putAll(creteColumns("column_3", new ColumnType(DataType.DOUBLE)));
+        columns.putAll(creteColumns("column_4", new ColumnType(DataType.FLOAT)));
+        columns.putAll(creteColumns("column_5", new ColumnType(DataType.INT)));
+        columns.putAll(creteColumns("column_6", new ColumnType(DataType.TEXT)));
+        columns.putAll(creteColumns("column_7", new ColumnType(DataType.VARCHAR)));
         Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
 
         ClusterName clusterRef = new ClusterName(CLUSTER_NAME);

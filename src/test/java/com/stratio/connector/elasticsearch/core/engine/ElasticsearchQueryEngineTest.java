@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+import com.stratio.crossdata.common.data.ResultSet;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.After;
@@ -101,7 +103,9 @@ public class ElasticsearchQueryEngineTest {
         SearchRequestBuilder searchRequestBuilder = mock(SearchRequestBuilder.class);
         when(queryBuilder.buildQuery(eSConnection, projectParsed)).thenReturn(searchRequestBuilder);
 
-        QueryResult queryResult = QueryResult.createSuccessQueryResult();
+        ResultSet resultSet = mock(ResultSet.class);
+
+        QueryResult queryResult = QueryResult.createQueryResult(resultSet, 0, true);
         when(queryExecutor.executeQuery(eSConnection, searchRequestBuilder, projectParsed)).thenReturn(queryResult);
 
         QueryResult returnQueryResult = elasticsearchQueryEngine.execute(project, connection);
@@ -113,7 +117,7 @@ public class ElasticsearchQueryEngineTest {
      * Method: asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
      */
     @Test(expected = UnsupportedException.class)
-    public void testAsyncExecute() throws UnsupportedException, ExecutionException {
+    public void testAsyncExecute() throws ConnectorException {
         elasticsearchQueryEngine.asyncExecute("", mock(LogicalWorkflow.class), mock(IResultHandler.class));
     }
 

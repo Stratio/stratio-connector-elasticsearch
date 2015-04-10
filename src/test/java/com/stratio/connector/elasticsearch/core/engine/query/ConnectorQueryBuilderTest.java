@@ -24,11 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -147,19 +143,24 @@ public class ConnectorQueryBuilderTest {
         alias.put(key1, COLUMN_1);
         alias.put(key2, COLUMN_2);
 
-        Select select = new Select(Operations.FILTER_INDEXED_EQ, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+        Set operations = new HashSet<>();
+        operations.add(Operations.FILTER_INDEXED_EQ);
+        Select select = new Select(operations, alias, Collections.EMPTY_MAP, Collections.EMPTY_MAP);
 
         List<ColumnName> columnList = new ArrayList<>();
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_1));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_2));
         columnList.add(new ColumnName(INDEX_NAME, TYPE_NAME, COLUMN_3));
 
-        Project project = new Project(Operations.FILTER_NON_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
+        Set operations2 = new HashSet<>();
+        operations2.add(Operations.FILTER_NON_INDEXED_EQ);
+        Project project = new Project(operations2, new TableName(INDEX_NAME, TYPE_NAME),
                         new ClusterName(CLUSTER_NAME), columnList);
 
         Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector(
                         STRING_SELECTOR_VALUE));
-        Filter filter = new Filter(Operations.FILTER_NON_INDEXED_EQ, relation);
+
+        Filter filter = new Filter(operations2, relation);
 
         project.setNextStep(filter);
         filter.setNextStep(select);

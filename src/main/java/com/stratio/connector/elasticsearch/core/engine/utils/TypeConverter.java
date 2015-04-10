@@ -20,6 +20,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 
 /**
  * Created by jmgomez on 24/11/14.
@@ -65,31 +66,24 @@ public final class TypeConverter {
      */
     public static String convert(ColumnType columnType) throws ExecutionException {
 
-        String type = "";
-        return type;
-        /*switch (columnType) {
-        case BIGINT:
+        String type;
+        if (columnType.getDataType() == DataType.BIGINT){
             type = ES_LONG;
-            break;
-        case BOOLEAN:
+        } else if (columnType.getDataType() == DataType.BOOLEAN) {
             type = ES_BOOLEAN;
-            break;
-        case DOUBLE:
+        } else if (columnType.getDataType() == DataType.DOUBLE) {
             type = ES_DOUBLE;
-            break;
-        case FLOAT:
+        } else if (columnType.getDataType() == DataType.FLOAT) {
             type = ES_FLOAT;
-            break;
-        case INT:
+        } else if (columnType.getDataType() == DataType.INT) {
             type = ES_INTEGER;
-            break;
-        case TEXT:
-        case VARCHAR:
+        } else if (columnType.getDataType() == DataType.TEXT) {
             type = ES_STRING;
-            break;
-        default:
+        } else if (columnType.getDataType() == DataType.VARCHAR) {
+            type = ES_STRING;
+        } else {
             throw new ExecutionException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
-        return type;*/
+        return type;
     }
 }

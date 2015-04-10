@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.crossdata.common.metadata.DataType;
 import org.elasticsearch.action.admin.indices.flush.FlushRequest;
 import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsRequest;
@@ -59,9 +60,9 @@ import com.stratio.crossdata.common.security.ICredentials;
  */
 public class ESConnectorHelper implements IConnectorHelper {
 
-    protected String SERVER_IP = "10.200.0.58, 10.200.0.59, 10.200.0.60, 10.200.0.61, 10.200.0.62"; // "192
+    protected String SERVER_IP = "10.200.0.58"; // "192
     // .168.0.3";
-    private String SERVER_PORT = "9300,9300,9300,9300,9300";
+    private String SERVER_PORT = "9300";
 
     // private TransportClient auxConection = null;
 
@@ -140,13 +141,13 @@ public class ESConnectorHelper implements IConnectorHelper {
     public Collection<ColumnType> getAllSupportedColumnType() {
         Set<ColumnType> allColumntTypes = new HashSet<>();
 
-        allColumntTypes.add(ColumnType.BIGINT);
-        allColumntTypes.add(ColumnType.BOOLEAN);
-        allColumntTypes.add(ColumnType.DOUBLE);
-        allColumntTypes.add(ColumnType.FLOAT);
-        allColumntTypes.add(ColumnType.INT);
-        allColumntTypes.add(ColumnType.TEXT);
-        allColumntTypes.add(ColumnType.VARCHAR);
+        allColumntTypes.add(new ColumnType(DataType.BIGINT));
+        allColumntTypes.add(new ColumnType(DataType.BOOLEAN));
+        allColumntTypes.add(new ColumnType(DataType.DOUBLE));
+        allColumntTypes.add(new ColumnType(DataType.FLOAT));
+        allColumntTypes.add(new ColumnType(DataType.INT));
+        allColumntTypes.add(new ColumnType(DataType.TEXT));
+        allColumntTypes.add(new ColumnType(DataType.VARCHAR));
         return allColumntTypes;
     }
 

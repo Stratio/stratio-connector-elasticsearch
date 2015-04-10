@@ -18,12 +18,15 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.jgroups.util.Util.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
+import akka.remote.OversizedPayloadException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +72,10 @@ public class QueryBuilderCreatorTest {
     public void testCreateBuilderEQ() throws Exception {
         Collection<Filter> filter = new ArrayList<>();
 
-        createFilter(filter, Operations.DELETE_PK_EQ, Operator.EQ);
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_EQ);
+
+        createFilter(filter, operations, Operator.EQ);
 
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
@@ -85,7 +91,10 @@ public class QueryBuilderCreatorTest {
     public void testCreateBuilderLT() throws Exception {
         Collection<Filter> filter = new ArrayList<>();
 
-        createFilter(filter, Operations.DELETE_PK_LT, Operator.LT);
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_LT);
+
+        createFilter(filter, operations, Operator.LT);
 
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
@@ -101,7 +110,10 @@ public class QueryBuilderCreatorTest {
     public void testCreateBuilderLET() throws Exception {
         Collection<Filter> filter = new ArrayList<>();
 
-        createFilter(filter, Operations.DELETE_PK_LET, Operator.LET);
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_LET);
+
+        createFilter(filter, operations, Operator.LET);
 
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
@@ -114,7 +126,10 @@ public class QueryBuilderCreatorTest {
     public void testCreateBuilderGT() throws Exception {
         Collection<Filter> filter = new ArrayList<>();
 
-        createFilter(filter, Operations.DELETE_PK_GT, Operator.GT);
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_GT);
+
+        createFilter(filter, operations, Operator.GT);
 
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
@@ -128,7 +143,10 @@ public class QueryBuilderCreatorTest {
 
         Collection<Filter> filter = new ArrayList<>();
 
-        createFilter(filter, Operations.DELETE_PK_GET, Operator.GET);
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_GET);
+
+        createFilter(filter, operations, Operator.GET);
 
         QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
 
@@ -137,7 +155,7 @@ public class QueryBuilderCreatorTest {
 
     }
 
-    private void createFilter(Collection<Filter> filter, Operations operations, Operator operator) {
+    private void createFilter(Collection<Filter> filter, Set<Operations> operations, Operator operator) {
         filter.add(new Filter(operations, new Relation(new ColumnSelector(new ColumnName(CATALOG_NAME,
                 TABLE_NAME,
                 COLUMN_NAME)), operator, new IntegerSelector(5))));

@@ -23,10 +23,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+import com.stratio.crossdata.common.metadata.DataType;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -148,7 +147,11 @@ public class ConnectorQueryExecutorTest {
 
     private ProjectParsed createQueryData(SearchType searchType) throws ConnectorException {
 
-        Project projection = new Project(Operations.FILTER_INDEXED_EQ, new TableName(INDEX_NAME, TYPE_NAME),
+
+        Set operations = new HashSet<>();
+        operations.add(Operations.FILTER_INDEXED_EQ);
+
+        Project projection = new Project(operations, new TableName(INDEX_NAME, TYPE_NAME),
                         new ClusterName(CLUSTER_NAME));
 
         Map<Selector, String> column = new HashMap<>();
@@ -160,10 +163,14 @@ public class ConnectorQueryExecutorTest {
         column.put(key, ALIAS);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
+        type.put("alias" + COLUMN_NAME, new ColumnType(DataType.TEXT));
         Map<Selector, ColumnType> typeColumn = new HashMap<>();
-        typeColumn.put(key, ColumnType.TEXT);
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumn);
+        typeColumn.put(key, new ColumnType(DataType.TEXT));
+
+        Set operations2 = new HashSet<>();
+        operations2.add(Operations.SELECT_OPERATOR);
+
+        Select select = new Select(operations2, column, type, typeColumn);
 
         projection.setNextStep(select);
 

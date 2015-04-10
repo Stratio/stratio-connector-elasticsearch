@@ -24,12 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
@@ -226,7 +221,9 @@ public class ElasticsearchStorageEngineTest {
     @Test
     public void testDelete() throws Exception {
         Collection<Filter> whereFilter = new ArrayList<>();
-        whereFilter.add(new Filter(Operations.DELETE_PK_EQ, new Relation(new ColumnSelector(new ColumnName
+        Set operations = new HashSet<>();
+        operations.add(Operations.DELETE_PK_EQ);
+        whereFilter.add(new Filter(operations, new Relation(new ColumnSelector(new ColumnName
                 (INDEX_NAME, TYPE_NAME, COLUMN_NAME)),
                 Operator.EQ,
                 new StringSelector("1"))));

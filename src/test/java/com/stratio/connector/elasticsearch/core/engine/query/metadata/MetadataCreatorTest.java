@@ -21,10 +21,9 @@ package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.stratio.crossdata.common.metadata.DataType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,7 +68,9 @@ public class MetadataCreatorTest {
     private static final String ALIAS_3 = "alias_3";
     private String[] ALIAS = { ALIAS_1, ALIAS_2, ALIAS_3 };
     MetadataCreator metadataCreator;
-    private ColumnType[] TYPES = { ColumnType.BOOLEAN, ColumnType.DOUBLE, ColumnType.VARCHAR };
+
+
+    private ColumnType[] TYPES = { new ColumnType(DataType.BOOLEAN), new ColumnType(DataType.DOUBLE), new ColumnType(DataType.VARCHAR) };
 
     @Before
     public void before() throws Exception {
@@ -120,8 +121,14 @@ public class MetadataCreatorTest {
         typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME1)), TYPES[0]);
         typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME2)), TYPES[1]);
         typeColumnName.put(new ColumnSelector(new ColumnName(CATALOG_NAME, TABLE_NAME, COLUMN_NAME3)), TYPES[2]);
-        Select select = new Select(Operations.SELECT_OPERATOR, columnMap, typeMap, typeColumnName);
-        Project project = new Project(Operations.PROJECT, new TableName(CATALOG_NAME, TABLE_NAME), new ClusterName(
+
+        Set operations = new HashSet<>();
+        operations.add(Operations.SELECT_OPERATOR);
+        Select select = new Select(operations, columnMap, typeMap, typeColumnName);
+
+        Set operations2 = new HashSet<>();
+        operations2.add(Operations.PROJECT);
+        Project project = new Project(operations2, new TableName(CATALOG_NAME, TABLE_NAME), new ClusterName(
                         "CLUSTER_NAME"));
         project.setNextStep(select);
 

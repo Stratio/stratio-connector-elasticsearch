@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.stratio.crossdata.common.metadata.DataType;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,18 +55,18 @@ public class TypeConverterTest {
 
     @Before
     public void setUp() {
-        convet.put(ColumnType.BOOLEAN, "boolean");
-        convet.put(ColumnType.BIGINT, "long");
-        convet.put(ColumnType.DOUBLE, "double");
-        convet.put(ColumnType.FLOAT, "float");
-        convet.put(ColumnType.INT, "integer");
-        convet.put(ColumnType.TEXT, "string");
-        convet.put(ColumnType.VARCHAR, "string");
+        convet.put(new ColumnType(DataType.BOOLEAN), "boolean");
+        convet.put(new ColumnType(DataType.BIGINT), "long");
+        convet.put(new ColumnType(DataType.DOUBLE), "double");
+        convet.put(new ColumnType(DataType.FLOAT), "float");
+        convet.put(new ColumnType(DataType.INT), "integer");
+        convet.put(new ColumnType(DataType.TEXT), "string");
+        convet.put(new ColumnType(DataType.VARCHAR), "string");
 
-        exceptions.add(ColumnType.LIST);
-        exceptions.add(ColumnType.MAP);
-        exceptions.add(ColumnType.NATIVE);
-        exceptions.add(ColumnType.SET);
+        exceptions.add(new ColumnType(DataType.LIST));
+        exceptions.add(new ColumnType(DataType.MAP));
+        exceptions.add(new ColumnType(DataType.NATIVE));
+        exceptions.add(new ColumnType(DataType.SET));
 
     }
 
@@ -79,7 +80,7 @@ public class TypeConverterTest {
     }
 
     private void allCoveredTest() {
-        assertEquals("All features are tested", ColumnType.values().length, convet.size() + exceptions.size());
+        assertEquals("All features are tested", DataType.values().length, convet.size() + exceptions.size());
     }
 
     private void conversionTest() throws UnsupportedException, ExecutionException {

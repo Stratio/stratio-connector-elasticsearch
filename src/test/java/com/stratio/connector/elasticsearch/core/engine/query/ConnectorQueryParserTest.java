@@ -21,12 +21,9 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import com.stratio.crossdata.common.metadata.DataType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +86,7 @@ public class ConnectorQueryParserTest {
         assertEquals("The filter size is correct", 1, filters.size());
         Filter filter = (Filter) filters.toArray()[0];
 
-        assertEquals("The filter operation is correct", Operations.FILTER_FUNCTION_EQ, filter.getOperation());
+        assertEquals("The filter operation is correct", Operations.FILTER_FUNCTION_EQ, filter.getOperations().iterator().next());
         assertEquals("The left term is type correct,", ColumnSelector.class.getCanonicalName(),
                 filter.getRelation().getLeftTerm().getClass().getCanonicalName());
         assertEquals("The filter table is correct", TYPE_NAME,
@@ -108,7 +105,8 @@ public class ConnectorQueryParserTest {
 
     private Project createLogicalWorkFlow() {
 
-        Operations operations = Operations.FILTER_FUNCTION_EQ;
+        Set operations = new HashSet<>();
+        operations.add(Operations.FILTER_FUNCTION_EQ);
 
         List<LogicalStep> initalSteps = new ArrayList<>();
 
@@ -126,11 +124,13 @@ public class ConnectorQueryParserTest {
 		column.put(selector,  "alias" + COLUMN_NAME);
 
         Map<String, ColumnType> type = new HashMap<>();
-        type.put("alias" + COLUMN_NAME, ColumnType.TEXT);
+        type.put("alias" + COLUMN_NAME, new ColumnType(DataType.TEXT));
         Map<Selector, ColumnType> typeColumName = new HashMap<>();
-        typeColumName.put(selector, ColumnType.TEXT);
+        typeColumName.put(selector, new ColumnType(DataType.TEXT));
 
-        Select select = new Select(Operations.SELECT_OPERATOR, column, type, typeColumName);
+        Set operations2 = new HashSet<>();
+        operations2.add(Operations.SELECT_OPERATOR);
+        Select select = new Select(operations2, column, type, typeColumName);
         		
         filter.setNextStep(select);
 

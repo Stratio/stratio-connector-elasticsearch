@@ -111,9 +111,11 @@ public class ConnectionHandleTest {
     public void testCreateTransportConnection() throws Exception {
 
         ICredentials credentials = mock(ICredentials.class);
+
         Map<String, String> options = new HashMap<>();
         options.put(ConfigurationOptions.NODE_TYPE.getManifestOption(), "false");
-        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), options);
+
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), null, options);
 
         TransportConnection connection = mock(TransportConnection.class);
         whenNew(TransportConnection.class).withArguments(credentials, config).thenReturn(connection);
