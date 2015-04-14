@@ -43,9 +43,7 @@ import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecu
 import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
 import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
 import com.stratio.crossdata.common.connector.IResultHandler;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.result.QueryResult;
 
@@ -58,10 +56,10 @@ import com.stratio.crossdata.common.result.QueryResult;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ElasticsearchQueryEngine.class, ConnectorQueryParser.class, ConnectorQueryBuilder.class,
-        ConnectorQueryExecutor.class })
+        ConnectorQueryExecutor.class, Connection.class, Project.class })
 public class ElasticsearchQueryEngineTest {
 
-    @Mock ConnectionHandler connectionHandle;
+    @Mock ConnectionHandler connectionHandler;
     @Mock private ConnectorQueryParser queryParser;
     @Mock private ConnectorQueryBuilder queryBuilder;
     @Mock private ConnectorQueryExecutor queryExecutor;
@@ -74,7 +72,7 @@ public class ElasticsearchQueryEngineTest {
         whenNew(ConnectorQueryBuilder.class).withNoArguments().thenReturn(queryBuilder);
         whenNew(ConnectorQueryExecutor.class).withNoArguments().thenReturn(queryExecutor);
 
-        elasticsearchQueryEngine = new ElasticsearchQueryEngine(connectionHandle);
+        elasticsearchQueryEngine = new ElasticsearchQueryEngine(connectionHandler);
 
     }
 
@@ -118,14 +116,15 @@ public class ElasticsearchQueryEngineTest {
      */
     @Test(expected = UnsupportedException.class)
     public void testAsyncExecute() throws ConnectorException {
-        elasticsearchQueryEngine.asyncExecute("", mock(LogicalWorkflow.class), mock(IResultHandler.class));
+        elasticsearchQueryEngine.
+                asyncExecute("", mock(Project.class), mock(Connection.class), mock(IResultHandler.class));
     }
 
-    /**
-     * Method: stop(String queryId)
-     */
+        /**
+         * Method: stop(String queryId)
+         */
     @Test(expected = UnsupportedException.class)
-    public void testStop() throws UnsupportedException, ExecutionException {
+    public void testStop() throws ConnectorException {
         elasticsearchQueryEngine.stop("");
     }
 
