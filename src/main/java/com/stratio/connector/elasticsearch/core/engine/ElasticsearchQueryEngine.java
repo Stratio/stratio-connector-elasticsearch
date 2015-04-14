@@ -57,23 +57,28 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     }
 
     @Override
-    protected void pagedExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
-
+    protected void pagedExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws UnsupportedException {
+        throw new UnsupportedException("The method pagedExecute is not supported");
     }
 
     @Override
-    protected void asyncExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
-
+    protected void asyncExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws UnsupportedException {
+        throw new UnsupportedException("The method asyncExecute is not supported");
     }
 
     @Override
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
-        return null;
+        Client elasticClient = connection.getNativeConnection();
+        ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
+
+        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
+
+        return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
     }
 
     @Override
     public void stop(String queryId) throws UnsupportedException {
-        throw new UnsupportedException("Not supported");
+        throw new UnsupportedException("The method stop is not supported");
 
     }
 
