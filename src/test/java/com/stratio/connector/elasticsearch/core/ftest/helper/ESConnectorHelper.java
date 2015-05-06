@@ -60,9 +60,9 @@ import com.stratio.crossdata.common.security.ICredentials;
  */
 public class ESConnectorHelper implements IConnectorHelper {
 
-    protected String SERVER_IP = "10.200.0.58"; // "192
+    protected String SERVER_IP = "10.200.0.58,10.200.0.59,10.200.0.60,10.200.0.61"; // "192
     // .168.0.3";
-    private String SERVER_PORT = "9300";
+    private String SERVER_PORT = "9300,9300,9300,9300,9300";
 
     // private TransportClient auxConection = null;
 
@@ -202,7 +202,7 @@ public class ESConnectorHelper implements IConnectorHelper {
 
     @Override
     public boolean isTableMandatory() {
-        return false;
+        return true;
     }
 
     @Override
