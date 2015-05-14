@@ -115,7 +115,7 @@ public class ConnectionHandleTest {
         Map<String, String> options = new HashMap<>();
         options.put(ConfigurationOptions.NODE_TYPE.getManifestOption(), "false");
 
-        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), null, options);
+        ConnectorClusterConfig config = new ConnectorClusterConfig(new ClusterName(CLUSTER_NAME), options, Collections.EMPTY_MAP);
 
         TransportConnection connection = mock(TransportConnection.class);
         whenNew(TransportConnection.class).withArguments(credentials, config).thenReturn(connection);

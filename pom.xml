@@ -23,24 +23,27 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-elasticsearch</artifactId>
+    <artifactId>stratio-connector-elasticsearch-parent</artifactId>
     <version>0.4.0-SNAPSHOT</version>
     <url>http://www.stratio.com</url>
     <name>ElasticSearch Connector</name>
-    <description>The Crossdata connector for ElasticSearch</description>
+    <description>The Crossdata connector for ElasticSearch parent</description>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.stratio</groupId>
+        <artifactId>parent</artifactId>
+        <version>0.1.0</version>
+    </parent>
 
     <properties>
         <version.crossdata>0.3.0-RC1</version.crossdata>
-        <version.connector.commons>0.5.0-SNAPSHOT</version.connector.commons>
+        <version.connector.commons>0.5.0-RC1</version.connector.commons>
         <version.elasticsearch>1.3.2</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-
-
-
-
-    <licenses>
+  <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
@@ -48,12 +51,16 @@
         </license>
     </licenses>
 
+    <modules>
+        <module>doc</module>
+        <module>connector-elasticsearh</module>
+    </modules>
+
     <scm>
         <connection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</connection>
         <developerConnection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</developerConnection>
         <url>https://github.com/Stratio/stratio-connector-elasticsearch</url>
     </scm>
-
     <developers>
         <developer>
             <id>jmgomez</id>
@@ -66,123 +73,6 @@
             </roles>
         </developer>
     </developers>
-
-    <distributionManagement>
-
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-
-    </distributionManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
-            <version>${version.connector.commons}</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>crossdata-common</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>${version.crossdata}</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>crossdata-connector</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>${version.crossdata}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${version.elasticsearch}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.7</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
-            <classifier>tests</classifier>
-            <version>${version.connector.commons}</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
-            <version>1.5.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>1.5.5</version>
-            <scope>test</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.8.8</version>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>FT</id>
-            <build>
-
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.18</version>
-                        <configuration>
-                            <includes>
-                                <include>**/*FT.java</include>
-                            </includes>
-                            <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                                <configuration>
-                                    <includes>
-                                        <include>**/*FT.class</include>
-                                    </includes>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -231,10 +121,9 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <argLine>${jacocoUT-argline}</argLine>
+                    <argLine>${jacoco-UT-argline}</argLine>
                     <argLine>-noverify</argLine>
-                    <skip></skip>
-                    <testFailureIgnore>true</testFailureIgnore>
+                    <skipTests>${skipUTs}</skipTests>
                 </configuration>
             </plugin>
 
@@ -257,146 +146,19 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.7.1.201405082137</version>
-                <configuration>
-                    <destFile>${basedir}/target/jacoco.exec</destFile>
-                </configuration>
                 <executions>
                     <execution>
-                        <id>jacoco-initialize</id>
+                        <id>pre-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacocoUT.exec</destFile>
+                            <propertyName>jacoco-UT-argline</propertyName>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <formats>
-                        <format>xml</format>
-                    </formats>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>crossdata-connector-maven-plugin</artifactId>
-                <groupId>com.stratio.crossdata</groupId>
-                <version>${version.crossdata}</version>
-                <configuration>
-                    <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
-                    <jmxPort>7190</jmxPort>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.4</version>
-                <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.8</version>
-                            <reportSets>
-                                <reportSet>
-                                    <reports></reports>
-                                </reportSet>
-                            </reportSets>
-                        </plugin>
-                        <plugin>
-                            <groupId>com.stratio.maven</groupId>
-                            <artifactId>sphinx-maven-plugin</artifactId>
-                            <version>2.0.0</version>
-                            <configuration>
-                                <builders>
-                                    <entry>html</entry>
-                                </builders>
-                                <resources>
-                                    <resource>
-                                        <directory>src/site/sphinx</directory>
-                                        <filtering>true</filtering>
-                                        <includes>
-                                            <include>conf.py</include>
-                                        </includes>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </plugin>
-                    </reportPlugins>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.stratio.mojo.unix</groupId>
-                <artifactId>unix-maven-plugin</artifactId>
-                <version>1.0-alpha-9</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <contact><![CDATA[Stratio <jmgomez@stratio.com>]]></contact>
-                    <contactEmail>jmgomez@stratio.com</contactEmail>
-                    <size>2048</size>
-                    <deb>
-                        <section>devel</section>
-                    </deb>
-                    <rpm>
-                        <group>stratio</group>
-                    </rpm>
-                    <assembly>
-                        <mkdirs>
-                            <paths>
-                                <path>etc/sds/stratio-connector-elasticsearch</path>
-                                <path>etc/default</path>
-                            </paths>
-                            <attributes>
-                                <user>stratio</user>
-                                <group>stratio</group>
-                                <mode>644</mode>
-                            </attributes>
-                        </mkdirs>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/bin</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/bin</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/lib</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/lib</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/conf</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/conf</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/template</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/template</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/config</from>
-                            <to>etc/sds/stratio-connector-elasticsearch</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/unix/files_and_dirs/etc/default</from>
-                            <to>etc/default</to>
-                        </copyDirectory>
-                        <copyFile>
-                            <path>src/main/include/LICENSE</path>
-                            <toFile>opt/sds/stratio-connector-elasticsearch/LICENSE</toFile>
-                        </copyFile>
-                        <copyFile>
-                            <path>src/main/include/NOTICE</path>
-                            <toFile>opt/sds/stratio-connector-elasticsearch/NOTICE</toFile>
-                        </copyFile>
-                    </assembly>
-                </configuration>
-            </plugin>
-
-
-
-
         </plugins>
-
     </build>
-
 </project>

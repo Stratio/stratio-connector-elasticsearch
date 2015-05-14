@@ -116,7 +116,7 @@ public class ElasticsearchQueryEngineTest {
     /**
      * Method: asyncExecute(String queryId, LogicalWorkflow workflow, IResultHandler resultHandler)
      */
-    @Test(expected = UnsupportedException.class)
+    @Test(expected = ExecutionException.class)
     public void testAsyncExecute() throws ConnectorException {
         elasticsearchQueryEngine.asyncExecute("", mock(LogicalWorkflow.class), mock(IResultHandler.class));
     }

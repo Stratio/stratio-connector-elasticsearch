@@ -58,17 +58,20 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
     @Override
     protected void pagedExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
-
+        throw new UnsupportedException("Not supported");
     }
 
     @Override
     protected void asyncExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
-
+        throw new UnsupportedException("Not supported");
     }
 
     @Override
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
-        return null;
+     Client elasticClient = connection.getNativeConnection();
+      ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
+     SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
+     return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
     }
 
     @Override
