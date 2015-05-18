@@ -53,7 +53,7 @@
 
     <modules>
         <module>doc</module>
-        <module>connector-elasticsearh</module>
+        <module>connector-elasticsearch</module>
     </modules>
 
     <scm>
