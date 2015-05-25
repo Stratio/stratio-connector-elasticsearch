@@ -1,7 +1,7 @@
 # About #
 
 
-Stratio Connector Elasticsearch is a crossdata connector interface implementation for elasticsearch 1.3.2.
+Stratio Connector Elasticsearch is a crossdata connector interface implementation for Elasticsearch 1.3.2.
 
 ## Requirements ##
 
@@ -30,14 +30,14 @@ To generate the executable execute the following command:
 To run Connector Elasticsearch execute:
 
 ```
-   > cd connector-elasticsearch-core/
-   > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT start
+   >  cd connector-elasticsearch/
+   > target/stratio-connector-elasticsearch-[version]/bin/stratio-connector-elasticsearch-[version] start
 ```
 
 To stop the connector execute:
 
 ```
-   > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT stop
+   > target/stratio-connector-elasticsearch-[version]/bin/stratio-connector-elasticsearch-[version] start
 ```
 ## Build a redistributable package ##
 
