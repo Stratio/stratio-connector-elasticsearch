@@ -74,6 +74,8 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
      return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
     }
 
+
+
     @Override
     public void stop(String queryId) throws UnsupportedException {
         throw new UnsupportedException("Not supported");

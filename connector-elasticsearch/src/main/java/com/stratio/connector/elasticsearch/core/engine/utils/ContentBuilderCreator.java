@@ -19,6 +19,7 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -49,6 +50,14 @@ public class ContentBuilderCreator {
      * The index identification.
      */
     private static final String INDEX = "index";
+
+
+    private static final String FORMAT_FIELD = "format";
+
+    private static final String ANALYZER_FIELDS = "analyzer";
+
+    private static final String STORE = "store";
+
     /**
      * The id elasticsearch name.
      */
@@ -66,30 +75,26 @@ public class ContentBuilderCreator {
      * The XContentBuilder.
      */
 
-    private XContentBuilder xContentBuilder;
 
     /**
      * This method creates the XContentBuilder for a type.
      *
-     * @param typeMetadata
-     *            the type crossdata.
+     * @param typeMetadata the type crossdata.
      * @return the XContentBuilder that represent the type.
-     * @throws ExecutionException
-     *             if an error happen.
+     * @throws ExecutionException if an error happen.
      */
     public XContentBuilder createTypeSource(TableMetadata typeMetadata) throws ExecutionException {
 
+        XContentBuilder xContentBuilder = null;
         try {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
-
-            createFieldOptions(typeMetadata);
-
+            createFieldOptions(typeMetadata, xContentBuilder);
             xContentBuilder.endObject();
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index ["
-                                + typeMetadata.getName().getCatalogName() + "]");
+                        + typeMetadata.getName().getCatalogName() + "]");
                 logger.debug("Mapping : " + xContentBuilder.string());
             }
 
@@ -105,21 +110,18 @@ public class ContentBuilderCreator {
     /**
      * This method create the xcontenBuilder for add a field in a mapping.
      *
-     * @param columnMetadata
-     *            the colimn meta data.
+     * @param columnMetadata the colimn meta data.
      * @return the XContentBuilder.
-     * @throws IOException
-     *             if a IO excetion happens.
-     * @throws ExecutionException
-     *             if an error happen.
+     * @throws IOException        if a IO excetion happens.
+     * @throws ExecutionException if an error happen.
      */
     public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, ExecutionException {
         XContentBuilder mapping = XContentFactory.jsonBuilder().startObject()
-                        .startObject(columnMetadata.getName().getTableName().getName()).startObject(PROPERTIES)
-                        .startObject(columnMetadata.getName().getName())
-                        .field(TYPE, TypeConverter.convert(columnMetadata.getColumnType()))
-                        .field(INDEX, ESIndexType.getDefault().getCode()).endObject().endObject().endObject()
-                        .endObject();
+                .startObject(columnMetadata.getName().getTableName().getName()).startObject(PROPERTIES)
+                .startObject(columnMetadata.getName().getName())
+                .field(TYPE, TypeConverter.convert(columnMetadata.getColumnType()))
+                .field(INDEX, ESIndexType.getDefault().getCode()).endObject().endObject().endObject()
+                .endObject();
 
         return mapping;
     }
@@ -127,35 +129,57 @@ public class ContentBuilderCreator {
     /**
      * This method creates the fields options.
      *
-     * @param tableMetadata
-     *            the table metadata.
-     * @throws IOException
-     *             if an error happen creating the ContentBuilder.
-     * @throws ExecutionException
-     *             if an error happen
+     * @param tableMetadata the table metadata.
+     * @throws IOException        if an error happen creating the ContentBuilder.
+     * @throws ExecutionException if an error happen
      */
-    private void createFieldOptions(TableMetadata tableMetadata) throws IOException, ExecutionException {
+    private void createFieldOptions(TableMetadata tableMetadata, XContentBuilder xContentBuilder) throws IOException, ExecutionException {
 
-        configureIndex(ID, ESIndexType.NOT_ANALYZED);
+        configureIndex(ID, ESIndexType.NOT_ANALYZED, xContentBuilder);
         Map<ColumnName, ColumnMetadata> columns = tableMetadata.getColumns();
         if (columns != null && !columns.isEmpty()) {
             xContentBuilder.startObject(PROPERTIES);
             for (Map.Entry<ColumnName, ColumnMetadata> column : columns.entrySet()) {
-                String columnType = TypeConverter.convert(column.getValue().getColumnType());
+
                 String name = column.getKey().getName();
-                xContentBuilder = xContentBuilder.startObject(name).field(TYPE, columnType);
-                xContentBuilder.field(INDEX, getTypeIndex(columnType)).endObject();
+
+                xContentBuilder = xContentBuilder.startObject(name);
+                xContentBuilder = processColumnProperties(xContentBuilder, column.getValue());
+                //xContentBuilder= xContentBuilder.endObject();
             }
             xContentBuilder.endObject();
         }
 
     }
 
+    private XContentBuilder processColumnProperties(XContentBuilder xContentBuilder, ColumnMetadata columnMetadata) throws ExecutionException, IOException {
+        String columnType = TypeConverter.convert(columnMetadata.getColumnType());
+        xContentBuilder = xContentBuilder.field(TYPE, columnType);
+
+
+        Map<String, List<String>> columProperties = columnMetadata.getColumnType().getColumnProperties();
+        if (columProperties != null && columProperties.containsKey(INDEX)) {
+            xContentBuilder = xContentBuilder.field(INDEX, columProperties.get(INDEX).get(0));
+        } else {
+            xContentBuilder.field(INDEX, getTypeIndex(columnType));
+        }
+        if (columProperties != null && columProperties.containsKey(ANALYZER_FIELDS)) {
+            xContentBuilder = xContentBuilder.field(ANALYZER_FIELDS, columProperties.get(ANALYZER_FIELDS));
+        }
+        if (columProperties != null && columProperties.containsKey(FORMAT_FIELD)) {
+            xContentBuilder = xContentBuilder.field(FORMAT_FIELD, columProperties.get(FORMAT_FIELD));
+        }
+        if (columProperties != null && columProperties.containsKey(STORE)) {
+            xContentBuilder = xContentBuilder.field(STORE, columProperties.get(STORE));
+        }
+
+        return xContentBuilder.endObject();
+    }
+
     /**
      * Resolve the typeIndex.
      *
-     * @param columnType
-     *            the columnType.
+     * @param columnType the columnType.
      * @return the index type.
      */
     private String getTypeIndex(String columnType) {
@@ -172,14 +196,11 @@ public class ContentBuilderCreator {
     /**
      * This method create the index.
      *
-     * @param field
-     *            the field to index.
-     * @param indexType
-     *            the index type.
-     * @throws IOException
-     *             if an error happen creating the ContentBuilder.
+     * @param field     the field to index.
+     * @param indexType the index type.
+     * @throws IOException if an error happen creating the ContentBuilder.
      */
-    private void configureIndex(String field, ESIndexType indexType) throws IOException {
+    private void configureIndex(String field, ESIndexType indexType, XContentBuilder xContentBuilder) throws IOException {
 
         xContentBuilder.startObject(field).field(INDEX, indexType.getCode()).endObject();
 

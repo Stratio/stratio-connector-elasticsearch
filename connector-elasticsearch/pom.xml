@@ -91,6 +91,11 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/config</directory>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>crossdata-connector-maven-plugin</artifactId>

@@ -20,12 +20,10 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import com.stratio.crossdata.common.metadata.*;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -111,4 +109,44 @@ public class ContentBuilderCreatorTest {
         return columns;
     }
 
+
+    @Test
+    public void testCreateTableWithColumnOptions() throws Exception {
+        TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
+        Map<Selector, Selector> options = new LinkedHashMap<>();
+        options.put(new StringSelector("number_of_shards"), new IntegerSelector(5));
+        options.put(new StringSelector("number_of_replicas"), new IntegerSelector(2));
+        options.put(new StringSelector("other"), new StringSelector("String value"));
+
+
+        LinkedHashMap<ColumnName, ColumnMetadata> columns = new LinkedHashMap<>();
+        columns.putAll(creteColumns("column_1", new ColumnType(DataType.BIGINT)));
+        Map<String, List<String>> columnPropertie = new HashMap<>();
+        columnPropertie.put("analyzer", Arrays.asList("aaa", "bbb"));
+        columnPropertie.put("format", Arrays.asList("aebi"));
+        columns.putAll(creteColumns("column_6", new ColumnType(DataType.TEXT, columnPropertie)));
+        Map<IndexName, IndexMetadata> indexes = new HashMap<IndexName, IndexMetadata>();
+
+        ClusterName clusterRef = new ClusterName(CLUSTER_NAME);
+
+
+        LinkedList<ColumnName> partitionKey = new LinkedList<ColumnName>();
+        LinkedList<ColumnName> clusterKey = new LinkedList<ColumnName>();
+
+        TableMetadata tableMetadata = new TableMetadata(tableName, options, columns, indexes,
+                clusterRef, partitionKey, clusterKey);
+
+        //Experientation
+        XContentBuilder result = deepContentBuilder.createTypeSource(tableMetadata);
+
+
+        //Expectations
+        String expected = "{\"_id\":{\"index\":\"not_analyzed\"},\"" +
+                "properties\":{\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"},\"" +
+                "column_6\":{\"type\":\"string\",\"index\":\"analyzed\",\"" +
+                "analyzer\":[\"aaa\",\"bbb\"],\"format\":[\"aebi\"]}}}";
+
+        assertEquals("The JSON is not correct", expected, result.string());
+
+    }
 }
