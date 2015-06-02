@@ -79,6 +79,7 @@ public class ElasticsearchConnector extends CommonsConnector {
         connectorApp.startup(elasticsearchConnector);
         elasticsearchConnector.attachShutDownHook();
 
+
     }
 
     /**

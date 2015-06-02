@@ -24,6 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.verifyNew;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Collections;
@@ -83,9 +84,9 @@ import com.stratio.crossdata.common.statements.structures.StringSelector;
 public class ElasticsearchMetadataEngineTest {
 
     public static final String CATALOG_NAME = "catalog_name";
-    private static final String TYPE_NAME = "tableName".toLowerCase();
-    private final String CLUSTER_NAME = "clusterName".toLowerCase();
-    private final String INDEX_NAME = "indexName".toLowerCase();
+    private static final String TYPE_NAME = "tableName";
+    private final String CLUSTER_NAME = "clusterName";
+    private final String INDEX_NAME = "indexName";
     ElasticsearchMetadataEngine elasticsearchMetadataEngine;
     @Mock
     ConnectionHandler connectionHandler;
@@ -131,8 +132,36 @@ public class ElasticsearchMetadataEngineTest {
 
         verify(createIndexRequestBluilder, times(1)).setSettings(options);
         verify(listenableActionFuture, times(1)).actionGet();
+        verify(indicesAdminClient).prepareCreate(CATALOG_NAME);
     }
 
+
+
+    @Test
+    public void testCreateCatalogINUpper() throws Exception {
+
+        ListenableActionFuture<CreateIndexResponse> listenableActionFuture = mock(ListenableActionFuture.class);
+        CreateIndexRequestBuilder createIndexRequestBluilder = mock(CreateIndexRequestBuilder.class);
+
+        when(createIndexRequestBluilder.execute()).thenReturn(listenableActionFuture);
+        IndicesAdminClient indicesAdminClient = mock(IndicesAdminClient.class);
+
+        when(indicesAdminClient.prepareCreate(CATALOG_NAME)).thenReturn(createIndexRequestBluilder);
+
+        AdminClient adminClient = mock(AdminClient.class);
+        when(adminClient.indices()).thenReturn(indicesAdminClient);
+
+        when(client.admin()).thenReturn(adminClient);
+
+        Map<Selector, Selector> options = Collections.EMPTY_MAP;
+        Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
+        CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME.toUpperCase()), options, tables);
+        elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
+
+        verify(createIndexRequestBluilder, times(1)).setSettings(options);
+        verify(listenableActionFuture, times(1)).actionGet();
+        verify(indicesAdminClient).prepareCreate(CATALOG_NAME);
+    }
     @Test
     public void testCreateCatalogWithOptions() throws Exception {
 

@@ -222,7 +222,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection) throws ExecutionException {
 
         CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
-                        .prepareCreate(indexMetaData.getName().getName());
+                        .prepareCreate(indexMetaData.getName().getName().toLowerCase());
         createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
 
         createIndexRequestBuilder.execute().actionGet();
