@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-elasticsearch-core</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <url>http://www.stratio.com</url>
     <name>ElasticSearch Connector core</name>
     <description>The Crossdata connector for ElasticSearch core</description>

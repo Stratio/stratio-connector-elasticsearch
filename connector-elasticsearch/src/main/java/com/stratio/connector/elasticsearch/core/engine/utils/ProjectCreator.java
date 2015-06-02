@@ -37,7 +37,7 @@ public class ProjectCreator {
      */
     public void modify(SearchRequestBuilder requestBuilder, Project projection) {
 
-        requestBuilder.setIndices(projection.getCatalogName()).setTypes(projection.getTableName().getName());
+        requestBuilder.setIndices(projection.getCatalogName().toLowerCase()).setTypes(projection.getTableName().getName());
 
     }
 

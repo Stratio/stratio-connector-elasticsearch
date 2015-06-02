@@ -41,13 +41,13 @@ To run Connector Elasticsearch execute:
 
 ::
 
-       > target/stratio-connector-elasticsearch-[version]/bin/stratio-connector-elasticsearch-[version] start
+       > target/stratio-connector-elasticsearch-<version>/bin/stratio-connector-elasticsearch-<version> start
 
 To stop the connector execute:
 
 ::
 
-       > target/stratio-connector-elasticsearch-[version]/bin/stratio-connector-elasticsearch-[version] stop
+       > target/stratio-connector-elasticsearch-<version>/bin/stratio-connector-elasticsearch-<version> stop
 
 Build a redistributable package
 -------------------------------
@@ -71,13 +71,13 @@ RPM Package:
  
 ::   
     
-       > rpm -i target/stratio-connector-elasticsearch-[version].rpm
+       > rpm -i target/stratio-connector-elasticsearch-<version>.rpm
      
 DEB Package:
 
 ::   
     
-       > dpkg -i target/stratio-connector-elasticsearch-[version].deb
+       > dpkg -i target/stratio-connector-elasticsearch-<version>.deb
 
 Now to start/stop the connector:
  
@@ -97,7 +97,7 @@ How to use Elasticsearch Connector
    Add a data store. We need to specified the XML manifest that defines
    the data store. The XML manifest can be found in the path of the
    Elasticsearch Connector in
-   target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT/conf/ElasticSearchDataStore.xml
+   target/stratio-connector-elasticsearch-<version>/conf/ElasticSearchDataStore.xml
 
    ``xdsh:user>  ADD DATASTORE <Absolute path to Streaming Datastore manifest>;``
 

@@ -65,7 +65,7 @@ public class AddColumnHandler implements AlterTableHandler {
             ContentBuilderCreator contentBuilderCreator = new ContentBuilderCreator();
             XContentBuilder source = null;
             source = contentBuilderCreator.addColumn(alterOptions.getColumnMetadata());
-            connection.admin().indices().preparePutMapping(tableName.getCatalogName().getName())
+            connection.admin().indices().preparePutMapping(tableName.getCatalogName().getName().toLowerCase())
                             .setType(tableName.getName()).setSource(source).execute().actionGet();
 
         } catch (IOException e) {

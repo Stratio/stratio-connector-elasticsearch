@@ -62,12 +62,12 @@ import com.stratio.crossdata.common.statements.structures.Selector;
 
 public class IndexRequestBuilderCreatorExceptionTest {
 
-    private static final String CLUSTER_NAME = "CLUSTER NAME";
-    private static final String INDEX_NAME = "INDEX_NAME";
-    private static final String TYPE_NAME = "TYPE_NAME";
+    private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
+    private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
+    private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
     private TableName tableName = new TableName(INDEX_NAME, TYPE_NAME);
     private static final String ROW_NAME = "row_name";
-    private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME";
+    private static final String OTHER_ROW_NAME = "OTHER_ROW_NAME".toLowerCase();
     private static final String CELL_VALUE = "cell_value";
 
     @Rule

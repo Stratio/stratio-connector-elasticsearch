@@ -116,7 +116,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
     @Override
     protected void createTable(TableMetadata tableMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
-        String indexName = tableMetadata.getName().getCatalogName().getName();
+        String indexName = tableMetadata.getName().getCatalogName().getName().toLowerCase();
         XContentBuilder xContentBuilder = contentBuilder.createTypeSource(tableMetadata);
 
         recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
@@ -125,16 +125,15 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
   /**
      * This method drops an index in ES.
      *
-     * @param name
-     *            the index name.
+     * @param CatalogNAme  the index CatalogNAme.
      */
 
     @Override
-    protected void dropCatalog(CatalogName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
+    protected void dropCatalog(CatalogName CatalogNAme, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
          DeleteIndexResponse delete = null;
 
-        delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(name.getName()))
+        delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(CatalogNAme.getName().toLowerCase()))
                         .actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropCatalog request has not been acknowledged");
@@ -154,7 +153,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
         DeleteMappingResponse delete = null;
         delete = recoveredClient(connection).admin().indices()
-                        .prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName())
+                        .prepareDeleteMapping(name.getCatalogName().getName().toLowerCase()).setType(name.getName())
                         .execute().actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropTable request has not been acknowledged");

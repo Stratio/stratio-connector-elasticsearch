@@ -84,9 +84,9 @@ import com.stratio.crossdata.common.statements.structures.StringSelector;
 public class ElasticsearchMetadataEngineTest {
 
     public static final String CATALOG_NAME = "catalog_name";
-    private static final String TYPE_NAME = "tableName";
-    private final String CLUSTER_NAME = "clusterName";
-    private final String INDEX_NAME = "indexName";
+    private static final String TYPE_NAME = "table_name";
+    private final String CLUSTER_NAME = "cluster_name";
+    private final String INDEX_NAME = "index_name";
     ElasticsearchMetadataEngine elasticsearchMetadataEngine;
     @Mock
     ConnectionHandler connectionHandler;

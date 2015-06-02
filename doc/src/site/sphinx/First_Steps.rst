@@ -7,7 +7,7 @@ Crossdata connector.
 Connector Configuration
 -----------------------
 
-First of all [Stratio Crossdata 0.2.0]
+First of all [Stratio Crossdata <version>]
 https://github.com/Stratio/crossdata.git is needed and must be
 installed. The server and the Shell must be running.
 
@@ -59,7 +59,7 @@ Now we must run the connector.
 
       > <path_to_connector_executable>/connector-elasticsearch-core-<version> start
 
-To ensure that the connector is online we can execute the crossdata
+To ensure that the connector is online we can execute the Crossdata
 shell command
 
 ::

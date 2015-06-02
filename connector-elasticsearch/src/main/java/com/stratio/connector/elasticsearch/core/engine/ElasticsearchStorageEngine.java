@@ -103,7 +103,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
     @Override
     protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
                     throws UnsupportedException, ExecutionException {
-        String index = tableName.getCatalogName().getName();
+        String index = tableName.getCatalogName().getName().toLowerCase();
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
 
@@ -268,7 +268,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      */
     private void loggInsert(TableMetadata tableMetadata) {
         if (logger.isDebugEnabled()) {
-            String index = tableMetadata.getName().getCatalogName().getName();
+            String index = tableMetadata.getName().getCatalogName().getName().toLowerCase();
             String type = tableMetadata.getName().getName();
             logger.debug("Insert one row in ElasticSearch Database. Index [" + index + "] Type [" + type + "]");
         }
@@ -284,7 +284,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      */
     private void logBulkInsert(TableMetadata tableMetadata, Collection<Row> rows) {
         if (logger.isDebugEnabled()) {
-            String index = tableMetadata.getName().getCatalogName().getName();
+            String index = tableMetadata.getName().getCatalogName().getName().toLowerCase();
             String type = tableMetadata.getName().getName();
             logger.debug("Insert " + rows.size() + "  rows in ElasticSearch Database. Index [" + index + "] Type ["
                             + type + "]");

@@ -89,7 +89,7 @@ public class ContentBuilderCreator {
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Crete type [" + typeMetadata.getName().getName() + "] in index ["
-                                + typeMetadata.getName().getCatalogName() + "]");
+                                + typeMetadata.getName().getCatalogName().getName().toLowerCase() + "]");
                 logger.debug("Mapping : " + xContentBuilder.string());
             }
 

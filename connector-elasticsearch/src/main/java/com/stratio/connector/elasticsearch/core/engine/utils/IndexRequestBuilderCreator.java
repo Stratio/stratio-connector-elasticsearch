@@ -78,7 +78,7 @@ public class IndexRequestBuilderCreator {
                     Map<String, Object> dataInsert, String pk) {
         IndexRequestBuilder indexRequestBuilder;
 
-        String index = targetTable.getName().getCatalogName().getName();
+        String index = targetTable.getName().getCatalogName().getName().toLowerCase();
         String type = targetTable.getName().getName();
 
         if (pk != null) {
@@ -108,7 +108,7 @@ public class IndexRequestBuilderCreator {
         for (Map.Entry<String, Object> rowName : dataInsert.entrySet()) {
             TableName tableName = targetTable.getName();
 
-            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName(), tableName.getName(), rowName
+            if (targetTable.isPK(new ColumnName(tableName.getCatalogName().getName().toLowerCase(), tableName.getName(), rowName
                             .getKey()))) {
                 String tempPK = rowName.getValue().toString();
                 checkPkTypeSupport(pk);
