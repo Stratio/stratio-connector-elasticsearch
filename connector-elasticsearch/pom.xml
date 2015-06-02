@@ -23,22 +23,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-elasticsearch</artifactId>
+    <artifactId>stratio-connector-elasticsearch-core</artifactId>
     <version>0.4.0</version>
     <url>http://www.stratio.com</url>
-    <name>ElasticSearch Connector</name>
+    <name>ElasticSearch Connector core</name>
     <description>The Crossdata connector for ElasticSearch core</description>
 
     <parent>
         <groupId>com.stratio.connector</groupId>
-        <artifactId>stratio-connector-elasticsearch-parent</artifactId>
-        <version>0.4.0</version>
+        <artifactId>stratio-connector-elasticsearch</artifactId>
+        <version>0.4.1</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
+            <artifactId>stratio-connector-commons-core</artifactId>
             <version>${version.connector.commons}</version>
         </dependency>
         <dependency>
@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
+            <artifactId>stratio-connector-commons-core</artifactId>
             <classifier>tests</classifier>
             <version>${version.connector.commons}</version>
             <scope>test</scope>

@@ -24,19 +24,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-elasticsearch-doc</artifactId>
-    <version>0.4.0</version>
+    <version>0.4.1</version>
     <url>http://www.stratio.com</url>
-    <name>ElasticSearch Connector</name>
+    <name>ElasticSearch Connector documentation</name>
     <description>The Crossdata connector for ElasticSearch documentation</description>
 
     <parent>
-    <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-elasticsearch-parent</artifactId>
-    <version>0.4.0</version>
+        <groupId>com.stratio.connector</groupId>
+        <artifactId>stratio-connector-elasticsearch</artifactId>
+        <version>0.4.1</version>
     </parent>
     <build>
         <plugins>
-          <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.4</version>
