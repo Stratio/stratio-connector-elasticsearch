@@ -87,6 +87,11 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
+    @Override
+    public void restart() throws ExecutionException {
+        
+    }
+
 
     /**
      * Return the StorageEngine.
