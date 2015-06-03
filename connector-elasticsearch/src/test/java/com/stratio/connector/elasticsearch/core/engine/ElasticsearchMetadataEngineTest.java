@@ -38,6 +38,8 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingRequestBuilder;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequestBuilder;
@@ -127,10 +129,24 @@ public class ElasticsearchMetadataEngineTest {
         Map<Selector, Selector> options = Collections.EMPTY_MAP;
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
         CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
+
+
+        prepareIndexExist(indicesAdminClient, false);
+
+        //Experimentation
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
         verify(createIndexRequestBluilder, times(1)).setSettings(options);
         verify(listenableActionFuture, times(1)).actionGet();
+    }
+
+    private void prepareIndexExist(IndicesAdminClient indicesAdminClient, boolean exist) {
+        ActionFuture<IndicesExistsResponse> result = mock(ActionFuture.class);
+        IndicesExistsResponse actionGet = mock(IndicesExistsResponse.class);
+
+        when(indicesAdminClient.exists(any(IndicesExistsRequest.class))).thenReturn(result);
+        when(result.actionGet()).thenReturn(actionGet);
+        when(actionGet.isExists()).thenReturn(exist);
     }
 
     @Test
@@ -157,6 +173,9 @@ public class ElasticsearchMetadataEngineTest {
 
         Map<TableName, TableMetadata> tables = Collections.EMPTY_MAP;
         CatalogMetadata catalogMetadata = new CatalogMetadata(new CatalogName(CATALOG_NAME), options, tables);
+
+        prepareIndexExist(indicesAdminClient, false);
+        //Experimentation
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
         verify(createIndexRequestBluilder, times(1)).setSettings(eq(optionsTranform));

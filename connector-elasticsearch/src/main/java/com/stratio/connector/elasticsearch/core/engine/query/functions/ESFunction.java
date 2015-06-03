@@ -1,5 +1,7 @@
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -12,18 +14,19 @@ public abstract class ESFunction {
 
     private String name;
 
-    private List<Selector> paramareters;
+    private List<Selector> parameters;
 
-    public ESFunction(List<Selector> paramareters) {
-        this.paramareters = paramareters;
+    protected ESFunction(String name, List<Selector> paramareters) {
+        this.parameters = paramareters;
+        this.name = name;
     }
 
-    public List<Selector> getParamareters() {
-        return paramareters;
+    public List<Selector> getParameters() {
+        return parameters;
     }
 
-    public void setParamareters(List<Selector> paramareters) {
-        this.paramareters = paramareters;
+    public void setParameters(List<Selector> parameters) {
+        this.parameters = parameters;
     }
 
     public String getName() {
@@ -34,6 +37,20 @@ public abstract class ESFunction {
         this.name = name;
     }
 
-
     public abstract QueryBuilder buildQuery();
+
+
+    public static ESFunction build(FunctionSelector function) throws UnsupportedException {
+        List parameters = function.getFunctionColumns();
+        switch(function.getFunctionName()){
+            case "contains":
+                return new Match(parameters);
+            case "match_phrase":
+                return new MatchPhrase(parameters);
+            case "multi_match":
+                return new MultiMatch(parameters);
+            default:
+                throw new UnsupportedException("The function [" + function.getFunctionName() + "] is not supported");
+        }
+    }
 }

@@ -20,6 +20,9 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.util.Collection;
 
+import com.stratio.connector.elasticsearch.core.engine.query.functions.ESFunction;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -51,9 +54,9 @@ public class QueryBuilderCreator {
         if (filters.isEmpty()) {
             queryBuilder = QueryBuilders.matchAllQuery();
         } else {
-            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery(); //"bool" : {
             for (Filter filter : filters) {
-                boolQueryBuilder.must(createQueryBuilder(filter.getRelation()));
+                boolQueryBuilder.must(createQueryBuilder(filter.getRelation())); // "must" : {
             }
 
             queryBuilder = boolQueryBuilder;
@@ -75,29 +78,36 @@ public class QueryBuilderCreator {
 
         QueryBuilder queryBuilderfilter;
 
-        String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
-        String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
+        if (relation.getRightTerm() instanceof FunctionSelector) {
+            FunctionSelector function = (FunctionSelector) relation.getRightTerm();
+            return ESFunction.build(function).buildQuery();
 
-        switch (relation.getOperator()) {
-        case MATCH:
-        case EQ:
-            queryBuilderfilter = QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase());
-            break;
-        case LT:
-            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lt(rightTerm.toLowerCase());
-            break;
-        case LET:
-            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lte(rightTerm.toLowerCase());
-            break;
-        case GT:
-            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gt(rightTerm.toLowerCase());
-            break;
-        case GET:
-            queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gte(rightTerm.toLowerCase());
-            break;
+        } else {
+            String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
+            String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
 
-        default:
-            throw new UnsupportedException("The operation [" + relation.getOperator() + "] is not supported");
+            switch (relation.getOperator()) {
+                case MATCH:
+                case EQ:
+                    queryBuilderfilter = QueryBuilders.matchQuery(leftTerm, rightTerm.toLowerCase());
+                    break;
+                case LT:
+                    queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lt(rightTerm.toLowerCase());
+                    break;
+                case LET:
+                    queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).lte(rightTerm.toLowerCase());
+                    break;
+                case GT:
+                    queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gt(rightTerm.toLowerCase());
+                    break;
+                case GET:
+                    queryBuilderfilter = QueryBuilders.rangeQuery(leftTerm).gte(rightTerm.toLowerCase());
+                    break;
+
+                default:
+                    throw new UnsupportedException("The operation [" + relation.getOperator() + "] is not supported");
+            }
+
         }
         return queryBuilderfilter;
     }

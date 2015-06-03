@@ -106,6 +106,7 @@ public class ConnectorQueryExecutor {
                     }
                     countResult++;
                     resultSet.add(createRow(hit, queryData));
+                    logger.debug("Result Row, Score:" + hit.getScore());
 
                 }
 
@@ -183,6 +184,9 @@ public class ConnectorQueryExecutor {
                             new Cell(ColumnTypeHelper.getCastingValue(
                                     recoveredColumnType(select, columnSelector), value))); //TODO like before
         }
+
+        logger.debug("Fields:" + row.getCells().toString());
+
         return row;
     }
 

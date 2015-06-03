@@ -18,19 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
-import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
@@ -48,6 +35,22 @@ import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
+import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
+import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
+import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible of managing the ElasticSearch Metadata.
@@ -65,8 +68,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * Constructor.
      *
-     * @param connectionHandler
-     *            the connector handler.
+     * @param connectionHandler the connector handler.
      */
     public ElasticsearchMetadataEngine(ConnectionHandler connectionHandler) {
         super(connectionHandler);
@@ -107,35 +109,40 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method creates a type in ES.
      *
-     * @param tableMetadata
-     *            the type configure
-     * @throws UnsupportedException
-     *             if any operation is not supported.
-     * @throws ExecutionException
-     *             if an error occur.
+     * @param tableMetadata the type configure
+     * @throws UnsupportedException if any operation is not supported.
+     * @throws ExecutionException   if an error occur.
      */
     @Override
     protected void createTable(TableMetadata tableMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
         String indexName = tableMetadata.getName().getCatalogName().getName();
         XContentBuilder xContentBuilder = contentBuilder.createTypeSource(tableMetadata);
 
-        recoveredClient(connection).admin().indices().preparePutMapping().setIndices(indexName)
-            .setType(tableMetadata.getName().getName()).setSource(xContentBuilder).execute().actionGet();
+            IndicesAdminClient indicesClient= recoveredClient(connection).admin().indices();
+
+            indicesClient
+                    .preparePutMapping()
+                    .setIndices(indexName)
+                    .setType(tableMetadata.getName().getName())
+                    .setSource(xContentBuilder)
+                    .execute()
+                    .actionGet();
+
     }
-  /**
+
+    /**
      * This method drops an index in ES.
      *
-     * @param name
-     *            the index name.
+     * @param name the index name.
      */
 
     @Override
     protected void dropCatalog(CatalogName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
-         DeleteIndexResponse delete = null;
+        DeleteIndexResponse delete = null;
 
         delete = recoveredClient(connection).admin().indices().delete(new DeleteIndexRequest(name.getName()))
-                        .actionGet();
+                .actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropCatalog request has not been acknowledged");
         }
@@ -145,8 +152,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method drops a type in ES.
      *
-     * @param name
-     *            the type name.
+     * @param name the type name.
      */
 
     @Override
@@ -154,22 +160,19 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
         DeleteMappingResponse delete = null;
         delete = recoveredClient(connection).admin().indices()
-                        .prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName())
-                        .execute().actionGet();
+                .prepareDeleteMapping(name.getCatalogName().getName()).setType(name.getName())
+                .execute().actionGet();
         if (!delete.isAcknowledged()) {
             throw new ExecutionException("dropTable request has not been acknowledged");
         }
     }
 
-        /**
+    /**
      * This method creates an index.
      *
-     * @param indexMetadata
-     *            the index metadata.
-     * @param connection
-     *            the connection.
-     * @throws UnsupportedException
-     *             the method is not supporter.
+     * @param indexMetadata the index metadata.
+     * @param connection    the connection.
+     * @throws UnsupportedException the method is not supporter.
      */
 
     @Override
@@ -179,15 +182,12 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
     }
 
-     /**
+    /**
      * This method drops an index.
      *
-     * @param indexMetadata
-     *            the index metadata.
-     * @param connection
-     *            the connection.
-     * @throws UnsupportedException
-     *             the method is not supported.
+     * @param indexMetadata the index metadata.
+     * @param connection    the connection.
+     * @throws UnsupportedException the method is not supported.
      */
 
     @Override
@@ -200,8 +200,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method returns the concrete ES Client of a cluster.
      *
-     * @param connection
-     *            the cluster identification.
+     * @param connection the cluster identification.
      * @return the ES Client.
      */
 
@@ -212,31 +211,28 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     /**
      * This method creates an Elasticsearch Index.
      *
-     * @param indexMetaData
-     *            the metadata.
-     * @param connection
-     *            the elasticsearch connection.
-     * @throws ExecutionException
-     *             if an execution error happen.
+     * @param indexMetaData the metadata.
+     * @param connection    the elasticsearch connection.
+     * @throws ExecutionException if an execution error happen.
      */
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection) throws ExecutionException {
 
-        CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
-                        .prepareCreate(indexMetaData.getName().getName());
-        createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
+        IndicesAdminClient client = recoveredClient(connection).admin().indices();
+        if (!client.exists(new IndicesExistsRequest(indexMetaData.getName().getName())).actionGet().isExists()){
+            CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
+                    .prepareCreate(indexMetaData.getName().getName());
+            createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
 
-        createIndexRequestBuilder.execute().actionGet();
-
+            createIndexRequestBuilder.execute().actionGet();
+        }
     }
 
     /**
      * This method turns the Crossdata metadata into Elasticsearch properties.
      *
-     * @param indexMetaData
-     *            the Crossdata metadata.
+     * @param indexMetaData the Crossdata metadata.
      * @return the Elasticsearch options.
-     * @throws ExecutionException
-     *             if an error occurs.
+     * @throws ExecutionException if an error occurs.
      */
 
     private Map<String, String> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
@@ -246,7 +242,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
         if (options != null) {
             for (Map.Entry<Selector, Selector> key : options.entrySet()) {
                 transformOptions.put(SelectorHelper.getValue(String.class, key.getKey()),
-                                SelectorHelper.getValue(String.class, key.getValue()));
+                        SelectorHelper.getValue(String.class, key.getValue()));
             }
         }
         return transformOptions;

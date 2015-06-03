@@ -156,21 +156,15 @@ public class ContentBuilderCreator {
         String columnType = TypeConverter.convert(columnMetadata.getColumnType());
         xContentBuilder = xContentBuilder.field(TYPE, columnType);
 
-
         Map<String, List<String>> columProperties = columnMetadata.getColumnType().getColumnProperties();
-        if (columProperties != null && columProperties.containsKey(INDEX)) {
-            xContentBuilder = xContentBuilder.field(INDEX, columProperties.get(INDEX).get(0));
-        } else {
+        if (columProperties != null && !columProperties.containsKey(INDEX)) {
             xContentBuilder.field(INDEX, getTypeIndex(columnType));
         }
-        if (columProperties != null && columProperties.containsKey(ANALYZER_FIELDS)) {
-            xContentBuilder = xContentBuilder.field(ANALYZER_FIELDS, columProperties.get(ANALYZER_FIELDS));
-        }
-        if (columProperties != null && columProperties.containsKey(FORMAT_FIELD)) {
-            xContentBuilder = xContentBuilder.field(FORMAT_FIELD, columProperties.get(FORMAT_FIELD));
-        }
-        if (columProperties != null && columProperties.containsKey(STORE)) {
-            xContentBuilder = xContentBuilder.field(STORE, columProperties.get(STORE));
+
+        if (columProperties != null){
+            for ( String columProperty: columProperties.keySet()){
+                xContentBuilder = xContentBuilder.field(columProperty, columProperties.get(columProperty));
+            }
         }
 
         return xContentBuilder.endObject();

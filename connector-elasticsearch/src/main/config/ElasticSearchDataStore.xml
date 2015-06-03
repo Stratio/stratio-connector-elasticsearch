@@ -43,6 +43,29 @@
     <Behaviors>
         <Behavior>ALL_INDEXED</Behavior>
     </Behaviors>
+
+    <Functions>
+        <Function>
+            <FunctionName>CONTAINS</FunctionName>
+            <Signature>contains(Tuple[Text, Text]):Tuple[Text]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match</Description>
+        </Function>
+        <Function>
+            <FunctionName>MATCH_PHRASE</FunctionName>
+            <Signature>match_phrase(Tuple[Text, Text]):Tuple[Text]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_phrase</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MULTI_MATCH</FunctionName>
+            <Signature>multi_match(Tuple[Text*]):Tuple[Text]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES multi_match, The LAST value is the text to find</Description>
+        </Function>
+
+    </Functions>
 </DataStore>
 
 

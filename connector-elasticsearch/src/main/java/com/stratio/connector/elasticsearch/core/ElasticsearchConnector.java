@@ -45,14 +45,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * The Log.
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    /**
-     * The connector name.
-     */
-    private String connectorName;
-    /**
-     * The datastore name.
-     */
-    private String[] datastoreName;
+
 
     /**
      * Constructor.
@@ -60,9 +53,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * @throws InitializationException if an error happens.
      */
     public ElasticsearchConnector() throws InitializationException {
-
-        connectorName = ManifestUtil.getConectorName("ElasticSearchConnector.xml");
-        datastoreName = ManifestUtil.getDatastoreName("ElasticSearchConnector.xml");
+        super("/ElasticSearchConnector.xml", "/ElasticSearchDataStore.xml");
 
     }
 
@@ -96,27 +87,6 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
-    /**
-     * Return the connector Name.
-     *
-     * @return
-     */
-    @Override
-    public String getConnectorName() {
-
-        return connectorName;
-    }
-
-    /**
-     * Return the DataStore Name.
-     *
-     * @return DataStore Name
-     */
-    @Override
-    public String[] getDatastoreName() {
-
-        return datastoreName.clone();
-    }
 
     /**
      * Return the StorageEngine.

@@ -20,6 +20,8 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import java.util.Collection;
 
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -47,6 +49,7 @@ public class FilterBuilderCreator {
     public FilterBuilder createFilterBuilder(Collection<Filter> filters) throws UnsupportedException,
             ExecutionException {
 
+
         BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
         for (Filter filter : filters) {
 
@@ -71,36 +74,48 @@ public class FilterBuilderCreator {
         FilterBuilder localFilterBuilder = null;
 
         String leftTerm = recoveredLeftTerm(filter, relation);
-        Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
-                relation.getRightTerm());
-        if (rightTerm instanceof String) {
-            rightTerm = ((String) rightTerm).toLowerCase();
-        }
-        switch (relation.getOperator()) {
-        case EQ:
-        case ASSIGN:
-            localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
-            break;
-        case DISTINCT:
-            localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
-            break;
-        case LT:
-            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lt(rightTerm);
-            break;
-        case LET:
-            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lte(rightTerm);
-            break;
-        case GT:
-            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gt(rightTerm);
-            break;
-        case GET:
-            localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
-            break;
 
-        default:
-            throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
+        if (relation.getRightTerm() instanceof FunctionSelector) {
+//            FunctionSelector function = (FunctionSelector) relation.getRightTerm();
+//            String field = ((StringSelector) function.getFunctionColumns().get(0)).getValue();
+//            String value = ((StringSelector) function.getFunctionColumns().get(1)).getValue();
+//
+//
 
+        } else {
+            Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
+                    relation.getRightTerm());
+            if (rightTerm instanceof String) {
+                rightTerm = ((String) rightTerm).toLowerCase();
+            }
+
+            switch (relation.getOperator()) {
+                case EQ:
+                case ASSIGN:
+                    localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
+                    break;
+                case DISTINCT:
+                    localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
+                    break;
+                case LT:
+                    localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lt(rightTerm);
+                    break;
+                case LET:
+                    localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).lte(rightTerm);
+                    break;
+                case GT:
+                    localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gt(rightTerm);
+                    break;
+                case GET:
+                    localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
+                    break;
+
+                default:
+                    throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
+
+            }
         }
+
 
         return localFilterBuilder;
 
