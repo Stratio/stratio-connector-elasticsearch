@@ -145,7 +145,7 @@ public class ContentBuilderCreator {
 
                 xContentBuilder = xContentBuilder.startObject(name);
                 xContentBuilder = processColumnProperties(xContentBuilder, column.getValue());
-                //xContentBuilder= xContentBuilder.endObject();
+
             }
             xContentBuilder.endObject();
         }
@@ -163,7 +163,12 @@ public class ContentBuilderCreator {
 
         if (columProperties != null){
             for ( String columProperty: columProperties.keySet()){
-                xContentBuilder = xContentBuilder.field(columProperty, columProperties.get(columProperty));
+                if (columProperties.get(columProperty).size() > 1){
+                    xContentBuilder = xContentBuilder.field( columProperty, columProperties.get(columProperty));
+                }else if (columProperties.get(columProperty).size() == 1){
+                    xContentBuilder = xContentBuilder.field( columProperty, columProperties.get(columProperty).get(0));
+                }
+
             }
         }
 

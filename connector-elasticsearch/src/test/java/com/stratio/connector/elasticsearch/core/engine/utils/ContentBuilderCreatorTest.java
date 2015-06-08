@@ -144,7 +144,7 @@ public class ContentBuilderCreatorTest {
         String expected = "{\"_id\":{\"index\":\"not_analyzed\"},\"" +
                 "properties\":{\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"},\"" +
                 "column_6\":{\"type\":\"string\",\"index\":\"analyzed\",\"" +
-                "analyzer\":[\"aaa\",\"bbb\"],\"format\":[\"aebi\"]}}}";
+                "analyzer\":[\"aaa\",\"bbb\"],\"format\":\"aebi\"}}}";
 
         assertEquals("The JSON is not correct", expected, result.string());
 
