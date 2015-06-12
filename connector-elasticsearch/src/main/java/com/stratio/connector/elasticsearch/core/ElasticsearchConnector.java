@@ -72,6 +72,7 @@ public class ElasticsearchConnector extends CommonsConnector {
 
     }
 
+
     /**
      * Create a connection to Elasticsearch. The client will be a transportClient by default unless stratio nodeClient
      * is specified.

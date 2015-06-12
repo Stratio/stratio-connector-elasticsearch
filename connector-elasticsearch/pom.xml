@@ -23,33 +23,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-elasticsearch</artifactId>
-    <version>0.5.0-SNAPSHOT</version>
+    <artifactId>stratio-connector-elasticsearch-core</artifactId>
     <url>http://www.stratio.com</url>
-    <name>ElasticSearch Connector</name>
-    <description>The Crossdata connector for ElasticSearch core</description>
+    <name>Stratio ElasticSearch Connector core</name>
+    <description>Stratio Crossdata connector for ElasticSearch core</description>
 
     <parent>
         <groupId>com.stratio.connector</groupId>
-        <artifactId>stratio-connector-elasticsearch-parent</artifactId>
+        <artifactId>stratio-connector-elasticsearch</artifactId>
         <version>0.5.0-SNAPSHOT</version>
     </parent>
 
     <dependencies>
         <dependency>
             <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
+            <artifactId>stratio-connector-commons-core</artifactId>
             <version>${version.connector.commons}</version>
-        </dependency>
-        <dependency>
-            <artifactId>crossdata-common</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>${version.crossdata}</version>
-        </dependency>
-        <dependency>
-            <artifactId>crossdata-connector</artifactId>
-            <groupId>com.stratio.crossdata</groupId>
-            <version>${version.crossdata}</version>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>
@@ -63,12 +52,12 @@
         </dependency>
         <dependency>
             <groupId>com.stratio.connector</groupId>
-            <artifactId>stratio-connector-commons</artifactId>
+            <artifactId>stratio-connector-commons-core</artifactId>
             <classifier>tests</classifier>
             <version>${version.connector.commons}</version>
             <scope>test</scope>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
@@ -86,88 +75,253 @@
             <version>1.5.5</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
-
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/config</directory>
-            </resource>
-        </resources>
         <plugins>
             <plugin>
-                <artifactId>crossdata-connector-maven-plugin</artifactId>
-                <groupId>com.stratio.crossdata</groupId>
-                <version>${version.crossdata}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
                 <configuration>
-                    <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
-                    <jmxPort>7190</jmxPort>
+                    <skip>true</skip>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.stratio.mojo.unix</groupId>
-                <artifactId>unix-maven-plugin</artifactId>
-                <version>1.1.2</version>
-                <extensions>true</extensions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18</version>
                 <configuration>
-                    <contact><![CDATA[Stratio <jmgomez@stratio.com>]]></contact>
-                    <contactEmail>jmgomez@stratio.com</contactEmail>
-                    <size>1</size>
-                    <deb>
-                        <section>devel</section>
-                    </deb>
-                    <rpm>
-                        <group>stratio</group>
-                    </rpm>
-                    <assembly>
-                        <mkdirs>
-                            <paths>
-                                <path>etc/sds/stratio-connector-elasticsearch</path>
-                                <path>etc/default</path>
-                            </paths>
-                            <attributes>
-                                <user>stratio</user>
-                                <group>stratio</group>
-                                <mode>644</mode>
-                            </attributes>
-                        </mkdirs>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/bin</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/bin</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/lib</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/lib</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>target/stratio-connector-elasticsearch-${project.version}/conf</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/conf</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/template</from>
-                            <to>opt/sds/stratio-connector-elasticsearch/template</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/config</from>
-                            <to>etc/sds/stratio-connector-elasticsearch</to>
-                        </copyDirectory>
-                        <copyDirectory>
-                            <from>src/main/unix/files_and_dirs/etc/default</from>
-                            <to>etc/default</to>
-                        </copyDirectory>
-                        <copyFile>
-                            <path>src/main/include/LICENSE</path>
-                            <toFile>opt/sds/stratio-connector-elasticsearch/LICENSE</toFile>
-                        </copyFile>
-                        <copyFile>
-                            <path>src/main/include/NOTICE</path>
-                            <toFile>opt/sds/stratio-connector-elasticsearch/NOTICE</toFile>
-                        </copyFile>
-                    </assembly>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                    <argLine>${jacoco-UT-argline}
+                        -javaagent:${settings.localRepository}/org/powermock/powermock-module-javaagent/1.5.5/powermock-module-javaagent-1.5.5.jar
+                        -noverify
+                    </argLine>
+                    <skipTests>${skipUTs}</skipTests>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifestEntries>
+                            <version>${project.version}</version>
+                            <projectName>${project.name}</projectName>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.1.201405082137</version>
+                <executions>
+                    <execution>
+                        <id>pre-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/jacocoUT.exec</destFile>
+                            <propertyName>jacoco-UT-argline</propertyName>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>package</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>appassembler-maven-plugin</artifactId>
+                        <version>1.10</version>
+                        <executions>
+                            <execution>
+                                <id>ppassembler</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>assemble</goal>
+                                </goals>
+                                <configuration>
+                                    <configurationSourceDirectory>src/main/config</configurationSourceDirectory>
+                                    <configurationDirectory>conf</configurationDirectory>
+                                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
+                                    <includeConfigurationDirectoryInClasspath>true
+                                    </includeConfigurationDirectoryInClasspath>
+                                    <assembleDirectory>${project.build.directory}/stratio-connector-elasticsearch
+                                    </assembleDirectory>
+                                    <extraJvmArguments>$CONNECTOR_ELASTICSEARCH_OPTS -Djava.net.preferIPv4Stack=true
+                                        -Dcom.sun.management.jmxremote.port=${jmx.port}
+                                        -Dcom.sun.management.jmxremote.authenticate=false
+                                        -Dcom.sun.management.jmxremote.ssl=false
+                                    </extraJvmArguments>
+                                    <filterConfigurationDirectory>true</filterConfigurationDirectory>
+                                    <platforms>
+                                        <platform>windows</platform>
+                                        <platform>unix</platform>
+                                    </platforms>
+                                    <programs>
+                                        <program>
+                                            <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector
+                                            </mainClass>
+                                            <id>stratio-connector-elasticsearch</id>
+                                        </program>
+                                    </programs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.stratio.mojo.unix</groupId>
+                        <artifactId>unix-maven-plugin</artifactId>
+                        <version>1.1.5</version>
+                        <extensions>true</extensions>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <size>2048</size>
+                            <outputFileName>stratio-connector-elasticsearch</outputFileName>
+                            <contact><![CDATA[Stratio <jmgomez@stratio.com>]]></contact>
+                            <contactEmail>jmgomez@stratio.com</contactEmail>
+                            <deb>
+                                <section>devel</section>
+                            </deb>
+                            <rpm>
+                                <group>stratio</group>
+                                <requires>bash</requires>
+                            </rpm>
+                            <name>connector-elasticsearch</name>
+                            <excludeDirectoryAttributes>
+                                <dir>/etc</dir>
+                                <dir>/etc/init.d</dir>
+                                <dir>/etc/default</dir>
+                                <dir>/var</dir>
+                                <dir>/opt</dir>
+                                <dir>/usr</dir>
+                                <dir>/bin</dir>
+                            </excludeDirectoryAttributes>
+                            <assembly>
+                                <copyFile>
+                                    <path>src/main/unix/files_and_dirs/etc/init.d/connector-elasticsearch</path>
+                                    <toFile>/etc/init.d/connector-elasticsearch</toFile>
+                                    <attributes>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <mode>755</mode>
+                                    </attributes>
+                                </copyFile>
+                                <mkdirs>
+                                    <path>/opt/sds/connector-elasticsearch</path>
+                                    <attributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </attributes>
+                                </mkdirs>
+                                <mkdirs>
+                                    <path>/var/run/sds</path>
+                                    <attributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </attributes>
+                                </mkdirs>
+                                <copyDirectory>
+                                    <from>target/stratio-connector-elasticsearch/bin</from>
+                                    <to>opt/sds/stratio-connector-elasticsearch/bin</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>target/stratio-connector-elasticsearch/repo</from>
+                                    <to>opt/sds/stratio-connector-elasticsearch/repo</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>target/stratio-connector-elasticsearch/conf</from>
+                                    <to>opt/sds/stratio-connector-elasticsearch/conf</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/template</from>
+                                    <to>opt/sds/stratio-connector-elasticsearch/template</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/config</from>
+                                    <to>etc/sds/stratio-connector-elasticsearch</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyDirectory>
+                                    <from>src/main/unix/files_and_dirs/etc/default</from>
+                                    <to>etc/default</to>
+                                    <directoryAttributes>
+                                        <user>stratio</user>
+                                        <group>stratio</group>
+                                    </directoryAttributes>
+                                </copyDirectory>
+                                <copyFile>
+                                    <path>src/main/include/LICENSE</path>
+                                    <toFile>opt/sds/stratio-connector-elasticsearch/LICENSE</toFile>
+                                </copyFile>
+                                <copyFile>
+                                    <path>src/main/include/NOTICE</path>
+                                    <toFile>opt/sds/stratio-connector-elasticsearch/NOTICE</toFile>
+                                </copyFile>
+                            </assembly>
+                            <defaults>
+                                <directoryAttributes>
+                                    <mode>0755</mode>
+                                </directoryAttributes>
+                                <fileAttributes>
+                                    <mode>0644</mode>
+                                </fileAttributes>
+                            </defaults>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>deb</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package-deb</goal>
+                                </goals>
+                                <configuration>
+                                    <architecture>all</architecture>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>rpm</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>package-rpm</goal>
+                                </goals>
+                                <configuration>
+                                    <architecture>noarch</architecture>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
