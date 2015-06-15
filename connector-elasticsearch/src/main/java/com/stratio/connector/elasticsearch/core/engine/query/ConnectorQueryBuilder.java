@@ -23,6 +23,8 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.ScoreSortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +70,13 @@ public class ConnectorQueryBuilder {
         createFilter(queryData);
         createProjection(queryData);
         createLimit();
-        createSelect(queryData);
+       // createSelect(queryData);
+
+        ScoreSortBuilder sort = new ScoreSortBuilder();
+        sort.order(SortOrder.DESC);
+        requestBuilder.addSort(sort);
+
+        requestBuilder.setTrackScores(true);
 
         logQuery();
 
@@ -138,7 +146,7 @@ public class ConnectorQueryBuilder {
     private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 
         QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList());
+        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList(), queryData.getFunctionFilters());
 
         if (!queryData.getFilter().isEmpty()) {
             FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();

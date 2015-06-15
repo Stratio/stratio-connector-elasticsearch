@@ -33,6 +33,9 @@ import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.sort.ScoreSortBuilder;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +85,7 @@ public class ConnectorQueryExecutor {
         try {
 
             ResultSet resultSet = new ResultSet();
+
             SearchResponse scrollResp = requestBuilder.execute().actionGet();
             long countResult = 0;
             boolean isLimit = false;

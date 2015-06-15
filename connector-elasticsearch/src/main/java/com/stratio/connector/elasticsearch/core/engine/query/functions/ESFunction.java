@@ -1,10 +1,12 @@
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.statements.structures.FunctionRelation;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.index.query.QueryBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,8 +42,10 @@ public abstract class ESFunction {
     public abstract QueryBuilder buildQuery();
 
 
-    public static ESFunction build(FunctionSelector function) throws UnsupportedException {
-        List parameters = function.getFunctionColumns();
+    public static ESFunction build(FunctionRelation function) throws UnsupportedException {
+        List parameters = new ArrayList();
+        parameters.addAll(function.getFunctionSelectors());
+
         switch(function.getFunctionName()){
             case "contains":
                 return new Match(parameters);

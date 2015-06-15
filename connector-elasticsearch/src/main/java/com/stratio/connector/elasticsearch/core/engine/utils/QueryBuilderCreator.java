@@ -18,11 +18,14 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.function.Function;
 
 import com.stratio.connector.elasticsearch.core.engine.query.functions.ESFunction;
-import com.stratio.crossdata.common.statements.structures.FunctionSelector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.logicalplan.FunctionFilter;
+import com.stratio.crossdata.common.statements.structures.*;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -31,7 +34,6 @@ import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
-import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * The responsibility of this class is create a QueryBuilder.
@@ -39,6 +41,11 @@ import com.stratio.crossdata.common.statements.structures.Relation;
  */
 public class QueryBuilderCreator {
 
+
+
+    public QueryBuilder createBuilder(Collection<Filter> filters) throws ExecutionException, UnsupportedException {
+        return createBuilder(filters, new ArrayList<FunctionFilter>());
+    }
     /**
      * Create a query builder.
      *
@@ -47,17 +54,23 @@ public class QueryBuilderCreator {
      * @throws ExecutionException   if any error happens.
      * @throws UnsupportedException if the operation is not supported.
      */
-    public QueryBuilder createBuilder(Collection<Filter> filters) throws ExecutionException, UnsupportedException {
+    public QueryBuilder createBuilder(Collection<Filter> filters, Collection<FunctionFilter> functionFilters) throws ExecutionException, UnsupportedException {
 
         QueryBuilder queryBuilder;
 
-        if (filters.isEmpty()) {
+        if (filters.isEmpty() && functionFilters.isEmpty()) {
             queryBuilder = QueryBuilders.matchAllQuery();
         } else {
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery(); //"bool" : {
+
+            for(FunctionFilter functionFilter: functionFilters){
+                boolQueryBuilder.must(ESFunction.build(functionFilter.getRelation()).buildQuery());
+            }
+
             for (Filter filter : filters) {
                 boolQueryBuilder.must(createQueryBuilder(filter.getRelation())); // "must" : {
             }
+
 
             queryBuilder = boolQueryBuilder;
         }
@@ -68,21 +81,18 @@ public class QueryBuilderCreator {
     /**
      * Turn a relation into a queryBuilder.
      *
-     * @param relation the relation.
+     * @param abstractRelation the relation.
      * @return the queryBuilder.
      * @throws ExecutionException   if any error happens.
      * @throws UnsupportedException if the operation is not supported.
      */
-    private QueryBuilder createQueryBuilder(Relation relation)
+    private QueryBuilder createQueryBuilder(AbstractRelation abstractRelation)
             throws ExecutionException, UnsupportedException {
 
         QueryBuilder queryBuilderfilter;
 
-        if (relation.getRightTerm() instanceof FunctionSelector) {
-            FunctionSelector function = (FunctionSelector) relation.getRightTerm();
-            return ESFunction.build(function).buildQuery();
 
-        } else {
+            Relation relation = (Relation) abstractRelation;
             String leftTerm = SelectorHelper.getValue(String.class, relation.getLeftTerm());
             String rightTerm = SelectorHelper.getValue(String.class, relation.getRightTerm());
 
@@ -106,7 +116,7 @@ public class QueryBuilderCreator {
 
                 default:
                     throw new UnsupportedException("The operation [" + relation.getOperator() + "] is not supported");
-            }
+
 
         }
         return queryBuilderfilter;
