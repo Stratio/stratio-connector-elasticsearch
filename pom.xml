@@ -2,60 +2,56 @@
 
 
 <!--
-  ~ Licensed to STRATIO (C) under one or more contributor license agreements.
-  ~ See the NOTICE file distributed with this work for additional information
-  ~ regarding copyright ownership.  The STRATIO (C) licenses this file
-  ~ to you under the Apache License, Version 2.0 (the
-  ~ "License"); you may not use this file except in compliance
-  ~ with the License.  You may obtain a copy of the License at
-  ~
-  ~   http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing,
-  ~ software distributed under the License is distributed on an
-  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-  ~ KIND, either express or implied.  See the License for the
-  ~ specific language governing permissions and limitations
-  ~ under the License.
+   Licensed to STRATIO (C) under one or more contributor license agreements.
+   See the NOTICE file distributed with this work for additional information
+   regarding copyright ownership.  The STRATIO (C) licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+ 
+  Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
-    <artifactId>stratio-connector-elasticsearch-parent</artifactId>
+    <artifactId>stratio-connector-elasticsearch</artifactId>
     <version>0.5.0-SNAPSHOT</version>
     <url>http://www.stratio.com</url>
-    <name>ElasticSearch Connector</name>
-    <description>The Crossdata connector for ElasticSearch parent</description>
+    <name>Stratio ElasticSearch Connector</name>
+    <description>Stratio Crossdata connector for ElasticSearch</description>
     <packaging>pom</packaging>
-
     <parent>
         <groupId>com.stratio</groupId>
         <artifactId>parent</artifactId>
         <version>0.1.0</version>
     </parent>
-
     <properties>
-        <version.crossdata>0.4.0-SNAPSHOT</version.crossdata>
         <version.connector.commons>0.6.0-SNAPSHOT</version.connector.commons>
-        <version.elasticsearch>1.5.2</version.elasticsearch>
+        <version.elasticsearch>1.3.2</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <jmx.port>7190</jmx.port>
     </properties>
-  <licenses>
+    <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
             <url>http://www.apache.org/licenses/LICENSE-2.0t</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
-
     <modules>
         <module>doc</module>
         <module>connector-elasticsearch</module>
     </modules>
-
     <scm>
         <connection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</connection>
         <developerConnection>scm:git:git@github.com:Stratio/stratio-connector-elasticsearch.git</developerConnection>
@@ -83,81 +79,6 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                    <argLine>${jacoco-UT-argline}</argLine>
-                    <argLine>-noverify</argLine>
-                    <skipTests>${skipUTs}</skipTests>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <archive>
-                        <index>true</index>
-                        <manifestEntries>
-                            <version>${project.version}</version>
-                            <projectName>${project.name}</projectName>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.1.201405082137</version>
-                <executions>
-                    <execution>
-                        <id>pre-test</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacocoUT.exec</destFile>
-                            <propertyName>jacoco-UT-argline</propertyName>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

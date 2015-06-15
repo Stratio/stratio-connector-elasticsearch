@@ -8,7 +8,6 @@ DIR_INSTALL='/opt/sds/stratio-connector-elasticsearch'
 DIR_CONF='/etc/sds/stratio-connector-elasticsearch'
 DIR_LOG='/var/log/sds/stratio-connector-elasticsearch'
 
-cp /opt/sds/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch-* /opt/sds/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch
 cp /opt/sds/stratio-connector-elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /opt/sds/stratio-connector-elasticsearch/bin
@@ -44,10 +43,10 @@ echo "SALE"
   chown root:root /etc/init.d/stratio-connector-elasticsearch
  
   chown -R ${USER}:${GROUP} $DIR_INSTALL
+  ln -s $DIR_INSTALL/conf $DIR_CONF
   chown -R ${USER}:${GROUP} $DIR_CONF
   chown -R ${USER}:${GROUP} $DIR_LOG
-  chmod 775 $DIR_INSTALL
-  chmod 775 $DIR_CONF
+  chmod -R 775 $DIR_INSTALL
   chmod 775 $DIR_LOG
   
   update-rc.d stratio-connector-elasticsearch defaults

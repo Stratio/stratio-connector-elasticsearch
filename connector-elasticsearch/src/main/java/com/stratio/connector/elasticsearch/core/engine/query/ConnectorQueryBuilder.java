@@ -122,8 +122,6 @@ public class ConnectorQueryBuilder {
     private void createLimit() throws ExecutionException {
         LimitModifier limitModifier = new LimitModifier();
         limitModifier.modify(requestBuilder);
-        limitModifier.modify(requestBuilder);
-
     }
 
     /**
