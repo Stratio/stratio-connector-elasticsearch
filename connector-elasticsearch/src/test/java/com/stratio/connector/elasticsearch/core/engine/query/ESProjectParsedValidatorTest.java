@@ -1,15 +1,14 @@
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import org.junit.Test;
-
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Window;
+import org.junit.Test;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * ESProjectParsedValidator Tester.

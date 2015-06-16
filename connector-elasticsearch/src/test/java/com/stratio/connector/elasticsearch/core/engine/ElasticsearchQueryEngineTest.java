@@ -18,13 +18,21 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.commons.connection.ConnectionHandler;
+import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
+import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
+import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
+import com.stratio.crossdata.common.connector.IResultHandler;
 import com.stratio.crossdata.common.data.ResultSet;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.result.QueryResult;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.After;
@@ -35,19 +43,10 @@ import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.commons.connection.ConnectionHandler;
-import com.stratio.connector.commons.engine.query.ProjectParsed;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryBuilder;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryExecutor;
-import com.stratio.connector.elasticsearch.core.engine.query.ConnectorQueryParser;
-import com.stratio.connector.elasticsearch.core.engine.query.ESProjectParsedValidator;
-import com.stratio.crossdata.common.connector.IResultHandler;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.LogicalWorkflow;
-import com.stratio.crossdata.common.logicalplan.Project;
-import com.stratio.crossdata.common.result.QueryResult;
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * ElasticsearchQueryEngine Tester.

@@ -18,22 +18,20 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.function.Function;
-
+import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.query.functions.ESFunction;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.FunctionFilter;
-import com.stratio.crossdata.common.statements.structures.*;
+import com.stratio.crossdata.common.statements.structures.AbstractRelation;
+import com.stratio.crossdata.common.statements.structures.Relation;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
-import com.stratio.connector.commons.util.SelectorHelper;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.Filter;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * The responsibility of this class is create a QueryBuilder.
@@ -46,6 +44,7 @@ public class QueryBuilderCreator {
     public QueryBuilder createBuilder(Collection<Filter> filters) throws ExecutionException, UnsupportedException {
         return createBuilder(filters, new ArrayList<FunctionFilter>());
     }
+
     /**
      * Create a query builder.
      *

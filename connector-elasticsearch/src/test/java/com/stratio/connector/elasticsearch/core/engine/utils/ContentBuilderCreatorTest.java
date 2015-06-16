@@ -18,23 +18,22 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.*;
-
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.data.IndexName;
+import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.metadata.*;
+import com.stratio.crossdata.common.statements.structures.IntegerSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
+import com.stratio.crossdata.common.statements.structures.StringSelector;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.IndexName;
-import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.statements.structures.IntegerSelector;
-import com.stratio.crossdata.common.statements.structures.Selector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * DeepContentBuilder Tester.

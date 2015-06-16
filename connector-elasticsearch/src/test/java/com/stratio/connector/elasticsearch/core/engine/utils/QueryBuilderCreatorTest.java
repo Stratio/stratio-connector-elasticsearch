@@ -18,19 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import akka.remote.OversizedPayloadException;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.metadata.Operations;
@@ -38,6 +25,17 @@ import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.IntegerSelector;
 import com.stratio.crossdata.common.statements.structures.Operator;
 import com.stratio.crossdata.common.statements.structures.Relation;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * QueryBuilderCreator Tester.

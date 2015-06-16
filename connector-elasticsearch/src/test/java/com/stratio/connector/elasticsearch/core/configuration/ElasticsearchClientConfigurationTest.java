@@ -18,29 +18,21 @@
 
 package com.stratio.connector.elasticsearch.core.configuration;
 
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.CLUSTER_NAME;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.COERCE;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.DYNAMIC;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_DATA;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.NODE_MASTER;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.TRANSPORT_SNIFF;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.data.ClusterName;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.TransportAddress;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.data.ClusterName;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 
 /**
  * ElasticsearchClientConfiguration Tester.

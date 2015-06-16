@@ -18,16 +18,15 @@
 
 package com.stratio.connector.elasticsearch.core.engine.metadata;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collections;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.stratio.crossdata.common.data.AlterOperation;
 import com.stratio.crossdata.common.data.AlterOptions;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * AlterTableFactory Tester.

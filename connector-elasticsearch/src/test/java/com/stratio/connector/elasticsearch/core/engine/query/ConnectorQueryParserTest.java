@@ -18,16 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.*;
-
-import com.stratio.crossdata.common.metadata.DataType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.stratio.crossdata.common.data.ClusterName;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
@@ -36,12 +26,17 @@ import com.stratio.crossdata.common.logicalplan.LogicalStep;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.Operations;
-import com.stratio.crossdata.common.statements.structures.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.Operator;
-import com.stratio.crossdata.common.statements.structures.Relation;
-import com.stratio.crossdata.common.statements.structures.Selector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.statements.structures.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * LogicalPlanExecutor Tester.

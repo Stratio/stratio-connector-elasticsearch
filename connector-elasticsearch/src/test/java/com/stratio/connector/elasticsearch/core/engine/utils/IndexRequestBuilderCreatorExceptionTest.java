@@ -18,14 +18,15 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.crossdata.common.data.*;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.junit.After;
@@ -35,20 +36,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.crossdata.common.data.Cell;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.IndexName;
-import com.stratio.crossdata.common.data.Row;
-import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.IndexMetadata;
-import com.stratio.crossdata.common.metadata.TableMetadata;
-import com.stratio.crossdata.common.statements.structures.Selector;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * IndexRequestBuilderCreator Tester.

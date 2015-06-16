@@ -42,7 +42,11 @@ public class MultiMatch extends ESFunction {
 
         String[] fields = new String[getParameters().size() -1];
         for (int i = 0; i < getParameters().size() -1; i++){
-            fields[i]=((ColumnSelector) getParameters().get(i)).getColumnName().getName();
+            if (getParameters().get(i) instanceof ColumnSelector){
+                fields[i]=((ColumnSelector) getParameters().get(i)).getColumnName().getName();
+            }else{
+                fields[i]= getParameters().get(i).getStringValue();
+            }
         }
 
         return QueryBuilders.multiMatchQuery(value, fields);

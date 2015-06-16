@@ -18,19 +18,11 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-
-import java.util.Collections;
-import java.util.Map;
-
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.security.ICredentials;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.junit.After;
@@ -41,10 +33,16 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.elasticsearch.common.settings.Settings;
-import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.security.ICredentials;
+
+import java.util.Collections;
+import java.util.Map;
+
+import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * NodeConnection Tester.

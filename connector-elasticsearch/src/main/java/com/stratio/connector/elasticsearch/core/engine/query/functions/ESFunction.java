@@ -20,7 +20,6 @@ package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.FunctionRelation;
-import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.index.query.QueryBuilder;
 
@@ -28,14 +27,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by lcisneros on 2/06/15.
+ * Encapsulate an Elastic Search "Function", The child of this abstract class will instance the
+ * specific QueryBuilder that represents the filter required.
  */
 public abstract class ESFunction {
 
+    public static final String CONTAINS = "contains";
+    public static final String MATCH_PHRASE = "match_phrase";
+    public static final String MULTI_MATCH = "multi_match";
+
+    /**
+     * Function Name
+     */
     private String name;
 
+    /**
+     * The function parameters.
+     */
     private List<Selector> parameters;
 
+    /**
+     * Default constructor.
+     *
+     * @param name Function Name
+     * @param paramareters function parameters.
+     */
     protected ESFunction(String name, List<Selector> paramareters) {
         this.parameters = paramareters;
         this.name = name;
@@ -45,31 +61,34 @@ public abstract class ESFunction {
         return parameters;
     }
 
-    public void setParameters(List<Selector> parameters) {
-        this.parameters = parameters;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * Build a {@link org.elasticsearch.index.query.QueryBuilder} that satisfy this function.
+     *
+     * @return
+     */
     public abstract QueryBuilder buildQuery();
 
 
+    /**
+     * Builds a ESFunction using the FunctionRelation specification.
+     * @param function
+     * @return A ESFunction child.
+     * @throws UnsupportedException is the FunctionRelation isn't supported.
+     */
     public static ESFunction build(FunctionRelation function) throws UnsupportedException {
         List parameters = new ArrayList();
         parameters.addAll(function.getFunctionSelectors());
 
         switch(function.getFunctionName()){
-            case "contains":
+            case CONTAINS:
                 return new Match(parameters);
-            case "match_phrase":
+            case MATCH_PHRASE:
                 return new MatchPhrase(parameters);
-            case "multi_match":
+            case MULTI_MATCH:
                 return new MultiMatch(parameters);
             default:
                 throw new UnsupportedException("The function [" + function.getFunctionName() + "] is not supported");

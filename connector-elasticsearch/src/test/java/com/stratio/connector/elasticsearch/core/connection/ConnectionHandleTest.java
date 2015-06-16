@@ -18,20 +18,13 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.connector.IConfiguration;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.security.ICredentials;
 import org.elasticsearch.client.transport.TransportClient;
 import org.junit.After;
 import org.junit.Before;
@@ -42,13 +35,13 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
-import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.connector.IConfiguration;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.security.ICredentials;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * ConnectionHandle Tester.

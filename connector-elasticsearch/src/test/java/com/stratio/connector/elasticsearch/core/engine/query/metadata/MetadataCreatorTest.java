@@ -18,16 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.util.*;
-
-import com.stratio.crossdata.common.metadata.DataType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
@@ -39,9 +29,18 @@ import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnMetadata;
 import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * MetadataCreator Tester.

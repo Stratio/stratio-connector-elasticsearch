@@ -18,21 +18,20 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.DataType;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.stratio.crossdata.common.metadata.DataType;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.metadata.ColumnType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * TypeConverter Tester.

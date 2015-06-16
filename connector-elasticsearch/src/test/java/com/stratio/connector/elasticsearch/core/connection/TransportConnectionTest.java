@@ -18,17 +18,9 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
-import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
-import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.security.ICredentials;
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,9 +29,14 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.security.ICredentials;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.HOST;
+import static com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions.PORT;
+import static junit.framework.TestCase.assertNotNull;
+import static org.mockito.Mockito.*;
 
 /**
  * TransportConnection Tester.

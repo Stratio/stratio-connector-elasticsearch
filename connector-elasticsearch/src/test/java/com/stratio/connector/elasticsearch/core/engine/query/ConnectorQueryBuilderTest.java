@@ -18,29 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.util.*;
-
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.internal.util.reflection.Whitebox;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.engine.query.ProjectValidator;
 import com.stratio.crossdata.common.data.ClusterName;
@@ -51,11 +28,22 @@ import com.stratio.crossdata.common.logicalplan.Filter;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.Operations;
-import com.stratio.crossdata.common.statements.structures.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.Operator;
-import com.stratio.crossdata.common.statements.structures.Relation;
-import com.stratio.crossdata.common.statements.structures.Selector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.statements.structures.*;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.*;
+
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+import static org.mockito.Mockito.mock;
 
 /**
  * QueryBuilder Tester.

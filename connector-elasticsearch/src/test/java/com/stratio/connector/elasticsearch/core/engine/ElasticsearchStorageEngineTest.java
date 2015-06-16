@@ -18,14 +18,19 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.util.*;
-
+import com.stratio.connector.commons.connection.Connection;
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
+import com.stratio.crossdata.common.data.*;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.IndexMetadata;
+import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.metadata.TableMetadata;
+import com.stratio.crossdata.common.statements.structures.*;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -46,28 +51,11 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.commons.connection.Connection;
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
-import com.stratio.crossdata.common.data.Cell;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.IndexName;
-import com.stratio.crossdata.common.data.Row;
-import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.Filter;
-import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.IndexMetadata;
-import com.stratio.crossdata.common.metadata.Operations;
-import com.stratio.crossdata.common.metadata.TableMetadata;
-import com.stratio.crossdata.common.statements.structures.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.Operator;
-import com.stratio.crossdata.common.statements.structures.Relation;
-import com.stratio.crossdata.common.statements.structures.Selector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import java.util.*;
+
+import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * ElasticsearchStorageEngine Tester.

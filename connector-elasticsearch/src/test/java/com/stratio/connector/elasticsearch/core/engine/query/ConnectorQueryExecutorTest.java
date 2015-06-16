@@ -18,14 +18,18 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mock;
-
-import java.util.*;
-
+import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.commons.engine.query.ProjectValidator;
+import com.stratio.crossdata.common.data.*;
+import com.stratio.crossdata.common.exceptions.ConnectorException;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Select;
+import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.metadata.DataType;
+import com.stratio.crossdata.common.metadata.Operations;
+import com.stratio.crossdata.common.result.QueryResult;
+import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.action.ListenableActionFuture;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -42,21 +46,12 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.commons.engine.query.ProjectParsed;
-import com.stratio.connector.commons.engine.query.ProjectValidator;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.data.ResultSet;
-import com.stratio.crossdata.common.data.Row;
-import com.stratio.crossdata.common.data.TableName;
-import com.stratio.crossdata.common.exceptions.ConnectorException;
-import com.stratio.crossdata.common.logicalplan.Project;
-import com.stratio.crossdata.common.logicalplan.Select;
-import com.stratio.crossdata.common.metadata.ColumnType;
-import com.stratio.crossdata.common.metadata.Operations;
-import com.stratio.crossdata.common.result.QueryResult;
-import com.stratio.crossdata.common.statements.structures.ColumnSelector;
-import com.stratio.crossdata.common.statements.structures.Selector;
+import java.util.*;
+
+import static junit.framework.TestCase.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
  * ConnectorQueryExecutor Tester.

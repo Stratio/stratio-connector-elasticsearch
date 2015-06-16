@@ -18,13 +18,11 @@
 
 package com.stratio.connector.elasticsearch.core;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
+import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
+import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
+import com.stratio.crossdata.common.data.ClusterName;
+import com.stratio.crossdata.common.security.ICredentials;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,11 +31,10 @@ import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
-import com.stratio.connector.elasticsearch.core.connection.NodeConnection;
-import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
-import com.stratio.crossdata.common.data.ClusterName;
-import com.stratio.crossdata.common.security.ICredentials;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 /**
  * ElasticsearchConnector Tester.

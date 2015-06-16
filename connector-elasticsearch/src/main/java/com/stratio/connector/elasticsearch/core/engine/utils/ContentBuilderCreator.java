@@ -162,13 +162,12 @@ public class ContentBuilderCreator {
         }
 
         if (columProperties != null){
-            for ( String columProperty: columProperties.keySet()){
-                if (columProperties.get(columProperty).size() > 1){
-                    xContentBuilder = xContentBuilder.field( columProperty, columProperties.get(columProperty));
-                }else if (columProperties.get(columProperty).size() == 1){
-                    xContentBuilder = xContentBuilder.field( columProperty, columProperties.get(columProperty).get(0));
+            for ( Map.Entry<String, List<String>> entry: columProperties.entrySet()){
+                if (entry.getValue().size() > 1){
+                    xContentBuilder = xContentBuilder.field( entry.getKey(), entry.getValue());
+                }else if (columProperties.get(entry.getKey()).size() == 1){
+                    xContentBuilder = xContentBuilder.field(entry.getKey(), entry.getValue().get(0));
                 }
-
             }
         }
 
