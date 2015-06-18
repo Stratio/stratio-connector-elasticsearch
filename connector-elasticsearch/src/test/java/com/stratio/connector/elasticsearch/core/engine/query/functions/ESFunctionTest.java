@@ -30,22 +30,6 @@ import java.util.Collections;
 
 public class ESFunctionTest {
 
-
-    @Test
-    public void buildContainsFunction() throws UnsupportedException {
-        buildFunction(ESFunction.CONTAINS, Match.class);
-    }
-
-    @Test
-    public void buildMathPhaseFunction() throws UnsupportedException {
-        buildFunction(ESFunction.MATCH_PHRASE, MatchPhrase.class);
-    }
-
-    @Test
-    public void buildMultiMatchFunction() throws UnsupportedException {
-        buildFunction(ESFunction.MULTI_MATCH, MultiMatch.class);
-    }
-
     @Test(expected = UnsupportedException.class)
     public void testFailBuildFunction() throws UnsupportedException {
         buildFunction("not supported", null);

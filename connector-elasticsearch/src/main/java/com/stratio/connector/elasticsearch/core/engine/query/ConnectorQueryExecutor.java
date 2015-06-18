@@ -83,6 +83,7 @@ public class ConnectorQueryExecutor {
         QueryResult queryResult = null;
 
         try {
+            logger.debug("Query:" + requestBuilder.toString());
 
             ResultSet resultSet = new ResultSet();
 
@@ -110,8 +111,6 @@ public class ConnectorQueryExecutor {
                     }
                     countResult++;
                     resultSet.add(createRow(hit, queryData));
-                    logger.debug("Result Row, Score:" + hit.getScore());
-
                 }
 
             } while (scrollResp.getHits().getHits().length != 0 && !endQuery);

@@ -21,20 +21,18 @@ package com.stratio.connector.elasticsearch.core.engine.query.functions;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
 import java.util.List;
 
-/**
- * Created by lcisneros on 2/06/15.
- */
 public class Match extends ESFunction{
 
 
 
     protected Match(List<Selector> paramareters) {
-        super("contains", paramareters);
+        super(ESFunction.CONTAINS, paramareters);
 
     }
 
@@ -42,6 +40,10 @@ public class Match extends ESFunction{
     public QueryBuilder buildQuery() {
         String field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
         String value = getParameters().get(1).getStringValue();
-        return QueryBuilders.matchQuery(field, value.toLowerCase());
+        String minimunShoulMatch = getParameters().get(2).getStringValue();
+        if (StringUtils.isEmpty(minimunShoulMatch)){
+            minimunShoulMatch = "100%";
+        }
+        return QueryBuilders.matchQuery(field, value.toLowerCase()).minimumShouldMatch(minimunShoulMatch);
     }
 }

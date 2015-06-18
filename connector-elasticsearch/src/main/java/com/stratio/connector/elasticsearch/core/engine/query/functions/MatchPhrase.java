@@ -31,8 +31,7 @@ import java.util.List;
 public class MatchPhrase extends ESFunction {
 
     protected MatchPhrase(List<Selector> paramareters) {
-        super("match_phrase", paramareters);
-
+        super(ESFunction.MATCH_PHRASE, paramareters);
     }
 
     @Override

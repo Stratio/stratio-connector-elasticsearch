@@ -42,6 +42,7 @@ public class MatchTest {
         TableName tableName = new TableName("catalog", "table");
         parameters.add(new ColumnSelector(new ColumnName(tableName, "colName")));
         parameters.add(new StringSelector("value"));
+        parameters.add(new StringSelector("100%"));
 
         FunctionRelation function = new FunctionRelation(ESFunction.CONTAINS, parameters);
         ESFunction match = ESFunction.build(function);
@@ -50,7 +51,7 @@ public class MatchTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expedted = "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\"}}}";
+        String expedted = "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}";
         Assert.assertEquals(expedted, builder.toString().replace(" ", "").replace("\n", ""));
     }
 }

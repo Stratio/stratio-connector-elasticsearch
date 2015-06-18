@@ -47,8 +47,7 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     /**
      * Instantiates a new elasticsearch query engine.
      *
-     * @param connectionHandler
-     *            the connection handler
+     * @param connectionHandler the connection handler
      */
     public ElasticsearchQueryEngine(ConnectionHandler connectionHandler) {
 
@@ -68,12 +67,12 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
     @Override
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
-     Client elasticClient = connection.getNativeConnection();
-      ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
-     SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
-     return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
-    }
+        Client elasticClient = connection.getNativeConnection();
+        ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
+        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
 
+        return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
+    }
 
 
     @Override
@@ -81,7 +80,6 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
         throw new UnsupportedException("Not supported");
 
     }
-
 
 
 }

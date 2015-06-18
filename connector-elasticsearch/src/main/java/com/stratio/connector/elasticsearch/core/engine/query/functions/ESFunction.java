@@ -35,6 +35,10 @@ public abstract class ESFunction {
     public static final String CONTAINS = "contains";
     public static final String MATCH_PHRASE = "match_phrase";
     public static final String MULTI_MATCH = "multi_match";
+    public static final String MATCH_PREFIX = "match_prefix";
+    public static final String MULTI_MATCH_FUZZY = "multi_match_fuzzy";
+    public static final String FUZZY = "fuzzy";
+
 
     /**
      * Function Name
@@ -74,7 +78,7 @@ public abstract class ESFunction {
 
 
     /**
-     * Builds a ESFunction using the FunctionRelation specification.
+     * Builds a ESFunction using the FunctionRelation specification.cd
      * @param function
      * @return A ESFunction child.
      * @throws UnsupportedException is the FunctionRelation isn't supported.
@@ -90,6 +94,12 @@ public abstract class ESFunction {
                 return new MatchPhrase(parameters);
             case MULTI_MATCH:
                 return new MultiMatch(parameters);
+            case MATCH_PREFIX:
+                return new MatchPrefix(parameters);
+            case MULTI_MATCH_FUZZY:
+                return new MatchFuzzy(parameters);
+            case FUZZY:
+                return new Fuzzy(parameters);
             default:
                 throw new UnsupportedException("The function [" + function.getFunctionName() + "] is not supported");
         }

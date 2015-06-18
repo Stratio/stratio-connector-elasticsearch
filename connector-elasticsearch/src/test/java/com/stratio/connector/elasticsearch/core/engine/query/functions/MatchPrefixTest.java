@@ -42,16 +42,15 @@ public class MatchPrefixTest {
         TableName tableName = new TableName("catalog", "table");
         parameters.add(new ColumnSelector(new ColumnName(tableName, "colName")));
         parameters.add(new StringSelector("value"));
-        parameters.add(new StringSelector("100%"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.CONTAINS, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.MATCH_PREFIX, parameters);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expedted = "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}";
+        String expedted = "{\"prefix\":{\"colName\":{\"prefix\":\"value\"}}}";
         Assert.assertEquals(expedted, builder.toString().replace(" ", "").replace("\n", ""));
     }
 }

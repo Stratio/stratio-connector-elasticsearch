@@ -15,6 +15,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
@@ -25,22 +26,18 @@ import org.elasticsearch.index.query.QueryBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by lcisneros on 2/06/15.
- */
 public class MultiMatch extends ESFunction {
 
-
     protected MultiMatch(List<Selector> paramareters) {
-        super("multi_match", paramareters);
-
+        super(ESFunction.MULTI_MATCH, paramareters);
     }
 
     @Override
     public QueryBuilder buildQuery() {
-        String value = getParameters().get(getParameters().size() -1).getStringValue();
 
+        String value = getParameters().get(getParameters().size() -1).getStringValue();
         String[] fields = new String[getParameters().size() -1];
+
         for (int i = 0; i < getParameters().size() -1; i++){
             if (getParameters().get(i) instanceof ColumnSelector){
                 fields[i]=((ColumnSelector) getParameters().get(i)).getColumnName().getName();
@@ -48,8 +45,6 @@ public class MultiMatch extends ESFunction {
                 fields[i]= getParameters().get(i).getStringValue();
             }
         }
-
         return QueryBuilders.multiMatchQuery(value, fields);
     }
-
 }

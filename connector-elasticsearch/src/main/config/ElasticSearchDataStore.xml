@@ -47,22 +47,42 @@
     <Functions>
         <Function>
             <FunctionName>CONTAINS</FunctionName>
-            <Signature>contains(Tuple[Text, Text]):Tuple[Text]</Signature>
+            <Signature>contains(Tuple[Text, Text, Text]):Tuple[]</Signature>
             <FunctionType>simple</FunctionType>
-            <Description>Is the ES... match</Description>
+            <Description>Is the ES Match, first parameter is the field, second the query, third is the minimum_should_match</Description>
         </Function>
         <Function>
             <FunctionName>MATCH_PHRASE</FunctionName>
-            <Signature>match_phrase(Tuple[Text, Text]):Tuple[Text]</Signature>
+            <Signature>match_phrase(Tuple[Text, Text]):Tuple[]</Signature>
             <FunctionType>simple</FunctionType>
             <Description>Is the ES... match_phrase</Description>
         </Function>
 
         <Function>
             <FunctionName>MULTI_MATCH</FunctionName>
-            <Signature>multi_match(Tuple[Text*]):Tuple[Text]</Signature>
+            <Signature>multi_match(Tuple[Text*]):Tuple[]</Signature>
             <FunctionType>simple</FunctionType>
             <Description>Is the ES multi_match, The LAST value is the text to find</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MATCH_PREFIX</FunctionName>
+            <Signature>match_prefix(Tuple[Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_prefix</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MATCH_FUZZY</FunctionName>
+            <Signature>multi_match_fuzzy(Tuple[Text*]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_prefix</Description>
+        </Function>
+        <Function>
+            <FunctionName>FUZZY</FunctionName>
+            <Signature>fuzzy(Tuple[Text, Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>A Fuzzy Query, Field, Value, Fuzziness</Description>
         </Function>
 
     </Functions>
