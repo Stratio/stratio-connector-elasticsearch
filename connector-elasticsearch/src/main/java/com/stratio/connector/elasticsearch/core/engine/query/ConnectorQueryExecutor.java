@@ -83,7 +83,6 @@ public class ConnectorQueryExecutor {
         QueryResult queryResult = null;
 
         try {
-            logger.debug("Query:" + requestBuilder.toString());
 
             ResultSet resultSet = new ResultSet();
 

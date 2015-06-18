@@ -18,24 +18,17 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
+import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.elasticsearch.core.engine.utils.*;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.ScoreSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.stratio.connector.commons.engine.query.ProjectParsed;
-import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier;
-import com.stratio.connector.elasticsearch.core.engine.utils.ProjectCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.exceptions.UnsupportedException;
 
 /**
  * Created by jmgomez on 15/09/14.
@@ -69,15 +62,8 @@ public class ConnectorQueryBuilder {
         createRequestBuilder(elasticClient);
         createFilter(queryData);
         createProjection(queryData);
+        createSelect(queryData);
         createLimit();
-       // createSelect(queryData);
-
-        ScoreSortBuilder sort = new ScoreSortBuilder();
-        sort.order(SortOrder.DESC);
-        requestBuilder.addSort(sort);
-
-        requestBuilder.setTrackScores(true);
-
         logQuery();
 
         return requestBuilder;

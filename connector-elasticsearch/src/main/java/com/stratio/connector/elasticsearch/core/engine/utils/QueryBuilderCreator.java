@@ -70,7 +70,6 @@ public class QueryBuilderCreator {
                 boolQueryBuilder.must(createQueryBuilder(filter.getRelation())); // "must" : {
             }
 
-
             queryBuilder = boolQueryBuilder;
         }
 
