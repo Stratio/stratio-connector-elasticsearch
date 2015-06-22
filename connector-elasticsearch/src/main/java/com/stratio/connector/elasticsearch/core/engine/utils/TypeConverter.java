@@ -50,6 +50,11 @@ public final class TypeConverter {
     public static final String ES_STRING = "string";
 
     /**
+     * The elasticsearch string name.
+     */
+    public static final String ES_DATE = "date";
+
+    /**
      * Constructor.
      */
     private TypeConverter() {
@@ -81,7 +86,9 @@ public final class TypeConverter {
             type = ES_STRING;
         } else if (columnType.getDataType() == DataType.VARCHAR) {
             type = ES_STRING;
-        } else {
+        } else if (columnType.getDataType() == DataType.NATIVE && columnType.getODBCType().equals("date")) {
+            type = columnType.getODBCType();
+        }else {
             throw new ExecutionException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;
