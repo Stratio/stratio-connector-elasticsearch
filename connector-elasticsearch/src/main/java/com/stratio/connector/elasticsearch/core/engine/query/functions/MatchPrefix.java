@@ -34,7 +34,14 @@ public class MatchPrefix extends ESFunction {
 
         @Override
         public QueryBuilder buildQuery() {
-            String field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
+            String field = "";
+
+            if (getParameters().get(0) instanceof ColumnSelector ){
+                field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
+            } else {
+                field = getParameters().get(0).getStringValue();
+            }
+
             String value = getParameters().get(1).getStringValue();
             return QueryBuilders.prefixQuery(field, value.toLowerCase());
         }

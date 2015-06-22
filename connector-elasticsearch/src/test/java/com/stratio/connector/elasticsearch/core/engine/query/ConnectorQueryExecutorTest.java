@@ -99,30 +99,28 @@ public class ConnectorQueryExecutorTest {
         when(searchHits.iterator()).thenReturn(hits.iterator());
 
         SearchResponse searchResponse = mock(SearchResponse.class);
-        when(searchResponse.getScrollId()).thenReturn(SCROLL_ID);
 
         when(searchResponse.getHits()).thenReturn(searchHits);
-        SearchHit[] aHits = new SearchHit[0];
+        SearchHit[] aHits = new SearchHit[1];
+        aHits[0] = hits.get(0);
 
         when(searchHits.getHits()).thenReturn(aHits);
 
-        ListenableActionFuture<SearchResponse> listenableActionFuture = mock(ListenableActionFuture.class);
+        ListenableActionFuture<SearchResponse> respose = mock(ListenableActionFuture.class);
 
-        when(listenableActionFuture.actionGet()).thenReturn(searchResponse);
+        when(respose.actionGet()).thenReturn(searchResponse);
 
-        SearchScrollRequestBuilder searchScrollRequestBuilder = mock(SearchScrollRequestBuilder.class);
-        when(searchScrollRequestBuilder.setScroll(any(TimeValue.class))).thenReturn(searchScrollRequestBuilder);
-        when(searchScrollRequestBuilder.execute()).thenReturn(listenableActionFuture);
         Client client = mock(Client.class);
-        when(client.prepareSearchScroll(SCROLL_ID)).thenReturn(searchScrollRequestBuilder);
 
         SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
-        when(requestBuilder.execute()).thenReturn(listenableActionFuture);
+        when(requestBuilder.execute()).thenReturn(respose);
 
         ProjectParsed projectParsed = createQueryData(SearchType.SCAN);
 
+        //Experimentation
         QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, projectParsed);
 
+        //Expectations
         ResultSet resultset = queryResult.getResultSet();
         assertEquals("The resultset size is correct", 1, resultset.getRows().size());
         Row row = resultset.getRows().get(0);

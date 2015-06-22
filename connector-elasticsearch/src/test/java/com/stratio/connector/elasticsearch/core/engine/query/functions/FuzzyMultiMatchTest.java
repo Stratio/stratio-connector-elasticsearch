@@ -46,7 +46,7 @@ public class FuzzyMultiMatchTest {
         parameters.add(new StringSelector("value"));
         parameters.add(new StringSelector("100%"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH_FUZZY, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH_FUZZY, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation

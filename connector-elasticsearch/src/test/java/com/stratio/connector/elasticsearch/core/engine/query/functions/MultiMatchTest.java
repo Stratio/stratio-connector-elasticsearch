@@ -45,7 +45,7 @@ public class MultiMatchTest {
         parameters.add(new StringSelector("*_colName"));
         parameters.add(new StringSelector("value"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation

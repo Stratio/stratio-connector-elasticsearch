@@ -25,7 +25,6 @@ import org.elasticsearch.common.unit.TimeValue;
 /**
  * The responsibility of this class is create a Limit query Modifier.
  *
- * @author darroyo
  */
 public class LimitModifier {
 

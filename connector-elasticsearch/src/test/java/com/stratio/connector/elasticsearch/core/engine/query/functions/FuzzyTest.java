@@ -27,7 +27,7 @@ public class FuzzyTest {
         parameters.add(new StringSelector("fieldValue"));
         parameters.add(new StringSelector("1"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.FUZZY, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.FUZZY, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation

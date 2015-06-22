@@ -45,7 +45,7 @@ public class MatchPhraseTest {
         parameters.add(new ColumnSelector(new ColumnName(tableName, "colName")));
         parameters.add(new StringSelector("phrase"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.MATCH_PHRASE, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.MATCH_PHRASE, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation

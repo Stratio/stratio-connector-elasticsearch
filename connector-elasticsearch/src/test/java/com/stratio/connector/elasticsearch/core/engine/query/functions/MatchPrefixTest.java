@@ -43,7 +43,7 @@ public class MatchPrefixTest {
         parameters.add(new ColumnSelector(new ColumnName(tableName, "colName")));
         parameters.add(new StringSelector("value"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.MATCH_PREFIX, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.MATCH_PREFIX, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation

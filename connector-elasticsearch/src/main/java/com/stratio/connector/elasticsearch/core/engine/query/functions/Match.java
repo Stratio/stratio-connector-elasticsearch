@@ -38,7 +38,14 @@ public class Match extends ESFunction{
 
     @Override
     public QueryBuilder buildQuery() {
-        String field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
+
+        String field = "";
+        if (getParameters().get(0) instanceof ColumnSelector ){
+            field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
+        } else {
+            field = getParameters().get(0).getStringValue();
+        }
+
         String value = getParameters().get(1).getStringValue();
         String minimunShoulMatch = getParameters().get(2).getStringValue();
         if (StringUtils.isEmpty(minimunShoulMatch)){

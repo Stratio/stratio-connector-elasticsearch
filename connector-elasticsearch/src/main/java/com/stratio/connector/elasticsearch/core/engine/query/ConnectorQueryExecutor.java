@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -55,9 +56,6 @@ import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.SelectorType;
 
-/**
- * Created by jmgomez on 15/09/14.
- */
 public class ConnectorQueryExecutor {
 
     /**
@@ -86,34 +84,18 @@ public class ConnectorQueryExecutor {
 
             ResultSet resultSet = new ResultSet();
 
-            SearchResponse scrollResp = requestBuilder.execute().actionGet();
-            long countResult = 0;
-            boolean isLimit = false;
-            long limit = 0;
-            boolean endQuery = false;
             if (queryData.getLimit() != null) {
-                isLimit = true;
-                limit = queryData.getLimit().getLimit();
+
+                requestBuilder.setSize(queryData.getLimit().getLimit());
             }
 
+            SearchResponse response = requestBuilder.execute().actionGet();
             MetadataCreator crossdatadataCreator = new MetadataCreator();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            do {
-                scrollResp = elasticClient.prepareSearchScroll(scrollResp.getScrollId())
-                                .setScroll(new TimeValue(SCAN_TIMEOUT_MILLIS)).execute().actionGet();
-
-                for (SearchHit hit : scrollResp.getHits()) {
-                    if (isLimit && countResult == limit) {
-                        endQuery = true;
-                        break;
-                    }
-                    countResult++;
-                    resultSet.add(createRow(hit, queryData));
-                }
-
-            } while (scrollResp.getHits().getHits().length != 0 && !endQuery);
-
+            for (SearchHit hit : response.getHits().getHits()) {
+                resultSet.add(createRow(hit, queryData));
+            }
             queryResult = QueryResult.createQueryResult(resultSet, 0, true);
         } catch (IndexMissingException e) {
             if (logger.isDebugEnabled()) {

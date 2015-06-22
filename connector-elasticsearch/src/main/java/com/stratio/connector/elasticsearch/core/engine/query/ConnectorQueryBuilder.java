@@ -22,11 +22,16 @@ import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.elasticsearch.core.engine.utils.*;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.statements.structures.OrderByClause;
+import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,34 +51,48 @@ public class ConnectorQueryBuilder {
     private SearchRequestBuilder requestBuilder;
 
     /**
-     * @param elasticClient
-     *            the elasticSearch Client.
-     * @param queryData
-     *            the query representation,
+     * @param elasticClient the elasticSearch Client.
+     * @param queryData     the query representation,
      * @return The searchBuilder.
-     * @throws UnsupportedException
-     *             if the operation is not supported.
-     * @throws ExecutionException
-     *             if the method fails during execution.
+     * @throws UnsupportedException if the operation is not supported.
+     * @throws ExecutionException   if the method fails during execution.
      */
     public SearchRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
-                    ExecutionException {
+            ExecutionException {
 
         createRequestBuilder(elasticClient);
         createFilter(queryData);
         createProjection(queryData);
         createSelect(queryData);
-        createLimit();
+        createSort(queryData);
+        //createLimit(); TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
         logQuery();
 
         return requestBuilder;
     }
 
     /**
+     * This method create the Sort using the OrderBy clause
+     * @param queryData
+     */
+    private void createSort(ProjectParsed queryData) {
+
+        if (null != queryData.getOrderBy() && !queryData.getOrderBy().getIds().isEmpty()) {
+            // For each sort
+            for (OrderByClause orderBy : queryData.getOrderBy().getIds()) {
+                boolean ascendingWay = orderBy.getDirection().equals(OrderDirection.ASC);
+                String fieldName = orderBy.getSelector().getColumnName().getName();
+                SortBuilder sortBuilder = SortBuilders.fieldSort(fieldName);
+                sortBuilder.order(ascendingWay ? SortOrder.ASC : SortOrder.DESC);
+                this.requestBuilder.addSort(sortBuilder);
+            }
+        }
+    }
+
+    /**
      * This method create the select part of the query.
      *
-     * @param queryData
-     *            the querydata.
+     * @param queryData the querydata.
      */
     private void createSelect(ProjectParsed queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
@@ -86,8 +105,7 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the elasticsearch request builder.
      *
-     * @param elasticClient
-     *            the elasticsearch client..
+     * @param elasticClient the elasticsearch client..
      */
     private void createRequestBuilder(Client elasticClient) {
         requestBuilder = elasticClient.prepareSearch();
@@ -113,8 +131,7 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Limit part of the query.
      *
-     * @param queryData
-     *            the querydata.
+     * @param queryData the querydata.
      */
     private void createProjection(ProjectParsed queryData) {
         ProjectCreator projectModifier = new ProjectCreator();
@@ -124,8 +141,7 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Filter part of the query.
      *
-     * @param queryData
-     *            the querydata.
+     * @param queryData the querydata.
      */
     private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 

@@ -44,7 +44,7 @@ public class MatchTest {
         parameters.add(new StringSelector("value"));
         parameters.add(new StringSelector("100%"));
 
-        FunctionRelation function = new FunctionRelation(ESFunction.CONTAINS, parameters);
+        FunctionRelation function = new FunctionRelation(ESFunction.CONTAINS, parameters,tableName);
         ESFunction match = ESFunction.build(function);
 
         //Experimentation
