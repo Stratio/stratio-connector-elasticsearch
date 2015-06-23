@@ -75,11 +75,11 @@
             <version>1.5.5</version>
             <scope>test</scope>
         </dependency>
-	<dependency>
-  		<groupId>org.powermock</groupId>
-  		<artifactId>powermock-module-javaagent</artifactId>
-  		<version>1.5.5</version>
-	</dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-javaagent</artifactId>
+            <version>1.5.5</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -334,13 +334,12 @@
                     <plugin>
                         <artifactId>crossdata-connector-maven-plugin</artifactId>
                         <groupId>com.stratio.crossdata</groupId>
-                        <version>0.3.0-RC2-SNAPSHOT</version>
+                        <version>${crossdata.version}</version>
                         <configuration>
                             <mainClass>com.stratio.connector.elasticsearch.core.ElasticsearchConnector</mainClass>
                             <jmxPort>7190</jmxPort>
                         </configuration>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>

@@ -36,10 +36,11 @@
     </parent>
     <properties>
         <version.connector.commons>0.6.0-SNAPSHOT</version.connector.commons>
-        <version.elasticsearch>1.3.2</version.elasticsearch>
+        <version.elasticsearch>1.6.0</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jmx.port>7190</jmx.port>
+        <crossdata.version>0.4.0-SNAPSHOT</crossdata.version>
     </properties>
     <licenses>
         <license>
