@@ -21,6 +21,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 import java.util.Collection;
 
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import com.stratio.crossdata.common.statements.structures.GroupSelector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -100,7 +101,15 @@ public class FilterBuilderCreator {
             case GET:
                 localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).gte(rightTerm);
                 break;
+            case BETWEEN:
+                GroupSelector selector = (GroupSelector)filter.getRelation().getRightTerm();
+                Object from = SelectorHelper.getValue(SelectorHelper.getClass(selector.getFirstValue()),
+                        selector.getFirstValue());
+                Object to = SelectorHelper.getValue(SelectorHelper.getClass(selector.getLastValue()),
+                        selector.getLastValue());
 
+                localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).from(from).to(to);
+                break;
             default:
                 throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
 

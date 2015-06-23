@@ -64,9 +64,25 @@ public class FilterBuilderCreatorTest {
         testCreateFilterBuilder(Operator.GET, expectations);
     }
 
-    @Test(expected = UnsupportedException.class)
+    @Test()
     public void testCreateFilterBuilderFail() throws UnsupportedException, ExecutionException {
-        testCreateFilterBuilder(Operator.BETWEEN, null);
+
+        Selector from = new IntegerSelector (1);
+        Selector to = new IntegerSelector (10);
+
+        Selector left = new ColumnSelector(new ColumnName(new TableName("catalog", "table"), "column"));
+        GroupSelector selector = new GroupSelector(new TableName("catalog", "table"),from, to);
+
+        Relation relations = new Relation(left, Operator.BETWEEN, selector);
+
+        Filter filter = new Filter(new HashSet<>(Arrays.asList(Operations.FILTER_FUNCTION_EQ)), relations);
+
+        //Experimentation
+        FilterBuilder result = filterBuilderCreator.createFilterBuilder(Arrays.asList(filter));
+
+        //Expectations
+        String expected = "{\"bool\":{\"must\":{\"range\":{\"column\":{\"from\":1,\"to\":10,\"include_lower\":true,\"include_upper\":true}}}}}";
+        Assert.assertEquals(expected, result.toString().replace(" ", "").replace("\n", ""));
     }
 
     private void  testCreateFilterBuilder(Operator operator, String expected) throws UnsupportedException, ExecutionException {
