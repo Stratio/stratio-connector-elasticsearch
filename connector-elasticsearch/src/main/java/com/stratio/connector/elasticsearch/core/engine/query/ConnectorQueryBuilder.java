@@ -27,6 +27,7 @@ import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.LimitFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -65,7 +66,7 @@ public class ConnectorQueryBuilder {
         createProjection(queryData);
         createSelect(queryData);
         createSort(queryData);
-        //createLimit(); TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
+        createLimit(queryData); //TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
         logQuery();
 
         return requestBuilder;
@@ -123,9 +124,12 @@ public class ConnectorQueryBuilder {
     /**
      * This method crete the Limit part of the query.
      */
-    private void createLimit() throws ExecutionException {
-        LimitModifier limitModifier = new LimitModifier();
-        limitModifier.modify(requestBuilder);
+    private void createLimit(ProjectParsed queryData) throws ExecutionException {
+       // LimitModifier limitModifier = new LimitModifier();
+        //limitModifier.modify(requestBuilder);
+        if (queryData.getLimit() != null){
+            requestBuilder.setSize(queryData.getLimit().getLimit());
+        }
     }
 
     /**

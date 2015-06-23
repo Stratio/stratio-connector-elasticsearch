@@ -77,6 +77,6 @@
         <operation>FILTER_NON_INDEXED_DISTINCT</operation>
         <operation>FILTER_NON_INDEXED_MATCH</operation>
         <operation>FILTER_FUNCTION</operation>
-
+        <operation>SELECT_LIMIT</operation>
     </SupportedOperations>
 </Connector>

@@ -25,13 +25,20 @@ import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ConnectorException;
 import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.logicalplan.Limit;
 import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.statements.structures.*;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
+
+import static org.junit.Assert.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -39,6 +46,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
@@ -55,7 +63,7 @@ import static org.mockito.Mockito.mock;
  * </pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(value = { Client.class })
+@PrepareForTest(value = {Client.class})
 public class ConnectorQueryBuilderTest {
 
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
@@ -98,12 +106,12 @@ public class ConnectorQueryBuilderTest {
     @Test
     public void testBuildQuery() throws Exception {
 
-/*        ProjectParsed projectParsed = createProjectParsed();
+        ProjectParsed projectParsed = createProjectParsed();
 
+        //Experimentation
         SearchRequestBuilder searchRequestBuilder = queryBuilder.buildQuery(client, projectParsed);
 
-
-
+        //Expectations
         assertNotNull("The request builder is not null", searchRequestBuilder);
         SearchRequest request = (SearchRequest) Whitebox.getInternalState(searchRequestBuilder, "request");
         String[] indices = (String[]) Whitebox.getInternalState(request, "indices");
@@ -114,12 +122,13 @@ public class ConnectorQueryBuilderTest {
         assertEquals("The types is correct", TYPE_NAME, types[0]);
 
         SearchSourceBuilder searchSourceBuilder = (SearchSourceBuilder) Whitebox.getInternalState(searchRequestBuilder,
-                        "sourceBuilder");
+                "sourceBuilder");
         ArrayList fieldNames = (ArrayList) Whitebox.getInternalState(searchSourceBuilder, "fieldNames");
         assertEquals("the fieldNames length is correct", 2, fieldNames.size());
         assertTrue("The fieldNames is correct", fieldNames.contains(COLUMN_1));
         assertTrue("The fieldNames is correct", fieldNames.contains(COLUMN_2));
-        */
+        assertEquals(5, Whitebox.getInternalState(searchSourceBuilder, "size"));
+
 
     }
 
@@ -146,15 +155,17 @@ public class ConnectorQueryBuilderTest {
         Set operations2 = new HashSet<>();
         operations2.add(Operations.FILTER_NON_INDEXED_EQ);
         Project project = new Project(operations2, new TableName(INDEX_NAME, TYPE_NAME),
-                        new ClusterName(CLUSTER_NAME), columnList);
+                new ClusterName(CLUSTER_NAME), columnList);
 
         Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector(
-                        STRING_SELECTOR_VALUE));
+                STRING_SELECTOR_VALUE));
 
         Filter filter = new Filter(operations2, relation);
 
         project.setNextStep(filter);
         filter.setNextStep(select);
+        Limit limit = new Limit(Collections.singleton(Operations.SELECT_LIMIT), 5);
+        select.setNextStep(limit);
 
         ProjectValidator projectValidator = mock(ProjectValidator.class);
         ProjectParsed projectParsed = new ProjectParsed(project, projectValidator);
