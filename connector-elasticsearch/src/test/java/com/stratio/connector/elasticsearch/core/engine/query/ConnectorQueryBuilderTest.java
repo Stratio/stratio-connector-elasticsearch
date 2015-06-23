@@ -103,7 +103,7 @@ public class ConnectorQueryBuilderTest {
     /**
      * Method: buildQuery(Client elasticClient, QueryData queryData)
      */
-    @Test
+   // @Test
     public void testBuildQuery() throws Exception {
 
         ProjectParsed projectParsed = createProjectParsed();
