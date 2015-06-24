@@ -88,12 +88,6 @@ public class ConnectorQueryExecutor {
 
             ResultSet resultSet = new ResultSet();
 
-            if (queryData.getLimit() != null) {
-
-                ((SearchRequestBuilder)requestBuilder).setSize(queryData.getLimit().getLimit());
-            }
-
-
             SearchResponse response = ((SearchRequestBuilder)requestBuilder).execute().actionGet();
             MetadataCreator crossdatadataCreator = new MetadataCreator();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));

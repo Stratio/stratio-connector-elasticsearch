@@ -50,6 +50,7 @@ public class SelectCreator {
             for (Selector selector : columnMetadataList) {
                 if (SelectCreator.isFunction(selector, "count")) {
                     fields = new String[]{"_id"};
+                    requestBuilder.setSize(0);
                     break;
                 }
 
