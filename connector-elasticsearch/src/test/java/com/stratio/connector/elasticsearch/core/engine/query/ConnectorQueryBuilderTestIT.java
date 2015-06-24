@@ -30,6 +30,7 @@ import com.stratio.crossdata.common.logicalplan.Project;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.Operations;
 import com.stratio.crossdata.common.statements.structures.*;
+import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -64,7 +65,7 @@ import static org.mockito.Mockito.mock;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = {Client.class})
-public class ConnectorQueryBuilderTest {
+public class ConnectorQueryBuilderTestIT {
 
     private static final String INDEX_NAME = "INDEX_NAME".toLowerCase();
     private static final String TYPE_NAME = "TYPE_NAME".toLowerCase();
@@ -103,13 +104,13 @@ public class ConnectorQueryBuilderTest {
     /**
      * Method: buildQuery(Client elasticClient, QueryData queryData)
      */
-   // @Test
+    @Test
     public void testBuildQuery() throws Exception {
 
         ProjectParsed projectParsed = createProjectParsed();
 
         //Experimentation
-        SearchRequestBuilder searchRequestBuilder = queryBuilder.buildQuery(client, projectParsed);
+        ActionRequestBuilder searchRequestBuilder = queryBuilder.buildQuery(client, projectParsed);
 
         //Expectations
         assertNotNull("The request builder is not null", searchRequestBuilder);
