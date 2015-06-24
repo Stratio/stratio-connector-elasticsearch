@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
+import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 
@@ -69,7 +70,7 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
         Client elasticClient = connection.getNativeConnection();
         ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
-        SearchRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
+        ActionRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
 
         return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
     }

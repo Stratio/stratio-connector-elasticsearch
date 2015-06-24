@@ -18,7 +18,10 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.Map;
 import java.util.Set;
+
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -45,12 +48,56 @@ public class SelectCreator {
             String[] fields = new String[columnMetadataList.size()];
             int i = 0;
             for (Selector selector : columnMetadataList) {
+                if (SelectCreator.isFunction(selector, "count")) {
+                    fields = new String[]{"_id"};
+                    break;
+                }
+
                 fields[i] = selector.getColumnName().getName();
                 i++;
+
             }
 
             requestBuilder.addFields(fields);
         }
+    }
+
+    /**
+     * Return if the Selector is a function, and if the function name is the passed.
+     *
+     * @param selector
+     * @param functionName
+     * @return
+     */
+    public static boolean isFunction(Selector selector, String functionName) {
+
+        if (!(selector instanceof FunctionSelector))
+            return false;
+
+        FunctionSelector functionSelector = (FunctionSelector) selector;
+        return functionSelector.getFunctionName().equalsIgnoreCase(functionName);
+    }
+
+    public static boolean hasFunction(Map<Selector, String> columnMetadata, String functionName) {
+
+        for (Selector selector : columnMetadata.keySet()) {
+            if (isFunction(selector, functionName)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static FunctionSelector getFunctionSelector(Map<Selector, String> columnMetadata, String functionName) {
+
+        for (Selector selector : columnMetadata.keySet()) {
+            if (isFunction(selector, functionName)) {
+                return (FunctionSelector) selector;
+            }
+        }
+
+        return null;
     }
 
 }

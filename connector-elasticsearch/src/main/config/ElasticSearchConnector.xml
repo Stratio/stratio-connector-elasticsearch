@@ -58,6 +58,7 @@
         <operation>SELECT_OPERATOR</operation>
         <operation>SELECT_ORDER_BY</operation>
         <operation>SELECT_LIMIT</operation>
+        <operation>SELECT_FUNCTIONS</operation>
 
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_PK_GT</operation>
@@ -83,4 +84,53 @@
         <operation>FILTER_NON_INDEXED_BETWEEN</operation>
         <operation>FILTER_INDEXED_BETWEEN</operation>
     </SupportedOperations>
+
+    <Functions>
+        <Function>
+            <FunctionName>CONTAINS</FunctionName>
+            <Signature>contains(Tuple[Text, Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES Match, first parameter is the field, second the query, third is the minimum_should_match</Description>
+        </Function>
+        <Function>
+            <FunctionName>MATCH_PHRASE</FunctionName>
+            <Signature>match_phrase(Tuple[Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_phrase</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MULTI_MATCH</FunctionName>
+            <Signature>multi_match(Tuple[Text*]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES multi_match, The LAST value is the text to find</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MATCH_PREFIX</FunctionName>
+            <Signature>match_prefix(Tuple[Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_prefix</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MATCH_FUZZY</FunctionName>
+            <Signature>multi_match_fuzzy(Tuple[Text*]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>Is the ES... match_prefix</Description>
+        </Function>
+        <Function>
+            <FunctionName>FUZZY</FunctionName>
+            <Signature>fuzzy(Tuple[Text, Text, Text]):Tuple[]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>A Fuzzy Query, Field, Value, Fuzziness</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>COUNT</FunctionName>
+            <Signature>count(Tuple[Any*]):Tuple[Int]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>It counts the number of rows</Description>
+        </Function>
+    </Functions>
 </Connector>

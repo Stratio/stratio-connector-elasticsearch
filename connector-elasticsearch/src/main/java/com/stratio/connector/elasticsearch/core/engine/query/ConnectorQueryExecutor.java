@@ -26,6 +26,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -68,17 +71,18 @@ public class ConnectorQueryExecutor {
      *
      * @param elasticClient
      *            the elasticSearch Client.
-     * @param requestBuilder
+     * @param actionRequestBuilder
      *            the query to execute.
      * @param queryData
      *            the queryData.
      * @return the query result.
      */
 
-    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder, ProjectParsed queryData)
+    public QueryResult executeQuery(Client elasticClient, ActionRequestBuilder actionRequestBuilder, ProjectParsed queryData)
                     throws ExecutionException {
 
         QueryResult queryResult = null;
+        SearchRequestBuilder requestBuilder = (SearchRequestBuilder) actionRequestBuilder;
 
         try {
 
@@ -86,15 +90,27 @@ public class ConnectorQueryExecutor {
 
             if (queryData.getLimit() != null) {
 
-                requestBuilder.setSize(queryData.getLimit().getLimit());
+                ((SearchRequestBuilder)requestBuilder).setSize(queryData.getLimit().getLimit());
             }
 
-            SearchResponse response = requestBuilder.execute().actionGet();
+
+            SearchResponse response = ((SearchRequestBuilder)requestBuilder).execute().actionGet();
             MetadataCreator crossdatadataCreator = new MetadataCreator();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            for (SearchHit hit : response.getHits().getHits()) {
-                resultSet.add(createRow(hit, queryData));
+
+            if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")){
+                FunctionSelector functionSelector = SelectCreator.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
+                Map<Selector, String> alias = returnAlias(queryData);
+                Map<String, Object> fields = new HashMap();
+
+                fields.put(functionSelector.getAlias(), response.getHits().totalHits());
+                Row row = setRowValues(queryData, alias, fields);
+                resultSet.add(row);
+            }else{
+                for (SearchHit hit : response.getHits().getHits()) {
+                    resultSet.add(createRow(hit, queryData));
+                }
             }
             queryResult = QueryResult.createQueryResult(resultSet, 0, true);
         } catch (IndexMissingException e) {
@@ -197,7 +213,11 @@ public class ConnectorQueryExecutor {
     private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (Selector selector : selectors) {
-            fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
+           if (SelectCreator.isFunction(selector, "count")){
+               fieldNames.add((String) selector.getAlias());
+           }else{
+               fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
+           }
         }
         return fieldNames;
     }

@@ -24,6 +24,8 @@ import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
+import org.elasticsearch.action.ActionRequestBuilder;
+import org.elasticsearch.action.count.CountRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -58,7 +60,7 @@ public class ConnectorQueryBuilder {
      * @throws UnsupportedException if the operation is not supported.
      * @throws ExecutionException   if the method fails during execution.
      */
-    public SearchRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
+    public ActionRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
             ExecutionException {
 
         createRequestBuilder(elasticClient);
@@ -98,7 +100,6 @@ public class ConnectorQueryBuilder {
     private void createSelect(ProjectParsed queryData) {
         if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
             SelectCreator selectCreator = new SelectCreator();
-
             selectCreator.modify(requestBuilder, queryData.getSelect());
         }
     }
@@ -110,6 +111,7 @@ public class ConnectorQueryBuilder {
      */
     private void createRequestBuilder(Client elasticClient) {
         requestBuilder = elasticClient.prepareSearch();
+
     }
 
     /**
