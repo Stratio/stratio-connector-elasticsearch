@@ -129,6 +129,45 @@ public class ConnectorQueryExecutorTest {
 
     }
 
+    @Test
+    public void testExecuteCountQuery() throws Exception {
+
+        SearchHits searchHits = mock(SearchHits.class);
+        ArrayList<SearchHit> hits = new ArrayList<>();
+        hits.add(createHit());
+        when(searchHits.iterator()).thenReturn(hits.iterator());
+
+        SearchResponse searchResponse = mock(SearchResponse.class);
+
+        when(searchResponse.getHits()).thenReturn(searchHits);
+        SearchHit[] aHits = new SearchHit[1];
+        aHits[0] = hits.get(0);
+
+        when(searchHits.getHits()).thenReturn(aHits);
+
+        ListenableActionFuture<SearchResponse> respose = mock(ListenableActionFuture.class);
+
+        when(respose.actionGet()).thenReturn(searchResponse);
+
+        Client client = mock(Client.class);
+
+        SearchRequestBuilder requestBuilder = mock(SearchRequestBuilder.class);
+        when(requestBuilder.execute()).thenReturn(respose);
+
+        ProjectParsed projectParsed = createQueryData(SearchType.SCAN);
+
+        //Experimentation
+        QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, projectParsed);
+
+        //Expectations
+        ResultSet resultset = queryResult.getResultSet();
+        assertEquals("The resultset size is correct", 1, resultset.getRows().size());
+        Row row = resultset.getRows().get(0);
+        assertEquals("The rows number is correct", 1, row.size());
+        assertEquals("The value is not correct", COLUMN_STRING_VALUE, row.getCells().get(ALIAS).getValue());
+
+    }
+
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
 

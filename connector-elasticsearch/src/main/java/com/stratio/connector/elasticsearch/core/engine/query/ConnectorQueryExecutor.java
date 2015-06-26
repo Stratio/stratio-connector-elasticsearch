@@ -18,8 +18,6 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import static com.stratio.connector.elasticsearch.core.engine.utils.LimitModifier.SCAN_TIMEOUT_MILLIS;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -29,17 +27,12 @@ import java.util.Set;
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import org.elasticsearch.action.ActionRequestBuilder;
-import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
-import org.elasticsearch.search.sort.ScoreSortBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,20 +59,19 @@ public class ConnectorQueryExecutor {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private MetadataCreator crossdatadataCreator = new MetadataCreator();
+
     /**
      * This method execute a query in elasticSearch.
      *
-     * @param elasticClient
-     *            the elasticSearch Client.
-     * @param actionRequestBuilder
-     *            the query to execute.
-     * @param queryData
-     *            the queryData.
+     * @param elasticClient        the elasticSearch Client.
+     * @param actionRequestBuilder the query to execute.
+     * @param queryData            the queryData.
      * @return the query result.
      */
 
     public QueryResult executeQuery(Client elasticClient, ActionRequestBuilder actionRequestBuilder, ProjectParsed queryData)
-                    throws ExecutionException {
+            throws ExecutionException {
 
         QueryResult queryResult = null;
         SearchRequestBuilder requestBuilder = (SearchRequestBuilder) actionRequestBuilder;
@@ -87,41 +79,45 @@ public class ConnectorQueryExecutor {
         try {
 
             ResultSet resultSet = new ResultSet();
-
-            SearchResponse response = ((SearchRequestBuilder)requestBuilder).execute().actionGet();
-            MetadataCreator crossdatadataCreator = new MetadataCreator();
+            SearchResponse response = ((SearchRequestBuilder) requestBuilder).execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-
-            if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")){
-                FunctionSelector functionSelector = SelectCreator.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
-                Map<Selector, String> alias = returnAlias(queryData);
-                Map<String, Object> fields = new HashMap();
-
-                fields.put(functionSelector.getAlias(), response.getHits().totalHits());
-                Row row = setRowValues(queryData, alias, fields);
-                resultSet.add(row);
-            }else{
-                for (SearchHit hit : response.getHits().getHits()) {
-                    resultSet.add(createRow(hit, queryData));
-                }
+            if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
+                processCount(queryData, resultSet, response);
+            } else {
+                processResults(queryData, resultSet, response);
             }
             queryResult = QueryResult.createQueryResult(resultSet, 0, true);
         } catch (IndexMissingException e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("The index does not exist. The ES connector returns an empty QueryResult. "
-                                + e.getMessage());
+                        + e.getMessage());
             }
             queryResult = QueryResult.createQueryResult(new ResultSet(), 0, true);
         }
         return queryResult;
     }
 
+    private void processResults(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
+        for (SearchHit hit : response.getHits().getHits()) {
+            resultSet.add(createRow(hit, queryData));
+        }
+    }
+
+    private void processCount(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
+        FunctionSelector functionSelector = SelectCreator.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
+        Map<Selector, String> alias = returnAlias(queryData);
+        Map<String, Object> fields = new HashMap();
+
+        fields.put(functionSelector.getAlias(), response.getHits().totalHits());
+        Row row = buildRow(queryData, alias, fields);
+        resultSet.add(row);
+    }
+
     /**
      * This method creates a row.
      *
-     * @param hit
-     *            the Elasticsearch SearchHit.
+     * @param hit       the Elasticsearch SearchHit.
      * @param queryData
      * @return the row.
      */
@@ -129,7 +125,7 @@ public class ConnectorQueryExecutor {
 
         Map<Selector, String> alias = returnAlias(queryData);
         Map<String, Object> fields = getFields(hit);
-        Row row = setRowValues(queryData, alias, fields);
+        Row row = buildRow(queryData, alias, fields);
 
         return row;
     }
@@ -137,16 +133,13 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates a row.
      *
-     * @param queryData
-     *            the query data.
-     * @param alias
-     *            the alias.
-     * @param fields
-     *            the fields.
+     * @param queryData the query data.
+     * @param alias     the alias.
+     * @param fields    the fields.
      * @return a row.
      */
-    private Row setRowValues(ProjectParsed queryData, Map<Selector, String> alias, Map<String, Object> fields)
-                    throws ExecutionException {
+    private Row buildRow(ProjectParsed queryData, Map<Selector, String> alias, Map<String, Object> fields)
+            throws ExecutionException {
         Row row = new Row();
         Set<String> fieldNames;
 
@@ -156,27 +149,16 @@ public class ConnectorQueryExecutor {
         } else {
             fieldNames = createFieldNames(select.getColumnMap().keySet());
         }
+
         for (String field : fieldNames) {
             Object value = fields.get(field);
 
             ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData.getProject()
-                            .getTableName().getName(), field);
+                    .getTableName().getName(), field);
 
             ColumnSelector columnSelector = new ColumnSelector(columnName);
-            for (Map.Entry<Selector, String> allAlias: alias.entrySet()){ //TODO improve this pice of code. The map
-            // for column selector dont work fine.
-                if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())){
-                    String aliasValue = allAlias.getValue();
-                    if (aliasValue!=field){
-                        columnSelector.setAlias(aliasValue);
-                        field=aliasValue;
-                    }
-                    break;
-                }
-            }
-            row.addCell(field,
-                            new Cell(ColumnTypeHelper.getCastingValue(
-                                    recoveredColumnType(select, columnSelector), value))); //TODO like before
+            field = pickAliasOrFieldName(alias, field, columnName, columnSelector);
+            row.addCell(field, buildCell(select, value, columnSelector));
         }
 
         logger.debug("Fields:" + row.getCells().toString());
@@ -184,11 +166,32 @@ public class ConnectorQueryExecutor {
         return row;
     }
 
+    private Cell buildCell(Select select, Object value, ColumnSelector columnSelector) throws ExecutionException {
+        ColumnType columnType = recoveredColumnType(select, columnSelector);
+        Object cellValue = ColumnTypeHelper.getCastingValue(columnType, value);
+        return new Cell(cellValue);
+    }
+
+    private String pickAliasOrFieldName(Map<Selector, String> alias, String field, ColumnName columnName, ColumnSelector columnSelector) {
+        for (Map.Entry<Selector, String> allAlias : alias.entrySet()) {
+            // for column selector dont work fine.
+            if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
+                String aliasValue = allAlias.getValue();
+                if (aliasValue != field) {
+                    columnSelector.setAlias(aliasValue);
+                    field = aliasValue;
+                }
+                break;
+            }
+        }
+        return field;
+    }
+
     private ColumnType recoveredColumnType(Select select, ColumnSelector columnSelector) {
         ColumnType columntype = null;
         Map<Selector, ColumnType> typeMapFromColumnName = select.getTypeMapFromColumnName();
-        for (Map.Entry<Selector, ColumnType> columnMap :typeMapFromColumnName.entrySet()){
-            if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())){
+        for (Map.Entry<Selector, ColumnType> columnMap : typeMapFromColumnName.entrySet()) {
+            if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())) {
                 columntype = columnMap.getValue();
                 break;
             }
@@ -199,19 +202,18 @@ public class ConnectorQueryExecutor {
     /**
      * This method creates the field names.
      *
-     * @param selectors
-     *            the column names.
+     * @param selectors the column names.
      * @return the field names.
      * @throws ExecutionException
      */
     private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (Selector selector : selectors) {
-           if (SelectCreator.isFunction(selector, "count")){
-               fieldNames.add((String) selector.getAlias());
-           }else{
-               fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
-           }
+            if (SelectCreator.isFunction(selector, "count")) {
+                fieldNames.add((String) selector.getAlias());
+            } else {
+                fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
+            }
         }
         return fieldNames;
     }
@@ -219,8 +221,7 @@ public class ConnectorQueryExecutor {
     /**
      * This method return the fields for a hit.
      *
-     * @param hit
-     *            the hit.
+     * @param hit the hit.
      * @return the fields.
      */
     private Map<String, Object> getFields(SearchHit hit) {
@@ -239,8 +240,7 @@ public class ConnectorQueryExecutor {
     /**
      * This method return the field alias.
      *
-     * @param queryData
-     *            the query data.
+     * @param queryData the query data.
      * @return the alias.
      */
     private Map<Selector, String> returnAlias(ProjectParsed queryData) {
