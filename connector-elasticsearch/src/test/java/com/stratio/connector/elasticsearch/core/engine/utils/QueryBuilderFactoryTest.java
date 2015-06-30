@@ -38,13 +38,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * QueryBuilderCreator Tester.
+ * QueryBuilderFactory Tester.
  *
  * @author <Authors name>
  * @version 1.0
  * @since <pre>nov 21, 2014</pre>
  */
-public class QueryBuilderCreatorTest {
+public class QueryBuilderFactoryTest {
 
     private static final String CATALOG_NAME = "catalog_name";
     private static final String TABLE_NAME = "table_name";
@@ -55,12 +55,12 @@ public class QueryBuilderCreatorTest {
     private static final String GET_QUERY = "{\"bool\":{\"must\":{\"range\":{\"column_name\":{\"from\":\"5\",\"to\":null,\"include_lower\":true,\"include_upper\":true}}}}}";
     private static String EQ_QUERY = "{\"bool\":{\"must\":{\"match\":{\"column_name\":{\"query\":\"5\"," +
             "\"type\":\"boolean\"}}}}}";
-    private QueryBuilderCreator queryBuilderCreator;
+    private QueryBuilderFactory queryBuilderFactory;
 
     @Before
     public void before() throws Exception {
 
-        queryBuilderCreator = new QueryBuilderCreator();
+        queryBuilderFactory = new QueryBuilderFactory();
     }
 
     /**
@@ -75,7 +75,7 @@ public class QueryBuilderCreatorTest {
 
         createFilter(filter, operations, Operator.EQ);
 
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(filter);
 
         assertNotNull("the Query builder is not null", queryBuilder);
         assertEquals("The queryIsCorrect", EQ_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
@@ -94,7 +94,7 @@ public class QueryBuilderCreatorTest {
 
         createFilter(filter, operations, Operator.LT);
 
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(filter);
 
         assertNotNull("the Query builder is not null", queryBuilder);
         assertEquals("The queryIsCorrect", LT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
@@ -113,7 +113,7 @@ public class QueryBuilderCreatorTest {
 
         createFilter(filter, operations, Operator.LET);
 
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(filter);
 
         assertNotNull("the Query builder is not null", queryBuilder);
         assertEquals("The queryIsCorrect", LET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
@@ -129,7 +129,7 @@ public class QueryBuilderCreatorTest {
 
         createFilter(filter, operations, Operator.GT);
 
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(filter);
 
         assertNotNull("the Query builder is not null", queryBuilder);
         assertEquals("The queryIsCorrect", GT_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
@@ -146,7 +146,7 @@ public class QueryBuilderCreatorTest {
 
         createFilter(filter, operations, Operator.GET);
 
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(filter);
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(filter);
 
         assertNotNull("the Query builder is not null", queryBuilder);
         assertEquals("The queryIsCorrect", GET_QUERY, queryBuilder.toString().replaceAll("\n", "").replaceAll(" ", ""));
