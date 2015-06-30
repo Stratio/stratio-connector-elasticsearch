@@ -24,14 +24,16 @@ import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
+import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.action.ActionRequestBuilder;
-import org.elasticsearch.action.count.CountRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.LimitFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilder;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -69,13 +71,33 @@ public class ConnectorQueryBuilder {
         createSelect(queryData);
         createSort(queryData);
         createLimit(queryData); //TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
+        createAgreggation(queryData);
+
         logQuery();
 
         return requestBuilder;
     }
 
+    private void createAgreggation(ProjectParsed queryData) throws ExecutionException {
+
+        if (isAgregation(queryData)) {
+
+            if (queryData.getGroupBy().getIds().size() > 1) {
+                String message = "Multiple Column GroupBy isn't supported in this Datastore";
+                logger.error(message);
+                throw new ExecutionException(message);
+            }
+
+            Selector selector = queryData.getGroupBy().getIds().iterator().next();
+            AggregationBuilder aggregationBuilder = AggregationBuilders.terms(selector.getColumnName().getName()).field(selector.getColumnName().getName()).minDocCount(1).order(Terms.Order.count(false));
+            requestBuilder.addAggregation(aggregationBuilder);
+            requestBuilder.setSize(0);
+        }
+    }
+
     /**
      * This method create the Sort using the OrderBy clause
+     *
      * @param queryData
      */
     private void createSort(ProjectParsed queryData) {
@@ -98,10 +120,11 @@ public class ConnectorQueryBuilder {
      * @param queryData the querydata.
      */
     private void createSelect(ProjectParsed queryData) {
-        if (queryData.getSelect() != null && queryData.getSelect().getColumnMap() != null) {
-            SelectCreator selectCreator = new SelectCreator();
+        SelectCreator selectCreator = new SelectCreator();
+        if (!isAgregation(queryData)) {
             selectCreator.modify(requestBuilder, queryData.getSelect());
         }
+
     }
 
     /**
@@ -127,9 +150,9 @@ public class ConnectorQueryBuilder {
      * This method crete the Limit part of the query.
      */
     private void createLimit(ProjectParsed queryData) throws ExecutionException {
-       // LimitModifier limitModifier = new LimitModifier();
+        // LimitModifier limitModifier = new LimitModifier();
         //limitModifier.modify(requestBuilder);
-        if (queryData.getLimit() != null){
+        if (queryData.getLimit() != null) {
             requestBuilder.setSize(queryData.getLimit().getLimit());
         }
     }
@@ -151,8 +174,8 @@ public class ConnectorQueryBuilder {
      */
     private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 
-        QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
-        QueryBuilder queryBuilder = queryBuilderCreator.createBuilder(queryData.getMatchList(), queryData.getFunctionFilters());
+        QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
+        QueryBuilder queryBuilder = queryBuilderFactory.createBuilder(queryData.getMatchList(), queryData.getFunctionFilters());
 
         if (!queryData.getFilter().isEmpty()) {
             FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
@@ -164,4 +187,7 @@ public class ConnectorQueryBuilder {
         }
     }
 
+    private boolean isAgregation(ProjectParsed queryData) {
+        return queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty();
+    }
 }

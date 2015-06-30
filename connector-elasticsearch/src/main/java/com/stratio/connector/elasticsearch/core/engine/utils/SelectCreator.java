@@ -79,6 +79,7 @@ public class SelectCreator {
         return functionSelector.getFunctionName().equalsIgnoreCase(functionName);
     }
 
+
     public static boolean hasFunction(Map<Selector, String> columnMetadata, String functionName) {
 
         for (Selector selector : columnMetadata.keySet()) {
@@ -100,5 +101,4 @@ public class SelectCreator {
 
         return null;
     }
-
 }

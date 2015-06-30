@@ -33,6 +33,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +87,9 @@ public class ConnectorQueryExecutor {
             SearchResponse response = ((SearchRequestBuilder) requestBuilder).execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
+            if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty() ){
+                processAggregation(queryData, resultSet, response);
+            }else if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
                 processCount(queryData, resultSet, response);
             } else {
                 processResults(queryData, resultSet, response);
@@ -96,6 +103,25 @@ public class ConnectorQueryExecutor {
             queryResult = QueryResult.createQueryResult(new ResultSet(), 0, true);
         }
         return queryResult;
+    }
+
+    private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
+        for (Aggregation aggregation : response.getAggregations()) {
+            StringTerms stringTerms = (StringTerms) aggregation;//TODO support for multiple aggregation type
+            for (Terms.Bucket bucket : stringTerms.getBuckets()) {
+
+                Map<Selector, String> alias = returnAlias(queryData);
+
+                Map<String, Object> fields = new HashMap();
+
+                fields.put("count", bucket.getDocCount());
+                fields.put(stringTerms.getName(), bucket.getKey());
+
+                Row row = buildRow(queryData, alias, fields);
+                resultSet.add(row);
+
+            }
+        }
     }
 
     private void processResults(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
