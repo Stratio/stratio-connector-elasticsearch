@@ -129,7 +129,7 @@ public class ElasticsearchMetadataEngineTest {
         //Experimentation
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
-        verify(createIndexRequestBluilder, times(1)).setSettings(options);
+
         verify(listenableActionFuture, times(1)).actionGet();
     }
 
@@ -171,7 +171,6 @@ public class ElasticsearchMetadataEngineTest {
         //Experimentation
         elasticsearchMetadataEngine.createCatalog(new ClusterName(CLUSTER_NAME), catalogMetadata);
 
-        verify(createIndexRequestBluilder, times(1)).setSettings(eq(optionsTranform));
         verify(listenableActionFuture, times(1)).actionGet();
     }
 
