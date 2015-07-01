@@ -223,9 +223,10 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
             CreateIndexRequestBuilder createIndexRequestBuilder = client.prepareCreate(index);
 
             Map<String, Object> settings = transformOptions(indexMetaData);
+            final String JSON_SETTINGS_KEY = "settings";
 
-            if (settings.containsKey("settings")){
-                String settingsJson = settings.remove("settings").toString();
+            if (settings.containsKey(JSON_SETTINGS_KEY)){
+                String settingsJson = settings.remove(JSON_SETTINGS_KEY).toString();
                 if (!settings.isEmpty()){
                     throw new ExecutionException("You can either define the \"settings\" property including complete settings " +
                             "or other properties for specific settings, but not both.");
