@@ -35,13 +35,12 @@ import com.stratio.crossdata.common.metadata.CatalogMetadata;
 import com.stratio.crossdata.common.metadata.IndexMetadata;
 import com.stratio.crossdata.common.metadata.TableMetadata;
 import com.stratio.crossdata.common.statements.structures.Selector;
-import org.elasticsearch.action.admin.indices.close.CloseIndexRequest;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.mapping.delete.DeleteMappingResponse;
-import org.elasticsearch.action.admin.indices.open.OpenIndexRequest;
+import org.elasticsearch.action.admin.indices.settings.put.UpdateSettingsRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
@@ -219,9 +218,22 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
 
         IndicesAdminClient client = recoveredClient(connection).admin().indices();
         if (!client.exists(new IndicesExistsRequest(indexMetaData.getName().getName())).actionGet().isExists()){
-            CreateIndexRequestBuilder createIndexRequestBuilder = recoveredClient(connection).admin().indices()
-                    .prepareCreate(indexMetaData.getName().getName());
-            createIndexRequestBuilder.setSettings(transformOptions(indexMetaData));
+            String index = indexMetaData.getName().getName();
+
+            CreateIndexRequestBuilder createIndexRequestBuilder = client.prepareCreate(index);
+
+            Map<String, Object> settings = transformOptions(indexMetaData);
+            final String JSON_SETTINGS_KEY = "settings";
+
+            if (settings.containsKey(JSON_SETTINGS_KEY)){
+                String settingsJson = settings.remove(JSON_SETTINGS_KEY).toString();
+                if (!settings.isEmpty()){
+                    throw new ExecutionException("You can either define the \"settings\" property including complete settings " +
+                            "or other properties for specific settings, but not both.");
+                }
+                createIndexRequestBuilder.setSettings(settingsJson);
+            }
+            else {createIndexRequestBuilder.setSettings(settings);}
 
             createIndexRequestBuilder.execute().actionGet();
         }
@@ -235,9 +247,9 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws ExecutionException if an error occurs.
      */
 
-    private Map<String, String> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
+    private Map<String, Object> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
 
-        Map<String, String> transformOptions = new HashMap<>();
+        Map<String, Object> transformOptions = new HashMap<>();
         Map<Selector, Selector> options = indexMetaData.getOptions();
         if (options != null) {
             for (Map.Entry<Selector, Selector> key : options.entrySet()) {
