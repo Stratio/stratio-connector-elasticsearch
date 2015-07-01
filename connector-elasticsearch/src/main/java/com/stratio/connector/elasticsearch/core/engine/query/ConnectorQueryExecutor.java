@@ -87,9 +87,9 @@ public class ConnectorQueryExecutor {
             SearchResponse response = ((SearchRequestBuilder) requestBuilder).execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty() ){
+            if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
-            }else if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
+            } else if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
                 processCount(queryData, resultSet, response);
             } else {
                 processResults(queryData, resultSet, response);
@@ -106,20 +106,34 @@ public class ConnectorQueryExecutor {
     }
 
     private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
-        for (Aggregation aggregation : response.getAggregations()) {
-            StringTerms stringTerms = (StringTerms) aggregation;//TODO support for multiple aggregation type
+
+        for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
+            StringTerms stringTerms = (StringTerms) aggregation; //TODO support for different types
+            Map<Selector, String> alias = returnAlias(queryData);
+
             for (Terms.Bucket bucket : stringTerms.getBuckets()) {
-
-                Map<Selector, String> alias = returnAlias(queryData);
-
                 Map<String, Object> fields = new HashMap();
 
-                fields.put("count", bucket.getDocCount());
                 fields.put(stringTerms.getName(), bucket.getKey());
+                if (bucket.getAggregations().iterator().hasNext()) {
+                    processSubAggregation(queryData, resultSet, bucket, alias, fields);
+                } else {
+                    fields.put("count", bucket.getDocCount());
+                    Row row = buildRow(queryData, alias, fields);
+                    resultSet.add(row);
+                }
+            }
+        }
+    }
 
+    private void processSubAggregation(ProjectParsed queryData, ResultSet resultSet, Terms.Bucket bucket, Map<Selector, String> alias, Map<String, Object> fields) throws ExecutionException {
+        for (Aggregation subAgg : bucket.getAggregations().asList()) {
+            StringTerms stringTermsSubAgg = (StringTerms) subAgg;
+            for (Terms.Bucket subBucker : stringTermsSubAgg.getBuckets()) {
+                fields.put("count", subBucker.getDocCount());
+                fields.put(stringTermsSubAgg.getName(), subBucker.getKey());
                 Row row = buildRow(queryData, alias, fields);
                 resultSet.add(row);
-
             }
         }
     }

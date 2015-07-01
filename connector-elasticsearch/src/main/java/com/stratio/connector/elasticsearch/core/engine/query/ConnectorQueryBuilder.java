@@ -81,15 +81,16 @@ public class ConnectorQueryBuilder {
     private void createAgreggation(ProjectParsed queryData) throws ExecutionException {
 
         if (isAgregation(queryData)) {
+            AggregationBuilder aggregationBuilder = null;
 
-            if (queryData.getGroupBy().getIds().size() > 1) {
-                String message = "Multiple Column GroupBy isn't supported in this Datastore";
-                logger.error(message);
-                throw new ExecutionException(message);
+            for(Selector term: queryData.getGroupBy().getIds()){
+                if (aggregationBuilder == null){
+                    aggregationBuilder = AggregationBuilders.terms(term.getColumnName().getName()).field(term.getColumnName().getName());
+                }else{
+                    aggregationBuilder.subAggregation(AggregationBuilders.terms(term.getColumnName().getName()).field(term.getColumnName().getName()));
+                }
             }
 
-            Selector selector = queryData.getGroupBy().getIds().iterator().next();
-            AggregationBuilder aggregationBuilder = AggregationBuilders.terms(selector.getColumnName().getName()).field(selector.getColumnName().getName()).minDocCount(1).order(Terms.Order.count(false));
             requestBuilder.addAggregation(aggregationBuilder);
             requestBuilder.setSize(0);
         }
