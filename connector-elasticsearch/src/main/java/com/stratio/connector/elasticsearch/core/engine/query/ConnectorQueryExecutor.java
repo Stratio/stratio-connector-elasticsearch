@@ -271,7 +271,12 @@ public class ConnectorQueryExecutor {
             fields = new HashMap<>();
             for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
 
-                fields.put(entry.getKey(), entry.getValue().getValue());
+                if (entry.getValue().getValues().size()>1){
+                    fields.put(entry.getKey(), entry.getValue().getValues());
+                }else{
+                    fields.put(entry.getKey(), entry.getValue().getValue());
+                }
+
             }
         }
         return fields;
