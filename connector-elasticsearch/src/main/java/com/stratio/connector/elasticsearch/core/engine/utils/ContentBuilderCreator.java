@@ -18,62 +18,48 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import com.stratio.connector.elasticsearch.core.engine.metadata.ESIndexType;
+import com.stratio.crossdata.common.data.ColumnName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
+import com.stratio.crossdata.common.metadata.ColumnMetadata;
+import com.stratio.crossdata.common.metadata.ColumnType;
+import com.stratio.crossdata.common.metadata.TableMetadata;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.stratio.connector.elasticsearch.core.engine.metadata.ESIndexType;
-import com.stratio.crossdata.common.data.ColumnName;
-import com.stratio.crossdata.common.exceptions.ExecutionException;
-import com.stratio.crossdata.common.metadata.ColumnMetadata;
-import com.stratio.crossdata.common.metadata.TableMetadata;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This class is responsible to create ContentBuilders. Created by jmgomez on 11/09/14.
  */
 public class ContentBuilderCreator {
 
-    /**
-     * The properties identification.
-     */
-    private static final String PROPERTIES = "properties";
-    /**
-     * The type identification.
-     */
-    private static final String TYPE = "type";
-    /**
-     * The index identification.
-     */
-    private static final String INDEX = "index";
-
-
-    private static final String FORMAT_FIELD = "format";
-
-    private static final String ANALYZER_FIELDS = "analyzer";
-
-    private static final String STORE = "store";
-
-    /**
-     * The id elasticsearch name.
-     */
-    private static final String ID = "_id";
-    /**
-     * The elasticsearch long name.
-     */
-
-    /**
-     * The Log.
-     */
+    // Logger
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The XContentBuilder.
-     */
+    // Elasticsearch mapping properties
+    private static final String PROPERTIES = "properties";
+    private static final String TYPE = "type";
+    private static final String FIELDS = "fields";
+    private static final String INDEX = "index";
+    private static final String DYNAMIC = "dynamic";
+    private static final String ANALYZER = "analyzer";
+
+    // Elasticsearch specific fields
+    private static final String ID = "_id";
+
+    // Crossdata parsing properties
+    private static final String ANALYZER_FIELDS = "analyzer";
+
+    // Other
+    /*
+       private static final String FORMAT_FIELD = "format";
+       private static final String STORE = "store";
+       */
 
 
     /**
@@ -85,7 +71,7 @@ public class ContentBuilderCreator {
      */
     public XContentBuilder createTypeSource(TableMetadata typeMetadata) throws ExecutionException {
 
-        XContentBuilder xContentBuilder = null;
+        XContentBuilder xContentBuilder;
         try {
 
             xContentBuilder = XContentFactory.jsonBuilder().startObject();
@@ -116,7 +102,9 @@ public class ContentBuilderCreator {
      * @throws ExecutionException if an error happen.
      */
     public XContentBuilder addColumn(ColumnMetadata columnMetadata) throws IOException, ExecutionException {
-        XContentBuilder mapping = XContentFactory.jsonBuilder().startObject()
+        XContentBuilder mapping;
+
+        mapping = XContentFactory.jsonBuilder().startObject()
                 .startObject(columnMetadata.getName().getTableName().getName()).startObject(PROPERTIES)
                 .startObject(columnMetadata.getName().getName())
                 .field(TYPE, TypeConverter.convert(columnMetadata.getColumnType()))
@@ -153,43 +141,45 @@ public class ContentBuilderCreator {
     }
 
     private XContentBuilder processColumnProperties(XContentBuilder xContentBuilder, ColumnMetadata columnMetadata) throws ExecutionException, IOException {
-        String columnType = TypeConverter.convert(columnMetadata.getColumnType());
-        xContentBuilder = xContentBuilder.field(TYPE, columnType);
+        ColumnType columnType =  columnMetadata.getColumnType();
+        Map<String, List<String>> columnTypeProperties = columnType.getColumnProperties();
+        String columnTypeName = TypeConverter.convert(columnType);
 
-        Map<String, List<String>> columProperties = columnMetadata.getColumnType().getColumnProperties();
-        if (columProperties != null && !columProperties.containsKey(INDEX)) {
-            xContentBuilder.field(INDEX, getTypeIndex(columnType));
-        }
+        // Creates base field type
+        xContentBuilder = xContentBuilder.field(TYPE, columnTypeName);
 
-        if (columProperties != null){
-            for ( Map.Entry<String, List<String>> entry: columProperties.entrySet()){
+        // Apply specific properties for the given field
+        if (columnTypeProperties != null) {
+            // Retrieves any possible analyzers in order to be processed apart
+            List<String> analyzers = columnTypeProperties.remove(ANALYZER_FIELDS);
+
+            // Any property not being an analyzer is applied to the main field
+            for ( Map.Entry<String, List<String>> entry: columnTypeProperties.entrySet()){
                 if (entry.getValue().size() > 1){
                     xContentBuilder = xContentBuilder.field( entry.getKey(), entry.getValue());
-                }else if (columProperties.get(entry.getKey()).size() == 1){
+                }
+                else if (columnTypeProperties.get(entry.getKey()).size() == 1){
                     xContentBuilder = xContentBuilder.field(entry.getKey(), entry.getValue().get(0));
                 }
+            }
+
+            // Once every property for the main field has been processed analyzers are checked in order to create specific sub-fields
+            if (null != analyzers && !analyzers.isEmpty()){
+                xContentBuilder.startObject(FIELDS);
+                // For each defined analyzer a sub-field is created named the same as the analyzer and having the same type as the parent field.
+                for (String analyzer : analyzers) {
+                    xContentBuilder.startObject(analyzer);
+                    xContentBuilder = xContentBuilder.field(TYPE, columnTypeName);
+                    xContentBuilder = xContentBuilder.field(ANALYZER, analyzer);
+                    xContentBuilder.endObject();
+                }
+                xContentBuilder.endObject();
             }
         }
 
         return xContentBuilder.endObject();
     }
 
-    /**
-     * Resolve the typeIndex.
-     *
-     * @param columnType the columnType.
-     * @return the index type.
-     */
-    private String getTypeIndex(String columnType) {
-        String stringType;
-        if (TypeConverter.ES_BOOLEAN.equals(columnType)) {
-            stringType = ESIndexType.NOT_ANALYZED.getCode();
-        } else {
-            stringType = ESIndexType.getDefault().getCode();
-
-        }
-        return stringType;
-    }
 
     /**
      * This method create the index.
@@ -199,9 +189,11 @@ public class ContentBuilderCreator {
      * @throws IOException if an error happen creating the ContentBuilder.
      */
     private void configureIndex(String field, ESIndexType indexType, XContentBuilder xContentBuilder) throws IOException {
-
+        // Sets "_id" field as indexed in order to be able to search by id
         xContentBuilder.startObject(field).field(INDEX, indexType.getCode()).endObject();
 
+        // Sets "dynamic" property to "false" in order to avoid fields not defined through the mappings being indexed
+        xContentBuilder.field(DYNAMIC, "false");
     }
 
 }
