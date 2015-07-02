@@ -61,8 +61,10 @@ public class TypeConverterTest {
         convet.put(new ColumnType(DataType.INT), "integer");
         convet.put(new ColumnType(DataType.TEXT), "string");
         convet.put(new ColumnType(DataType.VARCHAR), "string");
+        ColumnType listType = new ColumnType(DataType.LIST, null);
+        listType.setDBCollectionType(new ColumnType(DataType.TEXT));
+        convet.put(listType, "string");
 
-        exceptions.add(new ColumnType(DataType.LIST));
         exceptions.add(new ColumnType(DataType.MAP));
         exceptions.add(new ColumnType(DataType.NATIVE));
         exceptions.add(new ColumnType(DataType.SET));

@@ -15,23 +15,13 @@ To automatically build execute the following command:
 ```
    > mvn clean compile install
 ```
-
-## Build an executable Connector Elasticsearch ##
-
-To generate the executable execute the following command:
-
-```
-   > mvn crossdata-connector:install
-```
-
 ## Running the Stratio Connector Elasticsearch ##
 
 
 To run Connector Elasticsearch execute:
 
 ```
-   > cd connector-elasticsearch-core/
-   > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT start
+   > mvn exec:java -DskipTests -pl connector-elasticsearch -Dexec.mainClass="com.stratio.connector.elasticsearch.core.ElasticsearchConnector"
 ```
 
 To stop the connector execute:
