@@ -189,11 +189,8 @@ public class ContentBuilderCreator {
      * @throws IOException if an error happen creating the ContentBuilder.
      */
     private void configureIndex(String field, ESIndexType indexType, XContentBuilder xContentBuilder) throws IOException {
-        // Sets "_id" field as indexed in order to be able to search by id
-        xContentBuilder.startObject(field).field(INDEX, indexType.getCode()).endObject();
-
         // Sets "dynamic" property to "false" in order to avoid fields not defined through the mappings being indexed
-        xContentBuilder.field(DYNAMIC, "false");
+        xContentBuilder.field(DYNAMIC, "strict");
     }
 
 }
