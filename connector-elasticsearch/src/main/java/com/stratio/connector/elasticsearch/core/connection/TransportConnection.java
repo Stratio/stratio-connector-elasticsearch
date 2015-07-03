@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class TransportConnection extends Connection<Client> {
      * @param credentiasl the credentials.
      * @param config      The cluster configuration.
      */
-    public TransportConnection(ICredentials credentiasl, ConnectorClusterConfig config) {
+    public TransportConnection(ICredentials credentiasl, ConnectorClusterConfig config)  throws ExecutionException {
 
         elasticClient = new TransportClient(ElasticsearchClientConfiguration.getSettings(config))
                 .addTransportAddresses(ElasticsearchClientConfiguration.getTransportAddress(config));
