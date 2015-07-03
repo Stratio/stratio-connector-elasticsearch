@@ -45,7 +45,7 @@ public enum ConfigurationOptions {
     /**
      * The elastichseach cluser name.
      */
-    CLUSTER_NAME("Cluster Name","cluster.name",""),
+    CLUSTER_NAME("Cluster Name","cluster.name","", "clusterName"),
     /**
      * The hosts ip.
      */
