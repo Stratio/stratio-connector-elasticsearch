@@ -133,5 +133,12 @@
             <FunctionType>simple</FunctionType>
             <Description>It counts the number of rows</Description>
         </Function>
+
+        <Function>
+            <FunctionName>SUB_FIELD</FunctionName>
+            <Signature>sub_field(Tuple[Any, Text]):Tuple[Text]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>It counts the number of rows</Description>
+        </Function>
     </Functions>
 </Connector>

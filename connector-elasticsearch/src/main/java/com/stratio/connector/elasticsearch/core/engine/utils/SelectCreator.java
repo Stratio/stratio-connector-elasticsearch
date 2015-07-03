@@ -52,15 +52,25 @@ public class SelectCreator {
                     fields = new String[]{"_id"};
                     requestBuilder.setSize(0);
                     break;
+                }else if (SelectCreator.isFunction(selector, "sub_field")){
+                     fields[i] = calculateSubFieldName(selector);;
+                }else{
+                    fields[i] = selector.getColumnName().getName();
                 }
 
-                fields[i] = selector.getColumnName().getName();
                 i++;
 
             }
 
             requestBuilder.addFields(fields);
         }
+    }
+
+    public static String calculateSubFieldName(Selector selector) {
+        FunctionSelector functionSelector = (FunctionSelector) selector;
+        String field = functionSelector.getFunctionColumns().get(0).getColumnName().getName();
+        String subField = functionSelector.getFunctionColumns().get(1).getStringValue();
+        return field +"."+subField;
     }
 
     /**

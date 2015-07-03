@@ -215,9 +215,14 @@ public class ConnectorQueryExecutor {
     private String pickAliasOrFieldName(Map<Selector, String> alias, String field, ColumnName columnName, ColumnSelector columnSelector) {
         for (Map.Entry<Selector, String> allAlias : alias.entrySet()) {
             // for column selector dont work fine.
-            if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
-                String aliasValue = allAlias.getValue();
-                if (aliasValue != field) {
+
+            if (SelectCreator.isFunction(allAlias.getKey(), "sub_field")
+                    && SelectCreator.calculateSubFieldName(allAlias.getKey()).equals(field)) {
+                field = allAlias.getKey().getAlias();
+            }else if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
+                String
+                        aliasValue = allAlias.getValue();
+                if (!aliasValue.equals(field)) {
                     columnSelector.setAlias(aliasValue);
                     field = aliasValue;
                 }
@@ -234,6 +239,9 @@ public class ConnectorQueryExecutor {
             if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())) {
                 columntype = columnMap.getValue();
                 break;
+            }else if(SelectCreator.isFunction(columnMap.getKey(), "sub_field") &&
+                    columnSelector.getColumnName().getName().contains(SelectCreator.calculateSubFieldName(columnMap.getKey()))){
+                columntype = columnMap.getValue();
             }
         }
         return columntype;
@@ -251,7 +259,9 @@ public class ConnectorQueryExecutor {
         for (Selector selector : selectors) {
             if (SelectCreator.isFunction(selector, "count")) {
                 fieldNames.add((String) selector.getAlias());
-            } else {
+            } else if (SelectCreator.isFunction(selector, "sub_field")){
+                fieldNames.add(SelectCreator.calculateSubFieldName(selector));
+            }else {
                 fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
             }
         }

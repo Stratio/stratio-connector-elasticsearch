@@ -85,14 +85,24 @@ public class ConnectorQueryBuilder {
 
             for(Selector term: queryData.getGroupBy().getIds()){
                 if (aggregationBuilder == null){
-                    aggregationBuilder = AggregationBuilders.terms(term.getColumnName().getName()).field(term.getColumnName().getName());
+                    String fieldName = getAggregationFieldName(term);
+                    aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
                 }else{
-                    aggregationBuilder.subAggregation(AggregationBuilders.terms(term.getColumnName().getName()).field(term.getColumnName().getName()));
+                    String fieldName = getAggregationFieldName(term);
+                    aggregationBuilder.subAggregation(AggregationBuilders.terms(fieldName).field(fieldName));
                 }
             }
 
             requestBuilder.addAggregation(aggregationBuilder);
             requestBuilder.setSize(0);
+        }
+    }
+
+    private String getAggregationFieldName(Selector term) {
+        if (SelectCreator.isFunction(term, "sub_field")){
+            return SelectCreator.calculateSubFieldName(term);
+        }else{
+            return term.getColumnName().getName();
         }
     }
 
