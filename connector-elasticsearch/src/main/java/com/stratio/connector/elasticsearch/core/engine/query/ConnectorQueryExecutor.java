@@ -24,7 +24,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import org.elasticsearch.action.ActionRequestBuilder;
@@ -37,8 +36,6 @@ import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
