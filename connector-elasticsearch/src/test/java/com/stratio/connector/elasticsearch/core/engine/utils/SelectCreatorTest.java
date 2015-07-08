@@ -73,7 +73,7 @@ public class SelectCreatorTest {
 
         columnMap.put(functionSelector, "count");
 
-        boolean result = SelectCreator.hasFunction(columnMap, "count");
+        boolean result = SelectorUtils.hasFunction(columnMap, "count");
 
         //Expectations
         Assert.assertTrue(result);
@@ -85,7 +85,7 @@ public class SelectCreatorTest {
         ColumnSelector columnSelector = mock(ColumnSelector.class);
         columnMap.put(columnSelector, "col");
 
-        boolean result = SelectCreator.hasFunction(columnMap, "count");
+        boolean result = SelectorUtils.hasFunction(columnMap, "count");
 
         //Expectations
         Assert.assertFalse(result);

@@ -18,13 +18,11 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
-import java.util.Map;
-import java.util.Set;
-
-import com.stratio.crossdata.common.statements.structures.FunctionSelector;
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+
+import java.util.Set;
 
 /**
  * The responsibility of this class is to create a Select creator.
@@ -48,12 +46,12 @@ public class SelectCreator {
             String[] fields = new String[columnMetadataList.size()];
             int i = 0;
             for (Selector selector : columnMetadataList) {
-                if (SelectCreator.isFunction(selector, "count")) {
+                if (SelectorUtils.isFunction(selector, "count")) {
                     fields = new String[]{"_id"};
                     requestBuilder.setSize(0);
                     break;
-                }else if (SelectCreator.isFunction(selector, "sub_field")){
-                     fields[i] = calculateSubFieldName(selector);;
+                }else if (SelectorUtils.isFunction(selector, "sub_field")){
+                     fields[i] = SelectorUtils.calculateSubFieldName(selector);;
                 }else{
                     fields[i] = selector.getColumnName().getName();
                 }
@@ -64,51 +62,5 @@ public class SelectCreator {
 
             requestBuilder.addFields(fields);
         }
-    }
-
-    public static String calculateSubFieldName(Selector selector) {
-        FunctionSelector functionSelector = (FunctionSelector) selector;
-        String field = functionSelector.getFunctionColumns().get(0).getColumnName().getName();
-        String subField = functionSelector.getFunctionColumns().get(1).getStringValue();
-        return field +"."+subField;
-    }
-
-    /**
-     * Return if the Selector is a function, and if the function name is the passed.
-     *
-     * @param selector
-     * @param functionName
-     * @return
-     */
-    public static boolean isFunction(Selector selector, String functionName) {
-
-        if (!(selector instanceof FunctionSelector))
-            return false;
-
-        FunctionSelector functionSelector = (FunctionSelector) selector;
-        return functionSelector.getFunctionName().equalsIgnoreCase(functionName);
-    }
-
-
-    public static boolean hasFunction(Map<Selector, String> columnMetadata, String functionName) {
-
-        for (Selector selector : columnMetadata.keySet()) {
-            if (isFunction(selector, functionName)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static FunctionSelector getFunctionSelector(Map<Selector, String> columnMetadata, String functionName) {
-
-        for (Selector selector : columnMetadata.keySet()) {
-            if (isFunction(selector, functionName)) {
-                return (FunctionSelector) selector;
-            }
-        }
-
-        return null;
     }
 }
