@@ -116,40 +116,24 @@ public class ConnectorQueryBuilderTest {
             ProjectParsed parsedQuery = createBaseParsedQuery();
 
             // Mocks limit property
-            Limit limit = mock(Limit.class);
-            when(limit.getLimit()).thenReturn(5);
-            when(parsedQuery.getLimit()).thenReturn(limit);
+            addLimit(5, parsedQuery);
 
             // Mocks query properties
             Collection<Filter> matches = new ArrayList<Filter>();
             when(parsedQuery.getMatchList()).thenReturn(matches);
 
-            ColumnName columnName = new ColumnName(INDEX, TYPE, COLUMN_1);
-            Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector("search string"));
-            Set<Operations> operations = new HashSet<Operations>();
-            operations.add(Operations.FILTER_NON_INDEXED_EQ);
-            Filter filter = new Filter(operations, relation);
             Collection<Filter> filters = new ArrayList<Filter>();
-            filters.add(filter);
+            addFilter(COLUMN_1, "search string", filters);
             when(parsedQuery.getFilter()).thenReturn(filters);
 
             Collection<FunctionFilter> functionFilters = new ArrayList<FunctionFilter>();
             when(parsedQuery.getFunctionFilters()).thenReturn(functionFilters);
 
-
             // Mocks return fields property
-            Selector selector1 = mock(Selector.class);
-            when(selector1.getColumnName()).thenReturn(new ColumnName(INDEX, TYPE, COLUMN_1));
-
-            Selector selector2 = mock(Selector.class);
-            when(selector2.getColumnName()).thenReturn(new ColumnName(INDEX, TYPE, COLUMN_2));
-
-            Map<Selector, String> selectors = new LinkedHashMap<Selector, String>();
-                selectors.put(selector1, COLUMN_1);
-                selectors.put(selector2, COLUMN_2);
-            Select select = mock(Select.class);
-            when(select.getColumnMap()).thenReturn(selectors);
-            when(parsedQuery.getSelect()).thenReturn(select);
+            List<String> returnFields = new ArrayList<String>();
+            returnFields.add(COLUMN_1);
+            returnFields.add(COLUMN_2);
+            addReturnFields(returnFields, parsedQuery);
 
             SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
             assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
@@ -174,6 +158,37 @@ public class ConnectorQueryBuilderTest {
         when(parsedQuery.getFunctionFilters()).thenReturn(functionFilters);
 
         return parsedQuery;
+    }
+
+
+    private void addLimit (int size, ProjectParsed parsedQuery){
+        Limit limit = mock(Limit.class);
+        when(limit.getLimit()).thenReturn(5);
+        when(parsedQuery.getLimit()).thenReturn(limit);
+    }
+
+
+    private void addFilter (String field, String value, Collection<Filter> filters){
+        ColumnName columnName = new ColumnName(INDEX, TYPE, field);
+        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector("search string"));
+        Set<Operations> operations = new HashSet<Operations>();
+        operations.add(Operations.FILTER_NON_INDEXED_EQ);
+        Filter filter = new Filter(operations, relation);
+
+        filters.add(filter);
+    }
+
+
+    private void addReturnFields (List<String> returnFields, ProjectParsed parsedQuery){
+        Map<Selector, String> selectors = new LinkedHashMap<Selector, String>();
+        for (String returnField : returnFields) {
+            Selector selector = mock(Selector.class);
+            selectors.put(selector, returnField);
+            when(selector.getColumnName()).thenReturn(new ColumnName(INDEX, TYPE, returnField));
+        }
+        Select select = mock(Select.class);
+        when(select.getColumnMap()).thenReturn(selectors);
+        when(parsedQuery.getSelect()).thenReturn(select);
     }
 
 

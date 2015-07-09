@@ -83,7 +83,7 @@ public class ConnectorQueryBuilder {
         else {
             createSelect(queryData.getSelect());
             createSort(queryData.getOrderBy());
-            createLimit(queryData.getLimit()); //TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
+            createLimit(queryData.getLimit());
         }
 
         logQuery();
