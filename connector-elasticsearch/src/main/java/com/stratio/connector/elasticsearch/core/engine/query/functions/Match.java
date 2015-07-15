@@ -31,10 +31,7 @@ public class Match extends ESFunction{
 
 
 
-    protected Match(List<Selector> paramareters) {
-        super(ESFunction.CONTAINS, paramareters);
-
-    }
+    protected Match(List<Selector> parameters) {super(ESFunction.CONTAINS, parameters);}
 
     @Override
     public QueryBuilder buildQuery() {
@@ -47,10 +44,8 @@ public class Match extends ESFunction{
         }
 
         String value = getParameters().get(1).getStringValue();
-        String minimunShoulMatch = getParameters().get(2).getStringValue();
-        if (StringUtils.isEmpty(minimunShoulMatch)){
-            minimunShoulMatch = "100%";
-        }
-        return QueryBuilders.matchQuery(field, value.toLowerCase()).minimumShouldMatch(minimunShoulMatch);
+        String minimumShouldMatch = getParameters().get(2).getStringValue();
+
+        return QueryBuilders.matchQuery(field, value).minimumShouldMatch(minimumShouldMatch);
     }
 }

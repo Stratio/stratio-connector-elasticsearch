@@ -30,8 +30,8 @@ import java.util.List;
  */
 public class MatchPhrase extends ESFunction {
 
-    protected MatchPhrase(List<Selector> paramareters) {
-        super(ESFunction.MATCH_PHRASE, paramareters);
+    protected MatchPhrase(List<Selector> parameters) {
+        super(ESFunction.MATCH_PHRASE, parameters);
     }
 
     @Override
@@ -44,7 +44,8 @@ public class MatchPhrase extends ESFunction {
         }
 
         String value = getParameters().get(1).getStringValue();
-        return QueryBuilders.matchPhraseQuery(field, value.toLowerCase());
+
+        return QueryBuilders.matchPhraseQuery(field, value);
     }
 
 }

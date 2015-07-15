@@ -97,7 +97,7 @@ public abstract class ESFunction {
             case MATCH_PREFIX:
                 return new MatchPrefix(parameters);
             case MULTI_MATCH_FUZZY:
-                return new MatchFuzzy(parameters);
+                return new MultiMatchFuzzy(parameters);
             case FUZZY:
                 return new Fuzzy(parameters);
             default:

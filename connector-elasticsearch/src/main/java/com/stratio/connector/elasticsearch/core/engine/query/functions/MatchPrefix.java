@@ -27,10 +27,7 @@ import java.util.List;
 
 public class MatchPrefix extends ESFunction {
 
-        protected MatchPrefix(List<Selector> paramareters) {
-            super(ESFunction.MATCH_PREFIX, paramareters);
-
-        }
+        protected MatchPrefix(List<Selector> parameters) {super(ESFunction.MATCH_PREFIX, parameters);}
 
         @Override
         public QueryBuilder buildQuery() {
@@ -43,6 +40,7 @@ public class MatchPrefix extends ESFunction {
             }
 
             String value = getParameters().get(1).getStringValue();
-            return QueryBuilders.prefixQuery(field, value.toLowerCase());
+
+            return QueryBuilders.prefixQuery(field, value);
         }
 }
