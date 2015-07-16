@@ -45,7 +45,7 @@ public class FuzzyMultiMatchTest {
         parameters.add(new ColumnSelector(new ColumnName(tableName, "col2Name")));
         parameters.add(new StringSelector("*_colName"));
         parameters.add(new StringSelector("value"));
-        parameters.add(new StringSelector("100%"));
+        parameters.add(new StringSelector("0.6"));
 
         FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH_FUZZY, parameters,tableName);
         ESFunction match = ESFunction.build(function);
@@ -54,7 +54,7 @@ public class FuzzyMultiMatchTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expected = "{\"multi_match\":{\"query\":\"value\",\"fields\":[\"colName\",\"col2Name\",\"*_colName\"],\"fuzziness\":\"100%\"}}";
+        String expected = "{\"multi_match\":{\"query\":\"value\",\"fields\":[\"colName\",\"col2Name\",\"*_colName\"],\"fuzziness\":\"0.6\"}}";
         Assert.assertEquals(expected, builder.toString().replaceAll("\\s+", ""));
     }
 }
