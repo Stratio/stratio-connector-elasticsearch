@@ -2,6 +2,7 @@ package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.FunctionRelation;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class FuzzyTest {
     @Test
-    public void testMatch() throws UnsupportedException {
+    public void testMatch() throws UnsupportedException, ExecutionException {
 
         List<Selector> parameters = new ArrayList<>();
         TableName tableName = new TableName("catalog", "table");
@@ -34,8 +35,7 @@ public class FuzzyTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expedted = "{\"fuzzy\":{\"colName\":{\"value\":\"fieldvalue\",\"fuzziness\":\"1\"}}}";
-        Assert.assertEquals(expedted, builder.toString().replace(" ", "").replace("\n", ""));
+        String expected = "{\"fuzzy\":{\"colName\":{\"value\":\"fieldValue\",\"fuzziness\":\"1\"}}}";
+        Assert.assertEquals(expected, builder.toString().replaceAll("\\s+", ""));
     }
-
 }

@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.StringSelector;
@@ -29,23 +30,44 @@ import java.util.List;
 
 public class Match extends ESFunction{
 
-
+    private final String FUNCTION_NAME = "contains";
+    private final String EXPECTED_SIGNATURE = "contains (fields, value, minimumShouldMatch)";
+    private final int EXPECTED_PARAMETERS = 3;
 
     protected Match(List<Selector> parameters) {super(ESFunction.CONTAINS, parameters);}
 
     @Override
-    public QueryBuilder buildQuery() {
+    public QueryBuilder buildQuery() throws ExecutionException {
 
-        String field = "";
-        if (getParameters().get(0) instanceof ColumnSelector ){
-            field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
-        } else {
-            field = getParameters().get(0).getStringValue();
-        }
+        // Checks function signature
+        validateFunctionSignature(FUNCTION_NAME, true, EXPECTED_PARAMETERS, EXPECTED_SIGNATURE);
 
+        // Retrieves function parameters
+
+        // Retrieves the string to be seached
         String value = getParameters().get(1).getStringValue();
+
+        // Retrieves the minimum should match value
         String minimumShouldMatch = getParameters().get(2).getStringValue();
 
-        return QueryBuilders.matchQuery(field, value).minimumShouldMatch(minimumShouldMatch);
+        // Retrieves the fields to be searched in
+        String fields = "";
+
+        // If first parameter is a column its name is set as the search field
+        if (getParameters().get(0) instanceof ColumnSelector ){
+            fields = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
+        }
+        // Otherwise the received value is treated as the search fields string
+        else {
+            fields = getParameters().get(0).getStringValue();
+        }
+
+        // Once the search fields string is retrieved it is checked if more than one field is queried so we could build a match or multi match query
+        if (fields.split("\\s+").length > 1){
+            return QueryBuilders.multiMatchQuery(value, fields.split("\\s+"));
+        }
+        else {
+            return QueryBuilders.matchQuery(fields, value).minimumShouldMatch(minimumShouldMatch);
+        }
     }
 }

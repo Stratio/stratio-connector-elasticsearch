@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.FunctionRelation;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -74,7 +75,7 @@ public abstract class ESFunction {
      *
      * @return
      */
-    public abstract QueryBuilder buildQuery();
+    public abstract QueryBuilder buildQuery() throws ExecutionException;
 
 
     /**
@@ -102,6 +103,31 @@ public abstract class ESFunction {
                 return new Fuzzy(parameters);
             default:
                 throw new UnsupportedException("The function [" + function.getFunctionName() + "] is not supported");
+        }
+    }
+
+    /**
+     * Checks function signature
+     *
+     * @param functionName                   function name
+     * @param checkEmpty                     flag that indicates if empty values are allowed
+     * @param expectedParameters      expected number of parameters
+     * @param expectedSignature         expected function signature
+     * @throws ExecutionException
+     */
+    public void validateFunctionSignature (String functionName, boolean checkEmpty, int expectedParameters, String expectedSignature)
+            throws ExecutionException {
+
+        if (null == parameters || parameters.size() != expectedParameters){
+            throw new ExecutionException("Wrong number of parameters for \"" + functionName + "\" function. " +
+                    "Expected signature: " + expectedSignature + ".");
+        }
+        if (checkEmpty){
+            for (Selector parameter : parameters) {
+                if (null == parameter || parameter.getStringValue().trim().isEmpty()){
+                    throw new ExecutionException("Every parameter in \"" + functionName + "\" function must have a non empty value.");
+                }
+            }
         }
     }
 }
