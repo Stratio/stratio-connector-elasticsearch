@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -33,6 +33,9 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +85,9 @@ public class ConnectorQueryExecutor {
             SearchResponse response = ((SearchRequestBuilder) requestBuilder).execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
+            if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
+                processAggregation(queryData, resultSet, response);
+            } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
                 processCount(queryData, resultSet, response);
             } else {
                 processResults(queryData, resultSet, response);
@@ -98,6 +103,39 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
+    private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
+
+        for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
+            StringTerms stringTerms = (StringTerms) aggregation; //TODO support for different types
+            Map<Selector, String> alias = returnAlias(queryData);
+
+            for (Terms.Bucket bucket : stringTerms.getBuckets()) {
+                Map<String, Object> fields = new HashMap();
+
+                fields.put(stringTerms.getName(), bucket.getKey());
+                if (bucket.getAggregations().iterator().hasNext()) {
+                    processSubAggregation(queryData, resultSet, bucket, alias, fields);
+                } else {
+                    fields.put("count", bucket.getDocCount());
+                    Row row = buildRow(queryData, alias, fields);
+                    resultSet.add(row);
+                }
+            }
+        }
+    }
+
+    private void processSubAggregation(ProjectParsed queryData, ResultSet resultSet, Terms.Bucket bucket, Map<Selector, String> alias, Map<String, Object> fields) throws ExecutionException {
+        for (Aggregation subAgg : bucket.getAggregations().asList()) {
+            StringTerms stringTermsSubAgg = (StringTerms) subAgg;
+            for (Terms.Bucket subBucker : stringTermsSubAgg.getBuckets()) {
+                fields.put("count", subBucker.getDocCount());
+                fields.put(stringTermsSubAgg.getName(), subBucker.getKey());
+                Row row = buildRow(queryData, alias, fields);
+                resultSet.add(row);
+            }
+        }
+    }
+
     private void processResults(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
         for (SearchHit hit : response.getHits().getHits()) {
             resultSet.add(createRow(hit, queryData));
@@ -105,7 +143,7 @@ public class ConnectorQueryExecutor {
     }
 
     private void processCount(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
-        FunctionSelector functionSelector = SelectCreator.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
+        FunctionSelector functionSelector = SelectorUtils.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
         Map<Selector, String> alias = returnAlias(queryData);
         Map<String, Object> fields = new HashMap();
 
@@ -175,9 +213,14 @@ public class ConnectorQueryExecutor {
     private String pickAliasOrFieldName(Map<Selector, String> alias, String field, ColumnName columnName, ColumnSelector columnSelector) {
         for (Map.Entry<Selector, String> allAlias : alias.entrySet()) {
             // for column selector dont work fine.
-            if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
-                String aliasValue = allAlias.getValue();
-                if (aliasValue != field) {
+
+            if (SelectorUtils.isFunction(allAlias.getKey(), "sub_field")
+                    && SelectorUtils.calculateSubFieldName(allAlias.getKey()).equals(field)) {
+                field = allAlias.getKey().getAlias();
+            }else if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
+                String
+                        aliasValue = allAlias.getValue();
+                if (!aliasValue.equals(field)) {
                     columnSelector.setAlias(aliasValue);
                     field = aliasValue;
                 }
@@ -194,6 +237,9 @@ public class ConnectorQueryExecutor {
             if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())) {
                 columntype = columnMap.getValue();
                 break;
+            }else if(SelectorUtils.isFunction(columnMap.getKey(), "sub_field") &&
+                    columnSelector.getColumnName().getName().contains(SelectorUtils.calculateSubFieldName(columnMap.getKey()))){
+                columntype = columnMap.getValue();
             }
         }
         return columntype;
@@ -209,9 +255,11 @@ public class ConnectorQueryExecutor {
     private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (Selector selector : selectors) {
-            if (SelectCreator.isFunction(selector, "count")) {
+            if (SelectorUtils.isFunction(selector, "count")) {
                 fieldNames.add((String) selector.getAlias());
-            } else {
+            } else if (SelectorUtils.isFunction(selector, "sub_field")){
+                fieldNames.add(SelectorUtils.calculateSubFieldName(selector));
+            }else {
                 fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
             }
         }
@@ -231,7 +279,12 @@ public class ConnectorQueryExecutor {
             fields = new HashMap<>();
             for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
 
-                fields.put(entry.getKey(), entry.getValue().getValue());
+                if (entry.getValue().getValues().size()>1){
+                    fields.put(entry.getKey(), entry.getValue().getValues());
+                }else{
+                    fields.put(entry.getKey(), entry.getValue().getValue());
+                }
+
             }
         }
         return fields;
@@ -250,5 +303,4 @@ public class ConnectorQueryExecutor {
         }
         return alias;
     }
-
 }

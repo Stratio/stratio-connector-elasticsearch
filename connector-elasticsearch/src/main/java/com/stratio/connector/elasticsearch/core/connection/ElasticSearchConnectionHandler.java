@@ -24,6 +24,7 @@ import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptio
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 import com.stratio.crossdata.common.connector.IConfiguration;
 import com.stratio.crossdata.common.exceptions.ConnectionException;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.security.ICredentials;
 
 /**
@@ -55,13 +56,15 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
         Connection connection;
         if (isNodeClient(connectorClusterConfig)) {
             connection = new NodeConnection(iCredentials, connectorClusterConfig);
-        } else {
-            connection = new TransportConnection(iCredentials, connectorClusterConfig);
+        }
+        else {
+            try {connection = new TransportConnection(iCredentials, connectorClusterConfig);}
+            catch (ExecutionException exception){
+                throw new ConnectionException("The connection could not be established", exception);
+            }
         }
         if (!connection.isConnected()) {
-             throw new ConnectionException("The connection could not be "
-                     + "established");
-             }
+             throw new ConnectionException("The connection could not be established");}
         return connection;
     }
 

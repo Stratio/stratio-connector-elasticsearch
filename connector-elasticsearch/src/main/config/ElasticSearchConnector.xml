@@ -59,6 +59,7 @@
         <operation>SELECT_ORDER_BY</operation>
         <operation>SELECT_LIMIT</operation>
         <operation>SELECT_FUNCTIONS</operation>
+        <operation>SELECT_GROUP_BY</operation>
 
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_PK_GT</operation>
@@ -129,6 +130,13 @@
         <Function>
             <FunctionName>COUNT</FunctionName>
             <Signature>count(Tuple[Any*]):Tuple[Int]</Signature>
+            <FunctionType>simple</FunctionType>
+            <Description>It counts the number of rows</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>SUB_FIELD</FunctionName>
+            <Signature>sub_field(Tuple[Any, Text]):Tuple[Text]</Signature>
             <FunctionType>simple</FunctionType>
             <Description>It counts the number of rows</Description>
         </Function>

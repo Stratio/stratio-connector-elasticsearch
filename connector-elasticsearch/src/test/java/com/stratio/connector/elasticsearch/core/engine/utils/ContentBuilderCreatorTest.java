@@ -47,8 +47,10 @@ public class ContentBuilderCreatorTest {
     public static final String INDEX_NAME = "index";
     public static final String TYPE_NAME = "type";
     public static final String CLUSTER_NAME = "CLUSTER_NAME";
-    private static final String RESULT_CREATE_TABLE = "{\"_id\":{\"index\":\"not_analyzed\"}," +
-            "\"properties\":{\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"},\"column_2\":{\"type\":\"boolean\",\"index\":\"not_analyzed\"},\"column_3\":{\"type\":\"double\",\"index\":\"analyzed\"},\"column_4\":{\"type\":\"float\",\"index\":\"analyzed\"},\"column_5\":{\"type\":\"integer\",\"index\":\"analyzed\"},\"column_6\":{\"type\":\"string\",\"index\":\"analyzed\"},\"column_7\":{\"type\":\"string\",\"index\":\"analyzed\"}}}";
+    private static final String RESULT_CREATE_TABLE = "{\"dynamic\":\"strict\"," +
+            "\"properties\":{\"column_1\":{\"type\":\"long\"},\"column_2\":{\"type\":\"boolean\"},\"column_3\":{\"type\":\"double\"}," +
+            "\"column_4\":{\"type\":\"float\"},\"column_5\":{\"type\":\"integer\"},\"column_6\":{\"type\":\"string\"}," +
+            "\"column_7\":{\"type\":\"string\"}}}";
     ContentBuilderCreator deepContentBuilder;
 
     @Before
@@ -140,10 +142,10 @@ public class ContentBuilderCreatorTest {
 
 
         //Expectations
-        String expected = "{\"_id\":{\"index\":\"not_analyzed\"},\"" +
-                "properties\":{\"column_1\":{\"type\":\"long\",\"index\":\"analyzed\"},\"" +
-                "column_6\":{\"type\":\"string\",\"index\":\"analyzed\",\"" +
-                "analyzer\":[\"aaa\",\"bbb\"],\"format\":\"aebi\"}}}";
+        String expected = "{\"dynamic\":\"strict\"," +
+                "\"properties\":{\"column_1\":{\"type\":\"long\"}," +
+                "\"column_6\":{\"type\":\"string\",\"format\":\"aebi\"," +
+                "\"fields\":{\"aaa\":{\"type\":\"string\",\"analyzer\":\"aaa\"},\"bbb\":{\"type\":\"string\",\"analyzer\":\"bbb\"}}}}}";
 
         assertEquals("The JSON is not correct", expected, result.string());
 

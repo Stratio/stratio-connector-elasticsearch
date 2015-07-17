@@ -30,12 +30,13 @@ import static com.stratio.connector.elasticsearch.core.configuration.Configurati
 import java.util.HashMap;
 import java.util.Map;
 
+import com.stratio.connector.commons.util.PropertyValueRecovered;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.transport.TransportAddress;
 
-import com.stratio.connector.commons.util.ConnectorParser;
 import com.stratio.crossdata.common.connector.ConnectorClusterConfig;
 
 /**
@@ -94,15 +95,16 @@ public final class ElasticsearchClientConfiguration {
      * @param config the configuration options.
      * @return the transport address
      */
-    public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) {
+    public static TransportAddress[] getTransportAddress(ConnectorClusterConfig config) throws ExecutionException{
 
-        String[] hosts = ConnectorParser.hosts(config.getClusterOptions().get(HOST.getManifestOption()));
-        String[] ports = ConnectorParser.ports(config.getClusterOptions().get(PORT.getManifestOption()));
-        TransportAddress[] transportAddresses = new TransportAddress[
-                hosts.length];
+        String[] hosts = PropertyValueRecovered.recoveredValueASArray(String.class, config.getClusterOptions().get(HOST.getManifestOption()));
+        String[] ports = PropertyValueRecovered.recoveredValueASArray(String.class, config.getClusterOptions().get(PORT.getManifestOption()));
+        TransportAddress[] transportAddresses = new TransportAddress[hosts.length];
+
         for (int i = 0; i < hosts.length; i++) {
             transportAddresses[i] = new InetSocketTransportAddress(hosts[i], Integer.decode(ports[i]));
         }
+
         return transportAddresses;
 
     }

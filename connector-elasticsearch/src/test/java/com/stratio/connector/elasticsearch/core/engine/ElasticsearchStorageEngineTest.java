@@ -21,7 +21,7 @@ package com.stratio.connector.elasticsearch.core.engine;
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.elasticsearch.core.connection.ElasticSearchConnectionHandler;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderFactory;
 import com.stratio.crossdata.common.data.*;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
@@ -65,7 +65,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  * @since <pre>sep 10, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ElasticsearchStorageEngine.class, QueryBuilderCreator.class })
+@PrepareForTest({ ElasticsearchStorageEngine.class, QueryBuilderFactory.class })
 public class ElasticsearchStorageEngineTest {
 
     private static final String CLUSTER_NAME = "CLUSTER NAME".toLowerCase();
@@ -216,10 +216,10 @@ public class ElasticsearchStorageEngineTest {
                 Operator.EQ,
                 new StringSelector("1"))));
 
-        QueryBuilderCreator queryBuilderCreator = mock(QueryBuilderCreator.class);
+        QueryBuilderFactory queryBuilderFactory = mock(QueryBuilderFactory.class);
         QueryBuilder queryBuilder = mock(QueryBuilder.class);
-        when(queryBuilderCreator.createBuilder(whereFilter)).thenReturn(queryBuilder);
-        whenNew(QueryBuilderCreator.class).withNoArguments().thenReturn(queryBuilderCreator);
+        when(queryBuilderFactory.createBuilder(whereFilter)).thenReturn(queryBuilder);
+        whenNew(QueryBuilderFactory.class).withNoArguments().thenReturn(queryBuilderFactory);
 
         ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
 
@@ -238,10 +238,10 @@ public class ElasticsearchStorageEngineTest {
     public void testTruncate() throws Exception {
         Collection<Filter> whereFilter = Collections.EMPTY_LIST;
 
-        QueryBuilderCreator queryBuilderCreator = mock(QueryBuilderCreator.class);
+        QueryBuilderFactory queryBuilderFactory = mock(QueryBuilderFactory.class);
         QueryBuilder queryBuilder = mock(QueryBuilder.class);
-        when(queryBuilderCreator.createBuilder(whereFilter)).thenReturn(queryBuilder);
-        whenNew(QueryBuilderCreator.class).withNoArguments().thenReturn(queryBuilderCreator);
+        when(queryBuilderFactory.createBuilder(whereFilter)).thenReturn(queryBuilder);
+        whenNew(QueryBuilderFactory.class).withNoArguments().thenReturn(queryBuilderFactory);
 
         ListenableActionFuture<DeleteByQueryResponse> listeneableActionFure = mock(ListenableActionFuture.class);
 

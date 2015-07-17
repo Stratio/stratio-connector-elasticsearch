@@ -21,6 +21,7 @@ package com.stratio.connector.elasticsearch.core.engine;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderFactory;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
@@ -32,7 +33,6 @@ import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.CommonsStorageEngine;
 import com.stratio.connector.elasticsearch.core.engine.utils.IndexRequestBuilderCreator;
-import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderCreator;
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -105,10 +105,10 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
                     throws UnsupportedException, ExecutionException {
         String index = tableName.getCatalogName().getName();
 
-        QueryBuilderCreator queryBuilderCreator = new QueryBuilderCreator();
+        QueryBuilderFactory queryBuilderFactory = new QueryBuilderFactory();
 
         connection.getNativeConnection().prepareDeleteByQuery(index)
-                        .setQuery(queryBuilderCreator.createBuilder(whereClauses)).execute().actionGet();
+                        .setQuery(queryBuilderFactory.createBuilder(whereClauses)).execute().actionGet();
 
     }
 

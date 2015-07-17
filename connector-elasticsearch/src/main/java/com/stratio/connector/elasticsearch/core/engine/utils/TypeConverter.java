@@ -88,7 +88,9 @@ public final class TypeConverter {
             type = ES_STRING;
         } else if (columnType.getDataType() == DataType.NATIVE && columnType.getODBCType().equals("date")) {
             type = columnType.getODBCType();
-        }else {
+        }else if (columnType.getDataType() == DataType.LIST) {
+            type = convert(columnType.getDbInnerType());
+        } else {
             throw new ExecutionException("The type [" + columnType + "] is not supported in ElasticSearch");
         }
         return type;

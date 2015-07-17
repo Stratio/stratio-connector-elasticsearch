@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -27,22 +28,36 @@ import java.util.List;
 
 public class MatchPrefix extends ESFunction {
 
-        protected MatchPrefix(List<Selector> paramareters) {
-            super(ESFunction.MATCH_PREFIX, paramareters);
+    private final String FUNCTION_NAME = "match_prefix";
+    private final String EXPECTED_SIGNATURE = "match_prefix (field, prefix)";
+    private final int EXPECTED_PARAMETERS = 2;
 
-        }
+        protected MatchPrefix(List<Selector> parameters) {super(ESFunction.MATCH_PREFIX, parameters);}
 
         @Override
-        public QueryBuilder buildQuery() {
+        public QueryBuilder buildQuery() throws ExecutionException {
+
+            // Checks function signature
+            validateFunctionSignature(FUNCTION_NAME, true, EXPECTED_PARAMETERS, EXPECTED_SIGNATURE);
+
+            // Retrieves function parameters
+
+            // Retrieves the string to be seached
+            String value = getParameters().get(1).getStringValue();
+
+            // Retrieves the field to be searched in
             String field = "";
 
+            // If first parameter is a column its name is set as the search field
             if (getParameters().get(0) instanceof ColumnSelector ){
                 field = ((ColumnSelector) getParameters().get(0)).getColumnName().getName();
-            } else {
+            }
+            // Otherwise the received value is treated as the search fields string
+            else {
                 field = getParameters().get(0).getStringValue();
             }
 
-            String value = getParameters().get(1).getStringValue();
-            return QueryBuilders.prefixQuery(field, value.toLowerCase());
+            // Builds the match phrase query
+            return QueryBuilders.prefixQuery(field, value);
         }
 }
