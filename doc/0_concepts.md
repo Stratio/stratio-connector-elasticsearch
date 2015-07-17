@@ -12,7 +12,7 @@ shards and replicas and even define new [analyzers] (https://www.elastic.co/guid
     "english_stemmer"],"tokenizer" : "standard"}},"filter" : {"english_stemmer" : {"type" : "stemmer","language" : "english"}}}}'};
 
 
-In this example we are  configuring three analyzers appart form the standard ones:
+In this example we are  configuring three analyzers appart from the standard ones:
 
 * **raw**: Does not tokenize nor change the original nor lowercases it. Suitable for groupings and aggregations if the fields are
 case sensitive.
@@ -28,7 +28,7 @@ basic search you can just create the catalog with no options.
 
 ### SubFields
 Elasticsearch allows us to define subfields by applying different analyzers to the original field. Those fields may be used for
-specific functionalities like sorting the results, getting agggregations or even achieving a better search experience by applying,
+specific functionalities like sorting the results, getting aggregations or even achieving a better search experience by applying,
 for example, language specific rules.
 
 #### Defining SubFields
