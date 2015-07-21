@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
+import com.stratio.connector.commons.TimerJ;
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.commons.engine.CommonsMetadataEngine;
@@ -74,33 +75,39 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
     }
 
     @Override
+    @TimerJ
     protected List<CatalogMetadata> provideMetadata(ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
         throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
     }
 
     @Override
+    @TimerJ
     protected CatalogMetadata provideCatalogMetadata(CatalogName catalogName, ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
         throw new UnsupportedException("Operation provideCatalogMetadata: Not supported yet by ElasticSearch");
     }
 
     @Override
+    @TimerJ
     protected TableMetadata provideTableMetadata(TableName tableName, ClusterName targetCluster, Connection<Client> connection) throws ConnectorException {
         throw new UnsupportedException("Operation provideTableMetadata: Not supported yet by ElasticSearch");
 
     }
 
     @Override
+    @TimerJ
     protected void alterCatalog(CatalogName catalogName, Map<Selector, Selector> options, Connection<Client> connection)
             throws UnsupportedException, ExecutionException {
         throw new UnsupportedException("Operation alterCatalog: Not supported yet by ElasticSearch");
     }
 
     @Override
+    @TimerJ
     protected void alterTable(TableName name, AlterOptions alterOptions, Connection<Client> connection) throws UnsupportedException, ExecutionException {
         AlterTableFactory.createHandler(alterOptions).execute(name, connection.getNativeConnection());
     }
 
     @Override
+    @TimerJ
     protected void createCatalog(CatalogMetadata catalogMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
         createESIndex(catalogMetadata, connection);
     }
@@ -113,6 +120,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @throws ExecutionException   if an error occur.
      */
     @Override
+    @TimerJ
     protected void createTable(TableMetadata tableMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
         String indexName = tableMetadata.getName().getCatalogName().getName();
         XContentBuilder xContentBuilder = contentBuilder.createTypeSource(tableMetadata);
@@ -136,6 +144,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void dropCatalog(CatalogName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         DeleteIndexResponse delete = null;
@@ -155,6 +164,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void dropTable(TableName name, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         DeleteMappingResponse delete = null;
@@ -175,6 +185,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void createIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         throw new UnsupportedException("Operation createIndex: Not supported yet by ElasticSearch");
@@ -190,6 +201,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void dropIndex(IndexMetadata indexMetadata, Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
         throw new UnsupportedException("Operation dropIndex: Not supported yet by ElasticSearch");
@@ -203,6 +215,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @return the ES Client.
      */
 
+    @TimerJ
     private Client recoveredClient(Connection connection) {
         return (Client) connection.getNativeConnection();
     }
@@ -214,6 +227,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @param connection    the elasticsearch connection.
      * @throws ExecutionException if an execution error happen.
      */
+    @TimerJ
     private void createESIndex(CatalogMetadata indexMetaData, Connection connection) throws ExecutionException {
 
         IndicesAdminClient client = recoveredClient(connection).admin().indices();
@@ -246,7 +260,7 @@ public class ElasticsearchMetadataEngine extends CommonsMetadataEngine<Client> {
      * @return the Elasticsearch options.
      * @throws ExecutionException if an error occurs.
      */
-
+    @TimerJ
     private Map<String, Object> transformOptions(CatalogMetadata indexMetaData) throws ExecutionException {
 
         Map<String, Object> transformOptions = new HashMap<>();

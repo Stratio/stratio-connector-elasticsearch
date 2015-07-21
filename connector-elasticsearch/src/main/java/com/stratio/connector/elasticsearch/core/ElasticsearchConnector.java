@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core;
 
+import com.stratio.connector.commons.TimerJ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      */
 
     @Override
+    @TimerJ
     public void init(IConfiguration configuration) throws InitializationException {
 
         connectionHandler = new ElasticSearchConnectionHandler(configuration);
@@ -100,6 +102,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * @return the StorageEngine
      */
     @Override
+    @TimerJ
     public IStorageEngine getStorageEngine() {
 
         return new ElasticsearchStorageEngine(connectionHandler);
@@ -109,6 +112,7 @@ public class ElasticsearchConnector extends CommonsConnector {
     /**
      * Run the shutdown.
      */
+    @TimerJ
     public void attachShutDownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -128,6 +132,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * @return the QueryEngine
      */
     @Override
+    @TimerJ
     public IQueryEngine getQueryEngine() {
 
         return new ElasticsearchQueryEngine(connectionHandler);
@@ -139,6 +144,7 @@ public class ElasticsearchConnector extends CommonsConnector {
      * @return the MetadataEngine
      */
     @Override
+    @TimerJ
     public IMetadataEngine getMetadataEngine() {
 
         return new ElasticsearchMetadataEngine(connectionHandler);

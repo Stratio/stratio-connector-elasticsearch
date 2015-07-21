@@ -21,6 +21,7 @@ package com.stratio.connector.elasticsearch.core.engine;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.stratio.connector.commons.TimerJ;
 import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderFactory;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -80,6 +81,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      *             if an error happens.
      */
     @Override
+    @TimerJ
     protected void truncate(TableName tableName, Connection<Client> connection) throws UnsupportedException,
                     ExecutionException {
         delete(tableName, Collections.EMPTY_LIST, connection);
@@ -101,6 +103,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      *             if an error happens.
      */
     @Override
+    @TimerJ
     protected void delete(TableName tableName, Collection<Filter> whereClauses, Connection<Client> connection)
                     throws UnsupportedException, ExecutionException {
         String index = tableName.getCatalogName().getName();
@@ -130,6 +133,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void update(TableName tableName, Collection<Relation> assignments, Collection<Filter> whereClauses,
                     Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
@@ -150,6 +154,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      */
 
     @Override
+    @TimerJ
     protected void insert(TableMetadata targetTable, Row row, boolean isNotExists, Connection<Client> connection)
                     throws UnsupportedException, ExecutionException {
 
@@ -177,6 +182,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      *             if the operation is not supported.
      */
     @Override
+    @TimerJ
     protected void insert(TableMetadata targetTable, Collection<Row> rows, boolean isNotExists,
                     Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
@@ -208,6 +214,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @throws ExecutionException
      *             if the execution fails.
      */
+    @TimerJ
     private IndexRequestBuilder createIndexRequest(TableMetadata tableMetadata, Row row, Connection<Client> connection)
                     throws UnsupportedException, ExecutionException {
 
@@ -231,6 +238,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @throws ExecutionException
      *             if the execution fails.
      */
+    @TimerJ
     private BulkRequestBuilder createBulkRequest(TableMetadata tablesMetadata, Collection<Row> rows,
                     Connection<Client> connection) throws UnsupportedException, ExecutionException {
 
@@ -254,6 +262,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @throws ExecutionException
      *             if an error happens during the execution.
      */
+    @TimerJ
     private void validateBulkResponse(BulkResponse bulkResponse) throws ExecutionException {
         if (bulkResponse.hasFailures()) {
             throw new ExecutionException(bulkResponse.buildFailureMessage());
@@ -266,6 +275,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @param tableMetadata
      *            the table metadata.
      */
+    @TimerJ
     private void loggInsert(TableMetadata tableMetadata) {
         if (logger.isDebugEnabled()) {
             String index = tableMetadata.getName().getCatalogName().getName();
@@ -282,6 +292,7 @@ public class ElasticsearchStorageEngine extends CommonsStorageEngine<Client> {
      * @param rows
      *            the rows.
      */
+    @TimerJ
     private void logBulkInsert(TableMetadata tableMetadata, Collection<Row> rows) {
         if (logger.isDebugEnabled()) {
             String index = tableMetadata.getName().getCatalogName().getName();

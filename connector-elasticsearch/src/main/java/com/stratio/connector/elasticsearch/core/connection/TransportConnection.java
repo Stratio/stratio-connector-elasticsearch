@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
+import com.stratio.connector.commons.TimerJ;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
@@ -64,6 +65,7 @@ public class TransportConnection extends Connection<Client> {
     /**
      * Close the connection.
      */
+    @TimerJ
     public void close() {
         if (elasticClient != null) {
             elasticClient.close();
@@ -80,6 +82,7 @@ public class TransportConnection extends Connection<Client> {
      * @return true if the connection is open. False in other case.
      */
     @Override
+    @TimerJ
     public boolean isConnected() {
 
         return (elasticClient!=null && !((TransportClient)elasticClient).connectedNodes().isEmpty());
@@ -93,6 +96,7 @@ public class TransportConnection extends Connection<Client> {
      * @return the native connection.
      */
     @Override
+    @TimerJ
     public Client getNativeConnection() {
         return elasticClient;
     }

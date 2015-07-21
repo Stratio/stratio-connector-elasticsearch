@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.connection;
 
+import com.stratio.connector.commons.TimerJ;
 import com.stratio.connector.commons.connection.Connection;
 import com.stratio.connector.commons.connection.ConnectionHandler;
 import com.stratio.connector.elasticsearch.core.configuration.ConfigurationOptions;
@@ -51,6 +52,7 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
      * @return a elasticsearch connection.
      */
     @Override
+    @TimerJ
     protected Connection createNativeConnection(ICredentials iCredentials,
             ConnectorClusterConfig connectorClusterConfig) throws ConnectionException {
         Connection connection;
@@ -74,6 +76,7 @@ public class ElasticSearchConnectionHandler extends ConnectionHandler {
      * @param config the configuration.
      * @return true if is configure to be a node connection. False in other case.
      */
+    @TimerJ
     private boolean isNodeClient(ConnectorClusterConfig config) {
         return Boolean.parseBoolean(config.getConnectorOptions().get(ConfigurationOptions.NODE_TYPE.getManifestOption()));
     }
