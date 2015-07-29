@@ -251,7 +251,7 @@
                                     </attributes>
                                 </copyFile>
                                 <mkdirs>
-                                    <path>/opt/sds/connector-elasticsearch</path>
+                                    <path>/opt/sds/connectors/elasticsearch</path>
                                     <attributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -266,7 +266,7 @@
                                 </mkdirs>
                                 <copyDirectory>
                                     <from>target/stratio-connector-elasticsearch/bin</from>
-                                    <to>opt/sds/stratio-connector-elasticsearch/bin</to>
+                                    <to>opt/sds/connectors/elasticsearch/bin</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -274,7 +274,7 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>target/stratio-connector-elasticsearch/repo</from>
-                                    <to>opt/sds/stratio-connector-elasticsearch/repo</to>
+                                    <to>opt/sds/connectors/elasticsearch/repo</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -282,7 +282,7 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>target/stratio-connector-elasticsearch/conf</from>
-                                    <to>opt/sds/stratio-connector-elasticsearch/conf</to>
+                                    <to>opt/sds/connectors/elasticsearch/conf</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -290,7 +290,7 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>src/main/template</from>
-                                    <to>opt/sds/stratio-connector-elasticsearch/template</to>
+                                    <to>opt/sds/connectors/elasticsearch/template</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -298,7 +298,7 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>src/main/config</from>
-                                    <to>etc/sds/stratio-connector-elasticsearch</to>
+                                    <to>etc/sds/connectors/elasticsearch</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -314,11 +314,11 @@
                                 </copyDirectory>
                                 <copyFile>
                                     <path>src/main/include/LICENSE</path>
-                                    <toFile>opt/sds/stratio-connector-elasticsearch/LICENSE</toFile>
+                                    <toFile>opt/sds/connectors/elasticsearch/LICENSE</toFile>
                                 </copyFile>
                                 <copyFile>
                                     <path>src/main/include/NOTICE</path>
-                                    <toFile>opt/sds/stratio-connector-elasticsearch/NOTICE</toFile>
+                                    <toFile>opt/sds/connectors/elasticsearch/NOTICE</toFile>
                                 </copyFile>
                             </assembly>
                             <defaults>

@@ -4,17 +4,17 @@ set -e
 
 GROUP='stratio'
 USER='stratio'
-DIR_INSTALL='/opt/sds/stratio-connector-elasticsearch'
-DIR_CONF='/etc/sds/stratio-connector-elasticsearch'
-DIR_LOG='/var/log/sds/stratio-connector-elasticsearch'
+DIR_INSTALL='/opt/sds/connectors/elasticsearch'
+DIR_CONF='/etc/sds/connectors/elasticsearch'
+DIR_LOG='/var/log/sds/connectors/elasticsearch'
 
 cp /opt/sds/stratio-connector-elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /etc/init.d/stratio-connector-elasticsearch
-chmod 755 /opt/sds/stratio-connector-elasticsearch/bin
-chmod +x /opt/sds/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch
+chmod 755 /opt/sds/connectors/elasticsearch/bin
+chmod +x /opt/sds/connectors/elasticsearch/bin/stratio-connector-elasticsearch
 chmod +x /etc/default/stratio-connector-elasticsearch
-export ELASTICSEARCH_CONNECTOR_LIB=/opt/sds/stratio-connector-elasticsearch
-export ELASTICSEARCH_CONNECTOR_CONF="/etc/sds/stratio-connector-elasticsearch"
+export ELASTICSEARCH_CONNECTOR_LIB=/opt/sds/connectors/elasticsearch
+export ELASTICSEARCH_CONNECTOR_CONF="/etc/sds/connectors/elasticsearch"
 
 case "$1" in
   configure)

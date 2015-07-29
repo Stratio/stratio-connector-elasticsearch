@@ -43,12 +43,12 @@ case "$1" in
 
   ;;
 esac
-cp /opt/sds/stratio-connector-elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
+cp /opt/sds/connectors/elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /etc/init.d/stratio-connector-elasticsearch
-chmod 755 /opt/sds/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch
+chmod 755 /opt/sds/connectors/elasticsearch/bin/stratio-connector-elasticsearch
 chmod +x /etc/default/stratio-connector-elasticsearch
-export ELASTICSEARCH_CONNECTOR_LIB=/opt/sds/stratio-connector-elasticsearch/
-export ELASTICSEARCH_CONNECTOR_CONF="/etc/sds/stratio-connector-elasticsearch"
+export ELASTICSEARCH_CONNECTOR_LIB=/opt/sds/connectors/elasticsearch/
+export ELASTICSEARCH_CONNECTOR_CONF="/etc/sds/connectors/elasticsearch"
 
 /sbin/chkconfig --add stratio-connector-elasticsearch
 
