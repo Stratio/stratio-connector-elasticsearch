@@ -3,7 +3,7 @@
 # For instance, untar the code.
 
 ## directory/to/be/created
-mkdir -p /var/sds/stratio-connector-elasticsearch/stratio-connector-elasticsearch-store
-mkdir -p /var/log/sds/stratio-connector-elasticsearch
-mkdir -p /opt/sds/stratio-connector-mongodb
+mkdir -p /var/sds/connectors/elasticsearch/stratio-connector-elasticsearch-store
+mkdir -p /var/log/sds/connectors/elasticsearch
+mkdir -p /opt/sds/connectors/elasticsearch
 

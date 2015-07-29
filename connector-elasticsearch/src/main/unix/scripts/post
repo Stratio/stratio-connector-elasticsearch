@@ -4,9 +4,9 @@ set -e
 
 GROUP='stratio'
 USER='stratio'
-DIR_INSTALL='/opt/sds/stratio-connector-elasticsearch'
-DIR_CONF='/etc/sds/stratio-connector-elasticsearch'
-DIR_LOG='/var/log/sds/stratio-connector-elasticsearch'
+DIR_INSTALL='/opt/sds/connectors/elasticsearch'
+DIR_CONF='/etc/sds/connectors/elasticsearch'
+DIR_LOG='/var/log/sds/connectors/elasticsearch'
 
 case "$1" in
   configure)
