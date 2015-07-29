@@ -1,4 +1,4 @@
-/etc/default/stratio-connector-elasticsearch
-/etc/sds/stratio-connector-elasticsearch/connector-application.conf
-/etc/sds/stratio-connector-elasticsearch/log.properties
-/etc/sds/stratio-connector-elasticsearch/connector-reference.conf
+/etc/default/connectors/elasticsearch
+/etc/sds/connectors/elasticsearch/connector-application.conf
+/etc/sds/connectors/elasticsearch/log.properties
+/etc/sds/connectors/elasticsearch/connector-reference.conf

@@ -8,7 +8,7 @@ DIR_INSTALL='/opt/sds/connectors/elasticsearch'
 DIR_CONF='/etc/sds/connectors/elasticsearch'
 DIR_LOG='/var/log/sds/connectors/elasticsearch'
 
-cp /opt/sds/stratio-connector-elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
+cp /opt/sds/connectors/elasticsearch/template/ElasticSearchConnector /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /etc/init.d/stratio-connector-elasticsearch
 chmod 755 /opt/sds/connectors/elasticsearch/bin
 chmod +x /opt/sds/connectors/elasticsearch/bin/stratio-connector-elasticsearch

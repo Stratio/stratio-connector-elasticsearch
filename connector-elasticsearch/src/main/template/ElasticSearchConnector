@@ -14,7 +14,7 @@ RUNAS=root
 PIDPATH=/var/run/sds/
 PIDNAME=stratio-connector-elasticsearch.pid
 PIDFILE=$PIDPATH$PIDNAME
-LOGFILE=/var/log/sds/stratio-connector-elasticsearch/stratio-connector-elasticsearch.log
+LOGFILE=/var/log/sds/connectors/elasticsearch/stratio-connector-elasticsearch.log
 start() {
   if [ ! -d "$PIDPATH" ]; then
     mkdir $PIDPATH
@@ -25,7 +25,7 @@ start() {
     return 1
   fi
   echo 'Starting service…' >&2
-  cd /opt/sds/stratio-connector-elasticsearch/
+  cd /opt/sds/connectors/elasticsearch/
 
     nohup bin/stratio-connector-elasticsearch start > $LOGFILE & echo $! $RUNAS > $PIDFILE
   echo 'Service started'
@@ -39,7 +39,7 @@ stop() {
 #  echo 'Stopping service…' >&2
 #  kill -15 $(cat "$PIDFILE") && rm -f "$PIDFILE"
 #  echo 'Service stopped' >&2
-    cd /opt/sds/stratio-connector-elasticsearch/
+    cd /opt/sds/connectors/elasticsearch/
     nohup bin/stratio-connector-elasticsearch stop > $LOGFILE
     echo 'Service stopped'
 }
