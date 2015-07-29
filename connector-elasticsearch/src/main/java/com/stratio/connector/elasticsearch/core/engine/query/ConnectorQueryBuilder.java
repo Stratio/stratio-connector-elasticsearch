@@ -19,9 +19,12 @@
 package com.stratio.connector.elasticsearch.core.engine.query;
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
-import com.stratio.connector.elasticsearch.core.engine.utils.*;
+import com.stratio.connector.elasticsearch.core.engine.utils.FilterBuilderCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderFactory;
+import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
+import com.stratio.crossdata.common.logicalplan.*;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -33,14 +36,17 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Set;
+
 /**
+ * Class that creates an elasticsearch query from a SELECT clause
+ *
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryBuilder {
@@ -65,121 +71,51 @@ public class ConnectorQueryBuilder {
     public ActionRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
             ExecutionException {
 
+        if (null == elasticClient){throw new ExecutionException("Query builder received an empty client to execute the query.");}
+        if (null == queryData){throw new ExecutionException("Query builder received an empty select clause to be processed.");}
+
         createRequestBuilder(elasticClient);
+        createProjection(queryData.getProject());
         createFilter(queryData);
-        createProjection(queryData);
-        createSelect(queryData);
-        createSort(queryData);
-        createLimit(queryData); //TODO https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-type.html
-        createAgreggation(queryData);
+
+        if (isAggregation(queryData)){
+            createNestedTermAggregation(queryData.getGroupBy());}
+        else {
+            createSelect(queryData.getSelect());
+            createSort(queryData.getOrderBy());
+            createLimit(queryData.getLimit());
+        }
 
         logQuery();
 
         return requestBuilder;
     }
 
-    private void createAgreggation(ProjectParsed queryData) throws ExecutionException {
-
-        if (isAgregation(queryData)) {
-            AggregationBuilder aggregationBuilder = null;
-
-            for(Selector term: queryData.getGroupBy().getIds()){
-                if (aggregationBuilder == null){
-                    String fieldName = getAggregationFieldName(term);
-                    aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
-                }else{
-                    String fieldName = getAggregationFieldName(term);
-                    aggregationBuilder.subAggregation(AggregationBuilders.terms(fieldName).field(fieldName));
-                }
-            }
-
-            requestBuilder.addAggregation(aggregationBuilder);
-            requestBuilder.setSize(0);
-        }
-    }
-
-    private String getAggregationFieldName(Selector term) {
-        if (SelectCreator.isFunction(term, "sub_field")){
-            return SelectCreator.calculateSubFieldName(term);
-        }else{
-            return term.getColumnName().getName();
-        }
-    }
 
     /**
-     * This method create the Sort using the OrderBy clause
-     *
-     * @param queryData
-     */
-    private void createSort(ProjectParsed queryData) {
-
-        if (null != queryData.getOrderBy() && !queryData.getOrderBy().getIds().isEmpty()) {
-            // For each sort
-            for (OrderByClause orderBy : queryData.getOrderBy().getIds()) {
-                boolean ascendingWay = orderBy.getDirection().equals(OrderDirection.ASC);
-                String fieldName = orderBy.getSelector().getColumnName().getName();
-                SortBuilder sortBuilder = SortBuilders.fieldSort(fieldName);
-                sortBuilder.order(ascendingWay ? SortOrder.ASC : SortOrder.DESC);
-                this.requestBuilder.addSort(sortBuilder);
-            }
-        }
-    }
-
-    /**
-     * This method create the select part of the query.
-     *
-     * @param queryData the querydata.
-     */
-    private void createSelect(ProjectParsed queryData) {
-        SelectCreator selectCreator = new SelectCreator();
-        if (!isAgregation(queryData)) {
-            selectCreator.modify(requestBuilder, queryData.getSelect());
-        }
-
-    }
-
-    /**
-     * This method crete the elasticsearch request builder.
+     * Method that creates the elasticsearch request builder.
      *
      * @param elasticClient the elasticsearch client..
      */
     private void createRequestBuilder(Client elasticClient) {
         requestBuilder = elasticClient.prepareSearch();
-
     }
 
     /**
-     * Logger the query.
-     */
-    private void logQuery() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
-        }
-    }
-
-    /**
-     * This method crete the Limit part of the query.
-     */
-    private void createLimit(ProjectParsed queryData) throws ExecutionException {
-        // LimitModifier limitModifier = new LimitModifier();
-        //limitModifier.modify(requestBuilder);
-        if (queryData.getLimit() != null) {
-            requestBuilder.setSize(queryData.getLimit().getLimit());
-        }
-    }
-
-    /**
-     * This method crete the Limit part of the query.
+     * Method that creates base query request including the index to be searched and the data type
      *
-     * @param queryData the querydata.
+     * @param projection object including the index and data type information
      */
-    private void createProjection(ProjectParsed queryData) {
-        ProjectCreator projectModifier = new ProjectCreator();
-        projectModifier.modify(requestBuilder, queryData.getProject());
+    private void createProjection(Project projection) {
+        // Sets the index to be searched
+        requestBuilder.setIndices(projection.getCatalogName());
+        // Sets the data type
+        requestBuilder.setTypes(projection.getTableName().getName());
     }
 
+
     /**
-     * This method crete the Filter part of the query.
+     * Method that creates the Filter part of the query.
      *
      * @param queryData the querydata.
      */
@@ -194,11 +130,138 @@ public class ConnectorQueryBuilder {
             requestBuilder.setQuery(QueryBuilders.filteredQuery(queryBuilder, filterBuilder));
         } else {
             requestBuilder.setQuery(queryBuilder);
-
         }
     }
 
-    private boolean isAgregation(ProjectParsed queryData) {
+
+    /**
+     * Method that creates the appropriate nested term aggregation properties to elasticsearch based on those specified by the "group by" clause
+     *
+     * @param groupBy           GROUP BY clause that defines the nested term aggregations to be retrieved
+     * @throws ExecutionException
+     */
+    private void createNestedTermAggregation(GroupBy groupBy) throws ExecutionException {
+        // If any "group by" fields are defined they are used in order to create the appropriate aggregations
+        if (null != groupBy && null != groupBy.getIds()){
+            AggregationBuilder aggregationBuilder = null;
+
+            // First field is used as the parent aggregation level and next ones are added as nested sub-aggregations of the previous one
+            for(Selector term: groupBy.getIds()){
+                String fieldName = SelectorUtils.getSelectorFieldName(term);
+                if (aggregationBuilder == null){
+                    aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                }else{
+                    aggregationBuilder.subAggregation(AggregationBuilders.terms(fieldName).field(fieldName));
+                }
+            }
+
+            // No results are needed when requesting an aggregation therefore the size is set to 0 and the aggregation properties are added to the query
+            requestBuilder.addAggregation(aggregationBuilder);
+            requestBuilder.setSize(0);
+        }
+    }
+
+    /**
+     * Method that adds the appropriate returning fields to the elasticsearch query from those specified by the select clause
+     *
+     * @param select SELECT clause including fields to be returned
+     */
+    private void createSelect(Select select) {
+        // If any "select" fields are requested they are used in order to set the return fields in the elasticsearch query
+        if (null != select && null != select.getColumnMap() && !select.getColumnMap().isEmpty()){
+
+            Set<Selector> selectors = select.getColumnMap().keySet();
+
+            // If it is a count operation no field is needed to be returned
+            if (isCount(selectors)){return;}
+
+            // Otherwise field names are added to the return fields property
+            for (Selector selector : selectors) {
+                // Gets the field name associated to the selector
+                String fieldName = SelectorUtils.getSelectorFieldName(selector);
+
+                // Adds field name to returning field property in the elasticsearch query
+                if (null != fieldName) {requestBuilder.addField(fieldName);}
+            }
+        }
+    }
+
+
+    /**
+     * Method that adds the appropriate sorts to the elasticsearch query from those specified by the OrderBy clause
+     *
+     * @param orderBy   ORDER BY clause including fields to be used for sorting and sorting ways
+     */
+    private void createSort(OrderBy orderBy) {
+        // Checks if any order by clause is present
+        if (null != orderBy && null != orderBy.getIds() && !orderBy.getIds().isEmpty()) {
+
+            // For each clause a new sort property is added to the query
+            for (OrderByClause orderByClause : orderBy.getIds()) {
+
+                // Retrieves selector (field or field function) which is going to be used to sort results and the sort way (ascending or descending)
+                Selector selector = orderByClause.getSelector();
+                boolean ascendingWay = OrderDirection.ASC.equals(orderByClause.getDirection());
+
+                // Gets the field name associated to the selector
+                String fieldName = SelectorUtils.getSelectorFieldName(selector);
+
+                // Creates the appropriate sort property and adds it to the query builder
+                if (null != fieldName) {
+                    SortBuilder sortBuilder = SortBuilders.fieldSort(fieldName);
+                    sortBuilder.order(ascendingWay ? SortOrder.ASC : SortOrder.DESC);
+                    this.requestBuilder.addSort(sortBuilder);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Method that adds the size property to the elasticsearch query based on the limit property from the original clause.
+     *
+     * @param limit LIMIT clause that defines the number of results to be returned
+     */
+    private void createLimit(Limit limit) throws ExecutionException {
+        if (null != limit) {requestBuilder.setSize(limit.getLimit());}
+    }
+
+
+
+    // UTILITY METHODS
+
+    /**
+     * Checks whether a select clause is an aggregation operation by checking if includes a "group by" clause
+     *
+     * @param queryData   complete information from the SELECT clause
+     * @return                      true if the clause is a count operation or false otherwise
+     */
+    private boolean isAggregation(ProjectParsed queryData) {
         return queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty();
+    }
+
+
+    /**
+     * Checks whether a select clause is a count operation by checking if includes the function "count(...)"
+     *
+     * @param selectors     list of fields from the SELECT clause
+     * @return                      true if the clause is a count operation or false otherwise
+     */
+    private boolean isCount (Set<Selector> selectors){
+        // If any of the selectors is a count function the the clause is a count operation
+        for (Selector selector : selectors) {
+            if (SelectorUtils.isFunction(selector, "count")){return true;}
+        }
+        return false;
+    }
+
+
+    /**
+     * Logger the query.
+     */
+    private void logQuery() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("ElasticSearch Query: [" + requestBuilder + "]");
+        }
     }
 }

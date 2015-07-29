@@ -20,6 +20,7 @@ package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.FunctionRelation;
@@ -36,7 +37,7 @@ public class MultiMatchTest {
 
 
     @Test
-    public void testMatch() throws UnsupportedException {
+    public void testMatch() throws UnsupportedException, ExecutionException {
 
         List<Selector> parameters = new ArrayList<>();
         TableName tableName = new TableName("catalog", "table");
@@ -44,6 +45,7 @@ public class MultiMatchTest {
         parameters.add(new ColumnSelector(new ColumnName(tableName, "col2Name")));
         parameters.add(new StringSelector("*_colName"));
         parameters.add(new StringSelector("value"));
+        parameters.add(new StringSelector("1"));
 
         FunctionRelation function = new FunctionRelation(ESFunction.MULTI_MATCH, parameters,tableName);
         ESFunction match = ESFunction.build(function);
@@ -52,7 +54,7 @@ public class MultiMatchTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expedted = "{\"multi_match\":{\"query\":\"value\",\"fields\":[\"colName\",\"col2Name\",\"*_colName\"]}}";
-        Assert.assertEquals(expedted, builder.toString().replace(" ", "").replace("\n", ""));
+        String expected = "{\"multi_match\":{\"query\":\"value\",\"fields\":[\"colName\",\"col2Name\",\"*_colName\"],\"minimum_should_match\":\"1\"}}";
+        Assert.assertEquals(expected, builder.toString().replaceAll("\\s+", ""));
     }
 }

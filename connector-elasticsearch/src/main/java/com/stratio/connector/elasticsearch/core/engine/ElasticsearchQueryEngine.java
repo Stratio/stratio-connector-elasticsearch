@@ -18,6 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine;
 
+import com.stratio.connector.commons.TimerJ;
 import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
@@ -57,16 +58,19 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     }
 
     @Override
+    @TimerJ
     protected void pagedExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
         throw new UnsupportedException("Not supported");
     }
 
     @Override
+    @TimerJ
     protected void asyncExecute(String queryId, Project project, Connection connection, IResultHandler resultHandler) throws ConnectorException {
         throw new UnsupportedException("Not supported");
     }
 
     @Override
+    @TimerJ
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
         Client elasticClient = connection.getNativeConnection();
         ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
@@ -77,6 +81,7 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
 
 
     @Override
+    @TimerJ
     public void stop(String queryId) throws UnsupportedException {
         throw new UnsupportedException("Not supported");
 

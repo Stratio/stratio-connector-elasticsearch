@@ -24,7 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.stratio.connector.elasticsearch.core.engine.utils.SelectCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -36,8 +36,6 @@ import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
-import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +87,7 @@ public class ConnectorQueryExecutor {
 
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
-            } else if (SelectCreator.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
+            } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
                 processCount(queryData, resultSet, response);
             } else {
                 processResults(queryData, resultSet, response);
@@ -145,7 +143,7 @@ public class ConnectorQueryExecutor {
     }
 
     private void processCount(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
-        FunctionSelector functionSelector = SelectCreator.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
+        FunctionSelector functionSelector = SelectorUtils.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
         Map<Selector, String> alias = returnAlias(queryData);
         Map<String, Object> fields = new HashMap();
 
@@ -216,8 +214,8 @@ public class ConnectorQueryExecutor {
         for (Map.Entry<Selector, String> allAlias : alias.entrySet()) {
             // for column selector dont work fine.
 
-            if (SelectCreator.isFunction(allAlias.getKey(), "sub_field")
-                    && SelectCreator.calculateSubFieldName(allAlias.getKey()).equals(field)) {
+            if (SelectorUtils.isFunction(allAlias.getKey(), "sub_field")
+                    && SelectorUtils.calculateSubFieldName(allAlias.getKey()).equals(field)) {
                 field = allAlias.getKey().getAlias();
             }else if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
                 String
@@ -239,8 +237,8 @@ public class ConnectorQueryExecutor {
             if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())) {
                 columntype = columnMap.getValue();
                 break;
-            }else if(SelectCreator.isFunction(columnMap.getKey(), "sub_field") &&
-                    columnSelector.getColumnName().getName().contains(SelectCreator.calculateSubFieldName(columnMap.getKey()))){
+            }else if(SelectorUtils.isFunction(columnMap.getKey(), "sub_field") &&
+                    columnSelector.getColumnName().getName().contains(SelectorUtils.calculateSubFieldName(columnMap.getKey()))){
                 columntype = columnMap.getValue();
             }
         }
@@ -257,10 +255,10 @@ public class ConnectorQueryExecutor {
     private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (Selector selector : selectors) {
-            if (SelectCreator.isFunction(selector, "count")) {
+            if (SelectorUtils.isFunction(selector, "count")) {
                 fieldNames.add((String) selector.getAlias());
-            } else if (SelectCreator.isFunction(selector, "sub_field")){
-                fieldNames.add(SelectCreator.calculateSubFieldName(selector));
+            } else if (SelectorUtils.isFunction(selector, "sub_field")){
+                fieldNames.add(SelectorUtils.calculateSubFieldName(selector));
             }else {
                 fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
             }
@@ -305,5 +303,4 @@ public class ConnectorQueryExecutor {
         }
         return alias;
     }
-
 }

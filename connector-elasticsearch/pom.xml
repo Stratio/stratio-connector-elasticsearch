@@ -99,11 +99,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <skipTests>${skipITs}</skipTests>
-                    <argLine>${jacoco-IT-argline}</argLine>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -116,11 +111,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <skipTests>${skipUTs}</skipTests>
-                    <argLine>${jacoco-UT-argline}</argLine>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -137,33 +127,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.7.1.201405082137</version>
-                <executions>
-                    <execution>
-                        <id>UT</id>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacocoUT.exec</destFile>
-                            <propertyName>jacoco-UT-argline</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>IT</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                        <configuration>
-                            <destFile>${project.build.directory}/jacocoIT.exec</destFile>
-                            <propertyName>jacoco-IT-argline</propertyName>
-                        </configuration>
-                    </execution>
-                </executions>
+		<groupId>org.jacoco</groupId>
+		<artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

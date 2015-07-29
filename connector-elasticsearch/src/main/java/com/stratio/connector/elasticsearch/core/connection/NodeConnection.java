@@ -20,6 +20,7 @@ package com.stratio.connector.elasticsearch.core.connection;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
+import com.stratio.connector.commons.TimerJ;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
@@ -78,6 +79,7 @@ public class NodeConnection extends Connection<Client> {
     /**
      * Close the connection.
      */
+    @TimerJ
     public void close() {
         if (node != null) {
             node.close();
@@ -94,6 +96,7 @@ public class NodeConnection extends Connection<Client> {
      * @return true if the connection is open. False in other case.
      */
     @Override
+    @TimerJ
     public boolean isConnected() {
         return (node!=null && !node.isClosed());
     }
@@ -104,6 +107,7 @@ public class NodeConnection extends Connection<Client> {
      * @return the native connection.
      */
     @Override
+    @TimerJ
     public Client getNativeConnection() {
         return elasticClient;
     }

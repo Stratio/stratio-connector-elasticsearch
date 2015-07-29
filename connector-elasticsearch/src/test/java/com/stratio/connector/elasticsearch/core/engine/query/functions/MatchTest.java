@@ -21,6 +21,7 @@ package com.stratio.connector.elasticsearch.core.engine.query.functions;
 
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
+import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.FunctionRelation;
@@ -36,7 +37,7 @@ import java.util.List;
 public class MatchTest {
 
     @Test
-    public void testMatch() throws UnsupportedException {
+    public void testMatch() throws UnsupportedException, ExecutionException {
 
         List<Selector> parameters = new ArrayList<>();
         TableName tableName = new TableName("catalog", "table");
@@ -51,7 +52,7 @@ public class MatchTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expedted = "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}";
-        Assert.assertEquals(expedted, builder.toString().replace(" ", "").replace("\n", ""));
+        String expected = "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}";
+        Assert.assertEquals(expected, builder.toString().replaceAll("\\s+", ""));
     }
 }

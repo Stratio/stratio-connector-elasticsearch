@@ -5,7 +5,7 @@ Stratio Connector Elasticsearch is a crossdata connector interface implementatio
 
 ## Requirements ##
 
-Install [elasticsearch 1.3.2] (http://www.elasticsearch.org/downloads/1-3-2/) and run it. 
+Install [elasticsearch 1.6.0] (https://www.elastic.co/downloads/past-releases/elasticsearch-1-6-0) and run it. 
 [Crossdata] (https://github.com/Stratio/crossdata) is needed to interact with this connector.
 
 ## Compiling Stratio Connector Elasticsearch ##
@@ -29,7 +29,7 @@ To stop the connector execute:
 ```
    > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT stop
 ```
-## Build a redistributable package ##
+## Building a redistributable package ##
 
 It is possible too, to create a RPM or DEB redistributable package.
 
@@ -102,6 +102,11 @@ Now to start/stop the connector:
         ...
 
 
+## Documentation ##
+
+* [Concepts](doc/0_concepts.md)
+* [Functions](doc/1_functions.md)
+* [Examples](doc/2_examples.md)
 
 # License #
 
