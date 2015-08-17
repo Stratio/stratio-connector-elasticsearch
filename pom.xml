@@ -36,7 +36,7 @@
     </parent>
     <properties>
         <version.connector.commons>0.6.0-RC1</version.connector.commons>
-        <version.elasticsearch>1.6.0</version.elasticsearch>
+        <version.elasticsearch>1.7.1</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jmx.port>7190</jmx.port>
