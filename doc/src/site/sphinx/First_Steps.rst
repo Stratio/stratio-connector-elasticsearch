@@ -11,34 +11,7 @@ First of all [Stratio Crossdata 0.2.0]
 https://github.com/Stratio/crossdata.git is needed and must be
 installed. The server and the Shell must be running.
 
-In the Crossdata Shell we need to add the Datastore Manifest.
-
-::
-
-       > add datastore "<path_to_manifest_folder>/ElasticSearchDataStore.xml";
-
-The output must be:
-
-::
-
-       [INFO|Shell] Response time: 0 seconds    
-       [INFO|Shell] OK
-
-Now we need to add the ConnectorManifest.
-
-::
-
-       > add connector "<path_to_manifest_folder>/ElasticSearchConnector.xml";  
-
-The output must be:
-
-::
-
-       [INFO|Shell] Response time: 0 seconds    
-       [INFO|Shell] OK
-
-At this point we have reported to Crossdata the connector options and
-operations. Now we configure the datastore cluster.
+In the Crossdata Shell we need to configure the datastore cluster.
 
 ::
 
@@ -54,10 +27,11 @@ The output must be:
       Cluster attached successfully
 
 Now we must run the connector.
+In the parent directory:
 
 ::
 
-      > <path_to_connector_executable>/connector-elasticsearch-core-<version> start
+      > ./connector-elasticsearch/target/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch;
 
 To ensure that the connector is online we can execute the crossdata
 shell command
