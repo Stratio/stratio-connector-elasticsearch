@@ -5,7 +5,7 @@ Stratio Connector Elasticsearch is a crossdata connector interface implementatio
 
 ## Requirements ##
 
-Install [elasticsearch 1.6.0] (https://www.elastic.co/downloads/past-releases/elasticsearch-1-6-0) and run it. 
+Install [elasticsearch 1.3.2] (https://www.elastic.co/downloads/past-releases/elasticsearch-1-3-2) and run it. 
 [Crossdata] (https://github.com/Stratio/crossdata) is needed to interact with this connector.
 
 ## Compiling Stratio Connector Elasticsearch ##
@@ -15,20 +15,23 @@ To automatically build execute the following command:
 ```
    > mvn clean compile install
 ```
+## Build an executable Stratio Connector Elasticsearch ##
+
+To generate the executable, run the following command:
+
+```
+   > mvn package -Ppackage
+```
+
 ## Running the Stratio Connector Elasticsearch ##
 
 
-To run Connector Elasticsearch execute:
+To run Connector Elasticsearch execute, in the parent directory:
 
 ```
-   > mvn exec:java -DskipTests -pl connector-elasticsearch -Dexec.mainClass="com.stratio.connector.elasticsearch.core.ElasticsearchConnector"
+   > ./connector-elasticsearch/target/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch
 ```
 
-To stop the connector execute:
-
-```
-   > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT stop
-```
 ## Building a redistributable package ##
 
 It is possible too, to create a RPM or DEB redistributable package.
@@ -62,24 +65,11 @@ Now to start/stop the connector:
  2. Start Elasticsearch Connector as it is explained before
  3. In crossdata-shell:
     
-    Add a data store. We need to specified the XML manifest that defines the data store. The XML manifest can be found in the path of the Elasticsearch Connector in target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT/conf/ElasticSearchDataStore.xml
-      
-      ```
-         xdsh:user>  ADD DATASTORE <Absolute path to Streaming Datastore manifest>;
-      ```
-
     Attach cluster on that datastore. The datastore name must be the same as the defined in the Datastore manifest.
     
       ```
          xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<IPHost_1,IPHost_2,...,IPHost_n>]', 'Port': '[<PortHost_1,PortHost_2,...,PortHost_n>]'};
       ```
-
-    Add the connector manifest. The XML with the manifest can be found in the path of the Cassandra Connector in target/-connector-elasticsearch-core-0.4.0-SNAPSHOT/conf/ElasticSearchConnector.xml
-
-       ```
-         xdsh:user>  ADD CONNECTOR <Path to Elasticsearch Connector Manifest>
-       ```
-    
     Attach the connector to the previously defined cluster. The connector name must match the one defined in the 
     Connector Manifest, and the cluster name must match with the previously defined in the ATTACH CLUSTER command.
     
@@ -125,8 +115,3 @@ software distributed under the License is distributed on an
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
-
-
-
-
-
