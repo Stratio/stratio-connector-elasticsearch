@@ -68,13 +68,13 @@ RPM Package:
  
 ::   
     
-       > rpm -i target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT.rpm
+       > rpm -i target/stratio-connector-elasticsearch-<version>.rpm
      
 DEB Package:
 
 ::   
     
-       > dpkg -i target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT.deb
+       > dpkg -i target/stratio-connector-elasticsearch-<version>.deb
 
 Now to start/stop the connector:
  
