@@ -51,7 +51,7 @@ public class MatchPrefixTest {
         QueryBuilder builder = match.buildQuery();
 
         //Expectations
-        String expected = "{\"prefix\":{\"colName\":{\"prefix\":\"value\"}}}";
+        String expected = "{\"prefix\":{\"colName\":\"value\"}}";
         Assert.assertEquals(expected, builder.toString().replaceAll("\\s+", ""));
     }
 }
