@@ -1,7 +1,7 @@
 # About #
 
 
-Stratio Connector Elasticsearch is a crossdata connector interface implementation for elasticsearch 1.3.2.
+Stratio Connector Elasticsearch is a crossdata connector interface implementation for elasticsearch 1.7.1.
 
 ## Requirements ##
 
