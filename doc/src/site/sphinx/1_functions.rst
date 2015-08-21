@@ -1,10 +1,10 @@
 FUNCTIONS
 *********
 
-CONTAINS Contains function allows to search a text inside one or
-----------------------------------------------------------------
+CONTAINS
+--------
 
-more fields.
+Contains function allows to search a text inside one ormore fields.
 
 **contains (fields, value, minimumShouldMatch)**
 
@@ -27,10 +27,10 @@ Example:
     rings", "100%"); SELECT title FROM movie WHERE
     contains("title.english title^10", "lords", "100%");
 
-FUZZY Fuzzy function uses distance algorithms to find results
--------------------------------------------------------------
+FUZZY
+------
 
-including terms similar to those indicated.
+Fuzzy function uses distance algorithms to find results including terms similar to those indicated.
 
 **fuzzy (fields, value, fuzziness)**
 
@@ -50,10 +50,10 @@ Example:
     SELECT title FROM movie WHERE multi\_match\_fuzzy("title.english
     title^10", "lorzs", "0.6");
 
-MATCH PHRASE Match Phrase function searches multiterm values as a
------------------------------------------------------------------
+MATCH PHRASE
+-------------
 
-phrase, meaning that terms must be found in the exact same order to be
+Match Phrase function searches multiterm values as a phrase, meaning that terms must be found in the exact same order to be
 considered as a match.
 
 **match\_phrase (field, phrase)**
@@ -68,10 +68,10 @@ Example:
     SELECT title FROM movie WHERE match\_phrase("title", "lord of the
     rings");
 
-MATCH PREFIX Match Prefix function searches for documents including
--------------------------------------------------------------------
+MATCH PREFIX
+------------
 
-terms starting for the given prefix.
+ Match Prefix function searches for documents including terms starting for the given prefix.
 
 **match\_prefix (field, prefix)**
 

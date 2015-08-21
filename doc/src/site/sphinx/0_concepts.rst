@@ -5,13 +5,12 @@ Settings and Analyzers
 ----------------------
 
 Elasticsearch index behaviour can be customized via settings
-[properties]
-(https://www.elastic.co/guide/en/elasticsearch/guide/current/*index*\ settings.html).
+`properties <https://www.elastic.co/guide/en/elasticsearch/guide/current/_index_settings.html>`_.
 We can set these properties during the catalog creation using the option
 "settings" including the configuration as a json string. This way we can
 set properties like the number of shards and replicas and even define
-new [analyzers]
-(https://www.elastic.co/guide/en/elasticsearch/reference/1.6/analysis.html).
+new `analyzers <https://www.elastic.co/guide/en/elasticsearch/reference/1.6/analysis.html>`_.
+
 
 ::
 
