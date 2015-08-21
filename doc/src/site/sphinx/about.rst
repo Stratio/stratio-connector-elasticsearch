@@ -7,28 +7,18 @@ implementation for elasticsearch 1.7.1.
 Requirements
 ------------
 
-Install [elasticsearch 1.7.1]
-(https://www.elastic.co/downloads/past-releases/elasticsearch-1-7-1) and run it. [Crossdata]
-(https://github.com/Stratio/crossdata) is needed to interact with this
+Install `elasticsearch 1.7.1 <https://www.elastic.co/downloads/past-releases/elasticsearch-1-7-1>`_ and run it.
+`Crossdata <https://github.com/Stratio/crossdata>`_ is needed to interact with this
 connector.
 
-Compiling Stratio Connector Elasticsearch
------------------------------------------
+Compiling an building an executable Stratio Connector Elasticsearch
+-------------------------------------------------------------------
 
 To automatically build execute the following command:
 
 ::
 
-       > mvn clean compile install
-
-Build an executable Connector Elasticsearch
--------------------------------------------
-
-To generate the executable execute the following command:
-
-::
-
-       > mvn crossdata-connector:install
+       > mvn clean install
 
 Running the Stratio Connector Elasticsearch
 -------------------------------------------
@@ -37,95 +27,72 @@ To run Connector Elasticsearch execute:
 
 ::
 
-       > cd connector-elasticsearch-core/
-       > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT start
+       > ./connector-elasticsearch/target/stratio-connector-elasticsearch/bin/stratio-connector-elasticsearch
 
-To stop the connector execute:
 
-::
-
-       > target/connector-elasticsearch-core-0.4.0-SNAPSHOT/bin/connector-elasticsearch-core-0.4.0-SNAPSHOT stop
 
 Build a redistributable package
 -------------------------------
 It is possible too, to create a RPM or DEB redistributable package.
 
-RPM Package:
 
 ::
 
-       > mvn unix:package-rpm -N
-    
-DEB Package:
+        > mvn package -Ppackage
 
-::
-   
-       > mvn unix:package-deb -N
 
 Once the package it's created, execute this commands to install:
 
 RPM Package:
  
-::   
-    
-       > rpm -i target/stratio-connector-elasticsearch-<version>.rpm
+::
+
+        > rpm -i target/stratio-connector-elasticsearch-<version>.rpm
      
 DEB Package:
 
-::   
-    
-       > dpkg -i target/stratio-connector-elasticsearch-<version>.deb
+::
+
+        > dpkg -i target/stratio-connector-elasticsearch-<version>.deb
 
 Now to start/stop the connector:
  
-::   
-    
-       > service stratio-connector-elasticsearch start
-       > service stratio-connector-elasticsearch stop
+::
+
+        > service connector-elasticsearch start
+        > service connector-elasticsearch stop
 
 How to use Elasticsearch Connector
 ----------------------------------
+
+A complete tutorial is available `here <First_Steps.rst>`__. The basic commands are described below.
 
 1. Start `crossdata-server and then
    crossdata-shell <https://github.com/Stratio/crossdata>`__.
 2. Start Elasticsearch Connector as it is explained before
 3. In crossdata-shell:
 
-   Add a data store. We need to specified the XML manifest that defines
-   the data store. The XML manifest can be found in the path of the
-   Elasticsearch Connector in
-   target/stratio-connector-elasticsearch-0.4.0-SNAPSHOT/conf/ElasticSearchDataStore.xml
-
-   ``xdsh:user>  ADD DATASTORE <Absolute path to Streaming Datastore manifest>;``
-
    Attach cluster on that datastore. The datastore name must be the same
    as the defined in the Datastore manifest.
 
-   ``xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<IPHost_1,IPHost_2,...,IPHost_n>]', 'Port': '[<PortHost_1,PortHost_2,...,PortHost_n>]'};``
+::
 
-   Add the connector manifest. The XML with the manifest can be found in
-   the path of the Cassandra Connector in
-   target/-connector-elasticsearch-core-0.4.0-SNAPSHOT/conf/ElasticSearchConnector.xml
-
-   ``xdsh:user>  ADD CONNECTOR <Path to Elasticsearch Connector Manifest>``
+    xdsh:user>  ATTACH CLUSTER <cluster_name> ON DATASTORE <datastore_name> WITH OPTIONS {'Hosts': '[<IPHost_1,IPHost_2,...,IPHost_n>]', 'Port': '[<PortHost_1,PortHost_2,...,PortHost_n>]'};
 
    Attach the connector to the previously defined cluster. The connector
    name must match the one defined in the Connector Manifest, and the
    cluster name must match with the previously defined in the ATTACH
    CLUSTER command.
 
-   ::
+::
 
-       ```
-           xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {};
-       ```
+    xdsh:user>  ATTACH CONNECTOR <connector name> TO <cluster name> WITH OPTIONS {};
 
    At this point, we can start to send queries, that Crossdata execute
    with the connector specified.
 
-   ::
+::
 
-       ...
            xdsh:user> CREATE CATALOG catalogTest;
 
            xdsh:user> USE catalogTest;
@@ -135,7 +102,7 @@ How to use Elasticsearch Connector
            xdsh:user> INSERT INTO tableTest(id, name) VALUES (1, 'stratio');
 
            xdsh:user> SELECT * FROM tableTest;
-       ...
+
 
 License
 =======

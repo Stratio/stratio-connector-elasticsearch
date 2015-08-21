@@ -7,8 +7,7 @@ Crossdata connector.
 Connector Configuration
 -----------------------
 
-First of all [Stratio Crossdata 0.2.0]
-https://github.com/Stratio/crossdata.git is needed and must be
+First of all `Crossdata <https://github.com/Stratio/crossdata>`_ is needed and must be
 installed. The server and the Shell must be running.
 
 In the Crossdata Shell we need to configure the datastore cluster.
@@ -217,9 +216,10 @@ show the table evolution.
      | 6  | Violet   | 21  | false    |
      | 1  | Jhon     | 16  | true     |
      ----------------------------------
-     
-      >  DELETE FROM highschool.students  WHERE id = 1;
-      
+::
+
+    >  DELETE FROM highschool.students  WHERE id = 1;
+
     ----------------------------------
     | id | name     | age | enrolled |
     ----------------------------------
@@ -233,8 +233,10 @@ show the table evolution.
     | 6  | Violet   | 21  | false    |
     ----------------------------------
 
-      
-      > DELETE FROM highschool.students  WHERE id < 3;
+
+::
+
+    > DELETE FROM highschool.students  WHERE id < 3;
       
     ----------------------------------
     | id | name     | age | enrolled |
@@ -248,7 +250,9 @@ show the table evolution.
     | 6  | Violet   | 21  | false    |
     ----------------------------------
       
-      > DELETE FROM highschool.students  WHERE age <= 17;
+::
+
+    > DELETE FROM highschool.students  WHERE age <= 17;
       
     ----------------------------------
     | id | name     | age | enrolled |
@@ -260,7 +264,9 @@ show the table evolution.
     ----------------------------------
 
 
-      >  DELETE FROM highschool.students  WHERE id > 6;
+::
+
+    >  DELETE FROM highschool.students  WHERE id > 6;
 
     --------------------------------
     | id | name   | age | enrolled |
@@ -270,7 +276,9 @@ show the table evolution.
     --------------------------------
 
       
-      > DELETE FROM highschool.students  WHERE id >= 3;
+::
+
+    > DELETE FROM highschool.students  WHERE id >= 3;
 
 At this point the table must be empty. The sentence select \* from
 highschool.students must be returned.
