@@ -232,8 +232,18 @@
                             </excludeDirectoryAttributes>
                             <assembly>
                                 <copyFile>
-                                    <path>src/main/unix/files_and_dirs/etc/init.d/connector-elasticsearch</path>
-                                    <toFile>/etc/init.d/connector-elasticsearch</toFile>
+                                    <path>src/main/unix/files_and_dirs/etc/init.d/connector_elasticsearch</path>
+                                    <toFile>/etc/init.d/connector_elasticsearch</toFile>
+                                    <attributes>
+                                        <user>root</user>
+                                        <group>root</group>
+                                        <mode>755</mode>
+                                    </attributes>
+                                </copyFile>
+
+                                <copyFile>
+                                    <path>src/main/unix/files_and_dirs/etc/default/elasticsearch_connector</path>
+                                    <toFile>/etc/default/elasticsearch_connector</toFile>
                                     <attributes>
                                         <user>root</user>
                                         <group>root</group>
@@ -272,7 +282,7 @@
                                 </copyDirectory>
                                 <copyDirectory>
                                     <from>target/stratio-connector-elasticsearch/conf</from>
-                                    <to>opt/sds/connectors/elasticsearch/conf</to>
+                                    <to>opt/sds/connectors/elasticsearch</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>
@@ -289,14 +299,6 @@
                                 <copyDirectory>
                                     <from>src/main/config</from>
                                     <to>etc/sds/connectors/elasticsearch</to>
-                                    <directoryAttributes>
-                                        <user>stratio</user>
-                                        <group>stratio</group>
-                                    </directoryAttributes>
-                                </copyDirectory>
-                                <copyDirectory>
-                                    <from>src/main/unix/files_and_dirs/etc/default</from>
-                                    <to>etc/default</to>
                                     <directoryAttributes>
                                         <user>stratio</user>
                                         <group>stratio</group>

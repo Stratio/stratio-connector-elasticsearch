@@ -47,9 +47,6 @@ import static org.mockito.Mockito.mock;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>
- * oct 15, 2014
- * </pre>
  */
 
 public class MetadataCreatorTest {

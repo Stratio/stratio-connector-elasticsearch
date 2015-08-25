@@ -1,9 +1,0 @@
-#A This function should be modified with what the user wants to do previous to
-# the compilation.
-# For instance, untar the code.
-
-## directory/to/be/created
-mkdir -p /var/sds/connectors/elasticsearch/stratio-connector-elasticsearch-store
-mkdir -p /var/log/sds/connectors/elasticsearch
-mkdir -p /opt/sds/connectors/elasticsearch
-

@@ -58,9 +58,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>
- * sep 16, 2014
- * </pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Client.class, SearchHits.class, ConnectorQueryExecutor.class, SearchHit.class,

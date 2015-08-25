@@ -14,9 +14,6 @@ import static org.mockito.Mockito.when;
  * ESProjectParsedValidator Tester.
  * 
  * @author <Authors name>
- * @since <pre>
- * dic 17, 2014
- * </pre>
  * @version 1.0
  */
 public class ESProjectParsedValidatorTest {

@@ -39,7 +39,6 @@ import static junit.framework.TestCase.assertNotNull;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>oct 14, 2014</pre>
  */
 public class ElasticsearchClientConfigurationTest {
 

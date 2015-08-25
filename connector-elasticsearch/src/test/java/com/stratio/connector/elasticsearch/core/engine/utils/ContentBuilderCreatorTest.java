@@ -40,7 +40,6 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 11, 2014</pre>
  */
 public class ContentBuilderCreatorTest {
 

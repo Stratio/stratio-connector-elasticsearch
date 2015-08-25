@@ -43,7 +43,6 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 15, 2014</pre>
  */
 public class ConnectorQueryParserTest {
 

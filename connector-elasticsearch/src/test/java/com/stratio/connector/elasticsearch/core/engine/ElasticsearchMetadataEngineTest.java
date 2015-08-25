@@ -70,7 +70,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 9, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(value = { Client.class, DeleteIndexResponse.class, ActionResponse.class, ActionFuture.class,

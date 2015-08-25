@@ -1,2 +1,0 @@
-exec /opt/sds/connectors/elasticsearch/bin/stratio-connector-elasticsearch
-

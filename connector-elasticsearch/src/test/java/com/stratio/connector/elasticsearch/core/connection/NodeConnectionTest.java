@@ -49,7 +49,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>oct 14, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(NodeBuilder.class)

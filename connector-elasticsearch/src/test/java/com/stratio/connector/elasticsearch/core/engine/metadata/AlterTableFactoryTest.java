@@ -33,9 +33,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>
- * nov 24, 2014
- * </pre>
+
  */
 public class AlterTableFactoryTest {
 

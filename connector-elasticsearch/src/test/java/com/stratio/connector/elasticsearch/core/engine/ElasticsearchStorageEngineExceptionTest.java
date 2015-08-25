@@ -47,7 +47,6 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 10, 2014</pre>
  */
 
 public class ElasticsearchStorageEngineExceptionTest {

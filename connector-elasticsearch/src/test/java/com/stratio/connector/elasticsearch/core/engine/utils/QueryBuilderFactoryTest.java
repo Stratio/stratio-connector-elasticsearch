@@ -42,7 +42,6 @@ import static org.junit.Assert.assertNotNull;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>nov 21, 2014</pre>
  */
 public class QueryBuilderFactoryTest {
 

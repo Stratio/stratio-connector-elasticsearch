@@ -43,7 +43,6 @@ import static org.mockito.Mockito.*;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>oct 14, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
 public class TransportConnectionTest {

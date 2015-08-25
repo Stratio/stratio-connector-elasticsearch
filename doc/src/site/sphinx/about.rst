@@ -8,7 +8,7 @@ Requirements
 ------------
 
 Install `elasticsearch 1.7.1 <https://www.elastic.co/downloads/past-releases/elasticsearch-1-7-1>`_ and run it.
-`Crossdata <https://github.com/Stratio/crossdata>`_ is needed to interact with this
+`Crossdata <http://docs.stratio.com/modules/crossdata/0.4/index.html>`_ is needed to interact with this
 connector.
 
 Compiling an building an executable Stratio Connector Elasticsearch
@@ -65,10 +65,10 @@ Now to start/stop the connector:
 How to use Elasticsearch Connector
 ----------------------------------
 
-A complete tutorial is available `here <First_Steps.rst>`__. The basic commands are described below.
+A complete tutorial is available `here <First_Steps.html>`__. The basic commands are described below.
 
 1. Start `crossdata-server and then
-   crossdata-shell <https://github.com/Stratio/crossdata>`__.
+   crossdata-shell <http://docs.stratio.com/modules/crossdata/0.4/index.html>`__.
 2. Start Elasticsearch Connector as it is explained before
 3. In crossdata-shell:
 

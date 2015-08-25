@@ -62,7 +62,6 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
  *
  * @author <Authors name>
  * @version 1.0
- * @since <pre>sep 10, 2014</pre>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ElasticsearchStorageEngine.class, QueryBuilderFactory.class })
