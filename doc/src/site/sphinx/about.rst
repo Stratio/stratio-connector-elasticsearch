@@ -65,7 +65,7 @@ Now to start/stop the connector:
 How to use Elasticsearch Connector
 ----------------------------------
 
-A complete tutorial is available `here <First_Steps.html>`__. The basic commands are described below.
+A complete tutorial is available `here <http://docs.stratio.com/modules/stratio-connector-elasticsearch/0.5/First_Steps.html>`__. The basic commands are described below.
 
 1. Start `crossdata-server and then
    crossdata-shell <http://docs.stratio.com/modules/crossdata/0.4/index.html>`__.
