@@ -136,10 +136,38 @@
         </Function>
 
         <Function>
+            <FunctionName>SUM</FunctionName>
+            <Signature>sum(Tuple[Any*]):Tuple[Double]</Signature>
+            <FunctionType>Aggregation</FunctionType>
+            <Description>Sum the values of the fields</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>AVG</FunctionName>
+            <Signature>avg(Tuple[Any*]):Tuple[Double]</Signature>
+            <FunctionType>Aggregation</FunctionType>
+            <Description>Compute the Average of the field's values</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MIN</FunctionName>
+            <Signature>min(Tuple[Any*]):Tuple[Any]</Signature>
+            <FunctionType>Aggregation</FunctionType>
+            <Description>Compute the Average of the field's values</Description>
+        </Function>
+
+        <Function>
+            <FunctionName>MAX</FunctionName>
+            <Signature>max(Tuple[Any*]):Tuple[Any]</Signature>
+            <FunctionType>Aggregation</FunctionType>
+            <Description>Compute the Average of the field's values</Description>
+        </Function>
+
+        <Function>
             <FunctionName>SUB_FIELD</FunctionName>
             <Signature>sub_field(Tuple[Any, Text]):Tuple[Text]</Signature>
             <FunctionType>simple</FunctionType>
-            <Description>It counts the number of rows</Description>
+            <Description>Return the ElasticSearch Indexed SubField</Description>
         </Function>
     </Functions>
 </Connector>

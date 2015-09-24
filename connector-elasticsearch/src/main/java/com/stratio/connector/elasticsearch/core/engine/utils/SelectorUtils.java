@@ -2,6 +2,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Map;
 
@@ -73,13 +74,13 @@ public class SelectorUtils {
      * @param functionName
      * @return
      */
-    public static boolean isFunction(Selector selector, String functionName) {
+    public static boolean isFunction(Selector selector, String... functionName) {
 
         if (!(selector instanceof FunctionSelector))
             return false;
 
         FunctionSelector functionSelector = (FunctionSelector) selector;
-        return functionSelector.getFunctionName().equalsIgnoreCase(functionName);
+        return ArrayUtils.contains(functionName, functionSelector.getFunctionName().toLowerCase().toString());
     }
 
 

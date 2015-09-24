@@ -25,6 +25,7 @@ import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.*;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
 import com.stratio.crossdata.common.statements.structures.Selector;
@@ -36,17 +37,22 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.ValuesSourceMetricsAggregationBuilder;
+import org.elasticsearch.search.aggregations.metrics.sum.SumBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Set;
 
 /**
  * Class that creates an elasticsearch query from a SELECT clause
- *
+ * <p>
  * Created by jmgomez on 15/09/14.
  */
 public class ConnectorQueryBuilder {
@@ -71,16 +77,20 @@ public class ConnectorQueryBuilder {
     public ActionRequestBuilder buildQuery(Client elasticClient, ProjectParsed queryData) throws UnsupportedException,
             ExecutionException {
 
-        if (null == elasticClient){throw new ExecutionException("Query builder received an empty client to execute the query.");}
-        if (null == queryData){throw new ExecutionException("Query builder received an empty select clause to be processed.");}
+        if (null == elasticClient) {
+            throw new ExecutionException("Query builder received an empty client to execute the query.");
+        }
+        if (null == queryData) {
+            throw new ExecutionException("Query builder received an empty select clause to be processed.");
+        }
 
         createRequestBuilder(elasticClient);
         createProjection(queryData.getProject());
         createFilter(queryData);
 
-        if (isAggregation(queryData)){
-            createNestedTermAggregation(queryData.getGroupBy());}
-        else {
+        if (isAggregation(queryData)) {
+            createNestedTermAggregation(queryData.getGroupBy(), queryData.getSelect());
+        } else {
             createSelect(queryData.getSelect());
             createSort(queryData.getOrderBy());
             createLimit(queryData.getLimit());
@@ -137,29 +147,66 @@ public class ConnectorQueryBuilder {
     /**
      * Method that creates the appropriate nested term aggregation properties to elasticsearch based on those specified by the "group by" clause
      *
-     * @param groupBy           GROUP BY clause that defines the nested term aggregations to be retrieved
+     * @param groupBy GROUP BY clause that defines the nested term aggregations to be retrieved
+     * @param select
      * @throws ExecutionException
      */
-    private void createNestedTermAggregation(GroupBy groupBy) throws ExecutionException {
+    private void createNestedTermAggregation(GroupBy groupBy, Select select) throws ExecutionException {
         // If any "group by" fields are defined they are used in order to create the appropriate aggregations
-        if (null != groupBy && null != groupBy.getIds()){
+        if (null != groupBy && null != groupBy.getIds()) {
             AggregationBuilder aggregationBuilder = null;
-
+            AggregationBuilder lastAggregationBuilder = null;
             // First field is used as the parent aggregation level and next ones are added as nested sub-aggregations of the previous one
-            for(Selector term: groupBy.getIds()){
+            for (Selector term : groupBy.getIds()) {
                 String fieldName = SelectorUtils.getSelectorFieldName(term);
-                if (aggregationBuilder == null){
-                    aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
-                }else{
-                    aggregationBuilder.subAggregation(AggregationBuilders.terms(fieldName).field(fieldName));
+                if (aggregationBuilder == null) {
+                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                } else {
+                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                    aggregationBuilder.subAggregation(lastAggregationBuilder);
                 }
             }
-
+            if (aggregationBuilder != null) {
+                for (Selector selector : select.getColumnMap().keySet()) {
+                    if (SelectorUtils.isFunction(selector, "sum")) {
+                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "sum"));
+                    } else if (SelectorUtils.isFunction(selector, "avg")) {
+                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "avg"));
+                    } else if (SelectorUtils.isFunction(selector, "min")) {
+                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "min"));
+                    } else if (SelectorUtils.isFunction(selector, "max")) {
+                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "max"));
+                    }
+                }
+            }
+            //TODO add limits and Sorts
             // No results are needed when requesting an aggregation therefore the size is set to 0 and the aggregation properties are added to the query
             requestBuilder.addAggregation(aggregationBuilder);
             requestBuilder.setSize(0);
         }
     }
+
+    /**
+     * Builds Aggregation Functions from a FunctionSelector
+     * @param function A FunctionSelector
+     * @param methodName a <code>AggregationBuilders</code> method that build the aggregation
+     * @return a MetricsAggregationBuilder
+     */
+    private ValuesSourceMetricsAggregationBuilder buildAggregation(FunctionSelector function, String methodName) {
+
+        try {
+            Selector field = function.getFunctionColumns().get(0);
+            Method method =  AggregationBuilders.class.getMethod(methodName, String.class);
+            ValuesSourceMetricsAggregationBuilder aggFunction = (ValuesSourceMetricsAggregationBuilder) method.invoke(null, function.getAlias());
+            aggFunction.field(SelectorUtils.getSelectorFieldName(field));
+
+            return aggFunction;
+
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     /**
      * Method that adds the appropriate returning fields to the elasticsearch query from those specified by the select clause
@@ -168,12 +215,14 @@ public class ConnectorQueryBuilder {
      */
     private void createSelect(Select select) {
         // If any "select" fields are requested they are used in order to set the return fields in the elasticsearch query
-        if (null != select && null != select.getColumnMap() && !select.getColumnMap().isEmpty()){
+        if (null != select && null != select.getColumnMap() && !select.getColumnMap().isEmpty()) {
 
             Set<Selector> selectors = select.getColumnMap().keySet();
 
             // If it is a count operation no field is needed to be returned
-            if (isCount(selectors)){return;}
+            if (isCount(selectors)) {
+                return;
+            }
 
             // Otherwise field names are added to the return fields property
             for (Selector selector : selectors) {
@@ -181,7 +230,9 @@ public class ConnectorQueryBuilder {
                 String fieldName = SelectorUtils.getSelectorFieldName(selector);
 
                 // Adds field name to returning field property in the elasticsearch query
-                if (null != fieldName) {requestBuilder.addField(fieldName);}
+                if (null != fieldName) {
+                    requestBuilder.addField(fieldName);
+                }
             }
         }
     }
@@ -190,7 +241,7 @@ public class ConnectorQueryBuilder {
     /**
      * Method that adds the appropriate sorts to the elasticsearch query from those specified by the OrderBy clause
      *
-     * @param orderBy   ORDER BY clause including fields to be used for sorting and sorting ways
+     * @param orderBy ORDER BY clause including fields to be used for sorting and sorting ways
      */
     private void createSort(OrderBy orderBy) {
         // Checks if any order by clause is present
@@ -223,9 +274,10 @@ public class ConnectorQueryBuilder {
      * @param limit LIMIT clause that defines the number of results to be returned
      */
     private void createLimit(Limit limit) throws ExecutionException {
-        if (null != limit) {requestBuilder.setSize(limit.getLimit());}
+        if (null != limit) {
+            requestBuilder.setSize(limit.getLimit());
+        }
     }
-
 
 
     // UTILITY METHODS
@@ -233,8 +285,8 @@ public class ConnectorQueryBuilder {
     /**
      * Checks whether a select clause is an aggregation operation by checking if includes a "group by" clause
      *
-     * @param queryData   complete information from the SELECT clause
-     * @return                      true if the clause is a count operation or false otherwise
+     * @param queryData complete information from the SELECT clause
+     * @return true if the clause is a count operation or false otherwise
      */
     private boolean isAggregation(ProjectParsed queryData) {
         return queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty();
@@ -244,13 +296,15 @@ public class ConnectorQueryBuilder {
     /**
      * Checks whether a select clause is a count operation by checking if includes the function "count(...)"
      *
-     * @param selectors     list of fields from the SELECT clause
-     * @return                      true if the clause is a count operation or false otherwise
+     * @param selectors list of fields from the SELECT clause
+     * @return true if the clause is a count operation or false otherwise
      */
-    private boolean isCount (Set<Selector> selectors){
+    private boolean isCount(Set<Selector> selectors) {
         // If any of the selectors is a count function the the clause is a count operation
         for (Selector selector : selectors) {
-            if (SelectorUtils.isFunction(selector, "count")){return true;}
+            if (SelectorUtils.isFunction(selector, "count")) {
+                return true;
+            }
         }
         return false;
     }

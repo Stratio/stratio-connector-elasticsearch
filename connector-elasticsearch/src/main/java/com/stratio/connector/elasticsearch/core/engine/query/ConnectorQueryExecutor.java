@@ -18,11 +18,7 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
@@ -34,8 +30,12 @@ import org.elasticsearch.indices.IndexMissingException;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregation;
+import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,35 +103,65 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
+    private Object geyBucketValue(Terms.Bucket bucket){
+        if (bucket instanceof StringTerms.Bucket){
+            return  bucket.getKey();
+        }else {
+
+            return bucket.getKeyAsNumber();
+        }
+    }
+
+    /**
+     * Process Group By queries results
+     */
     private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
 
+        Map<Selector, String> alias = returnAlias(queryData);
+
         for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
-            StringTerms stringTerms = (StringTerms) aggregation; //TODO support for different types
-            Map<Selector, String> alias = returnAlias(queryData);
+            InternalTerms terms = (InternalTerms) aggregation; //TODO support for different types
+            processTermAggregation(queryData, resultSet, alias, terms);
+        }
+    }
 
-            for (Terms.Bucket bucket : stringTerms.getBuckets()) {
-                Map<String, Object> fields = new HashMap();
 
-                fields.put(stringTerms.getName(), bucket.getKey());
-                if (bucket.getAggregations().iterator().hasNext()) {
-                    processSubAggregation(queryData, resultSet, bucket, alias, fields);
-                } else {
-                    fields.put("count", bucket.getDocCount());
-                    Row row = buildRow(queryData, alias, fields);
-                    resultSet.add(row);
-                }
+    private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms) throws ExecutionException {
+
+        for (Terms.Bucket bucket : terms.getBuckets()) { //Top Level
+            Map<String, Object> fields = new HashMap();
+            fields.put(terms.getName(), geyBucketValue(bucket)); //First column
+
+            //Has other Aggregations/Columns
+            if (bucket.getAggregations().iterator().hasNext()) {
+                processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet);
+            } else {
+                fields.put("count", bucket.getDocCount());
+                resultSet.add(buildRow(queryData, alias, fields));
             }
         }
     }
 
-    private void processSubAggregation(ProjectParsed queryData, ResultSet resultSet, Terms.Bucket bucket, Map<Selector, String> alias, Map<String, Object> fields) throws ExecutionException {
-        for (Aggregation subAgg : bucket.getAggregations().asList()) {
-            StringTerms stringTermsSubAgg = (StringTerms) subAgg;
-            for (Terms.Bucket subBucker : stringTermsSubAgg.getBuckets()) {
-                fields.put("count", subBucker.getDocCount());
-                fields.put(stringTermsSubAgg.getName(), subBucker.getKey());
-                Row row = buildRow(queryData, alias, fields);
-                resultSet.add(row);
+
+    private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet) throws ExecutionException {
+        for (Aggregation subAgg : aggregations) {
+            if (subAgg instanceof InternalTerms){ //Is a Sub Agreggation
+                InternalTerms termsSubAgg = (InternalTerms) subAgg;
+                for (Terms.Bucket subBucker : termsSubAgg.getBuckets()) {
+                    if (subBucker.getAggregations().iterator().hasNext()) {
+                        fields.put("count", subBucker.getDocCount());
+                        fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
+                        processSubAggregation(queryData, subBucker.getAggregations().asList(), alias, fields, resultSet);
+                        resultSet.add(buildRow(queryData, alias, fields));
+                    } else {
+                        fields.put("count", subBucker.getDocCount());
+                        fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
+                        resultSet.add(buildRow(queryData, alias, fields));
+                    }
+                }
+            }else if (subAgg instanceof NumericMetricsAggregation){
+                NumericMetricsAggregation.SingleValue numericAggregation = (NumericMetricsAggregation.SingleValue) subAgg;
+                fields.put(subAgg.getName(), numericAggregation.value());
             }
         }
     }
@@ -255,7 +285,7 @@ public class ConnectorQueryExecutor {
     private Set<String> createFieldNames(Set<Selector> selectors) throws ExecutionException {
         Set<String> fieldNames = new LinkedHashSet<>();
         for (Selector selector : selectors) {
-            if (SelectorUtils.isFunction(selector, "count")) {
+            if (SelectorUtils.isFunction(selector, "count", "avg", "max", "min", "sum")) {
                 fieldNames.add((String) selector.getAlias());
             } else if (SelectorUtils.isFunction(selector, "sub_field")){
                 fieldNames.add(SelectorUtils.calculateSubFieldName(selector));
