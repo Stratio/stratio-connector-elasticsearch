@@ -1,7 +1,7 @@
 # About #
 
 
-The Stratio Connector-Elasticsearch allows [Stratio Crossdata] (<http://docs.stratio.com/modules/crossdata/0.4/index.html>) to interact with ElasticSearch.
+The Stratio Connector-Elasticsearch allows [Stratio Crossdata] (<http://docs.stratio.com/modules/crossdata/0.5/index.html>) to interact with ElasticSearch.
 
 ## How to use Stratio Connector-Elasticsearch ##
 
