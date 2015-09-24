@@ -60,6 +60,7 @@
         <operation>SELECT_LIMIT</operation>
         <operation>SELECT_FUNCTIONS</operation>
         <operation>SELECT_GROUP_BY</operation>
+        <operation>SELECT_DISTINCT</operation>
 
         <operation>FILTER_PK_EQ</operation>
         <operation>FILTER_PK_GT</operation>
