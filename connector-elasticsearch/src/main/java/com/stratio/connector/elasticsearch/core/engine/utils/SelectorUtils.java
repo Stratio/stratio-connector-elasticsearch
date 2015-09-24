@@ -57,9 +57,9 @@ public class SelectorUtils {
      */
     private static String getSubFieldFunctionSelectorFieldName (FunctionSelector subFieldFunctionSelector){
         // Retrieves the base field name
-        String field = subFieldFunctionSelector.getFunctionColumns().get(0).getColumnName().getName();
+        String field = subFieldFunctionSelector.getFunctionColumns().getSelectorList().get(0).getColumnName().getName();
         // Retrieves the analyzer name
-        String subField = subFieldFunctionSelector.getFunctionColumns().get(1).getStringValue();
+        String subField = subFieldFunctionSelector.getFunctionColumns().getSelectorList().get(1).getStringValue();
         // Builds field name
         return field + "." + subField;
     }
@@ -107,8 +107,8 @@ public class SelectorUtils {
 
     public static String calculateSubFieldName(Selector selector) {
         FunctionSelector functionSelector = (FunctionSelector) selector;
-        String field = functionSelector.getFunctionColumns().get(0).getColumnName().getName();
-        String subField = functionSelector.getFunctionColumns().get(1).getStringValue();
+        String field = functionSelector.getFunctionColumns().getSelectorList().get(0).getColumnName().getName();
+        String subField = functionSelector.getFunctionColumns().getSelectorList().get(1).getStringValue();
         return field +"."+subField;
     }
 

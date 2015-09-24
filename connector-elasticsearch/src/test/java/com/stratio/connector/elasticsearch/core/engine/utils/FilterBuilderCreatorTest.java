@@ -37,7 +37,7 @@ public class FilterBuilderCreatorTest {
     @Test
     public void testCreateFilterBuilderDistinc() throws UnsupportedException, ExecutionException {
         String expectations = "{\"bool\":{\"must\":{\"not\":{\"filter\":{\"term\":{\"column\":10}}}}}}";
-        testCreateFilterBuilder(Operator.DISTINCT, expectations);
+        testCreateFilterBuilder(Operator.NOT_EQ, expectations);
     }
 
     @Test

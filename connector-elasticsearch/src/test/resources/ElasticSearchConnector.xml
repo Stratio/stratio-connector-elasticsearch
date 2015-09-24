@@ -44,13 +44,13 @@
         <operation>FILTER_PK_LT</operation>
         <operation>FILTER_PK_GET</operation>
         <operation>FILTER_PK_LET</operation>
-        <operation>FILTER_PK_DISTINCT</operation>
+        <operation>FILTER_PK_NOT_EQ</operation>
         <operation>FILTER_INDEXED_EQ</operation>
         <operation>FILTER_INDEXED_GT</operation>
         <operation>FILTER_INDEXED_LT</operation>
         <operation>FILTER_INDEXED_GET</operation>
         <operation>FILTER_INDEXED_LET</operation>
-        <operation>FILTER_INDEXED_DISTINCT</operation>
+        <operation>FILTER_INDEXED_NOT_EQ</operation>
         <operation>FILTER_FULLTEXT</operation>
     </SupportedOperations>
 </Connector>

@@ -3,6 +3,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
+import com.stratio.crossdata.common.statements.structures.SelectExpression;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.junit.Test;
 
@@ -40,9 +41,11 @@ public class SelectorUtilsTest {
         Selector analyzer = mock(Selector.class);
         functionColumns.add(selector);
         functionColumns.add(analyzer);
+        SelectExpression se = mock(SelectExpression.class);
 
         when(functionSelector.getFunctionName()).thenReturn("unknown");
-        when(functionSelector.getFunctionColumns()).thenReturn(functionColumns);
+        when(functionSelector.getFunctionColumns()).thenReturn(se);
+        when(se.getSelectorList()).thenReturn(functionColumns);
         when(selector.getColumnName()).thenReturn(columnName);
         when(columnName.getName()).thenReturn("fieldName");
         when(analyzer.getStringValue()).thenReturn("analyzer");
@@ -59,9 +62,11 @@ public class SelectorUtilsTest {
         Selector analyzer = mock(Selector.class);
         functionColumns.add(selector);
         functionColumns.add(analyzer);
+        SelectExpression se = mock(SelectExpression.class);
 
         when(functionSelector.getFunctionName()).thenReturn("sub_field");
-        when(functionSelector.getFunctionColumns()).thenReturn(functionColumns);
+        when(functionSelector.getFunctionColumns()).thenReturn(se);
+        when(functionSelector.getFunctionColumns().getSelectorList()).thenReturn(functionColumns);
         when(selector.getColumnName()).thenReturn(columnName);
         when(columnName.getName()).thenReturn("fieldName");
         when(analyzer.getStringValue()).thenReturn("analyzer");

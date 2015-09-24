@@ -86,7 +86,7 @@ public class FilterBuilderCreator {
             case ASSIGN:
                 localFilterBuilder = FilterBuilders.termFilter(leftTerm, rightTerm);
                 break;
-            case DISTINCT:
+            case NOT_EQ:
                 localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.termFilter(leftTerm, rightTerm));
                 break;
             case LT:
