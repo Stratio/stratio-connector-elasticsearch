@@ -37,9 +37,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.metrics.MetricsAggregationBuilder;
 import org.elasticsearch.search.aggregations.metrics.ValuesSourceMetricsAggregationBuilder;
-import org.elasticsearch.search.aggregations.metrics.sum.SumBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -195,7 +193,7 @@ public class ConnectorQueryBuilder {
     private ValuesSourceMetricsAggregationBuilder buildAggregation(FunctionSelector function, String methodName) {
 
         try {
-            Selector field = function.getFunctionColumns().get(0);
+            Selector field = function.getFunctionColumns().getSelectorList().get(0);
             Method method =  AggregationBuilders.class.getMethod(methodName, String.class);
             ValuesSourceMetricsAggregationBuilder aggFunction = (ValuesSourceMetricsAggregationBuilder) method.invoke(null, function.getAlias());
             aggFunction.field(SelectorUtils.getSelectorFieldName(field));
@@ -219,8 +217,15 @@ public class ConnectorQueryBuilder {
 
             Set<Selector> selectors = select.getColumnMap().keySet();
 
-            // If it is a count operation no field is needed to be returned
-            if (isCount(selectors)) {
+            // If it is a aggregation operation adds the aggregation and returns
+            if (isfucntion(selectors, "count", "max", "avg", "min", "sum")) {
+                for (Selector selector : selectors) {
+                    if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
+                        FunctionSelector functionSelector = (FunctionSelector) selector;
+                        requestBuilder.addAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
+                    }
+                }
+                requestBuilder.setSize(0);
                 return;
             }
 
@@ -299,10 +304,10 @@ public class ConnectorQueryBuilder {
      * @param selectors list of fields from the SELECT clause
      * @return true if the clause is a count operation or false otherwise
      */
-    private boolean isCount(Set<Selector> selectors) {
+    private boolean isfucntion(Set<Selector> selectors, String... functionName) {
         // If any of the selectors is a count function the the clause is a count operation
         for (Selector selector : selectors) {
-            if (SelectorUtils.isFunction(selector, "count")) {
+            if (SelectorUtils.isFunction(selector, functionName)) {
                 return true;
             }
         }

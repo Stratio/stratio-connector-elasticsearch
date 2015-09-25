@@ -87,8 +87,8 @@ public class ConnectorQueryExecutor {
 
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
-            } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count")) {
-                processCount(queryData, resultSet, response);
+            } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count", "max", "avg", "min", "sum")) {
+                processAggregationFucntion(queryData, resultSet, response);
             } else {
                 processResults(queryData, resultSet, response);
             }
@@ -172,12 +172,15 @@ public class ConnectorQueryExecutor {
         }
     }
 
-    private void processCount(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
-        FunctionSelector functionSelector = SelectorUtils.getFunctionSelector(queryData.getSelect().getColumnMap(), "count");
+    private void processAggregationFucntion(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
+
         Map<Selector, String> alias = returnAlias(queryData);
         Map<String, Object> fields = new HashMap();
+        for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
+            NumericMetricsAggregation.SingleValue numericAggregation = (NumericMetricsAggregation.SingleValue) aggregation;
+            fields.put(numericAggregation.getName(), numericAggregation.value());
+        }
 
-        fields.put(functionSelector.getAlias(), response.getHits().totalHits());
         Row row = buildRow(queryData, alias, fields);
         resultSet.add(row);
     }

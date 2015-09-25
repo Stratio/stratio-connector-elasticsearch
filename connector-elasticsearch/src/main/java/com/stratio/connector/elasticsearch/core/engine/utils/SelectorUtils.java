@@ -84,7 +84,7 @@ public class SelectorUtils {
     }
 
 
-    public static boolean hasFunction(Map<Selector, String> columnMetadata, String functionName) {
+    public static boolean hasFunction(Map<Selector, String> columnMetadata, String... functionName) {
 
         for (Selector selector : columnMetadata.keySet()) {
             if (isFunction(selector, functionName)) {
