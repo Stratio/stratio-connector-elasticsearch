@@ -2,6 +2,7 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.statements.structures.AliasSelector;
+import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
 
@@ -28,10 +29,7 @@ public class RowSorter implements Comparator<Row> {
         while(columns.hasNext()){
             OrderByClause clause = columns.next();
 
-            String fieldName = clause.getSelector().getAlias();
-            if (clause.getSelector() instanceof AliasSelector){
-                fieldName = ((AliasSelector) clause.getSelector()).getReferencedSelector().getAlias();
-            }
+            String fieldName = SelectorUtils.calculateAlias(clause.getSelector());
 
             Comparable o1Value = (Comparable) o1.getCell(fieldName).getValue();
             Comparable o2Value = (Comparable) o2.getCell(fieldName).getValue();

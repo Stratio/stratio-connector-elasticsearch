@@ -1,5 +1,6 @@
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import com.stratio.crossdata.common.statements.structures.AliasSelector;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import org.apache.commons.lang3.ArrayUtils;
@@ -114,4 +115,17 @@ public class SelectorUtils {
     }
 
 
+    public static String calculateAlias(Selector selector){
+        String fieldName =selector.getAlias();
+
+        if (fieldName == null && selector instanceof FunctionSelector){
+            return ((FunctionSelector) selector).getAlias();
+        }else if (fieldName == null && selector instanceof AliasSelector){
+            return ((AliasSelector) selector).getReferencedSelector().getAlias();
+        }else if (fieldName == null){
+            return selector.getColumnName().getName();
+        }
+
+        return fieldName;
+    }
 }

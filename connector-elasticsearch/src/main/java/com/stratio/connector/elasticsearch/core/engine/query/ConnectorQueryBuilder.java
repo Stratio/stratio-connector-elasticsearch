@@ -37,6 +37,9 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.ValuesSourceAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.ValuesSourceMetricsAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
@@ -46,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -87,7 +92,7 @@ public class ConnectorQueryBuilder {
         createFilter(queryData);
 
         if (isAggregation(queryData)) {
-            createNestedTermAggregation(queryData.getGroupBy(), queryData.getSelect());
+            createNestedTermAggregation(queryData);
         } else {
             createSelect(queryData.getSelect());
             createSort(queryData.getOrderBy());
@@ -145,11 +150,26 @@ public class ConnectorQueryBuilder {
     /**
      * Method that creates the appropriate nested term aggregation properties to elasticsearch based on those specified by the "group by" clause
      *
-     * @param groupBy GROUP BY clause that defines the nested term aggregations to be retrieved
-     * @param select
      * @throws ExecutionException
      */
-    private void createNestedTermAggregation(GroupBy groupBy, Select select) throws ExecutionException {
+    /*
+    * When I wrote this, only God and I understood what I was doing
+    * Now, God only knows
+     */
+    private void createNestedTermAggregation(ProjectParsed queryData) throws ExecutionException {
+
+        GroupBy groupBy = queryData.getGroupBy();
+        Select select = queryData.getSelect();
+        OrderBy orderBy = queryData.getOrderBy();
+        int limit =  queryData.getLimit() != null ? queryData.getLimit().getLimit():0;
+
+        Map<String, OrderByClause> orderByMap = new HashMap<>();
+        if (orderBy!= null && !orderBy.getIds().isEmpty()){
+            for(OrderByClause clause:orderBy.getIds()){
+                orderByMap.put(SelectorUtils.calculateAlias(clause.getSelector()), clause);
+            }
+        }
+
         // If any "group by" fields are defined they are used in order to create the appropriate aggregations
         if (null != groupBy && null != groupBy.getIds()) {
             AggregationBuilder aggregationBuilder = null;
@@ -158,9 +178,11 @@ public class ConnectorQueryBuilder {
             for (Selector term : groupBy.getIds()) {
                 String fieldName = SelectorUtils.getSelectorFieldName(term);
                 if (aggregationBuilder == null) {
-                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName).size(limit);
+                    sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
                 } else {
-                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName).size(limit);
+                    sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
                     aggregationBuilder.subAggregation(lastAggregationBuilder);
                 }
             }
@@ -172,13 +194,18 @@ public class ConnectorQueryBuilder {
                     }
                 }
             }
-            //TODO add limits and Sorts
             // No results are needed when requesting an aggregation therefore the size is set to 0 and the aggregation properties are added to the query
             requestBuilder.addAggregation(aggregationBuilder);
             requestBuilder.setSize(0);
         }
     }
 
+    private void sortSubAggregation(String fieldName,Map<String, OrderByClause> orderByMap,TermsBuilder termsBuilder ){
+        if (orderByMap.containsKey(fieldName)){
+            boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
+            termsBuilder.order(Terms.Order.term(asc));
+        }
+    }
     /**
      * Builds Aggregation Functions from a FunctionSelector
      * @param function A FunctionSelector
@@ -217,7 +244,15 @@ public class ConnectorQueryBuilder {
                 for (Selector selector : selectors) {
                     if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
                         FunctionSelector functionSelector = (FunctionSelector) selector;
-                        requestBuilder.addAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
+
+                        if (select.isDistinct() && isfucntion(selectors, "count")){
+                            FunctionSelector function = (FunctionSelector) selector;
+                            Selector field = function.getFunctionColumns().getSelectorList().get(0);
+                            requestBuilder.addAggregation(AggregationBuilders.cardinality(function.getAlias()).field(SelectorUtils.getSelectorFieldName(field)));
+                        }else{
+                            requestBuilder.addAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
+                        }
+
                     }
                 }
                 requestBuilder.setSize(0);

@@ -160,21 +160,24 @@ public class ConnectorQueryExecutor {
                     if (subBucker.getAggregations().iterator().hasNext()) {
                         fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
                         processSubAggregation(queryData, subBucker.getAggregations().asList(), alias, fields, resultSet);
-                        resultSet.add(buildRow(queryData, alias, fields));
+                        addResult(resultSet, buildRow(queryData, alias, fields));
                     } else {
                         fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
-                        resultSet.add(buildRow(queryData, alias, fields));
+                        addResult(resultSet, buildRow(queryData, alias, fields));
                     }
                 }
             }else if (subAgg instanceof NumericMetricsAggregation){
                 NumericMetricsAggregation.SingleValue numericAggregation = (NumericMetricsAggregation.SingleValue) subAgg;
                 fields.put(subAgg.getName(), numericAggregation.value());
-                Row row  = buildRow(queryData, alias, fields);
-                if (!resultSet.getRows().contains(row)){
-                    resultSet.add(row);
-                }
+                addResult(resultSet, buildRow(queryData, alias, fields));
 
             }
+        }
+    }
+
+    private void addResult(ResultSet resultSet, Row row){
+        if (!resultSet.getRows().contains(row)){
+            resultSet.add(row);
         }
     }
 
