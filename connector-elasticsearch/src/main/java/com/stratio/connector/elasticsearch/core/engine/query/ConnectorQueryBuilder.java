@@ -166,14 +166,9 @@ public class ConnectorQueryBuilder {
             }
             if (aggregationBuilder != null) {
                 for (Selector selector : select.getColumnMap().keySet()) {
-                    if (SelectorUtils.isFunction(selector, "sum")) {
-                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "sum"));
-                    } else if (SelectorUtils.isFunction(selector, "avg")) {
-                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "avg"));
-                    } else if (SelectorUtils.isFunction(selector, "min")) {
-                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "min"));
-                    } else if (SelectorUtils.isFunction(selector, "max")) {
-                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, "max"));
+                    if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
+                        FunctionSelector functionSelector = (FunctionSelector) selector;
+                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
                     }
                 }
             }

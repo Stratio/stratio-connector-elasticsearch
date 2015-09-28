@@ -85,6 +85,12 @@
         <operation>FILTER_FUNCTION</operation>
         <operation>FILTER_NON_INDEXED_BETWEEN</operation>
         <operation>FILTER_INDEXED_BETWEEN</operation>
+        <operation>FILTER_PK_IN</operation>
+        <operation>FILTER_NON_INDEXED_IN</operation>
+        <operation>FILTER_INDEXED_IN</operation>
+        <operation>FILTER_PK_NOT_IN</operation>
+        <operation>FILTER_NON_INDEXED_NOT_IN</operation>
+        <operation>FILTER_INDEXED_NOT_IN</operation>
     </SupportedOperations>
 
     <Functions>

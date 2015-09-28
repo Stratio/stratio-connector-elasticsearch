@@ -18,31 +18,12 @@
 
 package com.stratio.connector.elasticsearch.core.engine.query;
 
-import java.util.*;
-
-import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
-import com.stratio.crossdata.common.statements.structures.FunctionSelector;
-import org.elasticsearch.action.ActionRequestBuilder;
-import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.indices.IndexMissingException;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHitField;
-import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregation;
-import org.elasticsearch.search.aggregations.metrics.max.InternalMax;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.stratio.connector.commons.engine.query.ProjectParsed;
 import com.stratio.connector.commons.util.ColumnTypeHelper;
 import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.connector.elasticsearch.core.engine.metadata.MetadataCreator;
+import com.stratio.connector.elasticsearch.core.engine.utils.RowSorter;
+import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.data.Cell;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.ResultSet;
@@ -52,8 +33,25 @@ import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
+import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.SelectorType;
+import org.elasticsearch.action.ActionRequestBuilder;
+import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.indices.IndexMissingException;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHitField;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.bucket.terms.InternalTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
+import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 public class ConnectorQueryExecutor {
 
@@ -123,8 +121,19 @@ public class ConnectorQueryExecutor {
             InternalTerms terms = (InternalTerms) aggregation; //TODO support for different types
             processTermAggregation(queryData, resultSet, alias, terms);
         }
-    }
 
+        if (queryData.getOrderBy() != null && !queryData.getOrderBy().getIds().isEmpty()){
+            List<OrderByClause> fields = queryData.getOrderBy().getIds();
+            Collections.sort(resultSet.getRows(), new RowSorter(fields));
+        }
+
+        if (queryData.getLimit() != null){
+            int limit = queryData.getLimit().getLimit();
+            List<Row> limitedResult = resultSet.getRows().subList(0,limit);
+            resultSet.setRows(new ArrayList<>(limitedResult));
+        }
+
+    }
 
     private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms) throws ExecutionException {
 
@@ -136,7 +145,7 @@ public class ConnectorQueryExecutor {
             if (bucket.getAggregations().iterator().hasNext()) {
                 processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet);
             } else {
-                fields.put("count", bucket.getDocCount());
+//                fields.put("count", bucket.getDocCount());
                 resultSet.add(buildRow(queryData, alias, fields));
             }
         }
@@ -149,12 +158,10 @@ public class ConnectorQueryExecutor {
                 InternalTerms termsSubAgg = (InternalTerms) subAgg;
                 for (Terms.Bucket subBucker : termsSubAgg.getBuckets()) {
                     if (subBucker.getAggregations().iterator().hasNext()) {
-                        fields.put("count", subBucker.getDocCount());
                         fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
                         processSubAggregation(queryData, subBucker.getAggregations().asList(), alias, fields, resultSet);
                         resultSet.add(buildRow(queryData, alias, fields));
                     } else {
-                        fields.put("count", subBucker.getDocCount());
                         fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
                         resultSet.add(buildRow(queryData, alias, fields));
                     }
@@ -162,6 +169,11 @@ public class ConnectorQueryExecutor {
             }else if (subAgg instanceof NumericMetricsAggregation){
                 NumericMetricsAggregation.SingleValue numericAggregation = (NumericMetricsAggregation.SingleValue) subAgg;
                 fields.put(subAgg.getName(), numericAggregation.value());
+                Row row  = buildRow(queryData, alias, fields);
+                if (!resultSet.getRows().contains(row)){
+                    resultSet.add(row);
+                }
+
             }
         }
     }

@@ -18,11 +18,11 @@
 
 package com.stratio.connector.elasticsearch.core.engine.utils;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import com.stratio.crossdata.common.statements.structures.FunctionSelector;
-import com.stratio.crossdata.common.statements.structures.GroupSelector;
-import com.stratio.crossdata.common.statements.structures.StringSelector;
+import com.stratio.crossdata.common.statements.structures.*;
 import org.elasticsearch.index.query.BoolFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
@@ -32,7 +32,6 @@ import com.stratio.connector.commons.util.SelectorHelper;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Filter;
-import com.stratio.crossdata.common.statements.structures.Relation;
 
 /**
  * The responsibility of this class is create a FilterBuilder.
@@ -75,11 +74,7 @@ public class FilterBuilderCreator {
         FilterBuilder localFilterBuilder = null;
         String leftTerm = recoveredLeftTerm(filter, relation);
 
-        Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(relation.getRightTerm()),
-                relation.getRightTerm());
-        if (rightTerm instanceof String) {
-            rightTerm = ((String) rightTerm).toLowerCase();
-        }
+        Object rightTerm = getSelectorValue(relation.getRightTerm());
 
         switch (relation.getOperator()) {
             case EQ:
@@ -110,6 +105,22 @@ public class FilterBuilderCreator {
 
                 localFilterBuilder = FilterBuilders.rangeFilter(leftTerm).from(from).to(to);
                 break;
+            case IN:
+            case NOT_IN:
+                ListSelector inSelector =  (ListSelector)filter.getRelation().getRightTerm();
+                FilterBuilder[] values = new FilterBuilder[inSelector.getSelectorsList().size()];
+
+                for (int i=0; i< values.length; i++){
+                    values[i] = FilterBuilders.termFilter(leftTerm, getSelectorValue(inSelector.getSelectorsList().get(i)));
+
+                }
+                if (relation.getOperator().equals(Operator.IN)){
+                    localFilterBuilder = FilterBuilders.boolFilter().should(values);
+                }else{
+                    localFilterBuilder = FilterBuilders.notFilter(FilterBuilders.boolFilter().should(values));
+                }
+
+                break;
             default:
                 throw new UnsupportedException("Not implemented yet in filter query. [" + relation.getOperator() + "]");
 
@@ -117,6 +128,15 @@ public class FilterBuilderCreator {
 
         return localFilterBuilder;
 
+    }
+
+    private Object getSelectorValue(Selector rightValue) throws ExecutionException {
+        Object rightTerm = SelectorHelper.getValue(SelectorHelper.getClass(rightValue),
+                rightValue);
+        if (rightTerm instanceof String) {
+            rightTerm = ((String) rightTerm).toLowerCase();
+        }
+        return rightTerm;
     }
 
     /**
