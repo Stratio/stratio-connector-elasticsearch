@@ -154,7 +154,7 @@ public class ConnectorQueryBuilder {
      */
     /*
     * When I wrote this, only God and I understood what I was doing
-    * Now, God only knows
+    * Now, God only knows LM
      */
     private void createNestedTermAggregation(ProjectParsed queryData) throws ExecutionException {
 
@@ -163,6 +163,7 @@ public class ConnectorQueryBuilder {
         OrderBy orderBy = queryData.getOrderBy();
         int limit =  queryData.getLimit() != null ? queryData.getLimit().getLimit():0;
 
+        //This maps Helps to look if there is an orderBy clause for a aggregation Field.
         Map<String, OrderByClause> orderByMap = new HashMap<>();
         if (orderBy!= null && !orderBy.getIds().isEmpty()){
             for(OrderByClause clause:orderBy.getIds()){

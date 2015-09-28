@@ -74,13 +74,13 @@ public class ConnectorQueryExecutor {
     public QueryResult executeQuery(Client elasticClient, ActionRequestBuilder actionRequestBuilder, ProjectParsed queryData)
             throws ExecutionException {
 
-        QueryResult queryResult = null;
+        QueryResult queryResult;
         SearchRequestBuilder requestBuilder = (SearchRequestBuilder) actionRequestBuilder;
 
         try {
 
             ResultSet resultSet = new ResultSet();
-            SearchResponse response = ((SearchRequestBuilder) requestBuilder).execute().actionGet();
+            SearchResponse response = requestBuilder.execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
@@ -101,10 +101,10 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
-    private Object geyBucketValue(Terms.Bucket bucket){
-        if (bucket instanceof StringTerms.Bucket){
-            return  bucket.getKey();
-        }else {
+    private Object geyBucketValue(Terms.Bucket bucket) {
+        if (bucket instanceof StringTerms.Bucket) {
+            return bucket.getKey();
+        } else {
 
             return bucket.getKeyAsNumber();
         }
@@ -122,15 +122,18 @@ public class ConnectorQueryExecutor {
             processTermAggregation(queryData, resultSet, alias, terms);
         }
 
-        if (queryData.getOrderBy() != null && !queryData.getOrderBy().getIds().isEmpty()){
+        //If there are more than one order by field, we need to sort by my self.
+        if (queryData.getOrderBy() != null && queryData.getOrderBy().getIds().size() > 1) {
             List<OrderByClause> fields = queryData.getOrderBy().getIds();
             Collections.sort(resultSet.getRows(), new RowSorter(fields));
         }
 
-        if (queryData.getLimit() != null){
+        if (queryData.getLimit() != null) {
             int limit = queryData.getLimit().getLimit();
-            List<Row> limitedResult = resultSet.getRows().subList(0,limit);
-            resultSet.setRows(new ArrayList<>(limitedResult));
+            if (resultSet.getRows().size() > limit) {
+                List<Row> limitedResult = resultSet.getRows().subList(0, limit);
+                resultSet.setRows(new ArrayList<>(limitedResult));
+            }
         }
 
     }
@@ -145,16 +148,18 @@ public class ConnectorQueryExecutor {
             if (bucket.getAggregations().iterator().hasNext()) {
                 processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet);
             } else {
-//                fields.put("count", bucket.getDocCount());
                 resultSet.add(buildRow(queryData, alias, fields));
             }
         }
     }
 
-
+    /*
+    * Again, When I wrote this, only God and I understood what I was doing
+    * Now, God only knows LM
+    */
     private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet) throws ExecutionException {
         for (Aggregation subAgg : aggregations) {
-            if (subAgg instanceof InternalTerms){ //Is a Sub Agreggation
+            if (subAgg instanceof InternalTerms) { //Is a Sub Agreggation
                 InternalTerms termsSubAgg = (InternalTerms) subAgg;
                 for (Terms.Bucket subBucker : termsSubAgg.getBuckets()) {
                     if (subBucker.getAggregations().iterator().hasNext()) {
@@ -166,17 +171,19 @@ public class ConnectorQueryExecutor {
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     }
                 }
-            }else if (subAgg instanceof NumericMetricsAggregation){
+                addResult(resultSet, buildRow(queryData, alias, fields));
+            } else if (subAgg instanceof NumericMetricsAggregation) {
                 NumericMetricsAggregation.SingleValue numericAggregation = (NumericMetricsAggregation.SingleValue) subAgg;
                 fields.put(subAgg.getName(), numericAggregation.value());
-                addResult(resultSet, buildRow(queryData, alias, fields));
-
+                //addResult(resultSet, buildRow(queryData, alias, fields));
             }
+
         }
+        addResult(resultSet, buildRow(queryData, alias, fields));
     }
 
-    private void addResult(ResultSet resultSet, Row row){
-        if (!resultSet.getRows().contains(row)){
+    private void addResult(ResultSet resultSet, Row row) {
+        if (!resultSet.getRows().contains(row)) {
             resultSet.add(row);
         }
     }
@@ -265,7 +272,7 @@ public class ConnectorQueryExecutor {
             if (SelectorUtils.isFunction(allAlias.getKey(), "sub_field")
                     && SelectorUtils.calculateSubFieldName(allAlias.getKey()).equals(field)) {
                 field = allAlias.getKey().getAlias();
-            }else if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
+            } else if (allAlias.getKey().getColumnName().getName().equals(columnName.getName())) {
                 String
                         aliasValue = allAlias.getValue();
                 if (!aliasValue.equals(field)) {
@@ -285,8 +292,8 @@ public class ConnectorQueryExecutor {
             if (columnMap.getKey().getColumnName().getName().equals(columnSelector.getName().getName())) {
                 columntype = columnMap.getValue();
                 break;
-            }else if(SelectorUtils.isFunction(columnMap.getKey(), "sub_field") &&
-                    columnSelector.getColumnName().getName().contains(SelectorUtils.calculateSubFieldName(columnMap.getKey()))){
+            } else if (SelectorUtils.isFunction(columnMap.getKey(), "sub_field") &&
+                    columnSelector.getColumnName().getName().contains(SelectorUtils.calculateSubFieldName(columnMap.getKey()))) {
                 columntype = columnMap.getValue();
             }
         }
@@ -305,9 +312,9 @@ public class ConnectorQueryExecutor {
         for (Selector selector : selectors) {
             if (SelectorUtils.isFunction(selector, "count", "avg", "max", "min", "sum")) {
                 fieldNames.add((String) selector.getAlias());
-            } else if (SelectorUtils.isFunction(selector, "sub_field")){
+            } else if (SelectorUtils.isFunction(selector, "sub_field")) {
                 fieldNames.add(SelectorUtils.calculateSubFieldName(selector));
-            }else {
+            } else {
                 fieldNames.add((String) SelectorHelper.getRestrictedValue(selector, SelectorType.COLUMN));
             }
         }
@@ -327,9 +334,9 @@ public class ConnectorQueryExecutor {
             fields = new HashMap<>();
             for (Map.Entry<String, SearchHitField> entry : hit.fields().entrySet()) {
 
-                if (entry.getValue().getValues().size()>1){
+                if (entry.getValue().getValues().size() > 1) {
                     fields.put(entry.getKey(), entry.getValue().getValues());
-                }else{
+                } else {
                     fields.put(entry.getKey(), entry.getValue().getValue());
                 }
 
