@@ -158,10 +158,32 @@ public class ConnectorQueryBuilder {
      */
     private void createNestedTermAggregation(ProjectParsed queryData) throws ExecutionException {
 
+
+        //TODO Si el orden es la segunda columna a mamar...
+
         GroupBy groupBy = queryData.getGroupBy();
         Select select = queryData.getSelect();
         OrderBy orderBy = queryData.getOrderBy();
-        int limit =  queryData.getLimit() != null ? queryData.getLimit().getLimit():0;
+
+        Integer limit = null;
+        Integer internalLimit = 10;
+
+        //If is a GroupBy with more than 1 field, and the sort is
+        //a function result, then we need all files, so put Limit 0
+        //It's heaviest than Falete.
+        if (queryData.getLimit() != null){
+            internalLimit = limit = queryData.getLimit().getLimit();
+        }
+
+        if (groupBy.getIds().size() > 1 && orderBy!= null && !orderBy.getIds().isEmpty()){
+            for (OrderByClause clause : orderBy.getIds()){
+                if (clause.getSelector() instanceof  FunctionSelector){
+                    //internalLimit =0;
+                    System.out.println("AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    break;
+                }
+            }
+        }
 
         //This maps Helps to look if there is an orderBy clause for a aggregation Field.
         Map<String, OrderByClause> orderByMap = new HashMap<>();
@@ -179,10 +201,17 @@ public class ConnectorQueryBuilder {
             for (Selector term : groupBy.getIds()) {
                 String fieldName = SelectorUtils.getSelectorFieldName(term);
                 if (aggregationBuilder == null) {
-                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName).size(limit);
+                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                    if (limit != null){
+                        ((TermsBuilder)lastAggregationBuilder).size(limit);
+                    }
                     sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
                 } else {
-                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName).size(limit);
+                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                    if (internalLimit != null){
+                        ((TermsBuilder)lastAggregationBuilder).size(internalLimit);
+                    }
+
                     sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
                     aggregationBuilder.subAggregation(lastAggregationBuilder);
                 }
@@ -191,6 +220,13 @@ public class ConnectorQueryBuilder {
                 for (Selector selector : select.getColumnMap().keySet()) {
                     if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
                         FunctionSelector functionSelector = (FunctionSelector) selector;
+
+                        String fieldName = SelectorUtils.calculateAlias(selector);
+                        if (orderByMap.containsKey(fieldName)){
+                            boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
+                            ((TermsBuilder)lastAggregationBuilder).order(Terms.Order.aggregation(fieldName, asc));
+                        }
+
                         lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
                     }
                 }
