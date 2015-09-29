@@ -32,9 +32,7 @@ import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.ValuesSourceAggregationBuilder;
@@ -50,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -140,10 +139,16 @@ public class ConnectorQueryBuilder {
         if (!queryData.getFilter().isEmpty()) {
             FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
             FilterBuilder filterBuilder = filterBuilderCreator.createFilterBuilder(queryData.getFilter());
-            requestBuilder.setQuery(QueryBuilders.filteredQuery(queryBuilder, filterBuilder));
-        } else {
-            requestBuilder.setQuery(queryBuilder);
+            queryBuilder = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
         }
+
+        if (!queryData.getDisjunctionList().isEmpty()){
+            FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
+            FilterBuilder filterBuilder =  filterBuilderCreator.createFilterBuilderForDisjunctions(queryData.getDisjunctionList());
+            queryBuilder = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
+        }
+
+        requestBuilder.setQuery(queryBuilder);
     }
 
 
