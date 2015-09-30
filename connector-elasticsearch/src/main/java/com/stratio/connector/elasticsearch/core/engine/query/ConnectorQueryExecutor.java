@@ -85,6 +85,8 @@ public class ConnectorQueryExecutor {
 
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
+            }else if(queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))){
+                processAggregation(queryData, resultSet, response);
             } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count", "max", "avg", "min", "sum")) {
                 processAggregationFucntion(queryData, resultSet, response);
             } else {
@@ -99,6 +101,10 @@ public class ConnectorQueryExecutor {
             queryResult = QueryResult.createQueryResult(new ResultSet(), 0, true);
         }
         return queryResult;
+    }
+
+    private boolean useCardinality(Select select){
+        return select.getColumnMap().size() == 1 && SelectorUtils.hasFunction(select.getColumnMap(), "count");
     }
 
     private Object geyBucketValue(Terms.Bucket bucket) {
@@ -123,7 +129,10 @@ public class ConnectorQueryExecutor {
         }
 
         //If there are more than one order by field, we need to sort by my self.
-        if (queryData.getOrderBy() != null && (queryData.getOrderBy().getIds().size() > 1 || queryData.getGroupBy().getIds().size()>1)) {
+        if (queryData.getOrderBy() != null &&
+                (queryData.getOrderBy().getIds().size() > 1 ||
+                        (queryData.getSelect().isDistinct() &&  queryData.getSelect().getColumnMap().size()>1) ||
+                        queryData.getGroupBy().getIds().size()>1)) {
             List<OrderByClause> fields = queryData.getOrderBy().getIds();
             Collections.sort(resultSet.getRows(), new RowSorter(fields));
         }

@@ -24,7 +24,10 @@ import com.stratio.connector.elasticsearch.core.engine.utils.QueryBuilderFactory
 import com.stratio.connector.elasticsearch.core.engine.utils.SelectorUtils;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
-import com.stratio.crossdata.common.logicalplan.*;
+import com.stratio.crossdata.common.logicalplan.Limit;
+import com.stratio.crossdata.common.logicalplan.OrderBy;
+import com.stratio.crossdata.common.logicalplan.Project;
+import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.statements.structures.FunctionSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.OrderDirection;
@@ -32,10 +35,11 @@ import com.stratio.crossdata.common.statements.structures.Selector;
 import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.ValuesSourceAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
 import org.elasticsearch.search.aggregations.metrics.ValuesSourceMetricsAggregationBuilder;
@@ -47,8 +51,8 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -91,7 +95,13 @@ public class ConnectorQueryBuilder {
         createFilter(queryData);
 
         if (isAggregation(queryData)) {
-            createNestedTermAggregation(queryData);
+            createNestedTermAggregation(queryData, queryData.getGroupBy().getIds());
+        } else if (queryData.getSelect() != null
+                && queryData.getSelect().isDistinct()
+                && !useCardinality(queryData.getSelect())
+                ) {
+            createNestedTermAggregation(queryData,  queryData.getSelect().getColumnMap().keySet());
+
         } else {
             createSelect(queryData.getSelect());
             createSort(queryData.getOrderBy());
@@ -103,6 +113,12 @@ public class ConnectorQueryBuilder {
         return requestBuilder;
     }
 
+    /**
+     * Return true if is a SELECT DISTINCT count(field) FROM table
+     */
+    private boolean useCardinality(Select select){
+        return select.getColumnMap().size() == 1 && isfucntion(select.getColumnMap().keySet(), "count");
+    }
 
     /**
      * Method that creates the elasticsearch request builder.
@@ -142,9 +158,9 @@ public class ConnectorQueryBuilder {
             queryBuilder = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
         }
 
-        if (!queryData.getDisjunctionList().isEmpty()){
+        if (!queryData.getDisjunctionList().isEmpty()) {
             FilterBuilderCreator filterBuilderCreator = new FilterBuilderCreator();
-            FilterBuilder filterBuilder =  filterBuilderCreator.createFilterBuilderForDisjunctions(queryData.getDisjunctionList());
+            FilterBuilder filterBuilder = filterBuilderCreator.createFilterBuilderForDisjunctions(queryData.getDisjunctionList());
             queryBuilder = QueryBuilders.filteredQuery(queryBuilder, filterBuilder);
         }
 
@@ -161,12 +177,8 @@ public class ConnectorQueryBuilder {
     * When I wrote this, only God and I understood what I was doing
     * Now, God only knows LM
      */
-    private void createNestedTermAggregation(ProjectParsed queryData) throws ExecutionException {
+    private void createNestedTermAggregation(ProjectParsed queryData, Collection<Selector> groupingSelectors) throws ExecutionException {
 
-
-        //TODO Si el orden es la segunda columna a mamar...
-
-        GroupBy groupBy = queryData.getGroupBy();
         Select select = queryData.getSelect();
         OrderBy orderBy = queryData.getOrderBy();
 
@@ -176,15 +188,14 @@ public class ConnectorQueryBuilder {
         //If is a GroupBy with more than 1 field, and the sort is
         //a function result, then we need all files, so put Limit 0
         //It's heaviest than Falete.
-        if (queryData.getLimit() != null){
+        if (queryData.getLimit() != null) {
             internalLimit = limit = queryData.getLimit().getLimit();
         }
 
-        if (groupBy.getIds().size() > 1 && orderBy!= null && !orderBy.getIds().isEmpty()){
-            for (OrderByClause clause : orderBy.getIds()){
-                if (clause.getSelector() instanceof  FunctionSelector){
-                    //internalLimit =0;
-                    System.out.println("AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        if (groupingSelectors.size() > 1 && orderBy != null && !orderBy.getIds().isEmpty()) {
+            for (OrderByClause clause : orderBy.getIds()) {
+                if (clause.getSelector() instanceof FunctionSelector) {
+                    internalLimit = 0;
                     break;
                 }
             }
@@ -192,65 +203,64 @@ public class ConnectorQueryBuilder {
 
         //This maps Helps to look if there is an orderBy clause for a aggregation Field.
         Map<String, OrderByClause> orderByMap = new HashMap<>();
-        if (orderBy!= null && !orderBy.getIds().isEmpty()){
-            for(OrderByClause clause:orderBy.getIds()){
+        if (orderBy != null && !orderBy.getIds().isEmpty()) {
+            for (OrderByClause clause : orderBy.getIds()) {
                 orderByMap.put(SelectorUtils.calculateAlias(clause.getSelector()), clause);
             }
         }
 
         // If any "group by" fields are defined they are used in order to create the appropriate aggregations
-        if (null != groupBy && null != groupBy.getIds()) {
-            AggregationBuilder aggregationBuilder = null;
-            AggregationBuilder lastAggregationBuilder = null;
-            // First field is used as the parent aggregation level and next ones are added as nested sub-aggregations of the previous one
-            for (Selector term : groupBy.getIds()) {
-                String fieldName = SelectorUtils.getSelectorFieldName(term);
-                if (aggregationBuilder == null) {
-                    lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
-                    if (limit != null){
-                        ((TermsBuilder)lastAggregationBuilder).size(limit);
-                    }
-                    sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
-                } else {
-                    lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
-                    if (internalLimit != null){
-                        ((TermsBuilder)lastAggregationBuilder).size(internalLimit);
-                    }
-
-                    sortSubAggregation(fieldName, orderByMap,(TermsBuilder)lastAggregationBuilder );
-                    aggregationBuilder.subAggregation(lastAggregationBuilder);
+        AggregationBuilder aggregationBuilder = null;
+        AggregationBuilder lastAggregationBuilder = null;
+        // First field is used as the parent aggregation level and next ones are added as nested sub-aggregations of the previous one
+        for (Selector term : groupingSelectors) {
+            String fieldName = SelectorUtils.getSelectorFieldName(term);
+            if (aggregationBuilder == null) {
+                lastAggregationBuilder = aggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                if (limit != null) {
+                    ((TermsBuilder) lastAggregationBuilder).size(limit);
                 }
-            }
-            if (aggregationBuilder != null) {
-                for (Selector selector : select.getColumnMap().keySet()) {
-                    if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
-                        FunctionSelector functionSelector = (FunctionSelector) selector;
+                sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
+            } else {
+                lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                ((TermsBuilder) lastAggregationBuilder).size(internalLimit);
 
-                        String fieldName = SelectorUtils.calculateAlias(selector);
-                        if (orderByMap.containsKey(fieldName)){
-                            boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
-                            ((TermsBuilder)lastAggregationBuilder).order(Terms.Order.aggregation(fieldName, asc));
-                        }
-
-                        lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
-                    }
-                }
+                sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
+                aggregationBuilder.subAggregation(lastAggregationBuilder);
             }
-            // No results are needed when requesting an aggregation therefore the size is set to 0 and the aggregation properties are added to the query
-            requestBuilder.addAggregation(aggregationBuilder);
-            requestBuilder.setSize(0);
         }
+        if (aggregationBuilder != null) {
+            for (Selector selector : select.getColumnMap().keySet()) {
+                if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
+                    FunctionSelector functionSelector = (FunctionSelector) selector;
+
+                    String fieldName = SelectorUtils.calculateAlias(selector);
+                    if (orderByMap.containsKey(fieldName)) {
+                        boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
+                        ((TermsBuilder) lastAggregationBuilder).order(Terms.Order.aggregation(fieldName, asc));
+                    }
+
+                    lastAggregationBuilder.subAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase()));
+                }
+            }
+        }
+        // No results are needed when requesting an aggregation therefore the size is set to 0 and the aggregation properties are added to the query
+        requestBuilder.addAggregation(aggregationBuilder);
+        requestBuilder.setSize(0);
+
     }
 
-    private void sortSubAggregation(String fieldName,Map<String, OrderByClause> orderByMap,TermsBuilder termsBuilder ){
-        if (orderByMap.containsKey(fieldName)){
+    private void sortSubAggregation(String fieldName, Map<String, OrderByClause> orderByMap, TermsBuilder termsBuilder) {
+        if (orderByMap.containsKey(fieldName)) {
             boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
             termsBuilder.order(Terms.Order.term(asc));
         }
     }
+
     /**
      * Builds Aggregation Functions from a FunctionSelector
-     * @param function A FunctionSelector
+     *
+     * @param function   A FunctionSelector
      * @param methodName a <code>AggregationBuilders</code> method that build the aggregation
      * @return a MetricsAggregationBuilder
      */
@@ -258,7 +268,7 @@ public class ConnectorQueryBuilder {
 
         try {
             Selector field = function.getFunctionColumns().getSelectorList().get(0);
-            Method method =  AggregationBuilders.class.getMethod(methodName, String.class);
+            Method method = AggregationBuilders.class.getMethod(methodName, String.class);
             ValuesSourceMetricsAggregationBuilder aggFunction = (ValuesSourceMetricsAggregationBuilder) method.invoke(null, function.getAlias());
             aggFunction.field(SelectorUtils.getSelectorFieldName(field));
 
@@ -287,11 +297,11 @@ public class ConnectorQueryBuilder {
                     if (SelectorUtils.isFunction(selector, "count", "max", "avg", "min", "sum")) {
                         FunctionSelector functionSelector = (FunctionSelector) selector;
 
-                        if (select.isDistinct() && isfucntion(selectors, "count")){
+                        if (select.isDistinct() && isfucntion(selectors, "count")) {
                             FunctionSelector function = (FunctionSelector) selector;
                             Selector field = function.getFunctionColumns().getSelectorList().get(0);
                             requestBuilder.addAggregation(AggregationBuilders.cardinality(function.getAlias()).field(SelectorUtils.getSelectorFieldName(field)));
-                        }else{
+                        } else {
                             requestBuilder.addAggregation(buildAggregation((FunctionSelector) selector, functionSelector.getFunctionName().toLowerCase().toString()));
                         }
 
