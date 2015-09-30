@@ -102,7 +102,9 @@ public class FilterBuilderCreator {
                         internalDisjunction.add((Disjunction) term);
                     }
                 }
-                internal.add(FilterBuilders.boolFilter().must(internal2.toArray(new FilterBuilder[]{})));
+                if (!internal2.isEmpty()){
+                    internal.add(FilterBuilders.boolFilter().must(internal2.toArray(new FilterBuilder[]{})));
+                }
                 if (!internalDisjunction.isEmpty()) {
                     internal.add(createFilterBuilderForDisjunctions(internalDisjunction));
                 }
