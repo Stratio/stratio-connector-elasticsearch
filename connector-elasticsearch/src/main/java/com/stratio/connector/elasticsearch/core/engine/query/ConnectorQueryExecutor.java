@@ -131,8 +131,8 @@ public class ConnectorQueryExecutor {
         //If there are more than one order by field, we need to sort by my self.
         if (queryData.getOrderBy() != null &&
                 (queryData.getOrderBy().getIds().size() > 1 ||
-                        (queryData.getSelect().isDistinct() &&  queryData.getSelect().getColumnMap().size()>1) ||
-                        queryData.getGroupBy().getIds().size()>1)) {
+                        (queryData.getSelect().isDistinct() &&  queryData.getSelect().getColumnMap().size()>1)
+                        || (queryData.getGroupBy() != null && queryData.getGroupBy().getIds().size()>1))) {
             List<OrderByClause> fields = queryData.getOrderBy().getIds();
             Collections.sort(resultSet.getRows(), new RowSorter(fields));
         }
