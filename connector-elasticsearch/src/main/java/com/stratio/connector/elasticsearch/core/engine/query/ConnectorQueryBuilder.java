@@ -225,12 +225,14 @@ public class ConnectorQueryBuilder {
                 }
                 sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
             } else { //Build a new Sub-Aggregation
-                lastAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
+                AggregationBuilder newAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
                 ((TermsBuilder) lastAggregationBuilder).size(internalLimit);
                 sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
-                aggregationBuilder.subAggregation(lastAggregationBuilder);
+                lastAggregationBuilder.subAggregation(newAggregationBuilder);
+                lastAggregationBuilder = newAggregationBuilder;
             }
         }
+
         if (aggregationBuilder != null) {
             addFunctionAggregation(select, orderByMap, lastAggregationBuilder);
         }
