@@ -149,7 +149,7 @@ public class ConnectorQueryBuilder {
      */
     private void createFilter(ProjectParsed queryData) throws UnsupportedException, ExecutionException {
 
-        QueryBuilder queryBuilder = new QueryBuilderFactory().createBuilder(queryData.getMatchList(), queryData.getFunctionFilters());
+        QueryBuilder queryBuilder = new QueryBuilderFactory().createBuilder(queryData.getMatchList(), queryData.getFunctionFilters(), queryData.getDisjunctionOfFunctionsList());
 
         if (!queryData.getFilter().isEmpty()) {
             FilterBuilder filterBuilder = new FilterBuilderCreator().createFilterBuilder(queryData.getFilter());

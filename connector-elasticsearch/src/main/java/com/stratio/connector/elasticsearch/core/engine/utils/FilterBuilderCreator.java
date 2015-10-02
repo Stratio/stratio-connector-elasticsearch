@@ -20,10 +20,12 @@ package com.stratio.connector.elasticsearch.core.engine.utils;
 
 import com.stratio.connector.commons.util.FilterHelper;
 import com.stratio.connector.commons.util.SelectorHelper;
+import com.stratio.connector.elasticsearch.core.engine.query.functions.ESFunction;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.exceptions.UnsupportedException;
 import com.stratio.crossdata.common.logicalplan.Disjunction;
 import com.stratio.crossdata.common.logicalplan.Filter;
+import com.stratio.crossdata.common.logicalplan.FunctionFilter;
 import com.stratio.crossdata.common.logicalplan.ITerm;
 import com.stratio.crossdata.common.statements.structures.*;
 import org.elasticsearch.index.query.BoolFilterBuilder;
@@ -61,9 +63,20 @@ public class FilterBuilderCreator {
 
     }
 
+    /**
+     * Creates a filterBuilder for Disjunctions (OR)
+     * @param disjunctions a List of OR
+     * @return the FilterBuilder with the logical tree.
+     * @throws UnsupportedException
+     * @throws ExecutionException
+     */
+    /*
+     * Magic! Touch only if you know what are you doing!
+     */
     public FilterBuilder createFilterBuilderForDisjunctions(Collection<Disjunction> disjunctions) throws UnsupportedException,
             ExecutionException {
 
+        // Where (x=1 or x=2) AND (y=1 OR y=2), Multiple disjunctions
         if (disjunctions.size() > 1) {
             List<BoolFilterBuilder> external = new ArrayList<>();
             for (Disjunction disjunction : disjunctions) {
@@ -88,7 +101,7 @@ public class FilterBuilderCreator {
             BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
             boolFilterBuilder.must(external.toArray(new BoolFilterBuilder[]{}));
             return boolFilterBuilder;
-        } else {
+        } else {// Where (x=1 and x=2) OR (y=1 AND y=2) Disjunctions in a Tree
             BoolFilterBuilder boolFilterBuilder = FilterBuilders.boolFilter();
             Disjunction disjunction = disjunctions.iterator().next();
             List<FilterBuilder> internal = new ArrayList<>();
