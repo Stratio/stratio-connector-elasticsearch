@@ -83,6 +83,10 @@ public class ConnectorQueryExecutor {
             SearchResponse response = requestBuilder.execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
+            if (response != null && response.getHits()!= null){
+                logger.info("Total results:" + response.getHits().totalHits());
+            }
+            
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
             }else if(queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))){
@@ -262,8 +266,6 @@ public class ConnectorQueryExecutor {
             field = pickAliasOrFieldName(alias, field, columnName, columnSelector);
             row.addCell(field, buildCell(select, value, columnSelector));
         }
-
-        logger.debug("Fields:" + row.getCells().toString());
 
         return row;
     }
