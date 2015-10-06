@@ -31,6 +31,10 @@ public class RowSorter implements Comparator<Row> {
 
             String fieldName = SelectorUtils.calculateAlias(clause.getSelector());
 
+            if (!o1.getCells().containsKey(fieldName)){
+                return 0;
+            }
+
             Comparable o1Value = (Comparable) o1.getCell(fieldName).getValue();
             Comparable o2Value = (Comparable) o2.getCell(fieldName).getValue();
             if (clause.getDirection().equals(OrderDirection.ASC)) {
