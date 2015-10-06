@@ -165,6 +165,26 @@ public class ConnectorQueryExecutorTest {
 
     }
 
+//
+//
+//    @Test
+//    public void testExecuteAggregationQuery() throws Exception {
+//
+//
+//
+//        //Experimentation
+//        QueryResult queryResult = connectorQueryExecutor.executeQuery(client, requestBuilder, projectParsed);
+//
+//        //Expectations
+//        ResultSet resultset = queryResult.getResultSet();
+//        assertEquals("The resultset size is correct", 1, resultset.getRows().size());
+//        Row row = resultset.getRows().get(0);
+//        assertEquals("The rows number is correct", 1, row.size());
+//        assertEquals("The value is not correct", "Value 1", row.getCells().get("col1").getValue());
+//        assertEquals("The value is not correct", "Value 2", row.getCells().get("col2").getValue());
+//
+//    }
+
     private SearchHit createHit() {
         SearchHit searchHit = mock(SearchHit.class);
 

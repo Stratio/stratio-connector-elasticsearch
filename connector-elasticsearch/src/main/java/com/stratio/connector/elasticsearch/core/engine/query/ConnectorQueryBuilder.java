@@ -223,11 +223,11 @@ public class ConnectorQueryBuilder {
                 if (limit != null) {
                     ((TermsBuilder) lastAggregationBuilder).size(limit);
                 }
-                sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
+                sortSubAggregation(term, orderByMap, (TermsBuilder) lastAggregationBuilder);
             } else { //Build a new Sub-Aggregation
                 AggregationBuilder newAggregationBuilder = AggregationBuilders.terms(fieldName).field(fieldName);
                 ((TermsBuilder) lastAggregationBuilder).size(internalLimit);
-                sortSubAggregation(fieldName, orderByMap, (TermsBuilder) lastAggregationBuilder);
+                sortSubAggregation(term, orderByMap, (TermsBuilder) lastAggregationBuilder);
                 lastAggregationBuilder.subAggregation(newAggregationBuilder);
                 lastAggregationBuilder = newAggregationBuilder;
             }
@@ -266,9 +266,15 @@ public class ConnectorQueryBuilder {
         return orderByMap;
     }
 
-    private void sortSubAggregation(String fieldName, Map<String, OrderByClause> orderByMap, TermsBuilder termsBuilder) {
+    private void sortSubAggregation(Selector term, Map<String, OrderByClause> orderByMap, TermsBuilder termsBuilder) {
+
+        String fieldName = SelectorUtils.getSelectorFieldName(term);
+        String alias = SelectorUtils.calculateAlias(term);
         if (orderByMap.containsKey(fieldName)) {
             boolean asc = orderByMap.get(fieldName).getDirection().equals(OrderDirection.ASC);
+            termsBuilder.order(Terms.Order.term(asc));
+        }else if ( orderByMap.containsKey(alias)) {
+            boolean asc = orderByMap.get(alias).getDirection().equals(OrderDirection.ASC);
             termsBuilder.order(Terms.Order.term(asc));
         }
     }

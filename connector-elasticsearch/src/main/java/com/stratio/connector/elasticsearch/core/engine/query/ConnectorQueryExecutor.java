@@ -66,16 +66,15 @@ public class ConnectorQueryExecutor {
      * This method execute a query in elasticSearch.
      *
      * @param elasticClient        the elasticSearch Client.
-     * @param actionRequestBuilder the query to execute.
+     * @param requestBuilder the query to execute.
      * @param queryData            the queryData.
      * @return the query result.
      */
 
-    public QueryResult executeQuery(Client elasticClient, ActionRequestBuilder actionRequestBuilder, ProjectParsed queryData)
+    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder, ProjectParsed queryData)
             throws ExecutionException {
 
         QueryResult queryResult;
-        SearchRequestBuilder requestBuilder = (SearchRequestBuilder) actionRequestBuilder;
 
         try {
 
@@ -86,7 +85,7 @@ public class ConnectorQueryExecutor {
             if (response != null && response.getHits()!= null){
                 logger.info("Total results:" + response.getHits().totalHits());
             }
-            
+
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
             }else if(queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))){

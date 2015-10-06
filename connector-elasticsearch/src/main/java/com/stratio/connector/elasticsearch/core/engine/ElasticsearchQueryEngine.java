@@ -72,9 +72,10 @@ public class ElasticsearchQueryEngine extends SingleProjectQueryEngine<Client> {
     @Override
     @TimerJ
     protected QueryResult execute(Project project, Connection<Client> connection) throws ConnectorException {
+
         Client elasticClient = connection.getNativeConnection();
         ProjectParsed projectParsed = new ProjectParsed(project, new ESProjectParsedValidator());
-        ActionRequestBuilder requestBuilder = queryBuilder.buildQuery(elasticClient, projectParsed);
+        SearchRequestBuilder requestBuilder = (SearchRequestBuilder) queryBuilder.buildQuery(elasticClient, projectParsed);
 
         return queryExecutor.executeQuery(elasticClient, requestBuilder, projectParsed);
     }
