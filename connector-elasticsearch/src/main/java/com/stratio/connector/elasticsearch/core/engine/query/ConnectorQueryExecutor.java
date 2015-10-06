@@ -37,7 +37,6 @@ import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.SelectorType;
-import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -71,9 +70,9 @@ public class ConnectorQueryExecutor {
     /**
      * This method execute a query in elasticSearch.
      *
-     * @param elasticClient        the elasticSearch Client.
+     * @param elasticClient  the elasticSearch Client.
      * @param requestBuilder the query to execute.
-     * @param queryData            the queryData.
+     * @param queryData      the queryData.
      * @return the query result.
      */
 
@@ -88,13 +87,13 @@ public class ConnectorQueryExecutor {
             SearchResponse response = requestBuilder.execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
-            if (response != null && response.getHits()!= null){
+            if (response != null && response.getHits() != null) {
                 logger.info("Total results:" + response.getHits().totalHits());
             }
 
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
                 processAggregation(queryData, resultSet, response);
-            }else if(queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))){
+            } else if (queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))) {
                 processAggregation(queryData, resultSet, response);
             } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count", "max", "avg", "min", "sum")) {
                 processAggregationFucntion(queryData, resultSet, response);
@@ -112,7 +111,7 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
-    private boolean useCardinality(Select select){
+    private boolean useCardinality(Select select) {
         return select.getColumnMap().size() == 1 && SelectorUtils.hasFunction(select.getColumnMap(), "count");
     }
 
@@ -134,17 +133,18 @@ public class ConnectorQueryExecutor {
     private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
 
         Map<Selector, String> alias = returnAlias(queryData);
+        Map<String, Format> fieldsFormatter =getFieldFormatters(queryData.getSelect());
 
         for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
             InternalTerms terms = (InternalTerms) aggregation; //TODO support for different types
-            processTermAggregation(queryData, resultSet, alias, terms);
+            processTermAggregation(queryData, resultSet, alias, terms, fieldsFormatter);
         }
 
         //If there are more than one order by field, we need to sort by my self.
         if (queryData.getOrderBy() != null &&
                 (queryData.getOrderBy().getIds().size() > 1 ||
-                        (queryData.getSelect().isDistinct() &&  queryData.getSelect().getColumnMap().size()>1)
-                        || (queryData.getGroupBy() != null && queryData.getGroupBy().getIds().size()>1))) {
+                        (queryData.getSelect().isDistinct() && queryData.getSelect().getColumnMap().size() > 1)
+                        || (queryData.getGroupBy() != null && queryData.getGroupBy().getIds().size() > 1))) {
             List<OrderByClause> fields = queryData.getOrderBy().getIds();
             Collections.sort(resultSet.getRows(), new RowSorter(fields));
         }
@@ -159,34 +159,38 @@ public class ConnectorQueryExecutor {
 
     }
 
-    private Format getFieldFormatter(Select select, String fieldName){
+    /**
+     * Buils a Map of Custom Formatters for the Native Fields with custom Format.
+     */
+    private Map<String, Format> getFieldFormatters(Select select) {
+        Map<String, Format> fieldFormatters = new HashMap<>();
 
-        for (Map.Entry<Selector, ColumnType> entry: select.getTypeMapFromColumnName().entrySet()){
-            if (SelectorUtils.getSelectorFieldName(entry.getKey()).equals(fieldName)){
-                ColumnType columnType = entry.getValue();
-                if (columnType.getDataType().equals(DataType.NATIVE) && columnType.getDbType().equals("date")){
-                    if (columnType.getColumnProperties().containsKey("format")){
-                        String format = columnType.getColumnProperties().get("format").get(0);
-                        return new SimpleDateFormat(format);
-                    }else{
-                        return DEFAULT_DATE_FORMATTER;
-                    }
+        for (Map.Entry<Selector, ColumnType> entry : select.getTypeMapFromColumnName().entrySet()) {
+            String fieldName = SelectorUtils.getSelectorFieldName(entry.getKey());
+            ColumnType columnType = entry.getValue();
+            if (columnType.getDataType().equals(DataType.NATIVE) && columnType.getDbType().equals("date")) {
+                if (columnType.getColumnProperties().containsKey("format")) {
+                    String format = columnType.getColumnProperties().get("format").get(0);
+                    fieldFormatters.put(fieldName, new SimpleDateFormat(format));
+                } else {
+                    fieldFormatters.put(fieldName, DEFAULT_DATE_FORMATTER);
                 }
             }
         }
-        return null;
+
+        return fieldFormatters;
     }
 
-    private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms) throws ExecutionException {
+    private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms, Map<String, Format> formatter) throws ExecutionException {
 
         for (Terms.Bucket bucket : terms.getBuckets()) { //Top Level
             Map<String, Object> fields = new HashMap();
 
-            fields.put(terms.getName(), getBucketValue(bucket, getFieldFormatter(queryData.getSelect(),terms.getName()))); //First column
+            fields.put(terms.getName(), getBucketValue(bucket, formatter.get(terms.getName()))); //First column
 
             //Has other Aggregations/Columns
             if (bucket.getAggregations().iterator().hasNext()) {
-                processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet);
+                processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet, formatter);
             } else {
                 resultSet.add(buildRow(queryData, alias, fields));
             }
@@ -197,19 +201,19 @@ public class ConnectorQueryExecutor {
     * Again, When I wrote this, only God and I understood what I was doing
     * Now, God only knows LM
     */
-    private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet) throws ExecutionException {
+    private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet, Map<String, Format> formatter) throws ExecutionException {
         for (Aggregation subAgg : aggregations) {
             if (subAgg instanceof InternalTerms) { //Is a Sub Agreggation
                 InternalTerms termsSubAgg = (InternalTerms) subAgg;
                 for (Terms.Bucket subBucket : termsSubAgg.getBuckets()) {
                     ColumnType colType = queryData.getSelect().getTypeMapFromColumnName().get(termsSubAgg.getName());
                     if (subBucket.getAggregations().iterator().hasNext()) {
-                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, getFieldFormatter(queryData.getSelect(),termsSubAgg.getName())));
-                        processSubAggregation(queryData, subBucket.getAggregations().asList(), alias, fields, resultSet);
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, formatter.get(termsSubAgg.getName())));
+                        processSubAggregation(queryData, subBucket.getAggregations().asList(), alias, fields, resultSet, formatter);
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     } else {
 
-                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, getFieldFormatter(queryData.getSelect(),termsSubAgg.getName())));
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, formatter.get(termsSubAgg.getName())));
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     }
                 }
