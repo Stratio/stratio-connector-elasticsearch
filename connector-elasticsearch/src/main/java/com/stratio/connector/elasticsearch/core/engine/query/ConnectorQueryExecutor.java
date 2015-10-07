@@ -31,7 +31,6 @@ import com.stratio.crossdata.common.data.Row;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
 import com.stratio.crossdata.common.logicalplan.Select;
 import com.stratio.crossdata.common.metadata.ColumnType;
-import com.stratio.crossdata.common.metadata.DataType;
 import com.stratio.crossdata.common.result.QueryResult;
 import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
@@ -51,7 +50,6 @@ import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -115,15 +113,26 @@ public class ConnectorQueryExecutor {
         return select.getColumnMap().size() == 1 && SelectorUtils.hasFunction(select.getColumnMap(), "count");
     }
 
-    private Object getBucketValue(Terms.Bucket bucket, Format format) {
+    private Object getBucketValue(Terms.Bucket bucket, ProjectParsed queryData, String fieldName) {
+
+        ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData.getProject()
+                .getTableName().getName(), fieldName);
+
+        ColumnSelector columnSelector = new ColumnSelector(columnName);
+        ColumnType columnType = recoveredColumnType(queryData.getSelect(), columnSelector);
 
         if (bucket instanceof StringTerms.Bucket) {
             return bucket.getKey();
         } else {
-            if (format != null && format instanceof DateFormat) {
-                return format.format(new Date(bucket.getKeyAsNumber().longValue()));
+            switch (columnType.getDataType()) {
+                case NATIVE: {
+                    if (columnType.getDbType().equalsIgnoreCase("date")){
+                        return new Date(bucket.getKeyAsNumber().longValue());
+                    }
+                }
+                default:
+                    return bucket.getKeyAsNumber();
             }
-            return bucket.getKeyAsNumber();
         }
     }
 
@@ -133,11 +142,10 @@ public class ConnectorQueryExecutor {
     private void processAggregation(ProjectParsed queryData, ResultSet resultSet, SearchResponse response) throws ExecutionException {
 
         Map<Selector, String> alias = returnAlias(queryData);
-        Map<String, Format> fieldsFormatter =getFieldFormatters(queryData.getSelect());
 
         for (Aggregation aggregation : response.getAggregations()) { //TODO support for multiple aggregations
             InternalTerms terms = (InternalTerms) aggregation; //TODO support for different types
-            processTermAggregation(queryData, resultSet, alias, terms, fieldsFormatter);
+            processTermAggregation(queryData, resultSet, alias, terms);
         }
 
         //If there are more than one order by field, we need to sort by my self.
@@ -162,35 +170,28 @@ public class ConnectorQueryExecutor {
     /**
      * Buils a Map of Custom Formatters for the Native Fields with custom Format.
      */
-    private Map<String, Format> getFieldFormatters(Select select) {
-        Map<String, Format> fieldFormatters = new HashMap<>();
+    private Map<String, ColumnType> getFieldTypes(Select select) {
+        Map<String, ColumnType> fieldTypes = new HashMap<>();
 
         for (Map.Entry<Selector, ColumnType> entry : select.getTypeMapFromColumnName().entrySet()) {
             String fieldName = SelectorUtils.getSelectorFieldName(entry.getKey());
             ColumnType columnType = entry.getValue();
-            if (columnType.getDataType().equals(DataType.NATIVE) && columnType.getDbType().equals("date")) {
-                if (columnType.getColumnProperties().containsKey("format")) {
-                    String format = columnType.getColumnProperties().get("format").get(0);
-                    fieldFormatters.put(fieldName, new SimpleDateFormat(format));
-                } else {
-                    fieldFormatters.put(fieldName, DEFAULT_DATE_FORMATTER);
-                }
-            }
+            fieldTypes.put(fieldName, columnType);
         }
 
-        return fieldFormatters;
+        return fieldTypes;
     }
 
-    private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms, Map<String, Format> formatter) throws ExecutionException {
+    private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms) throws ExecutionException {
 
         for (Terms.Bucket bucket : terms.getBuckets()) { //Top Level
             Map<String, Object> fields = new HashMap();
 
-            fields.put(terms.getName(), getBucketValue(bucket, formatter.get(terms.getName()))); //First column
+            fields.put(terms.getName(), getBucketValue(bucket, queryData, terms.getName())); //First column
 
             //Has other Aggregations/Columns
             if (bucket.getAggregations().iterator().hasNext()) {
-                processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet, formatter);
+                processSubAggregation(queryData, bucket.getAggregations().asList(), alias, fields, resultSet);
             } else {
                 resultSet.add(buildRow(queryData, alias, fields));
             }
@@ -201,19 +202,19 @@ public class ConnectorQueryExecutor {
     * Again, When I wrote this, only God and I understood what I was doing
     * Now, God only knows LM
     */
-    private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet, Map<String, Format> formatter) throws ExecutionException {
+    private void processSubAggregation(ProjectParsed queryData, List<Aggregation> aggregations, Map<Selector, String> alias, Map<String, Object> fields, ResultSet resultSet) throws ExecutionException {
         for (Aggregation subAgg : aggregations) {
             if (subAgg instanceof InternalTerms) { //Is a Sub Agreggation
                 InternalTerms termsSubAgg = (InternalTerms) subAgg;
                 for (Terms.Bucket subBucket : termsSubAgg.getBuckets()) {
                     ColumnType colType = queryData.getSelect().getTypeMapFromColumnName().get(termsSubAgg.getName());
                     if (subBucket.getAggregations().iterator().hasNext()) {
-                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, formatter.get(termsSubAgg.getName())));
-                        processSubAggregation(queryData, subBucket.getAggregations().asList(), alias, fields, resultSet, formatter);
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, queryData, termsSubAgg.getName()));
+                        processSubAggregation(queryData, subBucket.getAggregations().asList(), alias, fields, resultSet);
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     } else {
 
-                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, formatter.get(termsSubAgg.getName())));
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, queryData, termsSubAgg.getName()));
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     }
                 }
