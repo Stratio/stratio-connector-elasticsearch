@@ -8,5 +8,3 @@
 
 * Adapted to Stratio Crossdata 0.4.3
 
-
-

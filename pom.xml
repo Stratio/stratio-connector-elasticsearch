@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.stratio.connector</groupId>
     <artifactId>stratio-connector-elasticsearch</artifactId>
-    <version>0.5.3-SNAPSHOT</version>
+    <version>0.5.3-RC1-SNAPSHOT</version>
     <url>http://www.stratio.com</url>
     <name>Stratio ElasticSearch Connector</name>
     <description>Stratio Crossdata connector for ElasticSearch</description>
@@ -35,7 +35,7 @@
         <version>0.4.0</version>
     </parent>
     <properties>
-        <version.connector.commons>0.6.3-SNAPSHOT</version.connector.commons>
+        <version.connector.commons>0.6.3-RC1</version.connector.commons>
         <version.elasticsearch>1.7.1</version.elasticsearch>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
