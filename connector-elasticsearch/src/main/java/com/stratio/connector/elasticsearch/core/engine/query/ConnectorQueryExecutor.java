@@ -36,7 +36,6 @@ import com.stratio.crossdata.common.statements.structures.ColumnSelector;
 import com.stratio.crossdata.common.statements.structures.OrderByClause;
 import com.stratio.crossdata.common.statements.structures.Selector;
 import com.stratio.crossdata.common.statements.structures.SelectorType;
-import org.elasticsearch.action.ActionRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -51,9 +50,13 @@ import org.elasticsearch.search.aggregations.metrics.NumericMetricsAggregation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ConnectorQueryExecutor {
+
+    private static final Format DEFAULT_DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
      * The log.
@@ -65,17 +68,16 @@ public class ConnectorQueryExecutor {
     /**
      * This method execute a query in elasticSearch.
      *
-     * @param elasticClient        the elasticSearch Client.
-     * @param actionRequestBuilder the query to execute.
-     * @param queryData            the queryData.
+     * @param elasticClient  the elasticSearch Client.
+     * @param requestBuilder the query to execute.
+     * @param queryData      the queryData.
      * @return the query result.
      */
 
-    public QueryResult executeQuery(Client elasticClient, ActionRequestBuilder actionRequestBuilder, ProjectParsed queryData)
+    public QueryResult executeQuery(Client elasticClient, SearchRequestBuilder requestBuilder, ProjectParsed queryData)
             throws ExecutionException {
 
         QueryResult queryResult;
-        SearchRequestBuilder requestBuilder = (SearchRequestBuilder) actionRequestBuilder;
 
         try {
 
@@ -83,7 +85,13 @@ public class ConnectorQueryExecutor {
             SearchResponse response = requestBuilder.execute().actionGet();
             resultSet.setColumnMetadata(crossdatadataCreator.createColumnMetadata(queryData));
 
+            if (response != null && response.getHits() != null) {
+                logger.info("Total results:" + response.getHits().totalHits());
+            }
+
             if (queryData.getGroupBy() != null && !queryData.getGroupBy().getIds().isEmpty()) {
+                processAggregation(queryData, resultSet, response);
+            } else if (queryData.getSelect().isDistinct() && !(useCardinality(queryData.getSelect()))) {
                 processAggregation(queryData, resultSet, response);
             } else if (SelectorUtils.hasFunction(queryData.getSelect().getColumnMap(), "count", "max", "avg", "min", "sum")) {
                 processAggregationFucntion(queryData, resultSet, response);
@@ -101,12 +109,30 @@ public class ConnectorQueryExecutor {
         return queryResult;
     }
 
-    private Object geyBucketValue(Terms.Bucket bucket) {
+    private boolean useCardinality(Select select) {
+        return select.getColumnMap().size() == 1 && SelectorUtils.hasFunction(select.getColumnMap(), "count");
+    }
+
+    private Object getBucketValue(Terms.Bucket bucket, ProjectParsed queryData, String fieldName) {
+
+        ColumnName columnName = new ColumnName(queryData.getProject().getCatalogName(), queryData.getProject()
+                .getTableName().getName(), fieldName);
+
+        ColumnSelector columnSelector = new ColumnSelector(columnName);
+        ColumnType columnType = recoveredColumnType(queryData.getSelect(), columnSelector);
+
         if (bucket instanceof StringTerms.Bucket) {
             return bucket.getKey();
         } else {
-
-            return bucket.getKeyAsNumber();
+            switch (columnType.getDataType()) {
+                case NATIVE: {
+                    if (columnType.getDbType().equalsIgnoreCase("date")){
+                        return new Date(bucket.getKeyAsNumber().longValue());
+                    }
+                }
+                default:
+                    return bucket.getKeyAsNumber();
+            }
         }
     }
 
@@ -123,7 +149,10 @@ public class ConnectorQueryExecutor {
         }
 
         //If there are more than one order by field, we need to sort by my self.
-        if (queryData.getOrderBy() != null && queryData.getOrderBy().getIds().size() > 1) {
+        if (queryData.getOrderBy() != null &&
+                (queryData.getOrderBy().getIds().size() > 1 ||
+                        (queryData.getSelect().isDistinct() && queryData.getSelect().getColumnMap().size() > 1)
+                        || (queryData.getGroupBy() != null && queryData.getGroupBy().getIds().size() > 1))) {
             List<OrderByClause> fields = queryData.getOrderBy().getIds();
             Collections.sort(resultSet.getRows(), new RowSorter(fields));
         }
@@ -138,11 +167,27 @@ public class ConnectorQueryExecutor {
 
     }
 
+    /**
+     * Buils a Map of Custom Formatters for the Native Fields with custom Format.
+     */
+    private Map<String, ColumnType> getFieldTypes(Select select) {
+        Map<String, ColumnType> fieldTypes = new HashMap<>();
+
+        for (Map.Entry<Selector, ColumnType> entry : select.getTypeMapFromColumnName().entrySet()) {
+            String fieldName = SelectorUtils.getSelectorFieldName(entry.getKey());
+            ColumnType columnType = entry.getValue();
+            fieldTypes.put(fieldName, columnType);
+        }
+
+        return fieldTypes;
+    }
+
     private void processTermAggregation(ProjectParsed queryData, ResultSet resultSet, Map<Selector, String> alias, InternalTerms terms) throws ExecutionException {
 
         for (Terms.Bucket bucket : terms.getBuckets()) { //Top Level
             Map<String, Object> fields = new HashMap();
-            fields.put(terms.getName(), geyBucketValue(bucket)); //First column
+
+            fields.put(terms.getName(), getBucketValue(bucket, queryData, terms.getName())); //First column
 
             //Has other Aggregations/Columns
             if (bucket.getAggregations().iterator().hasNext()) {
@@ -161,13 +206,15 @@ public class ConnectorQueryExecutor {
         for (Aggregation subAgg : aggregations) {
             if (subAgg instanceof InternalTerms) { //Is a Sub Agreggation
                 InternalTerms termsSubAgg = (InternalTerms) subAgg;
-                for (Terms.Bucket subBucker : termsSubAgg.getBuckets()) {
-                    if (subBucker.getAggregations().iterator().hasNext()) {
-                        fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
-                        processSubAggregation(queryData, subBucker.getAggregations().asList(), alias, fields, resultSet);
+                for (Terms.Bucket subBucket : termsSubAgg.getBuckets()) {
+                    ColumnType colType = queryData.getSelect().getTypeMapFromColumnName().get(termsSubAgg.getName());
+                    if (subBucket.getAggregations().iterator().hasNext()) {
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, queryData, termsSubAgg.getName()));
+                        processSubAggregation(queryData, subBucket.getAggregations().asList(), alias, fields, resultSet);
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     } else {
-                        fields.put(termsSubAgg.getName(), geyBucketValue(subBucker));
+
+                        fields.put(termsSubAgg.getName(), getBucketValue(subBucket, queryData, termsSubAgg.getName()));
                         addResult(resultSet, buildRow(queryData, alias, fields));
                     }
                 }
@@ -253,8 +300,6 @@ public class ConnectorQueryExecutor {
             field = pickAliasOrFieldName(alias, field, columnName, columnSelector);
             row.addCell(field, buildCell(select, value, columnSelector));
         }
-
-        logger.debug("Fields:" + row.getCells().toString());
 
         return row;
     }

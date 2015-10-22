@@ -2,6 +2,7 @@ package com.stratio.connector.elasticsearch.core.engine.query;
 
 
 import com.stratio.connector.commons.engine.query.ProjectParsed;
+import com.stratio.connector.elasticsearch.core.engine.query.functions.ESFunction;
 import com.stratio.crossdata.common.data.ColumnName;
 import com.stratio.crossdata.common.data.TableName;
 import com.stratio.crossdata.common.exceptions.ExecutionException;
@@ -122,18 +123,16 @@ public class ConnectorQueryBuilderTest {
             Collection<Filter> matches = new ArrayList<Filter>();
             when(parsedQuery.getMatchList()).thenReturn(matches);
 
-            Collection<Filter> filters = new ArrayList<Filter>();
-            addFilter(COLUMN_1, "search string", filters);
+            Collection<Filter> filters = new ArrayList<>();
+            filters.add(buildFilter(COLUMN_1, "search string"));
+
             when(parsedQuery.getFilter()).thenReturn(filters);
 
             Collection<FunctionFilter> functionFilters = new ArrayList<FunctionFilter>();
             when(parsedQuery.getFunctionFilters()).thenReturn(functionFilters);
 
             // Mocks return fields property
-            List<String> returnFields = new ArrayList<String>();
-            returnFields.add(COLUMN_1);
-            returnFields.add(COLUMN_2);
-            addReturnFields(returnFields, parsedQuery);
+            buildReturnFields(parsedQuery);
 
             SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
             assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
@@ -168,14 +167,13 @@ public class ConnectorQueryBuilderTest {
     }
 
 
-    private void addFilter (String field, String value, Collection<Filter> filters){
+    private Filter buildFilter(String field, String value){
         ColumnName columnName = new ColumnName(INDEX, TYPE, field);
-        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector("search string"));
+        Relation relation = new Relation(new ColumnSelector(columnName), Operator.EQ, new StringSelector(value));
         Set<Operations> operations = new HashSet<Operations>();
         operations.add(Operations.FILTER_NON_INDEXED_EQ);
-        Filter filter = new Filter(operations, relation);
 
-        filters.add(filter);
+        return new Filter(operations, relation);
     }
 
 
@@ -195,4 +193,311 @@ public class ConnectorQueryBuilderTest {
     private String cleanJson (String json){
         return json.replaceAll("\\s", "");
     }
+
+
+    /**
+     * select column1, column2 from table where column1 = "val1" or column2 = "val2" limit 5
+     */
+    @Test
+    public void testORQueryCase1(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5,\"query\":"+
+                "{\"filtered\":{\"query\":{\"match_all\":{}},"+
+                "\"filter\":"+
+                "{\"bool\":{\"should\":[" +
+                        "{\"bool\":{\"must\":{\"term\":{\"column1\":\"val1\"}}}}," +
+                        "{\"bool\":{\"must\":{\"term\":{\"column2\":\"val2\"}}}}]}}}},"+
+                "\"fields\":[\"column1\",\"column2\"]}");
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            Collection<Filter> matches = new ArrayList<Filter>();
+            when(parsedQuery.getMatchList()).thenReturn(matches);
+
+            List<List<ITerm>> terms = new ArrayList<>();
+
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_1, "Val1"))));
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_2, "Val2"))));
+
+            Disjunction ds = new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION), terms);
+
+            when(parsedQuery.getDisjunctionList()).thenReturn(Collections.singleton(ds));
+
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            //Experimentation
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+
+            //Expectations
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+
+    /**
+     * select column1, column2 from table where (column1 = "val1" or column1 = "val2" limit 5) AND (column2 = "val3" or column2 = "val4" limit 5)
+     */
+    @Test
+    public void testORQueryCase2(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5," +
+                "\"query\":{" +
+                "\"filtered\":{\"query\":{\"match_all\":{}}," +
+                "\"filter\":{\"bool\":{" +
+                    "\"must\":[" +
+                        "{\"bool\":{\"should\":[{\"term\":{\"column1\":\"val1\"}},{\"term\":{\"column1\":\"val2\"}}]}}," +
+                        "{\"bool\":{\"should\":[{\"term\":{\"column2\":\"val3\"}},{\"term\":{\"column2\":\"val4\"}}]}}" +
+                    "]}}}}," +
+                "\"fields\":[\"column1\",\"column2\"]}");
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            Collection<Filter> matches = new ArrayList<Filter>();
+            when(parsedQuery.getMatchList()).thenReturn(matches);
+
+            List<List<ITerm>> terms = new ArrayList<>();
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_1, "Val1"))));
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_1, "Val2"))));
+
+            List<Disjunction> disjunctions = new ArrayList<>();
+            disjunctions.add(new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION), terms));
+
+            terms = new ArrayList<>();
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_2, "Val3"))));
+            terms.add(Collections.singletonList(((ITerm) buildFilter(COLUMN_2, "Val4"))));
+
+            disjunctions.add(new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION), terms));
+
+            when(parsedQuery.getDisjunctionList()).thenReturn(disjunctions);
+
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            //Experimentation
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+
+            //Expectations
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+
+    /**
+     * select column1, column2 from table
+     * where (column1 = "val1" or column1 = "val2") OR (column2 = "val3" AND column3 = "val4" limit 5)
+     */
+    @Test
+    public void testORQueryCase3(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5," +
+                "\"query\":{\"filtered\":{\"query\":{\"match_all\":{}}," +
+                "\"filter\":" +
+                    "{\"bool\":{\"should\":[{\"bool\":" +
+                        "{\"should\":{\"bool\":{\"must\":[{\"term\":{\"column1\":\"val1\"}},{\"term\":{\"column1\":\"val2\"}}]}}}}," +
+                        "{\"bool\":{\"must\":[{\"term\":{\"column2\":\"val4\"}},{\"term\":{\"column2\":\"val3\"}}]}}]}}}}," +
+                "\"fields\":[\"column1\",\"column2\"]}");
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            Collection<Filter> matches = new ArrayList<Filter>();
+            when(parsedQuery.getMatchList()).thenReturn(matches);
+
+            List<List<ITerm>> terms = new ArrayList<>();
+
+            //OR
+            List<ITerm> orTerms = new ArrayList<>();
+            orTerms.add(buildFilter(COLUMN_1, "Val1"));
+            orTerms.add( buildFilter(COLUMN_1, "Val2"));
+
+            List<ITerm> disjunctions = new ArrayList<>();
+            disjunctions.add(new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION),Collections.singletonList(orTerms)));
+            terms.add(disjunctions);
+
+
+            //And
+            List<ITerm> andTerms = new ArrayList<>();
+            andTerms.add(buildFilter(COLUMN_2, "Val4"));
+            andTerms.add(buildFilter(COLUMN_2, "Val3"));
+            terms.add(andTerms);
+
+            //Main OR
+            Collection mainDisjunction = Collections.singleton(new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION), terms));
+            when(parsedQuery.getDisjunctionList()).thenReturn(mainDisjunction);
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            //Experimentation
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+
+            //Expectations
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+
+
+    @Test
+    public void testFunction(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5," +
+                "\"query\":{\"bool\":" +
+                    "{\"must\":{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}}}," +
+                "\"fields\":[\"column1\",\"column2\"]}"
+        );
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            Collection<Filter> matches = new ArrayList<Filter>();
+            when(parsedQuery.getMatchList()).thenReturn(matches);
+
+            Collection<FunctionFilter> functionFilters = new ArrayList<>();
+            functionFilters.add(buildFunctionContainsFilter("colName", "value"));
+
+            when(parsedQuery.getFunctionFilters()).thenReturn(functionFilters);
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+
+    @Test
+    public void testFunctionWithAnd(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5," +
+                        "\"query\":{\"bool\":" +
+                        "{\"must\":[" +
+                        "{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}," +
+                        "{\"match\":{\"colName2\":{\"query\":\"value2\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}]}}," +
+                        "\"fields\":[\"column1\",\"column2\"]}"
+        );
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            when(parsedQuery.getMatchList()).thenReturn(new ArrayList<Filter>());
+
+            Collection<FunctionFilter> functionFilters = new ArrayList<>();
+            functionFilters.add(buildFunctionContainsFilter("colName", "value"));
+            functionFilters.add(buildFunctionContainsFilter("colName2", "value2"));
+
+            when(parsedQuery.getFunctionFilters()).thenReturn(functionFilters);
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+    @Test
+    public void testFunctionWithOR(){
+        final String EXPECTED_QUERY = cleanJson(
+                "{\"size\":5," +
+                        "\"query\":{\"bool\":" +
+                        "{\"must\":{\"bool\":" +
+                            "{\"should\":[" +
+                            "{\"bool\":{\"must\":{\"match\":{\"colName\":{\"query\":\"value\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}}}," +
+                            "{\"bool\":{\"must\":{\"match\":{\"colName2\":{\"query\":\"value2\",\"type\":\"boolean\",\"minimum_should_match\":\"100%\"}}}}}]}}}}," +
+                        "\"fields\":[\"column1\",\"column2\"]}"
+        );
+
+        try {
+            ProjectParsed parsedQuery = createBaseParsedQuery();
+
+            // Mocks limit property
+            addLimit(5, parsedQuery);
+
+            // Mocks query properties
+            when(parsedQuery.getMatchList()).thenReturn(new ArrayList<Filter>());
+
+            List<List<ITerm>> terms = new ArrayList<>();
+
+            terms.add(Collections.singletonList(((ITerm) buildFunctionContainsFilter("colName", "value"))));
+            terms.add(Collections.singletonList(((ITerm) buildFunctionContainsFilter("colName2", "value2"))));
+
+            Disjunction ds = new Disjunction(Collections.singleton(Operations.FILTER_DISJUNCTION), terms);
+
+            when(parsedQuery.getDisjunctionOfFunctionsList()).thenReturn(Collections.singleton(ds));
+
+            // Mocks return fields property
+            buildReturnFields(parsedQuery);
+
+            SearchRequestBuilder requestBuilder = (SearchRequestBuilder) connectorQueryBuilder.buildQuery(client, parsedQuery);
+            assertEquals(EXPECTED_QUERY, cleanJson(requestBuilder.toString()));
+        }
+        catch (Exception exception) {
+            fail(exception.getMessage());
+        }
+    }
+
+    public void buildReturnFields(ProjectParsed parsedQuery) {
+        List<String> returnFields = new ArrayList<String>();
+        returnFields.add(COLUMN_1);
+        returnFields.add(COLUMN_2);
+        addReturnFields(returnFields, parsedQuery);
+    }
+
+    public FunctionFilter buildFunctionContainsFilter(String columnName, String value) {
+        List<Selector> parameters = new ArrayList<>();
+        TableName tableName = new TableName("catalog", "table");
+        parameters.add(new ColumnSelector(new ColumnName(tableName, columnName)));
+        parameters.add(new StringSelector(value));
+        parameters.add(new StringSelector("100%"));
+
+        FunctionRelation function = new FunctionRelation(ESFunction.CONTAINS, parameters,tableName);
+
+        Set<Operations> operations = new HashSet();
+        operations.add(Operations.FILTER_FUNCTION);
+
+        return new FunctionFilter(operations, function);
+    }
+
 }

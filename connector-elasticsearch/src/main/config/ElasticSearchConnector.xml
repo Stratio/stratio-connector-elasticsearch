@@ -91,7 +91,7 @@
         <operation>FILTER_PK_NOT_IN</operation>
         <operation>FILTER_NON_INDEXED_NOT_IN</operation>
         <operation>FILTER_INDEXED_NOT_IN</operation>
-
+        <operation>FILTER_DISJUNCTION</operation>
     </SupportedOperations>
 
     <Functions>

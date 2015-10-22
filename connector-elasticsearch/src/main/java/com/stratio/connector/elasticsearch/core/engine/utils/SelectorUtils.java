@@ -32,6 +32,9 @@ public class SelectorUtils {
         if (selector instanceof FunctionSelector){
             return getFunctionSelectorFieldName((FunctionSelector) selector);
         }
+        if (selector instanceof AliasSelector){
+            return getSelectorFieldName(((AliasSelector)selector).getReferencedSelector());
+        }
         // Otherwise the selector is a field, so its name is returned
         return selector.getColumnName().getName();
     }
