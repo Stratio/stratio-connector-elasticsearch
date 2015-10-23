@@ -7,7 +7,7 @@ Crossdata connector.
 Connector Configuration
 -----------------------
 
-First of all `Crossdata <http://docs.stratio.com/modules/crossdata/0.4/index.html>`_ is needed and must be
+First of all `Crossdata <http://docs.stratio.com/modules/crossdata/0.5/index.html>`_ is needed and must be
 installed. The server and the Shell must be running.
 
 In the Crossdata Shell we need to configure the datastore cluster.
